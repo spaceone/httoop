@@ -223,5 +223,5 @@ class Response(Message):
 
 	def __repr__(self):
 		# TODO: do we really want to check the body length here?
-		content_length = self.headers.get("Content-Type", "")
-		return "<HTTP Response %d %s (%d)>" % (self.status, content_length, len(self.body))
+		content_type = self.headers.get("Content-Type", "")
+		return "<HTTP Response %d %s (%d)>" % (self.status, content_type, len(self.body))

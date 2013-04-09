@@ -19,13 +19,22 @@ from httoop.uri import URI
 # TODO: recheck the regex if they are completely HTTP comform, but they should be
 # TODO: create a ResponseBody for chunked response
 
-class InvalidRequestLine(ValueError):
-	"""error raised when first line is invalid"""
+class InvalidLine(ValueError):
+	u"""error raised when first line is invalid"""
 
 class Protocol(tuple):
 	u"""The HTTP protocol version"""
+
 	def __str__(self):
 		return 'HTTP/%d.%d' % self
+
+	@property
+	def major(self):
+		return self[0]
+
+	@property
+	def minor(self):
+		return self[1]
 
 class Message(object):
 	u"""A HTTP message
@@ -88,7 +97,7 @@ class Message(object):
 		"""
 		match = self.VERSION_RE.match(version)
 		if match is None:
-			raise InvalidRequestLine("Invalid HTTP version: %s" % version)
+			raise InvalidLine("Invalid HTTP version: %s" % version)
 
 		self.protocol = (int(match.group(1)), int(match.group(2)))
 
@@ -138,20 +147,20 @@ class Request(Message):
 		"""
 		bits = line.split(None, 2)
 		if len(bits) != 3:
-			raise InvalidRequestLine(line)
+			raise InvalidLine(line)
 
 		# version
 		super(Request, self).__init__(bits[2])
 
 		# method
 		if None is self.METHOD_RE.match(bits[0]):
-			raise InvalidRequestLine("invalid Method: %s" % bits[0])
+			raise InvalidLine("invalid Method: %s" % bits[0])
 		self.method = bits[0] # HTTP method is case sensitive
 
 		# URI
 		self.uri = bits[1]
 		if self._uri.fragment or self._uri.username or self._uri.password:
-			raise InvalidRequestLine("Invalid request URI. "\
+			raise InvalidLine("Invalid request URI. "\
 				"HTTP request URIs MUST NOT contain fragments, "\
 				"username or password")
 		# TODO: do something like uri.validate() or raise FooBar
@@ -193,11 +202,10 @@ class Response(Message):
 
 	def parse(self, line):
 		u"""parses the response line"""
-		# FIXME: s/InvalidRequestLine/InvalidResponseLine/
 
 		bits = line.split(None, 1)
 		if len(bits) != 2:
-			raise InvalidRequestLine(line)
+			raise InvalidLine(line)
 
 		# version
 		super(Response, self).parse(bits[0])
@@ -205,7 +213,7 @@ class Response(Message):
 		# status
 		match = self.STATUS_RE.match(bits[1])
 		if match is None:
-			raise InvalidRequestLine("Invalid status %s" % bits[1])
+			raise InvalidLine("Invalid status %s" % bits[1])
 
 		self.status = (int(match.group(1)), match.group(2))
 

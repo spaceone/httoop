@@ -2,7 +2,7 @@
 """utilities for HTTP bodies"""
 
 import os.path
-from circuits.six import PY3, string_types, binary_type
+from six import PY3, string_types, binary_type
 from io import IOBase
 
 class HTTPBody(object):

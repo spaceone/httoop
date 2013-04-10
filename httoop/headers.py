@@ -71,6 +71,7 @@ class CaseInsensitiveDict(dict):
 		return dict.pop(self, str(key).title(), default)
 
 class Headers(CaseInsensitiveDict):
+	HEADER_RE = re.compile("[\x00-\x1F\x7F()<>@,;:/\[\]={} \t\\\\\"]")
 
 	def elements(self, key):
 		"""Return a sorted list of HeaderElements for the given header."""
@@ -80,21 +81,11 @@ class Headers(CaseInsensitiveDict):
 		"""Return a list of all the values for the named field."""
 		return [val.strip() for val in self.get(name, '').split(',')]
 
+	def __str__(self):
+		return self.compose()
+
 	def __repr__(self):
 		return "Headers(%s)" % repr(list(self.items()))
-
-	def __str__(self):
-		# TODO: drop python2.6 support and inherit from OrderedDict ?
-		items = dict(self)
-		date = items.pop('Date', None)
-		server = items.pop('Server', None)
-		items = items.items()
-		if server is not None:
-			items = [('Server', server)] + items
-		if date is not None:
-			items = [('Date', date)] + items
-		headers = ["%s: %s\r\n" % (k, v) for k, v in items]
-		return "".join(headers) + '\r\n'
 
 	def __bytes__(self):
 		return str(self).encode('latin1') # WTF: ascii?!
@@ -138,6 +129,43 @@ class Headers(CaseInsensitiveDict):
 			else:
 				parts.append(_formatparam(k, v))
 		self.append(_name, "; ".join(parts))
+
+	def parse(self, data):
+		ur"""parses http headers
+
+			:param data:
+				the header string containing headers seperated by "\r\n"
+			:type  data: bytes
+		"""
+
+		lines = data.split(b'\r\n')
+
+		# parse headers into key/value pairs paying attention
+		# to continuation lines.
+		while len(lines):
+			# Parse initial header name : value pair.
+			curr = lines.pop(0)
+			if b':' not in curr:
+				raise InvalidHeader("invalid line %s" % curr.strip())
+
+			name, value = curr.split(":", 1)
+			name = name.rstrip(" \t")
+
+			if self.HEADER_RE.search(name):
+				raise InvalidHeader("invalid header name %s" % name)
+
+			name, value = name.strip(), [value.lstrip()]
+
+			# Consume value continuation lines
+			while len(lines) and lines[0].startswith((" ", "\t")): #FIXME: python2.6
+				value.append(lines.pop(0))
+			value = b''.join(value).rstrip()
+
+			# store new header value
+			self.append(name, value)
+
+	def compose(self):
+		return b''.join(b'%s: %s\r\n' % (k, v) for k, v in self.iteritems())
 
 def _formatparam(param, value=None, quote=1):
 	"""Convenience function to format and return a key=value pair.

@@ -29,6 +29,10 @@ class Protocol(tuple):
 		return 'HTTP/%d.%d' % self
 
 	@property
+	def name(self):
+		return 'HTTP'
+
+	@property
 	def major(self):
 		return self[0]
 
@@ -55,23 +59,8 @@ class Message(object):
 	# alias
 	version = protocol
 
-	@property
-	def headers(self):
-		return self._headers
-
-	@headers.setter
-	def headers(self, headers):
-		if not isinstance(headers, Headers):
-			headers = Headers(headers)
-		self._headers = headers
-
-	@property
-	def body(self):
-		return self._body
-
-	@body.setter
-	def body(self, body):
-		self._body.set(body)
+	headers = Headers()
+	body = Body()
 
 	def __init__(self, protocol=None, headers=None, body=None):
 		u"""Initiates a new Message to hold information about the message.
@@ -86,8 +75,8 @@ class Message(object):
 			:type  body: any
 		"""
 		self._protocol = Protocol(protocol or (1, 1))
-		self._headers = Headers(headers or {})
-		self._body = Body(body or b'')
+		self.__headers = Headers(headers or {})
+		self.__body = Body(body or b'')
 
 	def parse(self, version):
 		u"""parses the HTTP protocol version
@@ -117,13 +106,7 @@ class Request(Message):
 	def method(self, method):
 		self._method = method
 
-	@property
-	def uri(self):
-		return self._uri
-
-	@uri.setter
-	def uri(self, uri):
-		self._uri.set(uri)
+	uri = URI()
 
 	def __init__(self, method=None, uri=None, protocol=None, headers=None, body=None):
 		"""Creates a new Request object to hold information about a request.
@@ -138,7 +121,7 @@ class Request(Message):
 
 		super(Request, self).__init__(protocol, headers, body)
 		self._method = method or 'GET'
-		self._uri = URI(uri or '/')
+		self.__uri = URI(uri or '/')
 
 	def parse(self, line):
 		"""parses the request line and sets method, uri and protocol version
@@ -159,7 +142,7 @@ class Request(Message):
 
 		# URI
 		self.uri = bits[1]
-		if self._uri.fragment or self._uri.username or self._uri.password:
+		if self.__uri.fragment or self.__uri.username or self.__uri.password:
 			raise InvalidLine("Invalid request URI. "\
 				"HTTP request URIs MUST NOT contain fragments, "\
 				"username or password")
@@ -167,10 +150,10 @@ class Request(Message):
 
 	def compose(self):
 		u"""composes the request line"""
-		return b"%s %s %s" % (bytes(self._method), bytes(self._uri), bytes(self._protocol))
+		return b"%s %s %s" % (bytes(self._method), bytes(self.__uri), bytes(self._protocol))
 
 	def __repr__(self):
-		return "<HTTP Request %s %s %s>" % (bytes(self._method), bytes(self._uri.path), bytes(self.protocol))
+		return "<HTTP Request %s %s %s>" % (bytes(self._method), bytes(self.__uri.path), bytes(self.protocol))
 
 class Response(Message):
 	u"""A HTTP response message
@@ -180,13 +163,7 @@ class Response(Message):
 
 	STATUS_RE = re.compile(r"^(\d{3})(?:\s+([\s\w]*))$")
 
-	@property
-	def status(self):
-		return self._status
-
-	@status.setter
-	def status(self, status):
-		self._status.set(status)
+	status = Status()
 
 	def __init__(self, status=None, protocol=None, headers=None, body=None):
 		"""Creates a new Response object to hold information about the response.
@@ -198,7 +175,7 @@ class Response(Message):
 		super(Response, self).__init__(protocol, headers, body)
 		# TODO: overwrite the body by an body which has also chunked TE, stream, ...
 
-		self._status = Status(status or 200)
+		self.__status = Status(status or 200)
 
 	def parse(self, line):
 		u"""parses the response line"""

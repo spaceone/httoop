@@ -1,34 +1,33 @@
 # -*- coding: utf-8 -*-
-"""utilities for HTTP bodies"""
+"""HTTP request and response body
 
-import os.path
-from six import PY3, string_types, binary_type
+.. seealso:: :rfc:`2616#section-4.3`
+"""
+
+from os.path import getsize
 from io import IOBase
+from six import PY3, string_types, binary_type
 
-class HTTPBody(object):
+# TODO: cleanup
+
+class Body(object):
 	u"""A HTTP message body
 
 		We are internally saving the value as list which
 		is faster to iterate over if we are responding in chunks
 		(useful if we ever want to support WSGI)
+		the idea was from cherrypy
+
+		.. todo::
+			remove the list thing?
+			replace through BytesIO for everything to simplify?
 	"""
-	value = None
+	value = None # TODO: rename _value / _body / etc.
 
 	def __init__(self, value=None):
 		if value is None:
 			value = []
 		self.value = value
-
-	def set(self, body):
-		if isinstance(body, string_types):
-			if body:
-				body = [body]
-			else:
-				body = []
-		elif body is None:
-			body = []
-
-		self.value = body
 
 	def __unicode__(self):
 		return bytes(self).decode('utf-8')
@@ -70,9 +69,30 @@ class HTTPBody(object):
 			return 0
 
 		if isinstance(body, file):
-			return os.path.getsize(body.name)
+			return getsize(body.name)
 		if isinstance(body, IOBase):
 			return len(body.getvalue()) # already bytes
 
 		return len(bytes(self))
+
+	def __get__(self, message, cls=None):
+		if message is None:
+			return self
+		return message._Message__body
+
+	def __set__(self, message, body):
+		if message is body:
+			return
+
+		if isinstance(body, string_types):
+			if body:
+				body = [body]
+			else:
+				body = []
+		elif body is None:
+			body = []
+		elif isinstance(body, Body):
+			body = body.value
+
+		message.body.value = body
 

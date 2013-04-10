@@ -167,6 +167,18 @@ class Headers(CaseInsensitiveDict):
 	def compose(self):
 		return b''.join(b'%s: %s\r\n' % (k, v) for k, v in self.iteritems())
 
+	def __get__(self, message, cls=None):
+		if message is None:
+			return self
+		return message._Message__headers
+
+	def __set__(self, message, value):
+		if message is value:
+			return
+		if not isinstance(value, self.__class__):
+			value = self.__class__(value)
+		message._Message__headers = value
+
 def _formatparam(param, value=None, quote=1):
 	"""Convenience function to format and return a key=value pair.
 

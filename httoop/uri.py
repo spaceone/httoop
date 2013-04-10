@@ -65,7 +65,7 @@ class URI(object):
 				password=uri.password,
 				host=uri.host,
 				port=uri.port,
-				path)uri.path,
+				path=uri.path,
 				query_string=uri.query_string,
 				fragment=uri.fragment
 			))

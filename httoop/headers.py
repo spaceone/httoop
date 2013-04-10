@@ -131,7 +131,7 @@ class Headers(CaseInsensitiveDict):
 		self.append(_name, "; ".join(parts))
 
 	def parse(self, data):
-		ur"""parses http headers
+		r"""parses http headers
 
 			:param data:
 				the header string containing headers seperated by "\r\n"

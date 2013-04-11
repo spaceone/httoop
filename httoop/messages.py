@@ -40,6 +40,16 @@ class Protocol(tuple):
 	def minor(self):
 		return self[1]
 
+	def __get__(self, message, cls=None):
+		if message is None:
+			return self
+		return message._Message__protocol
+
+	def __set__(self, message, protocol):
+		if not isinstance(protocol, Protocol):
+			protocol = Protocol(protocol)
+		message._Message__protocol = protocol
+
 class Message(object):
 	u"""A HTTP message
 
@@ -48,14 +58,7 @@ class Message(object):
 
 	VERSION_RE = re.compile(r"^HTTP/(\d+).(\d+)$")
 
-	@property
-	def protocol(self):
-		return self._protocol
-
-	@protocol.setter
-	def protocol(self, protocol):
-		self._protocol = Protocol(protocol)
-
+	protocol = Protocol((1,1))
 	# alias
 	version = protocol
 
@@ -74,7 +77,7 @@ class Message(object):
 			:param body: the request body
 			:type  body: any
 		"""
-		self._protocol = Protocol(protocol or (1, 1))
+		self.__protocol = Protocol(protocol or (1, 1))
 		self.__headers = Headers(headers or {})
 		self.__body = Body(body or b'')
 
@@ -133,7 +136,7 @@ class Request(Message):
 			raise InvalidLine(line)
 
 		# version
-		super(Request, self).__init__(bits[2])
+		super(Request, self).parse(bits[2])
 
 		# method
 		if None is self.METHOD_RE.match(bits[0]):

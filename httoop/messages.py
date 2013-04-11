@@ -156,7 +156,7 @@ class Request(Message):
 		return b"%s %s %s" % (bytes(self._method), bytes(self.__uri), bytes(self._protocol))
 
 	def __repr__(self):
-		return "<HTTP Request %s %s %s>" % (bytes(self._method), bytes(self.__uri.path), bytes(self.protocol))
+		return "<HTTP Request(%s %s %s)>" % (bytes(self._method), bytes(self.__uri.path), bytes(self.protocol))
 
 class Response(Message):
 	u"""A HTTP response message
@@ -204,4 +204,4 @@ class Response(Message):
 	def __repr__(self):
 		# TODO: do we really want to check the body length here?
 		content_type = self.headers.get("Content-Type", "")
-		return "<HTTP Response %d %s (%d)>" % (self.status, content_type, len(self.body))
+		return "<HTTP Response(%d %s (%d))>" % (self.status, content_type, len(self.body))

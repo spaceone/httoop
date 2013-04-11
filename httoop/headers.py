@@ -9,6 +9,7 @@
 __all__ = ['Headers', 'HeaderElement']
 
 import re
+from httoop.util import CaseInsensitiveDict
 
 # TODO: cleanup
 # FIXME: python3 support
@@ -20,58 +21,12 @@ import re
 RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"/\[\]\?=]')
 RE_Q_SEPARATOR = re.compile(r'; *q *=')
 
-# TODO: move to compat
-class CaseInsensitiveDict(dict):
-	"""A case-insensitive dict subclass.
-
-		Each key is changed on entry to str(key).title().
-	"""
-
-	def __init__(self, *args, **kwargs):
-		d = dict(*args, **kwargs)
-		for key, value in d.iteritems(): # FIXME: py3
-			dict.__setitem__(self, str(key).title(), value)
-		dict.__init__(self)
-
-	def __getitem__(self, key):
-		return dict.__getitem__(self, str(key).title())
-
-	def __setitem__(self, key, value):
-		dict.__setitem__(self, str(key).title(), value)
-
-	def __delitem__(self, key):
-		dict.__delitem__(self, str(key).title())
-
-	def __contains__(self, key):
-		return dict.__contains__(self, str(key).title())
-
-	def get(self, key, default=None):
-		return dict.get(self, str(key).title(), default)
-
-	def update(self, E):
-		for k in E.keys():
-			self[str(k).title()] = E[k]
-
-	@classmethod
-	def fromkeys(cls, seq, value=None):
-		newdict = cls()
-		for k in seq:
-			newdict[k] = value
-		return newdict
-
-	def setdefault(self, key, x=None):
-		key = str(key).title()
-		try:
-			return dict.__getitem__(self, key)
-		except KeyError:
-			self[key] = x
-			return x
-
-	def pop(self, key, default=None):
-		return dict.pop(self, str(key).title(), default)
+class InvalidHeader(ValueError):
+	u"""error raised when header is invalid"""
 
 class Headers(CaseInsensitiveDict):
-	HEADER_RE = re.compile("[\x00-\x1F\x7F()<>@,;:/\[\]={} \t\\\\\"]")
+	# disallowed bytes for HTTP header field names
+	HEADER_RE = re.compile(b"[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]")
 
 	def elements(self, key):
 		"""Return a sorted list of HeaderElements for the given header."""
@@ -85,14 +40,14 @@ class Headers(CaseInsensitiveDict):
 		return self.compose()
 
 	def __repr__(self):
-		return "Headers(%s)" % repr(list(self.items()))
+		return "<HTTP Headers(%s)>" % repr(list(self.items()))
 
 	def __bytes__(self):
 		return str(self).encode('latin1') # WTF: ascii?!
 
 	def values(self, key=None):
 		# if key is set return a ordered list of element values
-		# TODO: maybe move this into another method because values is a dict name
+		# TODO: may move this into another method because values is a dict name
 		if key is None:
 			return super(Headers, self).values()
 		return [e.value for e in self.elements(key)]
@@ -130,6 +85,11 @@ class Headers(CaseInsensitiveDict):
 				parts.append(_formatparam(k, v))
 		self.append(_name, "; ".join(parts))
 
+	def validate(self):
+		u"""validates all header elements"""
+		for name in self:
+			self.elements(name)
+
 	def parse(self, data):
 		r"""parses http headers
 
@@ -158,7 +118,7 @@ class Headers(CaseInsensitiveDict):
 
 			# Consume value continuation lines
 			while len(lines) and lines[0].startswith((" ", "\t")): #FIXME: python2.6
-				value.append(lines.pop(0))
+				value.append(lines.pop(0)[1:])
 			value = b''.join(value).rstrip()
 
 			# store new header value

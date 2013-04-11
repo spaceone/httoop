@@ -5,75 +5,58 @@
 """
 
 from os.path import getsize
-from io import IOBase
-from six import PY3, string_types, binary_type
+from six import text_type, binary_type, BytesIO
+from io import BytesIO
 
-# TODO: cleanup
+from httoop.util import HTTPString
 
-class Body(object):
-	u"""A HTTP message body
+class Body(HTTPString):
+	u"""A HTTP message body"""
 
-		We are internally saving the value as list which
-		is faster to iterate over if we are responding in chunks
-		(useful if we ever want to support WSGI)
-		the idea was from cherrypy
+	def __init__(self, body=None):
+		self.body = BytesIO()
+		if body is not None:
+			self.set(body)
 
-		.. todo::
-			remove the list thing?
-			replace through BytesIO for everything to simplify?
-	"""
-	value = None # TODO: rename _value / _body / etc.
-
-	def __init__(self, value=None):
-		if value is None:
-			value = []
-		self.value = value
-
-	def __unicode__(self):
-		return bytes(self).decode('utf-8')
+	def set(self, body):
+		if not isinstance(body, (BytesIO, file)):
+			if not body:
+				body = BytesIO()
+			elif isinstance(body, text_type):
+				body = BytesIO(body.encode('utf-8'))
+			elif isinstance(body, binary_type):
+				body = BytesIO(body)
+			elif isinstance(body, Body):
+				body = body.body
+		self.body = body
 
 	def __bytes__(self):
-		_body = self.value
-		body = None
-		if isinstance(_body, (IOBase, file)):
-			body = _body.read()
-			_body.seek(0)
-		elif isinstance(_body, list):
-			body = b''.join([b if isinstance(b, binary_type) else b.encode('utf-8') for b in _body])
-		elif isinstance(_body, string_types):
-			body = _body
-		else:
-			# should not happen, this is dangerous
-			if isinstance(_body, dict):
-				body = repr(_body)
-			else:
-				body = _body
+		bytesio = self.body
+		t = bytesio.tell()
+		bytesio.seek(0)
+		body = bytesio.read()
+		bytesio.seek(t)
 
-		if not isinstance(body, binary_type):
-			body = body.encode('utf-8')
+		if isinstance(bytesio, file) and bytesio.encoding is not None:
+			body = body.encode(bytesio.encoding)
 
 		return body
 
-	def __str__(self):
-		if PY3:
-			return self.__unicode__()
-		else:
-			return self.__bytes__()
-
 	def __nonzero__(self):
-		return bool(self.value)
+		return bool(len(self))
 
 	def __len__(self):
-		body = self.value
-		if body is None:
-			return 0
+		body = self.body
 
 		if isinstance(body, file):
 			return getsize(body.name)
-		if isinstance(body, IOBase):
-			return len(body.getvalue()) # already bytes
+		if isinstance(body, BytesIO):
+			return len(body.getvalue())
 
 		return len(bytes(self))
+
+	def __repr__(self):
+		return '<HTTP Body(%d)>' % len(self)
 
 	def __get__(self, message, cls=None):
 		if message is None:
@@ -84,15 +67,5 @@ class Body(object):
 		if message is body:
 			return
 
-		if isinstance(body, string_types):
-			if body:
-				body = [body]
-			else:
-				body = []
-		elif body is None:
-			body = []
-		elif isinstance(body, Body):
-			body = body.value
-
-		message.body.value = body
+		message.body.set(body)
 

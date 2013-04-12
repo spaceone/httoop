@@ -1,4 +1,4 @@
-from six import PY3
+from six import PY3, text_type, binary_type, BytesIO, iteritems
 
 class CaseInsensitiveDict(dict):
 	"""A case-insensitive dict subclass.
@@ -8,7 +8,7 @@ class CaseInsensitiveDict(dict):
 
 	def __init__(self, *args, **kwargs):
 		d = dict(*args, **kwargs)
-		for key, value in d.iteritems(): # FIXME: py3
+		for key, value in iteritems(d):
 			dict.__setitem__(self, str(key).title(), value)
 		dict.__init__(self)
 

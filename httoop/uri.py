@@ -4,6 +4,8 @@
 .. seealso:: :rfc:`3986`
 """
 
+from httoop.exceptions import InvalidURI
+
 # TODO: from compat
 try:
 	import urlparse
@@ -42,6 +44,42 @@ class URI(object):
 
 		if self.uri.startswith('//'):
 			self.path = '/%s' % self.path
+
+		self.validate_http_uri()
+
+	def validate_http_uri(self):
+		if not self.fragment and\
+			not self.username and\
+			not self.password and\
+			self.path and\
+			self.path[0] in ('*', '/'):
+				raise InvalidURI(self.uri)
+
+	def abspath(self):
+		"""Clear out any '..' and excessive slashes from the path"""
+		# Remove double forward-slashes from the path
+		path = re.sub(b'\/{2,}', b'/', self.path)
+		# With that done, go through and remove all the relative references
+		unsplit = []
+		for part in path.split(b'/'):
+			# If we encounter the parent directory, and there's
+			# a segment to pop off, then we should pop it off.
+			if part == b'..' and (not unsplit or unsplit.pop() is not None):
+				pass
+			elif part != b'.':
+				unsplit.append(part)
+
+		# With all these pieces, assemble!
+		if self.path.endswith(b'.'):
+			# If the path ends with a period, then it refers to a directory,
+			# not a file path
+			self.path = b'/'.join(unsplit) + b'/'
+		else:
+			self.path = b'/'.join(unsplit)
+		return self
+
+	def sanitize(self):
+		return self.abspath()
 
 	def __get__(self, request, cls=None):
 		if request is None:

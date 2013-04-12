@@ -9,7 +9,8 @@
 __all__ = ['Headers', 'HeaderElement']
 
 import re
-from httoop.util import CaseInsensitiveDict
+from httoop.util import CaseInsensitiveDict, HTTPString
+from httoop.exceptions import InvalidHeader
 
 # TODO: cleanup
 # FIXME: python3 support
@@ -21,10 +22,7 @@ from httoop.util import CaseInsensitiveDict
 RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"/\[\]\?=]')
 RE_Q_SEPARATOR = re.compile(r'; *q *=')
 
-class InvalidHeader(ValueError):
-	u"""error raised when header is invalid"""
-
-class Headers(CaseInsensitiveDict):
+class Headers(HTTPString, CaseInsensitiveDict):
 	# disallowed bytes for HTTP header field names
 	HEADER_RE = re.compile(b"[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]")
 

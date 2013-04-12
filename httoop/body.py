@@ -5,10 +5,9 @@
 """
 
 from os.path import getsize
-from six import text_type, binary_type, BytesIO
-from io import BytesIO
+from io import BytesIO # hmm, six implements StringIO for this...
 
-from httoop.util import HTTPString
+from httoop.util import HTTPString, text_type, binary_type, BytesIO
 
 class Body(HTTPString):
 	u"""A HTTP message body"""

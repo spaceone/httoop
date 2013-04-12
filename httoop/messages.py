@@ -12,15 +12,13 @@ from httoop.headers import Headers
 from httoop.status import Status
 from httoop.body import Body
 from httoop.uri import URI
+from httoop.exceptions import InvalidLine, InvalidURI
 
 # TODO: replace @property by __set__ and  __get__ in the specific classes
 # TODO: add __slots__ for request and response to gain performance
 # TODO: rename get and set?
 # TODO: recheck the regex if they are completely HTTP comform, but they should be
 # TODO: create a ResponseBody for chunked response
-
-class InvalidLine(ValueError):
-	u"""error raised when first line is invalid"""
 
 class Protocol(tuple):
 	u"""The HTTP protocol version"""
@@ -140,16 +138,16 @@ class Request(Message):
 
 		# method
 		if None is self.METHOD_RE.match(bits[0]):
-			raise InvalidLine("invalid Method: %s" % bits[0])
+			raise InvalidLine("Invalid method: %s" % bits[0])
 		self.method = bits[0] # HTTP method is case sensitive
 
 		# URI
-		self.uri = bits[1]
-		if self.__uri.fragment or self.__uri.username or self.__uri.password:
-			raise InvalidLine("Invalid request URI. "\
+		try:
+			self.uri = bits[1]
+		except InvalidURI as exc:
+			raise InvalidLine("Invalid request URL: %s"\
 				"HTTP request URIs MUST NOT contain fragments, "\
-				"username or password")
-		# TODO: do something like uri.validate() or raise FooBar
+				"username or password, etc." % str(exc))
 
 	def compose(self):
 		u"""composes the request line"""

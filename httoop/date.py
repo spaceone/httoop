@@ -6,7 +6,7 @@
 
 __all__ = ['Date']
 
-from httoop.util import HTTPString
+from httoop.util import ByteString
 
 from functools import partial
 
@@ -21,7 +21,7 @@ import time
 
 # TODO: this is bloatet, do we need it?
 
-class Date(HTTPString):
+class Date(ByteString):
 	u"""HTTP Date
 
 		.. seealso:: :rfc:`2616#section-3.3`

@@ -9,7 +9,7 @@
 __all__ = ['Headers', 'HeaderElement']
 
 import re
-from httoop.util import CaseInsensitiveDict, HTTPString
+from httoop.util import CaseInsensitiveDict, ByteString
 from httoop.exceptions import InvalidHeader
 
 # TODO: cleanup
@@ -22,7 +22,7 @@ from httoop.exceptions import InvalidHeader
 RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"/\[\]\?=]')
 RE_Q_SEPARATOR = re.compile(r'; *q *=')
 
-class Headers(HTTPString, CaseInsensitiveDict):
+class Headers(ByteString, CaseInsensitiveDict):
 	# disallowed bytes for HTTP header field names
 	HEADER_RE = re.compile(b"[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]")
 

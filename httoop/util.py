@@ -49,7 +49,7 @@ class CaseInsensitiveDict(dict):
 	def pop(self, key, default=None):
 		return dict.pop(self, str(key).title(), default)
 
-class HTTPString(object):
+class ByteString(object):
 	def __str__(self):
 		if PY3:
 			return self.__unicode__()

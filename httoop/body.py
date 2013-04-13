@@ -7,9 +7,9 @@
 from os.path import getsize
 from io import BytesIO # hmm, six implements StringIO for this...
 
-from httoop.util import HTTPString, text_type, binary_type, BytesIO
+from httoop.util import ByteString, text_type, binary_type, BytesIO
 
-class Body(HTTPString):
+class Body(ByteString):
 	u"""A HTTP message body"""
 
 	def __init__(self, body=None):

@@ -52,7 +52,7 @@ class URI(object):
 			not self.username and\
 			not self.password and\
 			self.path and\
-			self.path[0] in ('*', '/'):
+			self.path[0] not in ('*', '/'):
 				raise InvalidURI(self.uri)
 
 	def abspath(self):

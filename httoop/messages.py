@@ -61,7 +61,7 @@ class Message(object):
 		.. seealso:: :rfc:`2616#section-4`
 	"""
 
-	VERSION_RE = re.compile(r"^HTTP/(\d+).(\d+)$")
+	VERSION_RE = re.compile(r"^HTTP/(\d+).(\d+)\Z")
 
 	protocol = Protocol((1,1))
 	# alias
@@ -104,7 +104,7 @@ class Request(Message):
 		.. seealso:: :rfc:`2616#section-5`
 	"""
 
-	METHOD_RE = re.compile(r"^[A-Z0-9$-_.]{1,20}$")
+	METHOD_RE = re.compile(r"^[A-Z0-9$-_.]{1,20}\Z")
 
 	method = Method()
 	uri = URI()
@@ -160,7 +160,7 @@ class Response(Message):
 		.. seealso:: :rfc:`2616#section-6`
 	"""
 
-	STATUS_RE = re.compile(r"^(\d{3})(?:\s+([\s\w]*))$")
+	STATUS_RE = re.compile(r"^([1-5]\d{2})(?:\s+([\s\w]*))\Z")
 
 	status = Status()
 

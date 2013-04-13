@@ -52,9 +52,10 @@ class URI(object):
 			not self.username and\
 			not self.password and\
 			self.path and\
-			self.path[0] not in ('*', '/'):
+			(self.path[0] == '/' or self.path == '*'):
 				raise InvalidURI(self.uri)
 
+	# this is ripped from url-parse project which is MIT licensed
 	def abspath(self):
 		"""Clear out any '..' and excessive slashes from the path"""
 		# Remove double forward-slashes from the path

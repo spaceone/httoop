@@ -14,11 +14,7 @@ from httoop.body import Body
 from httoop.uri import URI
 from httoop.exceptions import InvalidLine, InvalidURI
 
-# TODO: replace @property by __set__ and  __get__ in the specific classes
-# TODO: add __slots__ for request and response to gain performance
-# TODO: rename get and set?
-# TODO: recheck the regex if they are completely HTTP comform, but they should be
-# TODO: create a ResponseBody for chunked response
+# TODO: add __slots__ for request and response to gain performance?
 
 class Protocol(tuple):
 	u"""The HTTP protocol version"""
@@ -47,6 +43,17 @@ class Protocol(tuple):
 		if not isinstance(protocol, Protocol):
 			protocol = Protocol(protocol)
 		message._Message__protocol = protocol
+
+class Method(bytes):
+	u"""A HTTP request method"""
+
+	def __get__(self, request, cls=None):
+		if request is None:
+			return self
+		return request._Request__method
+
+	def __set__(self, request, method):
+		request._Request__method = bytes(method)
 
 class Message(object):
 	u"""A HTTP message
@@ -99,14 +106,7 @@ class Request(Message):
 
 	METHOD_RE = re.compile(r"^[A-Z0-9$-_.]{1,20}$")
 
-	@property
-	def method(self):
-		return self._method
-
-	@method.setter
-	def method(self, method):
-		self._method = method
-
+	method = Method()
 	uri = URI()
 
 	def __init__(self, method=None, uri=None, protocol=None, headers=None, body=None):
@@ -121,7 +121,7 @@ class Request(Message):
 		"""
 
 		super(Request, self).__init__(protocol, headers, body)
-		self._method = method or 'GET'
+		self.__method = Method(method or 'GET')
 		self.__uri = URI(uri or '/')
 
 	def parse(self, line):
@@ -145,16 +145,14 @@ class Request(Message):
 		try:
 			self.uri = bits[1]
 		except InvalidURI as exc:
-			raise InvalidLine("Invalid request URL: %s"\
-				"HTTP request URIs MUST NOT contain fragments, "\
-				"username or password, etc." % str(exc))
+			raise InvalidLine("Invalid request URL: %r" % str(exc))
 
 	def compose(self):
 		u"""composes the request line"""
-		return b"%s %s %s" % (bytes(self._method), bytes(self.__uri), bytes(self._protocol))
+		return b"%s %s %s" % (bytes(self.__method), bytes(self.__uri), bytes(self._protocol))
 
 	def __repr__(self):
-		return "<HTTP Request(%s %s %s)>" % (bytes(self._method), bytes(self.__uri.path), bytes(self.protocol))
+		return "<HTTP Request(%s %s %s)>" % (bytes(self.__method), bytes(self.__uri.path), bytes(self.protocol))
 
 class Response(Message):
 	u"""A HTTP response message
@@ -169,12 +167,13 @@ class Response(Message):
 	def __init__(self, status=None, protocol=None, headers=None, body=None):
 		"""Creates a new Response object to hold information about the response.
 
-			:param status: A HTTP status, default is 200
-			:type status: int or str or :class:`Status`
+			:param status:
+				A HTTP status, default is 200
+			:type status:
+				int or str or :class:`Status`
 		"""
 
 		super(Response, self).__init__(protocol, headers, body)
-		# TODO: overwrite the body by an body which has also chunked TE, stream, ...
 
 		self.__status = Status(status or 200)
 

@@ -56,15 +56,3 @@ class Body(ByteString):
 
 	def __repr__(self):
 		return '<HTTP Body(%d)>' % len(self)
-
-	def __get__(self, message, cls=None):
-		if message is None:
-			return self
-		return message._Message__body
-
-	def __set__(self, message, body):
-		if message is body:
-			return
-
-		message.body.set(body)
-

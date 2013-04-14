@@ -81,30 +81,3 @@ class URI(object):
 
 	def sanitize(self):
 		return self.abspath()
-
-	def __get__(self, request, cls=None):
-		if request is None:
-			return self
-		return request._Request__uri
-
-	def __set__(self, request, uri):
-		if request is uri:
-			return
-
-		_self = request.uri
-		if not isinstance(uri, URI):
-			_self.parse(uri)
-		else:
-			# don't parse again because it might was sanitize()d
-			_self.__dict__.update(dict(
-				uri=uri.uri,
-				scheme=uri.scheme,
-				netloc=uri.netloc,
-				username=uri.username,
-				password=uri.password,
-				host=uri.host,
-				port=uri.port,
-				path=uri.path,
-				query_string=uri.query_string,
-				fragment=uri.fragment
-			))

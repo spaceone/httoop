@@ -13,6 +13,7 @@ from httoop.status import Status
 from httoop.body import Body
 from httoop.uri import URI
 from httoop.exceptions import InvalidLine, InvalidURI
+import httoop.descriptors as descriptors
 
 # TODO: add __slots__ for request and response to gain performance?
 
@@ -34,26 +35,8 @@ class Protocol(tuple):
 	def minor(self):
 		return self[1]
 
-	def __get__(self, message, cls=None):
-		if message is None:
-			return self
-		return message._Message__protocol
-
-	def __set__(self, message, protocol):
-		if not isinstance(protocol, Protocol):
-			protocol = Protocol(protocol)
-		message._Message__protocol = protocol
-
 class Method(bytes):
 	u"""A HTTP request method"""
-
-	def __get__(self, request, cls=None):
-		if request is None:
-			return self
-		return request._Request__method
-
-	def __set__(self, request, method):
-		request._Request__method = bytes(method)
 
 class Message(object):
 	u"""A HTTP message
@@ -63,12 +46,12 @@ class Message(object):
 
 	VERSION_RE = re.compile(r"^HTTP/(\d+).(\d+)\Z")
 
-	protocol = Protocol((1,1))
+	protocol = descriptors.Protocol()
 	# alias
 	version = protocol
 
-	headers = Headers()
-	body = Body()
+	headers = descriptors.Headers()
+	body = descriptors.Body()
 
 	def __init__(self, protocol=None, headers=None, body=None):
 		u"""Initiates a new Message to hold information about the message.
@@ -106,8 +89,8 @@ class Request(Message):
 
 	METHOD_RE = re.compile(r"^[A-Z0-9$-_.]{1,20}\Z")
 
-	method = Method()
-	uri = URI()
+	method = descriptors.Method()
+	uri = descriptors.URI()
 
 	def __init__(self, method=None, uri=None, protocol=None, headers=None, body=None):
 		"""Creates a new Request object to hold information about a request.
@@ -149,10 +132,10 @@ class Request(Message):
 
 	def compose(self):
 		u"""composes the request line"""
-		return b"%s %s %s" % (bytes(self.__method), bytes(self.__uri), bytes(self._protocol))
+		return b"%s %s %s" % (bytes(self.__method), bytes(self.__uri), bytes(self.__protocol))
 
 	def __repr__(self):
-		return "<HTTP Request(%s %s %s)>" % (bytes(self.__method), bytes(self.__uri.path), bytes(self.protocol))
+		return "<HTTP Request(%s %s %s)>" % (bytes(self.__method), bytes(self.__uri.path), bytes(self.__protocol))
 
 class Response(Message):
 	u"""A HTTP response message
@@ -162,7 +145,7 @@ class Response(Message):
 
 	STATUS_RE = re.compile(r"^([1-5]\d{2})(?:\s+([\s\w]*))\Z")
 
-	status = Status()
+	status = descriptors.Status()
 
 	def __init__(self, status=None, protocol=None, headers=None, body=None):
 		"""Creates a new Response object to hold information about the response.

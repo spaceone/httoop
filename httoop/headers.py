@@ -9,7 +9,7 @@
 __all__ = ['Headers', 'HeaderElement']
 
 import re
-from httoop.util import CaseInsensitiveDict, ByteString
+from httoop.util import CaseInsensitiveDict, ByteString, iteritems
 from httoop.exceptions import InvalidHeader
 
 # TODO: cleanup
@@ -36,9 +36,6 @@ class Headers(ByteString, CaseInsensitiveDict):
 
 	def __str__(self):
 		return self.compose()
-
-	def __repr__(self):
-		return "<HTTP Headers(%s)>" % repr(list(self.items()))
 
 	def __bytes__(self):
 		return str(self).encode('latin1') # WTF: ascii?!
@@ -100,7 +97,7 @@ class Headers(ByteString, CaseInsensitiveDict):
 
 		# parse headers into key/value pairs paying attention
 		# to continuation lines.
-		while len(lines):
+		while lines:
 			# Parse initial header name : value pair.
 			curr = lines.pop(0)
 			if b':' not in curr:
@@ -115,7 +112,7 @@ class Headers(ByteString, CaseInsensitiveDict):
 			name, value = name.strip(), [value.lstrip()]
 
 			# Consume value continuation lines
-			while len(lines) and lines[0].startswith((" ", "\t")): #FIXME: python2.6
+			while lines and lines[0].startswith((" ", "\t")):
 				value.append(lines.pop(0)[1:])
 			value = b''.join(value).rstrip()
 
@@ -123,19 +120,10 @@ class Headers(ByteString, CaseInsensitiveDict):
 			self.append(name, value)
 
 	def compose(self):
-		return b''.join(b'%s: %s\r\n' % (k, v) for k, v in self.iteritems())
+		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, v) for k, v in iteritems(self))
 
-	def __get__(self, message, cls=None):
-		if message is None:
-			return self
-		return message._Message__headers
-
-	def __set__(self, message, value):
-		if message is value:
-			return
-		if not isinstance(value, self.__class__):
-			value = self.__class__(value)
-		message._Message__headers = value
+	def __repr__(self):
+		return "<HTTP Headers(%s)>" % repr(list(self.items()))
 
 def _formatparam(param, value=None, quote=1):
 	"""Convenience function to format and return a key=value pair.

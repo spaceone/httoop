@@ -41,28 +41,6 @@ class Status(object):
 		# TODO: ?
 		return '<HTTP Status (status=%d, reason=%r)>' % (self.status, self.reason)
 
-	def __get__(self, response, cls=None):
-		if response is None:
-			return self
-		return response._Response__status
-
-	def __set__(self, response, status):
-		if response is status:
-			return
-
-		_self = response.status
-		if isinstance(status, int):
-			_self.status, _self.reason = status, REASONS.get(status, ('', ''))[0]
-		elif isinstance(status, tuple):
-			_self.status, _self.reason = status
-		elif isinstance(status, bytes): # FIXME: python3
-			_status, _reason = status.split(None, 1)
-			_self.status, _self.reason = int(_status), _reason
-		elif isinstance(status, Status):
-			_self.status, _self.reason = status.status, status.reason
-		else:
-			raise ValueError('invalid type for an HTTP status code')
-
 # ripped from pythons BaseHTTPServer, dunno what license it is
 REASONS = {
 	# status: (reason, description)

@@ -13,7 +13,6 @@ from httoop.status import Status
 from httoop.body import Body
 from httoop.uri import URI
 from httoop.exceptions import InvalidLine, InvalidURI
-import httoop.descriptors as descriptors
 
 # TODO: add __slots__ for request and response to gain performance?
 
@@ -46,13 +45,6 @@ class Message(object):
 
 	VERSION_RE = re.compile(r"^HTTP/(\d+).(\d+)\Z")
 
-	protocol = descriptors.Protocol()
-	# alias
-	version = protocol
-
-	headers = descriptors.Headers()
-	body = descriptors.Body()
-
 	def __init__(self, protocol=None, headers=None, body=None):
 		u"""Initiates a new Message to hold information about the message.
 
@@ -81,6 +73,41 @@ class Message(object):
 
 		self.protocol = (int(match.group(1)), int(match.group(2)))
 
+	@property
+	def protocol(self):
+		return self.__protocol
+
+	@protocol.setter
+	def protocol(self, protocol):
+		if not isinstance(protocol, Protocol):
+			protocol = Protocol(protocol)
+		self.__protocol = protocol
+
+	# alias
+	version = protocol
+
+	@property
+	def headers(self):
+		return self.__headers
+
+	@headers.setter
+	def headers(self, headers):
+		headertype = type(self.__headers)
+		if not isinstance(headers, headertype):
+			headers = headertype(headers)
+		self.__headers = headers
+
+	@property
+	def body(self):
+		return self.__body
+
+	@body.setter
+	def body(self, body):
+		self.__body.set(body)
+
+	def __repr__(self):
+		return '<HTTP Message(protocol=%s)>' % (self.protocol,)
+
 class Request(Message):
 	u"""A HTTP request message
 
@@ -88,9 +115,6 @@ class Request(Message):
 	"""
 
 	METHOD_RE = re.compile(r"^[A-Z0-9$-_.]{1,20}\Z")
-
-	method = descriptors.Method()
-	uri = descriptors.URI()
 
 	def __init__(self, method=None, uri=None, protocol=None, headers=None, body=None):
 		"""Creates a new Request object to hold information about a request.
@@ -132,10 +156,26 @@ class Request(Message):
 
 	def compose(self):
 		u"""composes the request line"""
-		return b"%s %s %s" % (bytes(self.__method), bytes(self.__uri), bytes(self.__protocol))
+		return b"%s %s %s" % (bytes(self.__method), bytes(self.__uri), bytes(self.protocol))
+
+	@property
+	def method(self):
+		return self.__method
+
+	@method.setter
+	def method(self, method):
+		self.__method = Method(method)
+
+	@property
+	def uri(self):
+		return self.__uri
+
+	@uri.setter
+	def uri(self, uri):
+		self.__uri.set(uri)
 
 	def __repr__(self):
-		return "<HTTP Request(%s %s %s)>" % (bytes(self.__method), bytes(self.__uri.path), bytes(self.__protocol))
+		return "<HTTP Request(%s %s %s)>" % (bytes(self.__method), bytes(self.__uri.path), bytes(self.protocol))
 
 class Response(Message):
 	u"""A HTTP response message
@@ -144,8 +184,6 @@ class Response(Message):
 	"""
 
 	STATUS_RE = re.compile(r"^([1-5]\d{2})(?:\s+([\s\w]*))\Z")
-
-	status = descriptors.Status()
 
 	def __init__(self, status=None, protocol=None, headers=None, body=None):
 		"""Creates a new Response object to hold information about the response.
@@ -180,6 +218,14 @@ class Response(Message):
 	def compose(self):
 		u"""composes the response line"""
 		return b"%s %s" % (bytes(self.protocol), bytes(self.status))
+
+	@property
+	def status(self):
+		return self.__status
+
+	@status.setter
+	def status(self, status):
+		self.__status.set(status)
 
 	def __repr__(self):
 		# TODO: do we really want to check the body length here?

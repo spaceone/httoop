@@ -48,11 +48,11 @@ class URI(object):
 		self.validate_http_uri()
 
 	def validate_http_uri(self):
-		if not self.fragment and\
-			not self.username and\
-			not self.password and\
-			self.path and\
-			(self.path[0] == '/' or self.path == '*'):
+		if self.fragment or\
+			self.username or\
+			self.password or\
+			not self.path or\
+			(self.path != '*' and self.path[0] != '/'):
 				raise InvalidURI(self.uri)
 
 	# this is ripped from url-parse project which is MIT licensed
@@ -81,3 +81,24 @@ class URI(object):
 
 	def sanitize(self):
 		return self.abspath()
+
+	def set(self, uri):
+		if not isinstance(uri, URI):
+			self.parse(uri)
+		else:
+			# don't parse again because it might was sanitize()d
+			self.__dict__.update(dict(
+				uri=uri.uri,
+				scheme=uri.scheme,
+				netloc=uri.netloc,
+				username=uri.username,
+				password=uri.password,
+				host=uri.host,
+				port=uri.port,
+				path=uri.path,
+				query_string=uri.query_string,
+				fragment=uri.fragment
+			))
+
+	def __repr__(self):
+		return '<URI(todo)>'

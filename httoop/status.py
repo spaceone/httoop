@@ -13,7 +13,7 @@ class Status(object):
 
 	def __init__(self, status=None, reason=None):
 		if status:
-			self.status = status
+			self.set(status)
 		self.reason = reason or self.reason or REASONS.get(status, ('', ''))[0]
 
 	def __str__(self):
@@ -36,6 +36,26 @@ class Status(object):
 		if isinstance(other, int):
 			return self.status > other
 		return super(Status, self).__gt__(other)
+
+	def set(self, status):
+		u"""sets reason and status
+
+			:param status:
+				A status, e.g.: 200, (200, 'OK'), '200 OK'
+			:type  status:
+				int or tuple or bytes or Status
+		"""
+		if isinstance(status, int):
+			self.status, self.reason = status, REASONS.get(status, ('', ''))[0]
+		elif isinstance(status, tuple):
+			self.status, self.reason = status
+		elif isinstance(status, bytes): # FIXME: python3
+			_status, _reason = status.split(None, 1)
+			self.status, self.reason = int(_status), _reason
+		elif isinstance(status, Status):
+			self.status, self.reason = status.status, status.reason
+		else:
+			raise ValueError('invalid type for an HTTP status code')
 
 	def __repr__(self):
 		# TODO: ?

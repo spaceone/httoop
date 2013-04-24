@@ -1,7 +1,7 @@
 httoop
 ======
 
-HTTOOP - an OOP model of the HTTP protocol
+HTTOOP - an object oriented mapping of the HTTP protocol
 
 An extract of my HTTP implementation from my project [Space Framework](http://spaceframework.org:8090/)
 

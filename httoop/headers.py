@@ -38,7 +38,8 @@ class Headers(ByteString, CaseInsensitiveDict):
 		return self.compose()
 
 	def __bytes__(self):
-		return str(self).encode('latin1') # WTF: ascii?!
+		# TODO: remove, this is the job of compose
+		return str(self).encode('iso8859-1')
 
 	def values(self, key=None):
 		# if key is set return a ordered list of element values
@@ -86,10 +87,11 @@ class Headers(ByteString, CaseInsensitiveDict):
 			self.elements(name)
 
 	def parse(self, data):
-		r"""parses http headers
+		r"""parses HTTP headers
 
 			:param data:
-				the header string containing headers seperated by "\r\n"
+				the header string containing headers separated by "\r\n"
+				without trailing "\r\n"
 			:type  data: bytes
 		"""
 
@@ -120,6 +122,16 @@ class Headers(ByteString, CaseInsensitiveDict):
 			self.append(name, value)
 
 	def compose(self):
+		# TODO: implement this idea, adpat CaseInsensitiveDict to store values as unicode in python2
+		#headers = b''
+		#for name, field in iteritems(self):
+		#	try:
+		#		field = field.encode('utf-8')
+		#	except UnicodeDecodeError:
+		#		field = field.encode('iso8859-1')
+		#	headers += b'%s: %s\r\n' % (name.encode('ascii'), field)
+		#headers += b'\r\n'
+		#return headers
 		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, v) for k, v in iteritems(self))
 
 	def __repr__(self):
@@ -139,7 +151,6 @@ def _formatparam(param, value=None, quote=1):
 	else:
 		return param
 
-
 def header_elements(fieldname, fieldvalue):
 	"""Return a sorted HeaderElement list.
 
@@ -150,16 +161,67 @@ def header_elements(fieldname, fieldvalue):
 	if not fieldvalue:
 		return []
 
+	Element = headerfields.get(fieldname, HeaderElement)
+
 	result = []
 	for element in fieldvalue.split(","):
-		if fieldname.startswith("Accept") or fieldname == 'TE':
-			hv = AcceptElement.from_str(element)
-		else:
-			hv = HeaderElement.from_str(element)
-		result.append(hv)
+		result.append(Element.from_str(element))
 
 	return list(reversed(sorted(result)))
+	# TODO: remove the reversed() (fix in AcceptElement)
 
+headerfields = CaseInsensitiveDict()
+
+# TODO: remove this function?
+def init():
+	headerfields.update({
+		'TE': AcceptElement,
+		'Accept': AcceptElement,
+		'Accept-Charset': AcceptElement,
+		'Accept-Language': AcceptElement,
+		'Accept-Encoding': AcceptElement,
+		'Accept-Ranges': AcceptElement,
+		'Age': Age,
+		'Allow': Allow,
+		'Authorization': Authorization,
+		'Cache-Control': CacheControl,
+		'Connection': Connection,
+		'Content-Encoding': ContentEncoding,
+		'Content-Language': ContentLanguage,
+		'Content-Length': ContentLength,
+		'Content-Location': ContentLocation,
+		'Content-MD5': ContentMD5,
+		'Content-Range': ContentRange,
+		'Content-Type': ContentType,
+		'Date': Date,
+		'ETag': ETag,
+		'Expect': Expect,
+		'Expires': Expires,
+		'From': From,
+		'Host': Host,
+		'If-Match': IfMatch,
+		'If-Modified-Since': IfModifiedSince,
+		'If-None-Match': IfNoneMatch,
+		'If-Unmodified-Since': IfUnmodifiedSince,
+		'LastModified': LastModified,
+		'Location': Location,
+		'Max-Forwards': MaxForwards,
+		'Pragma': Pragma,
+		'Proxy-Authenticate': ProxyAuthenticate,
+		'Proxy-Authorization': ProxyAuthorization,
+		'Range': Range,
+		'Referer': Referer,
+		'Retry-After': RetryAfter,
+		'Server': Server,
+		'Trailer': Trailer,
+		'Transfer-Encoding': TransferEncoding,
+		'Upgrade': Upgrade,
+		'User-Agent': UserAgent,
+		'Vary': Vary,
+		'Via': Via,
+		'Warning': Warning,
+		'WWW-Authenticate': WWWAuthenticate
+	})
 
 class HeaderElement(object):
 	"""An element (with parameters) from an HTTP header's element list."""
@@ -207,7 +269,7 @@ class HeaderElement(object):
 		ival, params = cls.parse(elementstr)
 		return cls(ival, params)
 
-
+# TODO: rename e.g. into QualityElement
 class AcceptElement(HeaderElement):
 	"""An element (with parameters) from an Accept* header's element list.
 
@@ -271,7 +333,26 @@ class CacheControl(HeaderElement):
 class Connection(HeaderElement):
 	pass
 
-# TODO: Content-*
+class ContentEncoding(HeaderElement):
+	pass
+
+class ContentLanguage(HeaderElement):
+	pass
+
+class ContentLength(HeaderElement):
+	pass
+
+class ContentLocation(HeaderElement):
+	pass
+
+class ContentMD5(HeaderElement):
+	pass
+
+class ContentRange(HeaderElement):
+	pass
+
+class ContentType(HeaderElement):
+	pass
 
 class Date(HeaderElement):
 	pass

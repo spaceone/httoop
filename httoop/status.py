@@ -4,14 +4,13 @@
 .. seealso:: :rfc:`2616#section-10`
 """
 
-# TODO: __slots__ or tuple
 class Status(object):
 	u"""A HTTP status code"""
 
-	status = 0
-	reason = ''
+	__slots__ = ['status', 'reason']
 
 	def __init__(self, status=None, reason=None):
+		self.status = 0
 		if status:
 			self.set(status)
 		self.reason = reason or self.reason or REASONS.get(status, ('', ''))[0]

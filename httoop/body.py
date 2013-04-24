@@ -9,6 +9,8 @@ from io import BytesIO # hmm, six implements StringIO for this...
 
 from httoop.util import ByteString, text_type, binary_type, BytesIO
 
+# TODO: implement a nice way to support files, BytesIO and iterables, with methods to write, truncate, tell, read, etc.
+
 class Body(ByteString):
 	u"""A HTTP message body"""
 

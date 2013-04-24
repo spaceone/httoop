@@ -20,7 +20,6 @@ from httoop.exceptions import InvalidHeader
 # Regular expression that matches `special' characters in parameters, the
 # existance of which force quoting of the parameter value.
 RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"/\[\]\?=]')
-RE_Q_SEPARATOR = re.compile(r'; *q *=')
 
 class Headers(ByteString, CaseInsensitiveDict):
 	# disallowed bytes for HTTP header field names
@@ -228,9 +227,7 @@ class HeaderElement(object):
 
 	def __init__(self, value, params=None):
 		self.value = value
-		if params is None:
-			params = {}
-		self.params = params
+		self.params = params or {}
 
 	def __cmp__(self, other):
 		return cmp(self.value, other.value)
@@ -239,29 +236,31 @@ class HeaderElement(object):
 		return self.value < other.value
 
 	def __str__(self):
-		p = [";%s=%s" % (k, v) for k, v in self.params.iteritems()] # FIXME: py3
-		return "%s%s" % (self.value, "".join(p))
+		params = ["; %s=%s" % (k, v) for k, v in iteritems(self.params)]
+		return "%s%s" % (self.value, "".join(params))
 
+	@staticmethod
 	def parse(elementstr):
 		"""Transform 'token;key=val' to ('token', {'key': 'val'})."""
 		# Split the element into a value and parameters. The 'value' may
 		# be of the form, "token=token", but we don't split that here.
+		# FIXME: elementstr = 'name; =value'
 		atoms = [x.strip() for x in elementstr.split(";") if x.strip()]
+
 		if not atoms:
 			initial_value = ''
 		else:
 			initial_value = atoms.pop(0).strip()
+
 		params = {}
 		for atom in atoms:
-			atom = [x.strip() for x in atom.split("=", 1) if x.strip()]
-			key = atom.pop(0)
-			if atom:
-				val = atom[0]
+			if '=' not in atom:
+				params[atom] = ''
 			else:
-				val = ""
-			params[key] = val
+				key, val = atom.split("=", 1)
+				params[key.strip()] = val.strip()
+
 		return initial_value, params
-	parse = staticmethod(parse)
 
 	@classmethod
 	def from_str(cls, elementstr):
@@ -271,21 +270,23 @@ class HeaderElement(object):
 
 # TODO: rename e.g. into QualityElement
 class AcceptElement(HeaderElement):
-	"""An element (with parameters) from an Accept* header's element list.
+	"""An Accept element with quality value"""
 
-	AcceptElement objects are comparable; the more-preferred object will be
-	"less than" the less-preferred object. They are also therefore sortable;
-	if you sort a list of AcceptElement objects, they will be listed in
-	priority order; the most preferred value will be first. Yes, it should
-	have been the other way around, but it's too late to fix now.
-	"""
+	RE_Q_SEPARATOR = re.compile(r'; *q *=')
+
+	def __init__(self, value, params):
+		super(AcceptElement, self).__init__(value, params)
+		try:
+			self.quality
+		except ValueError:
+			raise InvalidHeader('quality value must be float')
 
 	@classmethod
 	def from_str(cls, elementstr):
 		qvalue = None
 		# The first "q" parameter (if any) separates the initial
 		# media-range parameter(s) (if any) from the accept-params.
-		atoms = RE_Q_SEPARATOR.split(elementstr, 1)
+		atoms = self.RE_Q_SEPARATOR.split(elementstr, 1)
 		media_range = atoms.pop(0).strip()
 		if atoms:
 			# The qvalue for an Accept header can have extensions. The other
@@ -295,20 +296,23 @@ class AcceptElement(HeaderElement):
 		media_type, params = cls.parse(media_range)
 		if qvalue is not None:
 			params["q"] = qvalue
+
 		return cls(media_type, params)
 
-	def qvalue(self):
+	@property
+	def quality(self):
+		"""The quality of this value."""
 		val = self.params.get("q", "1")
 		if isinstance(val, HeaderElement):
 			val = val.value
 		return float(val)
-	qvalue = property(qvalue, doc="The qvalue, or priority, of this value.")
 
 	def __cmp__(self, other):
 		diff = cmp(self.qvalue, other.qvalue)
 		if diff == 0:
 			diff = cmp(str(self), str(other))
-		return diff
+		# reverse
+		return {-1: 1, 0: 0, 1: -1}.get(diff, diff)
 
 	def __lt__(self, other):
 		if self.qvalue == other.qvalue:
@@ -400,6 +404,9 @@ class Pragma(HeaderElement):
 	pass
 
 class ProxyAuthenticate(HeaderElement):
+	pass
+
+class ProxyAuthorization(HeaderElement):
 	pass
 
 class Range(HeaderElement):

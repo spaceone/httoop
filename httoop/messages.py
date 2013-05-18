@@ -13,6 +13,7 @@ from httoop.status import Status
 from httoop.body import Body
 from httoop.uri import URI
 from httoop.exceptions import InvalidLine, InvalidURI
+from httoop.util import ByteString
 
 # TODO: add __slots__ for request and response to gain performance?
 
@@ -34,10 +35,26 @@ class Protocol(tuple):
 	def minor(self):
 		return self[1]
 
-class Method(bytes):
+class Method(unicode):
 	u"""A HTTP request method"""
 
-class Message(object):
+	safe_methods = (u'GET', u'HEAD', u'PUT', u'DELETE', u'OPTIONS', u'TRACE')
+
+	idempotent_methods = (u'GET', u'HEAD')
+
+	def __init__(self, method):
+		# TODO: make sure the method is HTTP "token"
+		if isinstance(method, unicode):
+			method = method.encode('ascii').decode('ascii')
+		elif isinstance(method, bytes):
+			method = method.decode('ascii')
+
+		super(Method, self).__init__(method)
+
+		self.idempotent = self in self.safe_methods
+		self.safe = self in self.idempotent_methods
+
+class Message(ByteString):
 	u"""A HTTP message
 
 		.. seealso:: :rfc:`2616#section-4`
@@ -104,6 +121,13 @@ class Message(object):
 	@body.setter
 	def body(self, body):
 		self.__body.set(body)
+
+	def compose_message(self):
+		u"""Compose the whole HTTP Message"""
+		start_line = bytes(self)
+		headers = bytes(self.headers)
+		body = bytes(self.body)
+		return b"%s%s%s" % (start_line, headers, body)
 
 	def __repr__(self):
 		return '<HTTP Message(protocol=%s)>' % (self.protocol,)
@@ -174,6 +198,9 @@ class Request(Message):
 	def uri(self, uri):
 		self.__uri.set(uri)
 
+	def __bytes__(self):
+		return self.compose()
+
 	def __repr__(self):
 		return "<HTTP Request(%s %s %s)>" % (bytes(self.__method), bytes(self.__uri.path), bytes(self.protocol))
 
@@ -226,6 +253,9 @@ class Response(Message):
 	@status.setter
 	def status(self, status):
 		self.__status.set(status)
+
+	def __bytes__(self):
+		return self.compose()
 
 	def __repr__(self):
 		# TODO: do we really want to check the body length here?

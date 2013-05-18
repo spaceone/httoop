@@ -270,9 +270,14 @@ class HeaderElement(object):
 
 # TODO: rename e.g. into QualityElement
 class AcceptElement(HeaderElement):
-	"""An Accept element with quality value"""
+	"""An Accept element with quality value
 
-	RE_Q_SEPARATOR = re.compile(r'; *q *=')
+		.. seealso:: :rfc:`2616#section-3.9`
+
+	"""
+
+	# RFC 2616 Section 3.9
+	RE_Q_SEPARATOR = re.compile(r'; *q *= *(?:(?:0(?:\.[0-9]{3})?)|(?:1(?:\.00?0?)?))')
 
 	def __init__(self, value, params):
 		super(AcceptElement, self).__init__(value, params)

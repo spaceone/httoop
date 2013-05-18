@@ -5,17 +5,18 @@
 """
 
 from httoop.exceptions import InvalidURI
-
-# TODO: from compat
-try:
-	import urlparse
-except ImportError:
-	import urllib.parse as urlparse  # NOQA
+from httoop.util import ByteString, urlparse
 
 # TODO: think about the naming.. this is atm an HTTP URL
-class URI(object):
+class URI(ByteString):
 	u"""Uniform Resource Identifier
+
 		.. seealso:: :rfc:`3986`
+
+		.. seealso:: :rfc:`2616#section-3.2`
+
+		.. seealso:: :rfc:`2616#section-3.2.2`
+
 	"""
 	def __init__(self, uri=None):
 		self.parse(uri or '')
@@ -27,6 +28,7 @@ class URI(object):
 				sanitizing (../, ./, //, %00)
 		"""
 		self.uri = uri
+		# TODO: remove this? A URI MUST NOT start with //
 		if uri.startswith('//'):
 			uri = uri[1:] # FIXME: //foo would result in a wrong result
 
@@ -89,16 +91,24 @@ class URI(object):
 			# don't parse again because it might was sanitize()d
 			self.__dict__.update(dict(
 				uri=uri.uri,
-				scheme=uri.scheme,
+				scheme=uri.scheme.lower(),
 				netloc=uri.netloc,
 				username=uri.username,
 				password=uri.password,
-				host=uri.host,
+				host=uri.host.lower(),
 				port=uri.port,
-				path=uri.path,
+				path=uri.path or '',
 				query_string=uri.query_string,
 				fragment=uri.fragment
 			))
 
+	def __eq__(self, other):
+		# TODO: RFC 2616 Section 3.2.3
+		pass
+
+	def __bytes__(self):
+		# TODO: we have a problem here, we don't know if we need to get the abspath or a relpath
+		return self.path
+
 	def __repr__(self):
-		return '<URI(todo)>'
+		return '<URI(host=%r, path=%r)>' % (self.host, self.path)

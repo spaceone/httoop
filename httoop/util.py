@@ -1,5 +1,31 @@
 from six import PY3, text_type, binary_type, BytesIO, iteritems
 
+# TODO: from six
+try:
+	import urlparse
+except ImportError:
+	import urllib.parse as urlparse  # NOQA
+
+import sys
+if hasattr(sys, 'maxsize'):
+	# python3
+	MAXSIZE = sys.maxsize
+else:
+	# python2
+	# It's possible to have sizeof(long) != sizeof(Py_ssize_t).
+	class X(object):
+		def __len__(self):
+			return 1 << 31
+	try:
+		len(X())
+	except OverflowError:
+		# 32-bit
+		MAXSIZE = int((1 << 31) - 1)
+	else:
+		# 64-bit
+		MAXSIZE = int((1 << 63) - 1)
+	del X
+
 class CaseInsensitiveDict(dict):
 	"""A case-insensitive dict subclass.
 

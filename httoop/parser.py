@@ -161,7 +161,7 @@ class StateMachine(object):
 					return
 
 			elif not self._on_trailers:
-				if 'Trailers' in request.headers:
+				if 'Trailer' in request.headers:
 					trailer_end = line_end + line_end
 					if trailer_end not in self.buffer:
 						# not received yet
@@ -173,7 +173,7 @@ class StateMachine(object):
 					except InvalidHeader as exc:
 						self.error(BAD_REQUEST('Invalid trailers: %s' % str(exc)))
 						return
-					for name in request.headers.values('Trailers'):
+					for name in request.headers.values('Trailer'):
 						value = request.trailers.pop(value, None)
 						if value is not None:
 							request.headers.append(name, value)

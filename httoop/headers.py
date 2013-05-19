@@ -430,7 +430,10 @@ class TE(HeaderElement):
 	pass
 
 class Trailer(HeaderElement):
-	pass
+	def __init__(self, value, params):
+		super(HeaderElement, self).__init__(value, params)
+		if value.title() in ('Transfer-Encoding', 'Content-Length', 'Trailer'):
+			raise InvalidHeader('A Trailer header MUST NOT contain %r field' % value.title())
 
 class TransferEncoding(HeaderElement):
 	pass

@@ -22,3 +22,4 @@ from httoop.body import Body
 from httoop.uri import URI
 from httoop.messages import Request, Response, Protocol, Method
 from httoop.exceptions import InvalidLine, InvalidHeader, InvalidURI
+from httoop.parser import StateMachine

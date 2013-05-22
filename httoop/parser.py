@@ -10,8 +10,6 @@ from httoop.messages import Request
 from httoop.headers import Headers
 from httoop.exceptions import InvalidLine, InvalidHeader, InvalidURI
 
-# TODO: make all error messages unicode
-
 class StateMachine(object):
 	u"""A HTTP Parser"""
 
@@ -28,6 +26,7 @@ class StateMachine(object):
 		#self.on_protocol = False
 		self.on_headers = False
 		self.on_body = False
+		self.on_body_started = False
 
 		# private events
 		self._on_trailers = True # will be set to false if trailers exists
@@ -37,15 +36,24 @@ class StateMachine(object):
 		self.message_length = 0
 		self.chunked = False
 
+		self._raise_errors = False
+
 	def error(self, httperror):
 		u"""error an HTTP Error"""
 		self.httperror = httperror
 		self.on_message = True
+		if self._raise_errors:
+			raise self.httperror
 
 	def parse(self, data):
-		u""""""
+		u"""Appends the given data to the internal buffer and parses it as HTTP Request-Message.
 
-		self.buffer.append(data)
+			:param data:
+				data to parse
+			:type  data: bytes
+		"""
+
+		self.buffer = "%s%s" % (self.buffer, data)
 
 		request = self.request
 		line_end = self.line_end
@@ -57,7 +65,7 @@ class StateMachine(object):
 					if LF not in self.buffer:
 						# request line unfinished
 						if len(self.buffer) > self.MAX_URI_LENGTH:
-							self.error(REQUEST_URI_TOO_LONG('The maximum length of the request is %d' % self.MAX_URI_LENGTH))
+							self.error(REQUEST_URI_TOO_LONG(u'The maximum length of the request is %d' % self.MAX_URI_LENGTH))
 						return
 					self.line_end = line_end = LF
 
@@ -67,11 +75,17 @@ class StateMachine(object):
 				try:
 					request.parse(requestline)
 				except InvalidLine as exc:
-					return self.error(BAD_REQUEST(str(exc)))
+					return self.error(BAD_REQUEST(unicode(exc))) # FIXME: python3
 
 				self.on_requestline = True
 
 			if not self.on_headers:
+				# empty headers?
+				if self.buffer.startswith(line_end):
+					self.buffer = self.buffer[len(line_end):]
+					self.on_headers = True
+					continue
+
 				header_end = line_end+line_end
 
 				if header_end not in self.buffer:
@@ -85,7 +99,7 @@ class StateMachine(object):
 					try:
 						request.headers.parse(headers)
 					except InvalidHeader as exc:
-						return self.error(BAD_REQUEST(str(exc)))
+						return self.error(BAD_REQUEST(unicode(exc))) # FIXME: python3
 
 				self.on_headers = True
 
@@ -100,7 +114,7 @@ class StateMachine(object):
 						te = request.headers['Transfer-Encoding'].lower()
 						self.chunked = 'chunked' == te
 						if not self.chunked:
-							return self.error(NOT_IMPLEMENTED('Unknown HTTP/1.1 Transfer-Encoding: %s' % te))
+							return self.error(NOT_IMPLEMENTED(u'Unknown HTTP/1.1 Transfer-Encoding: %s' % te))
 					else:
 						# Content-Length header defines the length of the message body
 						try:
@@ -108,7 +122,7 @@ class StateMachine(object):
 							if self.message_length < 0:
 								raise ValueError
 						except ValueError:
-							return self.error(BAD_REQUEST('Invalid Content-Length header.'))
+							return self.error(BAD_REQUEST(u'Invalid Content-Length header.'))
 
 				if self.chunked:
 					if line_end not in self.buffer:
@@ -122,7 +136,7 @@ class StateMachine(object):
 						if chunk_size < 0:
 							raise ValueError
 					except (ValueError, OverflowError):
-						return self.error(BAD_REQUEST('Invalid chunk size: %s' % chunk_size))
+						return self.error(BAD_REQUEST(u'Invalid chunk size: %s' % chunk_size))
 
 					if len(rest_chunk) < (chunk_size + len(line_end)):
 						# chunk not received completely
@@ -131,7 +145,7 @@ class StateMachine(object):
 
 					body_part, rest_chunk = rest_chunk[:chunk_size], rest_chunk[chunk_size:]
 					if not rest_chunk.startswith(line_end):
-						raise InvalidBody("chunk invalid terminator: [%s]" % data)
+						raise InvalidBody(u'chunk invalid terminator: [%s]' % self.buffer.decode('ISO8859-1'))
 
 					request.body.write(body_part)
 
@@ -152,13 +166,16 @@ class StateMachine(object):
 						# the body is not yet received completely
 						return
 					elif blen > self.message_length:
-						self.error(BAD_REQUEST('Body length mismatchs Content-Length header.'))
+						self.error(BAD_REQUEST(u'Body length mismatchs Content-Length header.'))
 						return
 
 				elif self.buffer:
 					# request without Content-Length header but body
-					self.error(LENGTH_REQUIRED('Missing Content-Length header.'))
+					self.error(LENGTH_REQUIRED(u'Missing Content-Length header.'))
 					return
+				else:
+					# no message body
+					self.on_body = True
 
 			elif not self._on_trailers:
 				if 'Trailer' in request.headers:
@@ -166,12 +183,13 @@ class StateMachine(object):
 					if trailer_end not in self.buffer:
 						# not received yet
 						return
+
 					trailers, self.buffer = self.buffer.split(trailer_end, 1)
 					request.trailers = Headers()
 					try:
 						request.trailers.parse(trailers)
 					except InvalidHeader as exc:
-						self.error(BAD_REQUEST('Invalid trailers: %s' % str(exc)))
+						self.error(BAD_REQUEST(u'Invalid trailers: %s' % unicode(exc))) # FIXME: python3
 						return
 					for name in request.headers.values('Trailer'):
 						value = request.trailers.pop(value, None)
@@ -181,12 +199,13 @@ class StateMachine(object):
 							# ignore
 							pass
 					if request.trailers:
-						self.error(BAD_REQUEST('untold trailers: "%s"' % '" ,"'.join(request.trailers.keys())))
+						self.error(BAD_REQUEST(u'untold trailers: "%s"' % u'" ,"'.join(request.trailers.keys())))
 					del request.trailers
 				self._on_trailers = True
 			elif not self.on_message:
 				self.on_message = True
+				request.body.seek(0)
 			else:
 				if self.buffer:
-					return self.error(BAD_REQUEST('too much input'))
+					return self.error(BAD_REQUEST(u'too much input'))
 				break

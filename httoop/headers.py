@@ -27,7 +27,7 @@ class Headers(ByteString, CaseInsensitiveDict):
 	RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"/\[\]\?=]')
 
 	def elements(self, fieldname):
-		"""Return a sorted list of HeaderElements from the given comma-separated header string."""
+		u"""Return a sorted list of HeaderElements from the given comma-separated header string."""
 
 		fieldvalue = self.get(fieldname)
 		if not fieldvalue:
@@ -110,24 +110,13 @@ class Headers(ByteString, CaseInsensitiveDict):
 			self.append(name, value)
 
 	def compose(self):
-		# TODO: implement this idea, adapt CaseInsensitiveDict to store values as unicode in python2
-		#headers = b''
-		#for name, field in iteritems(self):
-		#	try:
-		#		field = field.encode('UTF-8')
-		#	except UnicodeDecodeError:
-		#		field = field.encode('ISO8859-1')
-		#	headers += b'%s: %s\r\n' % (name.encode('ascii'), field)
-		#headers += b'\r\n'
-		#return headers
-		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, v) for k, v in iteritems(self))
+		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k.encode('ascii', 'ignore'), v.encode('ISO8859-1', 'replace')) for k, v in iteritems(self))
 
-	def __str__(self):
-		return self.compose()
+	def __unicode__(self):
+		return self.compose().decode('ISO8859-1')
 
 	def __bytes__(self):
-		# TODO: remove, this is the job of compose
-		return str(self).encode('ISO8859-1')
+		return self.compose()
 
 	def __repr__(self):
 		return "<HTTP Headers(%s)>" % repr(list(self.items()))
@@ -194,7 +183,7 @@ class HeaderElement(object):
 		return cls(ival, params)
 
 	def __repr__(self):
-		return '<%s(value=%s)>' % (self.__class__.__name__, self.value)
+		return '<%s(%r)>' % (self.__class__.__name__, self.value)
 
 class AcceptElement(HeaderElement):
 	"""An Accept element with quality value
@@ -211,14 +200,14 @@ class AcceptElement(HeaderElement):
 		try:
 			self.quality
 		except ValueError:
-			raise InvalidHeader('quality value must be float')
+			raise InvalidHeader(u'quality value must be float')
 
 	@classmethod
 	def from_str(cls, elementstr):
 		qvalue = None
 		# The first "q" parameter (if any) separates the initial
 		# media-range parameter(s) (if any) from the accept-params.
-		atoms = self.RE_Q_SEPARATOR.split(elementstr, 1)
+		atoms = cls.RE_Q_SEPARATOR.split(elementstr, 1)
 		media_range = atoms.pop(0).strip()
 		if atoms:
 			# The qvalue for an Accept header can have extensions. The other
@@ -240,17 +229,17 @@ class AcceptElement(HeaderElement):
 		return float(val)
 
 	def __cmp__(self, other):
-		diff = cmp(self.qvalue, other.qvalue)
+		diff = cmp(self.quality, other.quality)
 		if diff == 0:
 			diff = cmp(str(self), str(other))
 		# reverse
 		return {-1: 1, 0: 0, 1: -1}.get(diff, diff)
 
 	def __lt__(self, other):
-		if self.qvalue == other.qvalue:
+		if self.quality == other.quality:
 			return str(self) < str(other)
 		else:
-			return self.qvalue < other.qvalue
+			return self.quality < other.quality
 
 class Accept(AcceptElement):
 	@property
@@ -261,7 +250,7 @@ class Accept(AcceptElement):
 	def version(self, version):
 		self.params['version'] = version
 
-class AcceptCharset(AcceptCharset):
+class AcceptCharset(AcceptElement):
 	pass
 
 class AcceptEncoding(AcceptElement):

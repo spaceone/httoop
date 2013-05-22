@@ -8,37 +8,40 @@
 
 __all__ = ['Headers', 'HeaderElement']
 
+# FIXME: python3?
+
 import re
+
 from httoop.util import CaseInsensitiveDict, ByteString, iteritems
 from httoop.exceptions import InvalidHeader
 
-# TODO: cleanup
-# FIXME: python3 support
-
-# ripped from cherrypy, which is MIT
-
-# Regular expression that matches `special' characters in parameters, the
-# existance of which force quoting of the parameter value.
-RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"/\[\]\?=]')
+# a mapping of all headers to HeaderElement classes
+headerfields = CaseInsensitiveDict()
 
 class Headers(ByteString, CaseInsensitiveDict):
 	# disallowed bytes for HTTP header field names
 	HEADER_RE = re.compile(b"[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]")
 
-	def elements(self, key):
-		"""Return a sorted list of HeaderElements for the given header."""
-		return header_elements(key, self.get(key))
+	# Regular expression that matches `special' characters in parameters, the
+	# existance of which force quoting of the parameter value.
+	RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"/\[\]\?=]')
 
-	def get_all(self, name):
-		"""Return a list of all the values for the named field."""
-		return [val.strip() for val in self.get(name, '').split(',')]
+	def elements(self, fieldname):
+		"""Return a sorted list of HeaderElements from the given comma-separated header string."""
 
-	def __str__(self):
-		return self.compose()
+		fieldvalue = self.get(fieldname)
+		if not fieldvalue:
+			return []
 
-	def __bytes__(self):
-		# TODO: remove, this is the job of compose
-		return str(self).encode('iso8859-1')
+		Element = headerfields.get(fieldname, HeaderElement)
+
+		# FIXME: quoted strings
+		result = []
+		for element in fieldvalue.split(","):
+			result.append(Element.from_str(element))
+
+		return list(reversed(sorted(result)))
+		# TODO: remove the reversed() (fix in AcceptElement)
 
 	def values(self, key=None):
 		# if key is set return a ordered list of element values
@@ -47,41 +50,27 @@ class Headers(ByteString, CaseInsensitiveDict):
 			return super(Headers, self).values()
 		return [e.value for e in self.elements(key)]
 
-	def append(self, key, value):
-		if not key in self:
-			self[key] = value
+	def append(self, _name, _value, **params):
+		if params:
+			parts = [_value or b'']
+			for k, v in iteritems(params):
+				k = k.replace('_', '-') # TODO: find out why this is done
+				if v is None:
+					parts.append(k)
+				else:
+					parts.append(Headers._formatparam(k, v))
+			_value = "; ".join(parts)
+
+		if not _name in self:
+			self[_name] = _value
 		else:
-			self[key] = ", ".join([self[key], value])
-
-	def add_header(self, _name, _value, **_params):
-		"""Extended header setting.
-
-		_name is the header field to add. keyword arguments can be used to set
-		additional parameters for the header field, with underscores converted
-		to dashes. Normally the parameter will be added as key="value" unless
-		value is None, in which case only the key will be added.
-
-		Example:
-
-		h.add_header('content-disposition', 'attachment', filename='bud.gif')
-
-		Note that unlike the corresponding 'email.Message' method, this does
-		*not* handle '(charset, language, value)' tuples: all values must be
-		strings or None.
-		"""
-		parts = []
-		if _value is not None:
-			parts.append(_value)
-		for k, v in list(_params.items()):
-			k = k.replace('_', '-')
-			if v is None:
-				parts.append(k)
-			else:
-				parts.append(_formatparam(k, v))
-		self.append(_name, "; ".join(parts))
+			self[_name] = ", ".join([self[_name], _value])
 
 	def validate(self):
-		u"""validates all header elements"""
+		u"""validates all header elements
+
+			:raises: InvalidHeader
+		"""
 		for name in self:
 			self.elements(name)
 
@@ -102,13 +91,13 @@ class Headers(ByteString, CaseInsensitiveDict):
 			# Parse initial header name : value pair.
 			curr = lines.pop(0)
 			if b':' not in curr:
-				raise InvalidHeader("invalid line %s" % curr.strip())
+				raise InvalidHeader(u"Invalid header line: %s" % curr.strip().decode('ISO8859-1'))
 
 			name, value = curr.split(":", 1)
 			name = name.rstrip(" \t")
 
 			if self.HEADER_RE.search(name):
-				raise InvalidHeader("invalid header name %s" % name)
+				raise InvalidHeader(u"Invalid header name: %s" % name.decode('ISO8859-1'))
 
 			name, value = name.strip(), [value.lstrip()]
 
@@ -121,106 +110,42 @@ class Headers(ByteString, CaseInsensitiveDict):
 			self.append(name, value)
 
 	def compose(self):
-		# TODO: implement this idea, adpat CaseInsensitiveDict to store values as unicode in python2
+		# TODO: implement this idea, adapt CaseInsensitiveDict to store values as unicode in python2
 		#headers = b''
 		#for name, field in iteritems(self):
 		#	try:
-		#		field = field.encode('utf-8')
+		#		field = field.encode('UTF-8')
 		#	except UnicodeDecodeError:
-		#		field = field.encode('iso8859-1')
+		#		field = field.encode('ISO8859-1')
 		#	headers += b'%s: %s\r\n' % (name.encode('ascii'), field)
 		#headers += b'\r\n'
 		#return headers
 		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, v) for k, v in iteritems(self))
 
+	def __str__(self):
+		return self.compose()
+
+	def __bytes__(self):
+		# TODO: remove, this is the job of compose
+		return str(self).encode('ISO8859-1')
+
 	def __repr__(self):
 		return "<HTTP Headers(%s)>" % repr(list(self.items()))
 
-def _formatparam(param, value=None, quote=1):
-	"""Convenience function to format and return a key=value pair.
+	@staticmethod
+	def _formatparam(param, value=None, quote=1):
+		"""Convenience function to format and return a key=value pair.
 
-	This will quote the value if needed or if quote is true.
-	"""
-	if value is not None and len(value) > 0:
-		if quote or RE_TSPECIALS.search(value):
-			value = value.replace('\\', '\\\\').replace('"', r'\"')
-			return '%s="%s"' % (param, value)
+		This will quote the value if needed or if quote is true.
+		"""
+		if value:
+			if quote or self.RE_TSPECIALS.search(value):
+				value = value.replace('\\', '\\\\').replace('"', r'\"')
+				return '%s="%s"' % (param, value)
+			else:
+				return '%s=%s' % (param, value)
 		else:
-			return '%s=%s' % (param, value)
-	else:
-		return param
-
-def header_elements(fieldname, fieldvalue):
-	"""Return a sorted HeaderElement list.
-
-	Returns a sorted HeaderElement list
-	from a comma-separated header string.
-	"""
-
-	if not fieldvalue:
-		return []
-
-	Element = headerfields.get(fieldname, HeaderElement)
-
-	result = []
-	for element in fieldvalue.split(","):
-		result.append(Element.from_str(element))
-
-	return list(reversed(sorted(result)))
-	# TODO: remove the reversed() (fix in AcceptElement)
-
-headerfields = CaseInsensitiveDict()
-
-# TODO: remove this function?
-def init():
-	headerfields.update({
-		'TE': AcceptElement,
-		'Accept': AcceptElement,
-		'Accept-Charset': AcceptElement,
-		'Accept-Language': AcceptElement,
-		'Accept-Encoding': AcceptElement,
-		'Accept-Ranges': AcceptElement,
-		'Age': Age,
-		'Allow': Allow,
-		'Authorization': Authorization,
-		'Cache-Control': CacheControl,
-		'Connection': Connection,
-		'Content-Encoding': ContentEncoding,
-		'Content-Language': ContentLanguage,
-		'Content-Length': ContentLength,
-		'Content-Location': ContentLocation,
-		'Content-MD5': ContentMD5,
-		'Content-Range': ContentRange,
-		'Content-Type': ContentType,
-		'Date': Date,
-		'ETag': ETag,
-		'Expect': Expect,
-		'Expires': Expires,
-		'From': From,
-		'Host': Host,
-		'If-Match': IfMatch,
-		'If-Modified-Since': IfModifiedSince,
-		'If-None-Match': IfNoneMatch,
-		'If-Unmodified-Since': IfUnmodifiedSince,
-		'LastModified': LastModified,
-		'Location': Location,
-		'Max-Forwards': MaxForwards,
-		'Pragma': Pragma,
-		'Proxy-Authenticate': ProxyAuthenticate,
-		'Proxy-Authorization': ProxyAuthorization,
-		'Range': Range,
-		'Referer': Referer,
-		'Retry-After': RetryAfter,
-		'Server': Server,
-		'Trailer': Trailer,
-		'Transfer-Encoding': TransferEncoding,
-		'Upgrade': Upgrade,
-		'User-Agent': UserAgent,
-		'Vary': Vary,
-		'Via': Via,
-		'Warning': Warning,
-		'WWW-Authenticate': WWWAuthenticate
-	})
+			return param
 
 class HeaderElement(object):
 	"""An element (with parameters) from an HTTP header's element list."""
@@ -268,7 +193,9 @@ class HeaderElement(object):
 		ival, params = cls.parse(elementstr)
 		return cls(ival, params)
 
-# TODO: rename e.g. into QualityElement
+	def __repr__(self):
+		return '<%s(value=%s)>' % (self.__class__.__name__, self.value)
+
 class AcceptElement(HeaderElement):
 	"""An Accept element with quality value
 
@@ -325,7 +252,26 @@ class AcceptElement(HeaderElement):
 		else:
 			return self.qvalue < other.qvalue
 
-# TODO: add Accept-*
+class Accept(AcceptElement):
+	@property
+	def version(self):
+		return self.params.get('version', '')
+
+	@version.setter
+	def version(self, version):
+		self.params['version'] = version
+
+class AcceptCharset(AcceptCharset):
+	pass
+
+class AcceptEncoding(AcceptElement):
+	pass
+
+class AcceptLanguage(AcceptElement):
+	pass
+
+class AcceptRanges(AcceptElement):
+	pass
 
 class Age(HeaderElement):
 	pass
@@ -361,7 +307,21 @@ class ContentRange(HeaderElement):
 	pass
 
 class ContentType(HeaderElement):
-	pass
+	@property
+	def charset(self):
+		return self.params.get('charset', '')
+
+	@charset.setter
+	def charset(self, charset):
+		self.params['charset'] = charset
+
+	@property
+	def version(self):
+		return self.params.get('version', '')
+
+	@version.setter
+	def version(self, version):
+		self.params['version'] = version
 
 class Date(HeaderElement):
 	pass
@@ -433,7 +393,7 @@ class Trailer(HeaderElement):
 	def __init__(self, value, params):
 		super(HeaderElement, self).__init__(value, params)
 		if value.title() in ('Transfer-Encoding', 'Content-Length', 'Trailer'):
-			raise InvalidHeader('A Trailer header MUST NOT contain %r field' % value.title())
+			raise InvalidHeader(u'A Trailer header MUST NOT contain %r field' % value.title())
 
 class TransferEncoding(HeaderElement):
 	pass
@@ -456,3 +416,51 @@ class Warning(HeaderElement):
 class WWWAuthenticate(HeaderElement):
 	pass
 
+headerfields.update({
+	'TE': AcceptElement,
+	'Accept': AcceptElement,
+	'Accept-Charset': AcceptCharset,
+	'Accept-Language': AcceptLanguage,
+	'Accept-Encoding': AcceptEncoding,
+	'Accept-Ranges': AcceptRanges,
+	'Age': Age,
+	'Allow': Allow,
+	'Authorization': Authorization,
+	'Cache-Control': CacheControl,
+	'Connection': Connection,
+	'Content-Encoding': ContentEncoding,
+	'Content-Language': ContentLanguage,
+	'Content-Length': ContentLength,
+	'Content-Location': ContentLocation,
+	'Content-MD5': ContentMD5,
+	'Content-Range': ContentRange,
+	'Content-Type': ContentType,
+	'Date': Date,
+	'ETag': ETag,
+	'Expect': Expect,
+	'Expires': Expires,
+	'From': From,
+	'Host': Host,
+	'If-Match': IfMatch,
+	'If-Modified-Since': IfModifiedSince,
+	'If-None-Match': IfNoneMatch,
+	'If-Unmodified-Since': IfUnmodifiedSince,
+	'LastModified': LastModified,
+	'Location': Location,
+	'Max-Forwards': MaxForwards,
+	'Pragma': Pragma,
+	'Proxy-Authenticate': ProxyAuthenticate,
+	'Proxy-Authorization': ProxyAuthorization,
+	'Range': Range,
+	'Referer': Referer,
+	'Retry-After': RetryAfter,
+	'Server': Server,
+	'Trailer': Trailer,
+	'Transfer-Encoding': TransferEncoding,
+	'Upgrade': Upgrade,
+	'User-Agent': UserAgent,
+	'Vary': Vary,
+	'Via': Via,
+	'Warning': Warning,
+	'WWW-Authenticate': WWWAuthenticate
+})

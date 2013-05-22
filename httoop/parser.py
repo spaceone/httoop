@@ -9,6 +9,7 @@ CRLF = CR + LF
 from httoop.messages import Request
 from httoop.headers import Headers
 from httoop.exceptions import InvalidLine, InvalidHeader, InvalidURI
+from httoop.util import text_type
 
 class StateMachine(object):
 	u"""A HTTP Parser"""
@@ -75,7 +76,7 @@ class StateMachine(object):
 				try:
 					request.parse(requestline)
 				except InvalidLine as exc:
-					return self.error(BAD_REQUEST(unicode(exc))) # FIXME: python3
+					return self.error(BAD_REQUEST(text_type(exc)))
 
 				self.on_requestline = True
 
@@ -99,7 +100,7 @@ class StateMachine(object):
 					try:
 						request.headers.parse(headers)
 					except InvalidHeader as exc:
-						return self.error(BAD_REQUEST(unicode(exc))) # FIXME: python3
+						return self.error(BAD_REQUEST(text_type(exc)))
 
 				self.on_headers = True
 
@@ -189,7 +190,7 @@ class StateMachine(object):
 					try:
 						request.trailers.parse(trailers)
 					except InvalidHeader as exc:
-						self.error(BAD_REQUEST(u'Invalid trailers: %s' % unicode(exc))) # FIXME: python3
+						self.error(BAD_REQUEST(u'Invalid trailers: %s' % text_type(exc)))
 						return
 					for name in request.headers.values('Trailer'):
 						value = request.trailers.pop(value, None)

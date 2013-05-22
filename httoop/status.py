@@ -5,15 +5,13 @@
 .. seealso:: :rfc:`2616#section-10`
 """
 
-from httoop.util import ByteString
+from httoop.util import ByteString, text_type
 
 class Status(ByteString):
 	u"""A HTTP Status
 
 		:rfc:`2616#section-6.2`
 	"""
-
-	__slots__ = ['code', 'reason']
 
 	@property
 	def informational(self):
@@ -112,7 +110,7 @@ class Status(ByteString):
 			self.code, self.reason = status, REASONS.get(status, ('', ''))[0]
 		elif isinstance(status, tuple):
 			self.code, self.reason = status
-		elif isinstance(status, (bytes, unicode)): # FIXME: python3
+		elif isinstance(status, (bytes, text_type)):
 			code, reason = status.split(None, 1)
 			if isinstance(reason, bytes):
 				reason = reason.decode('ascii')

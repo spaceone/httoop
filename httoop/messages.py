@@ -13,9 +13,7 @@ from httoop.status import Status
 from httoop.body import Body
 from httoop.uri import URI
 from httoop.exceptions import InvalidLine, InvalidURI
-from httoop.util import ByteString
-
-# TODO: add __slots__ for request and response to gain performance?
+from httoop.util import ByteString, text_type
 
 class Protocol(tuple):
 	u"""The HTTP protocol version"""
@@ -35,7 +33,7 @@ class Protocol(tuple):
 	def minor(self):
 		return self[1]
 
-class Method(unicode):
+class Method(text_type):
 	u"""A HTTP request method"""
 
 	safe_methods = (u'GET', u'HEAD', u'PUT', u'DELETE', u'OPTIONS', u'TRACE')
@@ -44,7 +42,7 @@ class Method(unicode):
 
 	def __init__(self, method):
 		# TODO: make sure the method is HTTP "token"
-		if isinstance(method, unicode):
+		if isinstance(method, text_type):
 			method = method.encode('ascii').decode('ascii')
 		elif isinstance(method, bytes):
 			method = method.decode('ascii')

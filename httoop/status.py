@@ -1,68 +1,132 @@
 # -*- coding: utf-8 -*-
 """HTTP status codes
 
+.. seealso:: :rfc:`2616#section-6.2`
 .. seealso:: :rfc:`2616#section-10`
 """
 
-class Status(object):
-	u"""A HTTP status code"""
+from httoop.util import ByteString
 
-	__slots__ = ['status', 'reason']
+class Status(ByteString):
+	u"""A HTTP Status
 
-	def __init__(self, status=None, reason=None):
-		self.status = 0
-		if status:
-			self.set(status)
-		self.reason = reason or self.reason or REASONS.get(status, ('', ''))[0]
+		:rfc:`2616#section-6.2`
+	"""
 
-	def __str__(self):
-		return '%d %s' % (self.status, self.reason)
+	__slots__ = ['code', 'reason']
+
+	@property
+	def informational(self):
+		return 99 < self.code < 200
+
+	@property
+	def successful(self):
+		return 199 < self.code < 300
+
+	@property
+	def redirection(self):
+		return 299 < self.code < 400
+
+	@property
+	def client_error(self):
+		return 399 < self.code < 500
+
+	@property
+	def server_error(self):
+		return 499 < self.code < 600
+
+	# aliases
+	@property
+	def status(self):
+		return self.code
+
+	@property
+	def reason_phrase(self):
+		return self.reason
+
+	reason = None
+
+	def __init__(self, code=None, reason=None):
+		u"""
+			:param code:
+				the HTTP Statuscode
+			:type  code: int
+
+			:param reason:
+				the HTTP Reason-Phrase
+			:type  reason: unicode
+		"""
+		self.code = 0
+		self.reason = self.reason or u''
+		reason = reason or self.reason or REASONS.get(code, ('', ''))[0]
+		if code:
+			self.set((code, reason,))
+
+	def parse(self, data):
+		u"""parse a Statuscode and Reason-Phrase
+
+			:param data: the code and reason
+			:type  data: bytes
+		"""
+		code, reason = status.split(None, 1)
+		self.code, self.reason = int(code), reason.decode('ascii')
+
+	def compose(self):
+		return b'%d %s' % (self.code, self.reason.encode('ascii'))
+
+	def __bytes__(self):
+		return self.compose()
+
+	def __unicode__(self):
+		return self.compose().decode('ascii')
 
 	def __int__(self):
-		return self.status
+		u"""Returns this status as number"""
+		return self.code
 
 	def __eq__(self, other):
+		u"""Compares a status with another :class:`Status` or :class:`int`"""
 		if isinstance(other, int):
-			return self.status == other
+			return self.code == other
 		return super(Status, self).__eq__(other)
 
 	def __lt__(self, other):
 		if isinstance(other, int):
-			return self.status < other
+			return self.code < other
 		return super(Status, self).__lt__(other)
 
 	def __gt__(self, other):
 		if isinstance(other, int):
-			return self.status > other
+			return self.code > other
 		return super(Status, self).__gt__(other)
 
 	def set(self, status):
 		u"""sets reason and status
 
 			:param status:
-				A status, e.g.: 200, (200, 'OK'), '200 OK'
+				A HTTP Status, e.g.: 200, (200, 'OK'), '200 OK'
 			:type  status:
 				int or tuple or bytes or Status
 		"""
 		if isinstance(status, int):
-			self.status, self.reason = status, REASONS.get(status, ('', ''))[0]
+			self.code, self.reason = status, REASONS.get(status, ('', ''))[0]
 		elif isinstance(status, tuple):
-			self.status, self.reason = status
-		elif isinstance(status, bytes): # FIXME: python3
-			_status, _reason = status.split(None, 1)
-			self.status, self.reason = int(_status), _reason
+			self.code, self.reason = status
+		elif isinstance(status, (bytes, unicode)): # FIXME: python3
+			code, reason = status.split(None, 1)
+			if isinstance(reason, bytes):
+				reason = reason.decode('ascii')
+			self.code, self.reason = int(code), reason
 		elif isinstance(status, Status):
-			self.status, self.reason = status.status, status.reason
+			self.code, self.reason = status.code, status.reason
 		else:
-			raise ValueError('invalid type for an HTTP status code')
+			raise ValueError('invalid type for an HTTP Status')
 
 	def __repr__(self):
-		# TODO: ?
-		return '<HTTP Status (status=%d, reason=%r)>' % (self.status, self.reason)
+		return '<HTTP Status (code=%d, reason=%r)>' % (self.code, self.reason)
 
-# ripped from pythons BaseHTTPServer, dunno what license it is
 REASONS = {
-	# status: (reason, description)
+	# code: (reason, description)
 	100: ('Continue', 'Request received, please continue'),
 	101: ('Switching Protocols', 'Switching to new protocol; obey Upgrade header'),
 	200: ('OK', 'Request fulfilled, document follows'),

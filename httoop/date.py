@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-"""HTTP date
+"""HTTP Date
 
 .. seealso:: :rfc:`2616#section-3.3`
 """
 
 __all__ = ['Date']
 
-from httoop.util import ByteString
-
+import time
+from datetime import datetime
 from functools import partial
 
 try:
@@ -16,8 +16,8 @@ try:
 except ImportError:
 	from rfc822 import formatdate, parsedate
 
-from datetime import datetime
-import time
+from httoop.util import ByteString
+from httoop.exceptions import InvalidDate
 
 # TODO: this is bloatet, do we need it?
 
@@ -88,7 +88,7 @@ class Date(ByteString):
 				Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
 		"""
 
-		# parse the most common HTTP date format (RFC 2822)
+		# parse the most common HTTP Date format (RFC 2822)
 		date = parsedate(timestr)
 		if date is not None:
 			return cls(date[:7])
@@ -112,3 +112,5 @@ class Date(ByteString):
 			pass
 		else:
 			return cls(date)
+
+		raise InvalidDate(date)

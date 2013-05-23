@@ -43,6 +43,12 @@ class Headers(ByteString, CaseInsensitiveDict):
 		return list(reversed(sorted(result)))
 		# TODO: remove the reversed() (fix in AcceptElement)
 
+	def element(self, fieldname):
+		u"""Treat the field as single element"""
+		if fieldname in self:
+			Element = headerfields.get(fieldname, HeaderElement)
+			return Element.from_str(self[fieldname])
+
 	def values(self, key=None):
 		# if key is set return a ordered list of element values
 		# TODO: may move this into another method because values is a dict name

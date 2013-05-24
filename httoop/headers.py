@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """HTTP headers
 
+.. seealso:: :rfc:`2616#section-2.2`
+
 .. seealso:: :rfc:`2616#section-4.2`
 
 .. seealso:: :rfc:`2616#section-14`
@@ -9,6 +11,7 @@
 __all__ = ['Headers', 'HeaderElement']
 
 # FIXME: python3?
+# TODO: Via, Server, User-Agent can contain comments, parse them
 
 import re
 
@@ -112,14 +115,14 @@ class Headers(ByteString, CaseInsensitiveDict):
 				value.append(lines.pop(0)[1:])
 			value = b''.join(value).rstrip()
 
+			# TODO: parse encoded fields (MIME syntax)
+
 			# store new header value
 			self.append(name, value)
 
 	def compose(self):
-		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k.encode('ascii', 'ignore'), v.encode('ISO8859-1', 'replace')) for k, v in iteritems(self))
-
-	def __unicode__(self):
-		return self.compose().decode('ISO8859-1')
+		# TODO: if value contains UTF-8 chars encode them in MIME
+		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, v.encode('ISO8859-1', 'replace')) for k, v in iteritems(self))
 
 	def __bytes__(self):
 		return self.compose()

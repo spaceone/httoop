@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from six import PY3, text_type, binary_type, BytesIO, iteritems
 
 # TODO: from six
@@ -6,75 +7,73 @@ try:
 except ImportError:
 	import urllib.parse as urlparse  # NOQA
 
-import sys
-if hasattr(sys, 'maxsize'):
-	# python3
-	MAXSIZE = sys.maxsize
-else:
-	# python2
-	# It's possible to have sizeof(long) != sizeof(Py_ssize_t).
-	class X(object):
-		def __len__(self):
-			return 1 << 31
-	try:
-		len(X())
-	except OverflowError:
-		# 32-bit
-		MAXSIZE = int((1 << 31) - 1)
-	else:
-		# 64-bit
-		MAXSIZE = int((1 << 63) - 1)
-	del X
+def to_unicode(string):
+	if string is None:
+		return u''
+	if isinstance(string, bytes):
+		try:
+			return string.decode('UTF-8')
+		except UnicodeDecodeError:
+			return string.decode('ISO8859-1')
+	return text_type(string)
+
+def to_ascii(string):
+	if isinstance(string, text_type):
+		return string.encode('ascii', 'ignore')
+	return bytes(string).decode('ascii', 'ignore').encode('ascii')
 
 class CaseInsensitiveDict(dict):
-	"""A case-insensitive dict subclass.
+	"""A case-insensitive dict subclass optimized for HTTP header use.
 
-		Each key is changed on entry to str(key).title().
+		Each key is stored as case insensitive ascii
+		Each value is stored as unicode
 	"""
 
 	def __init__(self, *args, **kwargs):
 		d = dict(*args, **kwargs)
 		for key, value in iteritems(d):
-			dict.__setitem__(self, str(key).title(), value)
+			dict.__setitem__(self, to_ascii(key).title(), to_unicode(value))
 		dict.__init__(self)
 
 	def __getitem__(self, key):
-		return dict.__getitem__(self, str(key).title())
+		return dict.__getitem__(self, to_ascii(key).title())
 
 	def __setitem__(self, key, value):
-		dict.__setitem__(self, str(key).title(), value)
+		dict.__setitem__(self, to_ascii(key).title(), to_unicode(value))
 
 	def __delitem__(self, key):
-		dict.__delitem__(self, str(key).title())
+		dict.__delitem__(self, to_ascii(key).title())
 
 	def __contains__(self, key):
-		return dict.__contains__(self, str(key).title())
+		return dict.__contains__(self, to_ascii(key).title())
 
 	def get(self, key, default=None):
-		return dict.get(self, str(key).title(), default)
+		return dict.get(self, to_ascii(key).title(), default)
 
 	def update(self, E):
 		for k in E.keys():
-			self[str(k).title()] = E[k]
+			self[to_ascii(k).title()] = to_unicode(E[k])
+
+	def setdefault(self, key, x=None):
+		key = to_ascii(key).title()
+		try:
+			return dict.__getitem__(self, key)
+		except KeyError:
+			self[key] = to_unicode(x)
+			return dict.__getitem__(self, key)
+
+	def pop(self, key, default=None):
+		return dict.pop(self, to_ascii(key).title(), default)
 
 	@classmethod
 	def fromkeys(cls, seq, value=None):
 		newdict = cls()
 		for k in seq:
-			newdict[k] = value
+			newdict[k] = to_unicode(value)
 		return newdict
 
-	def setdefault(self, key, x=None):
-		key = str(key).title()
-		try:
-			return dict.__getitem__(self, key)
-		except KeyError:
-			self[key] = x
-			return x
 
-	def pop(self, key, default=None):
-		return dict.pop(self, str(key).title(), default)
-
+# TODO: rename
 class ByteString(object):
 	def __str__(self):
 		if PY3:
@@ -83,7 +82,11 @@ class ByteString(object):
 			return self.__bytes__()
 
 	def __unicode__(self):
-		return bytes(self).decode('utf-8')
+		bstr = bytes(self)
+		try:
+			return bstr.decode('UTF-8')
+		except UnicodeDecodeError:
+			return bstr.decode('ISO8859-1')
 
 	def __bytes__(self):
 		raise NotImplemented

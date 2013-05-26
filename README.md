@@ -17,6 +17,8 @@ HTTP and extensions are defined in the following RFC's:
 
 * Hypertext Transfer Protocol -- HTTP/1.1 (RFC 2616)
 
+* Internet Message Format (RFC 822, 2822, 5322)
+
 * HTTP Authentication: Basic and Digest Access Authentication (RFC 2617)
 
 * Additional HTTP Status Codes (RFC 6585)

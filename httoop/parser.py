@@ -8,8 +8,13 @@ CRLF = CR + LF
 
 from httoop.messages import Request
 from httoop.headers import Headers
-from httoop.exceptions import InvalidLine, InvalidHeader, InvalidURI
+from httoop.exceptions import InvalidLine, InvalidHeader, InvalidURI, InvalidBody
 from httoop.util import text_type
+from httoop.statuses import BAD_REQUEST, NOT_IMPLEMENTED, LENGTH_REQUIRED, MOVED_PERMANENTLY, REQUEST_URI_TOO_LONG, HTTP_VERSION_NOT_SUPPORTED
+
+import zlib
+
+ServerProtocol = (1, 1)
 
 class StateMachine(object):
 	u"""A HTTP Parser"""
@@ -194,7 +199,7 @@ class StateMachine(object):
 						self.error(BAD_REQUEST(u'Invalid trailers: %s' % text_type(exc)))
 						return
 					for name in request.headers.values('Trailer'):
-						value = request.trailers.pop(value, None)
+						value = request.trailers.pop(name, None)
 						if value is not None:
 							request.headers.append(name, value)
 						else:
@@ -223,7 +228,7 @@ class HTTP(StateMachine):
 				return self.error(HTTP_VERSION_NOT_SUPPORTED('The server only supports HTTP/1.0 and HTTP/1.1.'))
 
 			# set correct response protocol version
-			response.protocol = min(request.protocol, sp)
+			response.protocol = min(request.protocol, ServerProtocol)
 
 			# sanitize request URI (./, ../, /.$, etc.)
 			path = bytes(request.uri.path)

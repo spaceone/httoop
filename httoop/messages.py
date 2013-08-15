@@ -84,7 +84,7 @@ class Message(ByteString):
 		"""
 		match = self.VERSION_RE.match(version)
 		if match is None:
-			raise InvalidLine(u"Invalid HTTP version: %s" % version.decode('ISO8859-1'))
+			raise InvalidLine(u"Invalid HTTP version: %r" % version.decode('ISO8859-1'))
 
 		self.protocol = (int(match.group(1)), int(match.group(2)))
 
@@ -167,14 +167,14 @@ class Request(Message):
 
 		# method
 		if None is self.METHOD_RE.match(bits[0]):
-			raise InvalidLine(u"Invalid method: %s" % bits[0].decode('ISO8859-1'))
+			raise InvalidLine(u"Invalid method: %r" % bits[0].decode('ISO8859-1'))
 		self.method = bits[0] # HTTP method is case sensitive
 
 		# URI
 		try:
 			self.uri = bits[1]
 		except InvalidURI as exc:
-			raise InvalidLine(u"Invalid request URL: %s" % text_type(exc))
+			raise InvalidLine(u"Invalid request URL: %r" % text_type(exc))
 
 	def compose(self):
 		u"""composes the request line"""
@@ -236,7 +236,7 @@ class Response(Message):
 		# status
 		match = self.STATUS_RE.match(bits[1])
 		if match is None:
-			raise InvalidLine(u"Invalid status %s" % bits[1].decode('ISO8859-1'))
+			raise InvalidLine(u"Invalid status %r" % bits[1].decode('ISO8859-1'))
 
 		self.status = (int(match.group(1)), match.group(2))
 

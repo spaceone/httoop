@@ -7,6 +7,8 @@
 from httoop.exceptions import InvalidURI
 from httoop.util import ByteString, urlparse
 
+import re
+
 # TODO: think about the naming.. this is atm an HTTP URL
 class URI(ByteString):
 	u"""Uniform Resource Identifier

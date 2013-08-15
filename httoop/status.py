@@ -66,7 +66,7 @@ class Status(ByteString):
 			:param data: the code and reason
 			:type  data: bytes
 		"""
-		code, reason = status.split(None, 1)
+		code, reason = data.split(None, 1)
 		self.code, self.reason = int(code), reason.decode('ascii')
 
 	def compose(self):

@@ -130,14 +130,14 @@ class Headers(ByteString, CaseInsensitiveDict):
 	def __repr__(self):
 		return "<HTTP Headers(%s)>" % repr(list(self.items()))
 
-	@staticmethod
-	def _formatparam(param, value=None, quote=1):
+	@classmethod
+	def _formatparam(cls, param, value=None, quote=1):
 		"""Convenience function to format and return a key=value pair.
 
 		This will quote the value if needed or if quote is true.
 		"""
 		if value:
-			if quote or self.RE_TSPECIALS.search(value):
+			if quote or cls.RE_TSPECIALS.search(value):
 				value = value.replace('\\', '\\\\').replace('"', r'\"')
 				return '%s="%s"' % (param, value)
 			else:

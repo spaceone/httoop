@@ -28,9 +28,7 @@ class StateMachine(object):
 		self.on_headers = False
 		self.on_body = False
 		self.on_body_started = False
-
-		# private events
-		self._on_trailers = True # will be set to false if trailers exists
+		self.on_trailers = True # will be set to false if trailers exists
 
 		self.line_end = CRLF
 		self.MAX_URI_LENGTH = 1024
@@ -45,6 +43,9 @@ class StateMachine(object):
 		self.on_message = True
 		if self._raise_errors:
 			raise self.httperror
+
+	def state_changed(self, state):
+		setattr(self, 'on_%s' % (state), True)
 
 	def parse(self, data):
 		u"""Appends the given data to the internal buffer and parses it as HTTP Request-Message.
@@ -78,13 +79,13 @@ class StateMachine(object):
 				except InvalidLine as exc:
 					return self.error(BAD_REQUEST(text_type(exc)))
 
-				self.on_requestline = True
+				self.state_changed("requestline")
 
 			if not self.on_headers:
 				# empty headers?
 				if self.buffer.startswith(line_end):
 					self.buffer = self.buffer[len(line_end):]
-					self.on_headers = True
+					self.state_changed("headers")
 					continue
 
 				header_end = line_end+line_end
@@ -102,14 +103,14 @@ class StateMachine(object):
 					except InvalidHeader as exc:
 						return self.error(BAD_REQUEST(text_type(exc)))
 
-				self.on_headers = True
+				self.state_changed("headers")
 
 			elif not self.on_body:
 				if not self.on_body_started:
 					# RFC 2616 Section 4.4
 					# get message length
 
-					self.on_body_started = True
+					self.state_changed("body_started")
 					if request.protocol >= (1, 1) and 'Transfer-Encoding' in request.headers:
 						# chunked transfer in HTTP/1.1
 						te = request.headers['Transfer-Encoding'].lower()
@@ -154,7 +155,7 @@ class StateMachine(object):
 
 					if chunk_size == 0:
 						# finished
-						self.on_body = True
+						self.state_changed("body")
 
 				elif self.message_length:
 					request.body.write(self.buffer)
@@ -162,7 +163,7 @@ class StateMachine(object):
 
 					blen = len(request.body)
 					if blen == self.message_length:
-						self.on_body = True
+						self.state_changed("body")
 					elif blen < self.message_length:
 						# the body is not yet received completely
 						return
@@ -176,9 +177,9 @@ class StateMachine(object):
 					return
 				else:
 					# no message body
-					self.on_body = True
+					self.state_changed("body")
 
-			elif not self._on_trailers:
+			elif not self.on_trailers:
 				if 'Trailer' in request.headers:
 					trailer_end = line_end + line_end
 					if trailer_end not in self.buffer:
@@ -202,11 +203,69 @@ class StateMachine(object):
 					if request.trailers:
 						self.error(BAD_REQUEST(u'untold trailers: "%s"' % u'" ,"'.join(request.trailers.keys())))
 					del request.trailers
-				self._on_trailers = True
+				self.state_changed("trailers")
 			elif not self.on_message:
-				self.on_message = True
+				self.state_changed("message")
 				request.body.seek(0)
 			else:
 				if self.buffer:
 					return self.error(BAD_REQUEST(u'too much input'))
 				break
+
+class HTTP(StateMachine):
+	def state_changed(self, state):
+		super(HTTP, self).state_changed(state)
+		request = self.request
+		if state == "requestline":
+			# check if we speak the same major HTTP version
+			if request.protocol.major != response.protocol.major or request.protocol.minor not in (0, 1):
+				# the major HTTP version differs
+				return self.error(HTTP_VERSION_NOT_SUPPORTED('The server only supports HTTP/1.0 and HTTP/1.1.'))
+
+			# set correct response protocol version
+			response.protocol = min(request.protocol, sp)
+
+			# sanitize request URI (./, ../, /.$, etc.)
+			path = bytes(request.uri.path)
+			request.uri.sanitize()
+			if path != bytes(request.uri.path):
+				return self.error(MOVED_PERMANENTLY(request.uri.path))
+
+			# validate scheme if given
+			if request.uri.scheme:
+				if request.uri.scheme not in ('http', 'https'):
+					return self.error(BAD_REQUEST('wrong scheme'))
+			else:
+				# set correct scheme, host and port
+				request.uri.scheme = 'https' if self.server.secure else 'http'
+				request.uri.host = self.local.host.name
+				request.uri.port = self.local.host.port
+
+			# set Server header
+			response.headers['Server'] = self.version
+
+		if state == "headers":
+			# check if Host header exists for > HTTP 1.0
+			if request.protocol >= (1, 1) and not 'Host' in request.headers:
+				return self.error(BAD_REQUEST('Missing Host header'))
+
+			# set decompressor
+			encoding = request.headers.get('content-encoding')
+			if encoding == "gzip":
+				self._decompress_obj = zlib.decompressobj(16+zlib.MAX_WBITS)
+			elif encoding == "deflate":
+				self._decompress_obj = zlib.decompressobj()
+
+		if state == "message":
+			# TODO: (re)move if RFC 2616 allows this (probably)
+			# GET request with body
+			if request.method in ('GET', 'HEAD', 'OPTIONS') and request.body:
+				self.error(BAD_REQUEST('A %s request MUST NOT contain a request body.' % request.method))
+				return
+			# maybe decompress
+			if self._decompress_obj is not None:
+				try:
+					request.body = self._decompress_obj.decompress(request.body.read())
+				except zlib.error as exc:
+					self.error(BAD_REQUEST('Invalid compressed bytes: %r' % (exc)))
+

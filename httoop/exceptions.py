@@ -10,3 +10,6 @@ class InvalidURI(ValueError):
 
 class InvalidDate(ValueError):
 	u"""error raised when Date is invalid"""
+
+class InvalidBody(ValueError):
+	u"error raised when Body is invalid"""

@@ -48,7 +48,7 @@ class Body(ByteString):
 			elif isinstance(body, binary_type):
 				body = BytesIO(body)
 			elif isinstance(body, Body):
-				body = body.body
+				body = body.content
 		self.content = body
 
 	def __bytes__(self):
@@ -94,8 +94,8 @@ class Body(ByteString):
 	def read(self, size):
 		return self.content.read(size)
 
-	def seek(self, offset, whence=None):
-		return self.content.seek(offset, whence)
+	def seek(self, offset, whence=0):
+		return self.content.seek(offset)
 
 	def tell(self):
 		return self.content.tell()

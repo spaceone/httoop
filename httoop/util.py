@@ -8,6 +8,9 @@ except ImportError:
 	import urllib.parse as urlparse  # NOQA
 
 def to_unicode(string):
+	if isinstance(string, type):
+		# FIXME FIXME: CaseInsensitiveDict is also used for Header elements
+		return string
 	if string is None:
 		return u''
 	if isinstance(string, bytes):

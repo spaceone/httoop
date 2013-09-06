@@ -53,6 +53,8 @@ class Body(ByteString):
 
 	def __bytes__(self):
 		bytesio = self.content
+		if not hasattr(bytesio, 'tell'):
+			return str(bytesio) # FIXME: don't allow dicts anymore
 		t = bytesio.tell()
 		bytesio.seek(0)
 		body = bytesio.read()
@@ -65,7 +67,7 @@ class Body(ByteString):
 
 	def __unicode__(self):
 		body = bytes(self)
-		for encoding in (self.encoding, 'UTF-8', 'ISO8859-1'):
+		for encoding in (self.encoding or 'UTF-8', 'UTF-8', 'ISO8859-1'):
 			try:
 				return body.decode(encoding)
 			except UnicodeDecodeError:

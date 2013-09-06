@@ -178,7 +178,7 @@ class Request(Message):
 
 	def compose(self):
 		u"""composes the request line"""
-		return b"%s %s %s" % (bytes(self.__method), bytes(self.__uri), bytes(self.protocol))
+		return b"%s %s %s\r\n" % (bytes(self.__method), bytes(self.__uri), bytes(self.protocol))
 
 	@property
 	def method(self):
@@ -242,7 +242,7 @@ class Response(Message):
 
 	def compose(self):
 		u"""composes the response line"""
-		return b"%s %s" % (bytes(self.protocol), bytes(self.status))
+		return b"%s %s\r\n" % (bytes(self.protocol), bytes(self.status))
 
 	@property
 	def status(self):

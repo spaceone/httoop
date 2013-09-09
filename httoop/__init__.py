@@ -26,7 +26,7 @@ from httoop.body import Body
 from httoop.uri import URI
 from httoop.messages import Request, Response, Protocol, Method
 from httoop.exceptions import InvalidLine, InvalidHeader, InvalidURI, InvalidBody, InvalidDate
-from httoop.parser import StateMachine
+from httoop.parser import StateMachine, HTTP
 
 from httoop.statuses import CONTINUE, SWITCHING_PROTOCOLS, OK, CREATED, ACCEPTED, NON_AUTHORITATIVE_INFORMATION
 from httoop.statuses import NO_CONTENT, RESET_CONTENT, PARTIAL_CONTENT, MULTIPLE_CHOICES, MOVED_PERMANENTLY, FOUND

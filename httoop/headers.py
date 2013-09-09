@@ -151,12 +151,16 @@ class HeaderElement(object):
 	def __init__(self, value, params=None):
 		self.value = value
 		self.params = params or {}
+		self.sanitize()
+
+	def sanitize(self):
+		pass
 
 	def __cmp__(self, other):
-		return cmp(self.value, other.value)
+		return cmp(self.value, getattr(other, 'value', other))
 
 	def __lt__(self, other):
-		return self.value < other.value
+		return self.value < getattr(other, 'value', other)
 
 	def __str__(self):
 		params = ["; %s=%s" % (k, v) for k, v in iteritems(self.params)]
@@ -204,8 +208,15 @@ class AcceptElement(HeaderElement):
 	# RFC 2616 Section 3.9
 	RE_Q_SEPARATOR = re.compile(r'; *q *= *(?:(?:0(?:\.[0-9]{3})?)|(?:1(?:\.00?0?)?))')
 
-	def __init__(self, value, params):
-		super(AcceptElement, self).__init__(value, params)
+	@property
+	def quality(self):
+		"""The quality of this value."""
+		val = self.params.get("q", "1")
+		if isinstance(val, HeaderElement):
+			val = val.value
+		return float(val)
+
+	def sanitize(self):
 		try:
 			self.quality
 		except ValueError:
@@ -228,14 +239,6 @@ class AcceptElement(HeaderElement):
 			params["q"] = qvalue
 
 		return cls(media_type, params)
-
-	@property
-	def quality(self):
-		"""The quality of this value."""
-		val = self.params.get("q", "1")
-		if isinstance(val, HeaderElement):
-			val = val.value
-		return float(val)
 
 	def __cmp__(self, other):
 		diff = cmp(self.quality, other.quality)
@@ -336,7 +339,45 @@ class Expires(HeaderElement):
 class From(HeaderElement):
 	pass
 
+# TODO: add case insensitve HeaderElement
+# TODO: integrate ipaddr.IP4/6Address which parses every form of ip addresses
 class Host(HeaderElement):
+	RE_HOSTNAME = re.compile(r'^([^\x00-\x1F\x7F()<>@,;:/\[\]={} \t\\\\"]+)(?::\d+)?$')
+	RE_IP4 = re.compile(r'^([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})(?::\d+)?$')
+	# FIXME: implement IP parse, this matches 999.999.999.999
+	RE_IP6 = re.compile(r'^\[([0-9a-fA-F:]+)\](?::\d+)?$')
+	# FIXME: implement IP6 parse
+
+	@property
+	def is_ip4(self):
+		return self.RE_IP4.match(self.value) is not None
+
+	@property
+	def is_ip6(self):
+		return self.RE_IP6.match(self.value) is not None
+
+	@property
+	def hostname(self):
+		return self.ip6address or self.ip4address or self.RE_HOSTNAME.match(self.value).group(1).lower()
+
+	@property
+	def ip6address(self):
+		# removes IPv6 brackets and port
+		if self.is_ip6:
+			return self.RE_IP6.match(self.value).group(1)
+
+	@property
+	def ip4address(self):
+		# removes port
+		if self.is_ip4:
+			return self.RE_IP4.match(self.value).group(1)
+
+	def sanitize(self):
+		if not self.RE_HOSTNAME.match(self.value):
+			raise InvalidHeader('Invalid Host header')
+		self.value = self.value.lower()
+
+class XForwardedHost(Host):
 	pass
 
 class IfMatch(HeaderElement):
@@ -460,5 +501,6 @@ headerfields.update({
 	'Vary': Vary,
 	'Via': Via,
 	'Warning': Warning,
-	'WWW-Authenticate': WWWAuthenticate
+	'WWW-Authenticate': WWWAuthenticate,
+	'X-Forwarded-Host': XForwardedHost,
 })

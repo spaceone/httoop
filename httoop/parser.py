@@ -6,7 +6,7 @@ CR = b'\r'
 LF = b'\n'
 CRLF = CR + LF
 
-from httoop.messages import Request
+from httoop.messages import Request, Response
 from httoop.headers import Headers
 from httoop.exceptions import InvalidLine, InvalidHeader, InvalidURI, InvalidBody
 from httoop.util import text_type
@@ -21,6 +21,7 @@ class StateMachine(object):
 
 	def __init__(self):
 		self.request = Request()
+		self.response = Response()
 		self.buffer = b''
 		self.httperror = None
 
@@ -218,9 +219,14 @@ class StateMachine(object):
 				break
 
 class HTTP(StateMachine):
+	def __init__(self, *args, **kwargs):
+		super(HTTP, self).__init__(*args, **kwargs)
+		self._decompress_obj = None
+
 	def state_changed(self, state):
 		super(HTTP, self).state_changed(state)
 		request = self.request
+		response = self.response
 		if state == "requestline":
 			# check if we speak the same major HTTP version
 			if request.protocol.major != response.protocol.major or request.protocol.minor not in (0, 1):
@@ -240,14 +246,15 @@ class HTTP(StateMachine):
 			if request.uri.scheme:
 				if request.uri.scheme not in ('http', 'https'):
 					return self.error(BAD_REQUEST('wrong scheme'))
-			else:
-				# set correct scheme, host and port
-				request.uri.scheme = 'https' if self.server.secure else 'http'
-				request.uri.host = self.local.host.name
-				request.uri.port = self.local.host.port
+			# FIXME: add these information
+			#else:
+			#	# set correct scheme, host and port
+			#	request.uri.scheme = 'https' if self.server.secure else 'http'
+			#	request.uri.host = self.local.host.name
+			#	request.uri.port = self.local.host.port
 
-			# set Server header
-			response.headers['Server'] = self.version
+			## set Server header
+			#response.headers['Server'] = self.version
 
 		if state == "headers":
 			# check if Host header exists for > HTTP 1.0

@@ -12,6 +12,7 @@ from httoop.headers import Headers
 from httoop.status import Status
 from httoop.body import Body
 from httoop.uri import URI
+from httoop.date import Date
 from httoop.exceptions import InvalidLine, InvalidURI
 from httoop.util import ByteString, text_type
 
@@ -87,6 +88,9 @@ class Message(ByteString):
 			raise InvalidLine(u"Invalid HTTP version: %r" % version.decode('ISO8859-1'))
 
 		self.protocol = (int(match.group(1)), int(match.group(2)))
+
+	def prepare(self):
+		pass
 
 	@property
 	def protocol(self):
@@ -180,6 +184,9 @@ class Request(Message):
 		u"""composes the request line"""
 		return b"%s %s %s\r\n" % (bytes(self.__method), bytes(self.__uri), bytes(self.protocol))
 
+	def prepare(self):
+		pass # TODO: chunked, Content-Length, close?
+
 	@property
 	def method(self):
 		return self.__method
@@ -244,6 +251,22 @@ class Response(Message):
 		u"""composes the response line"""
 		return b"%s %s\r\n" % (bytes(self.protocol), bytes(self.status))
 
+	def prepare(self):
+		u"""prepares the response for being ready for transmitting"""
+
+		status = self.status
+		if status < 200 or status in (204, 205, 304):
+			# 1XX, 204 NO_CONTENT, 205 RESET_CONTENT, 304 NOT_MODIFIED
+			self.body = None
+
+		self.chunked = self.chunked
+		if not self.chunked:
+			self.headers['Content-Length'] = bytes(len(self.body))
+
+		self.headers['Date'] = bytes(Date())
+
+		self.close = self.close
+
 	@property
 	def status(self):
 		return self.__status
@@ -251,6 +274,39 @@ class Response(Message):
 	@status.setter
 	def status(self, status):
 		self.__status.set(status)
+
+	@property
+	def chunked(self):
+		return self.body.chunked or self.headers.get("Transfer-Encoding") == 'chunked'
+
+	@chunked.setter
+	def chunked(self, chunked):
+		if chunked:
+			self.headers['Transfer-Encoding'] = 'chunked'
+			self.headers.pop('Content-Length', None)
+		else:
+			self.headers.pop('Transfer-Encoding', None)
+
+	@property
+	def close(self):
+		# 413 Request Entity Too Large
+		# RFC 2616 Section 10.4.14
+		if self.status == 413:
+			pass
+		elif self.headers.get('Connection') == 'close':
+			pass
+		elif self.protocol < (1, 1):
+			pass
+		else:
+			return False
+		return True
+
+	@close.setter
+	def close(self, close):
+		if close and self.protocol >= (1, 1):
+			self.headers['Connection'] = 'close'
+		if not close and self.protocol < (1, 1):
+			self.headers['Connection'] = 'keep-alive'
 
 	def __bytes__(self):
 		return self.compose()

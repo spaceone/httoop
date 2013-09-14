@@ -6,15 +6,13 @@
 from httoop.body import Body # TODO: remove ?
 from httoop.status import Status, REASONS
 
+# mapping of status -> Class, will be filled at the bottom
+STATUSES = dict()
+
 # TODO: inherit from response?
 # TODO: also inherit from circuits.Event/SF.http.server.Response, implement __call__ for additional arguments then?
 class HTTPStatusException(Status, Exception):
 	u"""This class represents a small HTTP Response message for error handling purposes"""
-
-	@property
-	def header_to_remove(self):
-		u"""a tuple of header field names which should be removed when responding with this error"""
-		return ()
 
 	@property
 	def headers(self):
@@ -30,6 +28,9 @@ class HTTPStatusException(Status, Exception):
 	def body(self, value):
 		self.body
 		self._body.set(value)
+
+	header_to_remove = ()
+	u"""a tuple of header field names which should be removed when responding with this error"""
 
 	description = ''
 
@@ -571,3 +572,7 @@ class HTTP_VERSION_NOT_SUPPORTED(object):
 #class NETWORK_CONNECT_TIMEOUT_ERROR(object):
 #	__metaclass__ = StatusType
 #	status = 599
+
+for local in locals().values():
+	if isinstance(local, StatusType):
+		STATUSES[local.status] = local

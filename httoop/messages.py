@@ -10,6 +10,7 @@ import re
 
 from httoop.headers import Headers
 from httoop.status import Status
+from httoop.statuses import STATUSES
 from httoop.body import Body
 from httoop.uri import URI
 from httoop.date import Date
@@ -264,6 +265,11 @@ class Response(Message):
 			self.headers['Content-Length'] = bytes(len(self.body))
 
 		self.headers['Date'] = bytes(Date())
+
+		# remove header which should not occur along with this status
+		if int(status) in STATUSES:
+			for header in STATUSES[int(status)].header_to_remove:
+				self.headers.pop(header, None)
 
 		self.close = self.close
 

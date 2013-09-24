@@ -93,11 +93,14 @@ class Body(ByteString):
 	def flush(self):
 		return self.content.flush()
 
-	def read(self, size):
-		return self.content.read(size)
+	def read(self, *size):
+		return self.content.read(*size[:1])
+
+	def write(self, bytes_):
+		return self.content.write(bytes_)
 
 	def seek(self, offset, whence=0):
-		return self.content.seek(offset)
+		return self.content.seek(offset, whence)
 
 	def tell(self):
 		return self.content.tell()

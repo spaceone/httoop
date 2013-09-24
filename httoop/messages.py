@@ -17,6 +17,7 @@ from httoop.date import Date
 from httoop.exceptions import InvalidLine, InvalidURI
 from httoop.util import ByteString, text_type
 
+
 class Protocol(tuple):
 	u"""The HTTP protocol version"""
 
@@ -34,6 +35,7 @@ class Protocol(tuple):
 	@property
 	def minor(self):
 		return self[1]
+
 
 class Method(text_type):
 	u"""A HTTP request method"""
@@ -53,6 +55,7 @@ class Method(text_type):
 
 		self.idempotent = self in self.safe_methods
 		self.safe = self in self.idempotent_methods
+
 
 class Message(ByteString):
 	u"""A HTTP message
@@ -135,6 +138,7 @@ class Message(ByteString):
 	def __repr__(self):
 		return '<HTTP Message(protocol=%s)>' % (self.protocol,)
 
+
 class Request(Message):
 	u"""A HTTP request message
 
@@ -173,7 +177,7 @@ class Request(Message):
 		# method
 		if None is self.METHOD_RE.match(bits[0]):
 			raise InvalidLine(u"Invalid method: %r" % bits[0].decode('ISO8859-1'))
-		self.method = bits[0] # HTTP method is case sensitive
+		self.method = bits[0]  # HTTP method is case sensitive
 
 		# URI
 		try:
@@ -186,7 +190,7 @@ class Request(Message):
 		return b"%s %s %s\r\n" % (bytes(self.__method), bytes(self.__uri), bytes(self.protocol))
 
 	def prepare(self):
-		pass # TODO: chunked, Content-Length, close?
+		pass  # TODO: chunked, Content-Length, close?
 
 	@property
 	def method(self):
@@ -209,6 +213,7 @@ class Request(Message):
 
 	def __repr__(self):
 		return "<HTTP Request(%s %s %s)>" % (bytes(self.__method), bytes(self.__uri.path), bytes(self.protocol))
+
 
 class Response(Message):
 	u"""A HTTP response message

@@ -21,6 +21,7 @@ from httoop.exceptions import InvalidDate
 
 # TODO: this is bloatet, do we need it?
 
+
 class Date(ByteString):
 	u"""HTTP Date
 

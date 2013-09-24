@@ -5,7 +5,7 @@
 """
 
 from os.path import getsize
-from io import BytesIO # hmm, six implements StringIO for this, which is wrong...
+from io import BytesIO  # hmm, six implements StringIO for this, which is wrong...
 
 from httoop.headers import Headers
 from httoop.util import ByteString, text_type, binary_type
@@ -18,12 +18,14 @@ from httoop.util import ByteString, text_type, binary_type
 # 	response.body = ['this', 'is', 'a', 'chunk'] → if we want to send chunked output
 # 	response.body = BytesIO('')
 
+
 def get_bytes_from_unknown(unistr):
 	for encoding in ('UTF-8', 'ISO8859-1'):
 		try:
 			return unistr.encode(encoding)
 		except UnicodeEncodeError:
 			pass
+
 
 class Body(ByteString):
 	u"""A HTTP message body"""
@@ -54,7 +56,7 @@ class Body(ByteString):
 	def __bytes__(self):
 		bytesio = self.content
 		if not hasattr(bytesio, 'tell'):
-			return str(bytesio) # FIXME: don't allow dicts anymore
+			return str(bytesio)  # FIXME: don't allow dicts anymore
 		t = bytesio.tell()
 		bytesio.seek(0)
 		body = bytesio.read()
@@ -111,6 +113,7 @@ class Body(ByteString):
 	def __repr__(self):
 		return '<HTTP Body(%d)>' % len(self)
 
+
 # TODO: add iterable to list, tuple
 class ChunkedBody(Body):
 	u"""A body which consists of an iterable (to support WSGI)
@@ -131,7 +134,7 @@ class ChunkedBody(Body):
 	def __len__(self):
 		body = self.content
 		if isinstance(body, (list, tuple)):
-			return len(body) # FIXME
+			return len(body)  # FIXME
 		return super(ChunkedBody, self).__len__()
 
 	def __bytes__(self):
@@ -151,4 +154,3 @@ class ChunkedBody(Body):
 			yield b"0\r\n%s" % bytes(self.trailer)
 		else:
 			yield b"0\r\n\r\n"
-

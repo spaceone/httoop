@@ -7,6 +7,7 @@
 
 from httoop.util import ByteString, text_type
 
+
 class Status(ByteString):
 	u"""A HTTP Status
 

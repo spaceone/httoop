@@ -9,6 +9,7 @@ from httoop.util import ByteString, urlparse
 
 import re
 
+
 # TODO: think about the naming.. this is atm an HTTP URL
 class URI(ByteString):
 	u"""Uniform Resource Identifier
@@ -32,7 +33,7 @@ class URI(ByteString):
 		self.uri = uri
 		# TODO: remove this? A URI MUST NOT start with //
 		if uri.startswith('//'):
-			uri = uri[1:] # FIXME: //foo would result in a wrong result
+			uri = uri[1:]  # FIXME: //foo would result in a wrong result
 
 		parts = urlparse.urlsplit(uri)
 

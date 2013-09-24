@@ -7,6 +7,7 @@ try:
 except ImportError:
 	import urllib.parse as urlparse  # NOQA
 
+
 def to_unicode(string):
 	if isinstance(string, type):
 		# FIXME FIXME: CaseInsensitiveDict is also used for Header elements
@@ -20,10 +21,12 @@ def to_unicode(string):
 			return string.decode('ISO8859-1')
 	return text_type(string)
 
+
 def to_ascii(string):
 	if isinstance(string, text_type):
 		return string.encode('ascii', 'ignore')
 	return bytes(string).decode('ascii', 'ignore').encode('ascii')
+
 
 class CaseInsensitiveDict(dict):
 	"""A case-insensitive dict subclass optimized for HTTP header use.

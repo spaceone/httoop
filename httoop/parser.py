@@ -16,6 +16,7 @@ import zlib
 
 ServerProtocol = (1, 1)
 
+
 class StateMachine(object):
 	u"""A HTTP Parser"""
 
@@ -34,7 +35,7 @@ class StateMachine(object):
 		self.on_headers = False
 		self.on_body = False
 		self.on_body_started = False
-		self.on_trailers = True # will be set to false if trailers exists
+		self.on_trailers = True  # will be set to false if trailers exists
 
 		self.line_end = CRLF
 		self.MAX_URI_LENGTH = 1024
@@ -94,7 +95,7 @@ class StateMachine(object):
 					self.state_changed("headers")
 					continue
 
-				header_end = line_end+line_end
+				header_end = line_end + line_end
 
 				if header_end not in self.buffer:
 					# headers incomplete
@@ -218,6 +219,7 @@ class StateMachine(object):
 					return self.error(BAD_REQUEST(u'too much input'))
 				break
 
+
 class HTTP(StateMachine):
 	def __init__(self, *args, **kwargs):
 		super(HTTP, self).__init__(*args, **kwargs)
@@ -264,7 +266,7 @@ class HTTP(StateMachine):
 			# set decompressor
 			encoding = request.headers.get('content-encoding')
 			if encoding == "gzip":
-				self._decompress_obj = zlib.decompressobj(16+zlib.MAX_WBITS)
+				self._decompress_obj = zlib.decompressobj(16 + zlib.MAX_WBITS)
 			elif encoding == "deflate":
 				self._decompress_obj = zlib.decompressobj()
 
@@ -289,4 +291,3 @@ class HTTP(StateMachine):
 		if self.request.method == 'HEAD':
 			# RFC 2616 Section 9.4
 			self.response.body = None
-

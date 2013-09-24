@@ -21,6 +21,7 @@ from httoop.exceptions import InvalidHeader
 # a mapping of all headers to HeaderElement classes
 headerfields = CaseInsensitiveDict()
 
+
 class Headers(ByteString, CaseInsensitiveDict):
 	# disallowed bytes for HTTP header field names
 	HEADER_RE = re.compile(b"[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]")
@@ -63,7 +64,7 @@ class Headers(ByteString, CaseInsensitiveDict):
 		if params:
 			parts = [_value or b'']
 			for k, v in iteritems(params):
-				k = k.replace('_', '-') # TODO: find out why this is done
+				k = k.replace('_', '-')  # TODO: find out why this is done
 				if v is None:
 					parts.append(k)
 				else:
@@ -145,6 +146,7 @@ class Headers(ByteString, CaseInsensitiveDict):
 		else:
 			return param
 
+
 class HeaderElement(object):
 	"""An element (with parameters) from an HTTP header's element list."""
 
@@ -197,6 +199,7 @@ class HeaderElement(object):
 
 	def __repr__(self):
 		return '<%s(%r)>' % (self.__class__.__name__, self.value)
+
 
 class AcceptElement(HeaderElement):
 	"""An Accept element with quality value
@@ -253,6 +256,7 @@ class AcceptElement(HeaderElement):
 		else:
 			return self.quality < other.quality
 
+
 class Accept(AcceptElement):
 	@property
 	def version(self):
@@ -262,50 +266,66 @@ class Accept(AcceptElement):
 	def version(self, version):
 		self.params['version'] = version
 
+
 class AcceptCharset(AcceptElement):
 	pass
+
 
 class AcceptEncoding(AcceptElement):
 	pass
 
+
 class AcceptLanguage(AcceptElement):
 	pass
+
 
 class AcceptRanges(AcceptElement):
 	pass
 
+
 class Age(HeaderElement):
 	pass
+
 
 class Allow(HeaderElement):
 	pass
 
+
 class Authorization(HeaderElement):
 	pass
+
 
 class CacheControl(HeaderElement):
 	pass
 
+
 class Connection(HeaderElement):
 	pass
+
 
 class ContentEncoding(HeaderElement):
 	pass
 
+
 class ContentLanguage(HeaderElement):
 	pass
+
 
 class ContentLength(HeaderElement):
 	pass
 
+
 class ContentLocation(HeaderElement):
 	pass
+
 
 class ContentMD5(HeaderElement):
 	pass
 
+
 class ContentRange(HeaderElement):
 	pass
+
 
 class ContentType(HeaderElement):
 	@property
@@ -324,20 +344,26 @@ class ContentType(HeaderElement):
 	def version(self, version):
 		self.params['version'] = version
 
+
 class Date(HeaderElement):
 	pass
+
 
 class ETag(HeaderElement):
 	pass
 
+
 class Expect(HeaderElement):
 	pass
+
 
 class Expires(HeaderElement):
 	pass
 
+
 class From(HeaderElement):
 	pass
+
 
 # TODO: add case insensitve HeaderElement
 # TODO: integrate ipaddr.IP4/6Address which parses every form of ip addresses
@@ -377,56 +403,74 @@ class Host(HeaderElement):
 			raise InvalidHeader('Invalid Host header')
 		self.value = self.value.lower()
 
+
 class XForwardedHost(Host):
 	pass
+
 
 class IfMatch(HeaderElement):
 	pass
 
+
 class IfModifiedSince(HeaderElement):
 	pass
+
 
 class IfNoneMatch(HeaderElement):
 	pass
 
+
 class IfRange(HeaderElement):
 	pass
+
 
 class IfUnmodifiedSince(HeaderElement):
 	pass
 
+
 class LastModified(HeaderElement):
 	pass
+
 
 class Location(HeaderElement):
 	pass
 
+
 class MaxForwards(HeaderElement):
 	pass
+
 
 class Pragma(HeaderElement):
 	pass
 
+
 class ProxyAuthenticate(HeaderElement):
 	pass
+
 
 class ProxyAuthorization(HeaderElement):
 	pass
 
+
 class Range(HeaderElement):
 	pass
+
 
 class Referer(HeaderElement):
 	pass
 
+
 class RetryAfter(HeaderElement):
 	pass
+
 
 class Server(HeaderElement):
 	pass
 
+
 class TE(HeaderElement):
 	pass
+
 
 class Trailer(HeaderElement):
 	def __init__(self, value, params):
@@ -434,23 +478,30 @@ class Trailer(HeaderElement):
 		if value.title() in ('Transfer-Encoding', 'Content-Length', 'Trailer'):
 			raise InvalidHeader(u'A Trailer header MUST NOT contain %r field' % value.title())
 
+
 class TransferEncoding(HeaderElement):
 	pass
+
 
 class Upgrade(HeaderElement):
 	pass
 
+
 class UserAgent(HeaderElement):
 	pass
+
 
 class Vary(HeaderElement):
 	pass
 
+
 class Via(HeaderElement):
 	pass
 
+
 class Warning(HeaderElement):
 	pass
+
 
 class WWWAuthenticate(HeaderElement):
 	pass

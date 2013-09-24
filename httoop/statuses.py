@@ -3,11 +3,12 @@
 
 .. seealso:: :rfc:`2616#section-10`"""
 
-from httoop.body import Body # TODO: remove ?
+from httoop.body import Body  # TODO: remove ?
 from httoop.status import Status, REASONS
 
 # mapping of status -> Class, will be filled at the bottom
 STATUSES = dict()
+
 
 # TODO: inherit from response?
 # TODO: also inherit from circuits.Event/SF.http.server.Response, implement __call__ for additional arguments then?
@@ -76,7 +77,7 @@ class HTTPStatusException(Status, Exception):
 		Status.__init__(self, **statuskw)
 
 	def __repr__(self):
-		return '<HTTPStatusException(%s)>' % ' '.join('%s=%r' % (k,v) for k, v in self.to_dict().iteritems())
+		return '<HTTPStatusException(%s)>' % ' '.join('%s=%r' % (k, v) for k, v in self.to_dict().iteritems())
 
 	def to_dict(self):
 		u"""the default body arguments"""
@@ -86,17 +87,20 @@ class HTTPStatusException(Status, Exception):
 		            traceback=self.traceback or "",
 		            headers=self.headers)
 
+
 class HTTPInformational(HTTPStatusException):
 	u"""INFORMATIONAL = 1xx
 		Mostly used for negotiation with the HTTP Server
 	"""
 	pass
 
+
 class HTTPSuccess(HTTPStatusException):
 	u"""SUCCESS = 2xx
 		indicates that an operation was successful.
 	"""
 	pass
+
 
 class HTTPRedirect(HTTPStatusException):
 	u"""REDIRECTIONS = 3xx
@@ -115,11 +119,13 @@ class HTTPRedirect(HTTPStatusException):
 			dct.update(dict(Location=self.headers['Location']))
 		return dct
 
+
 class HTTPClientError(HTTPStatusException):
 	u"""CLIENT_ERRORS = 4xx
 		Something is wrong with the client: e.g. authentication, format of wanted representation, or error in the clients http library.
 	"""
 	pass
+
 
 class HTTPServerError(HTTPStatusException):
 	u"""SERVER_ERRORS = 5xx
@@ -130,6 +136,7 @@ class HTTPServerError(HTTPStatusException):
 		dct = super(HTTPServerError, self).to_dict()
 		dct.update(dict(traceback=self.traceback))
 		return dct
+
 
 class StatusType(type):
 	def __new__(mcs, name, bases, dict):
@@ -152,6 +159,7 @@ class StatusType(type):
 		dict.setdefault('description', reason[1])
 		return type.__new__(mcs, name, (scls,), dict)
 
+
 class CONTINUE(object):
 	u"""This is, beside 417, the status code for a LBYL (Look before you leap) request.
 		It indicates that the request is OK and the client should resent its request.
@@ -160,6 +168,7 @@ class CONTINUE(object):
 	__metaclass__ = StatusType
 	status = 100
 	body = None
+
 
 class SWITCHING_PROTOCOLS(object):
 	u"""If the client wants to use another protocol (in the Upgrade-header) this is the response
@@ -180,6 +189,7 @@ class OK(object):
 	__metaclass__ = StatusType
 	status = 200
 
+
 class CREATED(object):
 	u"""A new resource was created.
 		This should only be send on POST and PUT requests.
@@ -188,6 +198,7 @@ class CREATED(object):
 	"""
 	__metaclass__ = StatusType
 	status = 201
+
 	def __init__(self, location, *args, **kwargs):
 		kwargs.setdefault('headers', {})['Location'] = location
 		super(CREATED, self).__init__(*args, **kwargs)
@@ -197,6 +208,7 @@ class CREATED(object):
 		dct.update(dict(Location=self.headers['Location']))
 		return dct
 
+
 class ACCEPTED(object):
 	u"""The request looks valid but will be procecced later. It is an asynchronous action.
 		The Location-Header should contain a URI where the status of processing can be found.
@@ -204,10 +216,12 @@ class ACCEPTED(object):
 	__metaclass__ = StatusType
 	status = 202
 
+
 class NON_AUTHORITATIVE_INFORMATION(object):
 	u"""Everything is OK but the response headers may be altered by a third party."""
 	__metaclass__ = StatusType
 	status = 203
+
 
 class NO_CONTENT(object):
 	u"""GET: The representation of the resource is empty.
@@ -218,12 +232,14 @@ class NO_CONTENT(object):
 	status = 204
 	body = None
 
+
 class RESET_CONTENT(object):
 	u"""The same as 204 but this indicated that the client should reset the view of its data structure.
 	This is useful for entering a series of records in succession (a HTML POST form)."""
 	__metaclass__ = StatusType
 	status = 205
 	body = None
+
 
 class PARTIAL_CONTENT(object):
 	u"""Partial GET:
@@ -258,11 +274,13 @@ class MULTIPLE_CHOICES(object):
 	"""
 	__metaclass__ = StatusType
 	status = 300
+
 	def __init__(self, locations, *args, **kwargs):
 		if isinstance(locations, basestring):
 			locations = [locations]
 		locations = ', '.join(locations)
 		super(MULTIPLE_CHOICES, self).__init__(locations, *args, **kwargs)
+
 
 class MOVED_PERMANENTLY(object):
 	u"""The the server knows the target resource but the URI is incorrect (wrong domain, trailing slash, etc.).
@@ -270,9 +288,11 @@ class MOVED_PERMANENTLY(object):
 	__metaclass__ = StatusType
 	status = 301
 
+
 class FOUND(object):
 	__metaclass__ = StatusType
 	status = 302
+
 
 class SEE_OTHER(object):
 	u"""The request has been processed but instead of serving a representation of the result or resource
@@ -280,6 +300,7 @@ class SEE_OTHER(object):
 	This is also useful for links like /release-latest.tar.gz -> /release-1.2.tar.gz"""
 	__metaclass__ = StatusType
 	status = 303
+
 
 class NOT_MODIFIED(object):
 	u"""The client already has the data which is provided through the information in the Etag or If-Modified-Since-header.
@@ -298,6 +319,7 @@ class NOT_MODIFIED(object):
 	header_to_remove = ("Allow", "Content-Encoding", "Content-Language", "Content-Length",
 					"Content-MD5", "Content-Range", "Content-Type", "Expires", "Location")
 
+
 class USE_PROXY(object):
 	__metaclass__ = StatusType
 	status = 305
@@ -306,6 +328,7 @@ class USE_PROXY(object):
 #SWITCH_PROXY = class (object):
 #	__metaclass__ = StatusType
 #	status = 306
+
 
 class TEMPORARY_REDIRECT(object):
 	u"""The request has not processed because the requested resource is located at a different URI.
@@ -319,11 +342,13 @@ class TEMPORARY_REDIRECT(object):
 #	__metaclass__ = StatusType
 #	status = 308
 
+
 class BAD_REQUEST(object):
 	u"""The generic response code for client side errors.
 		The response entity-body should contain information about what is wrong with the request."""
 	__metaclass__ = StatusType
 	status = 400
+
 
 class UNAUTHORIZED(object):
 	u"""The requested resource is protected and no or wrong authentication credentials was given.
@@ -332,6 +357,7 @@ class UNAUTHORIZED(object):
 	"""
 	__metaclass__ = StatusType
 	status = 401
+
 	def __init__(self, authenticate, *args, **kwargs):
 		kwargs.setdefault('headers', {})['WWW-Authenticate'] = authenticate
 		super(UNAUTHORIZED, self).__init__(*args, **kwargs)
@@ -341,24 +367,29 @@ class UNAUTHORIZED(object):
 		dct.update(dict({'WWW-Authenticate': self.headers['WWW-Authenticate']}))
 		return dct
 
+
 class PAYMENT_REQUIRED(object):
 	__metaclass__ = StatusType
 	status = 402
 	# Reserved for future use
+
 
 class FORBIDDEN(object):
 	u"""The resource can only be served for specific users, at a specific time or from a certain IP address, etc."""
 	__metaclass__ = StatusType
 	status = 403
 
+
 class NOT_FOUND(object):
 	u"""No resource could be found at the given URI."""
 	__metaclass__ = StatusType
 	status = 404
+
 	def __init__(self, path, **kwargs):
 		self.path = path
 		kwargs.update(dict(description='The requested resource "%s" was not found on this server.' % (path)))
 		super(NOT_FOUND, self).__init__(**kwargs)
+
 
 class METHOD_NOT_ALLOWED(object):
 	u"""The client tried to use a HTTP Method which is not allowed.
@@ -366,6 +397,7 @@ class METHOD_NOT_ALLOWED(object):
 	"""
 	__metaclass__ = StatusType
 	status = 405
+
 	def __init__(self, allow, *args, **kwargs):
 		kwargs.setdefault('headers', {})['Allow'] = allow
 		super(METHOD_NOT_ALLOWED, self).__init__(*args, **kwargs)
@@ -375,20 +407,24 @@ class METHOD_NOT_ALLOWED(object):
 		dct.update(dict(Allow=self.headers['Allow']))
 		return dct
 
+
 class NOT_ACCEPTABLE(object):
 	u"""The clients Accept-\*-header wants a representation of the resource which the server can not deliver.
 		The entity body should contain a list of links with acceptable representations (similar to 300)."""
 	__metaclass__ = StatusType
 	status = 406
 
+
 class PROXY_AUTHENTICATION_REQUIRED(object):
 	__metaclass__ = StatusType
 	status = 407
+
 
 class REQUEST_TIMEOUT(object):
 	u"""The client opens a connection to a server without sending a request after a specific amount of time."""
 	__metaclass__ = StatusType
 	status = 408
+
 
 class CONFLICT(object):
 	u"""If the request would cause to leave the resource in an inconsequent state this status is send.
@@ -398,20 +434,24 @@ class CONFLICT(object):
 	__metaclass__ = StatusType
 	status = 409
 
+
 class GONE(object):
 	u"""The resource exists but is not anymore available (propably DELETEd)"""
 	__metaclass__ = StatusType
 	status = 410
+
 
 class LENGTH_REQUIRED(object):
 	u"""If a request representation is given but no Content-Length-header the HTTP server can decide to respond with this status code."""
 	__metaclass__ = StatusType
 	status = 411
 
+
 class PRECONDITION_FAILED(object):
 	u"""If a condition from any of the If-\*-headers except for conditional GET fails this status code is the respond."""
 	__metaclass__ = StatusType
 	status = 412
+
 
 class REQUEST_ENTITY_TOO_LARGE(object):
 	u"""The HTTP server can deny too large representations.
@@ -420,10 +460,12 @@ class REQUEST_ENTITY_TOO_LARGE(object):
 	__metaclass__ = StatusType
 	status = 413
 
+
 class REQUEST_URI_TOO_LONG(object):
 	u"""Raised if the given URI is too long for the server."""
 	__metaclass__ = StatusType
 	status = 414
+
 
 class UNSUPPORTED_MEDIA_TYPE(object):
 	u"""This status code is sent when the server does not know the representation media type given in Content-Type-header.
@@ -431,14 +473,17 @@ class UNSUPPORTED_MEDIA_TYPE(object):
 	__metaclass__ = StatusType
 	status = 415
 
+
 class REQUEST_RANGE_NOT_SATISFIABLE(object):
 	__metaclass__ = StatusType
 	status = 416
+
 
 class EXPECTATION_FAILED(object):
 	u"""This is the response code if a LBYL request (Expect-header) fails. It is the flip side of 100 Continue."""
 	__metaclass__ = StatusType
 	status = 417
+
 
 class I_AM_A_TEAPOT(object):
 	__metaclass__ = StatusType
@@ -515,25 +560,30 @@ class INTERNAL_SERVER_ERROR(object):
 	__metaclass__ = StatusType
 	status = 500
 
+
 class NOT_IMPLEMENTED(object):
 	u"""The client tried to use a HTTP feature which the server does not support. Used if the server does not know the request method."""
 	__metaclass__ = StatusType
 	status = 501
+
 
 class BAD_GATEWAY(object):
 	u"""Problem with the proxy server."""
 	__metaclass__ = StatusType
 	status = 502
 
+
 class SERVICE_UNAVAILABLE(object):
 	u"""There is currently a problem with the server. Propably too many requests at once."""
 	__metaclass__ = StatusType
 	status = 503
 
+
 class GATEWAY_TIMEOUT(object):
 	u"""The proxy could not connect to the upstream server."""
 	__metaclass__ = StatusType
 	status = 504
+
 
 class HTTP_VERSION_NOT_SUPPORTED(object):
 	u"""The clients http version is not supported. This should not happen since HTTP 1.1 is backward compatible.

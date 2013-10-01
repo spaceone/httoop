@@ -10,6 +10,8 @@ from io import BytesIO  # hmm, six implements StringIO for this, which is wrong.
 from httoop.headers import Headers
 from httoop.util import ByteString, text_type, binary_type
 
+# TODO: check if we need circuits.web.wrappers.file_generator
+
 # TODO: implement a nice way to support files, BytesIO and iterables, with methods to write, truncate, tell, read, etc.
 # We need to support the following cases:
 # 	response.body = open(filename)
@@ -53,7 +55,7 @@ class Body(ByteString):
 				body = body.content
 		self.content = body
 
-	def __bytes__(self):
+	def compose(self):
 		bytesio = self.content
 		if not hasattr(bytesio, 'tell'):
 			return str(bytesio)  # FIXME: don't allow dicts anymore
@@ -66,6 +68,9 @@ class Body(ByteString):
 			body = body.encode(bytesio.encoding)
 
 		return body
+
+	def __bytes__(self):
+		return self.compose()
 
 	def __unicode__(self):
 		body = bytes(self)
@@ -98,8 +103,17 @@ class Body(ByteString):
 	def read(self, *size):
 		return self.content.read(*size[:1])
 
+	def readline(self, *size):
+		return self.content.readline(*size[:1])
+
+	def readlines(self, *size):
+		return self.content.readlines(*size[:1])
+
 	def write(self, bytes_):
 		return self.content.write(bytes_)
+
+	def writelines(sequence_of_strings):
+		return self.content.writelines(sequence_of_strings)
 
 	def seek(self, offset, whence=0):
 		return self.content.seek(offset, whence)
@@ -116,11 +130,10 @@ class Body(ByteString):
 
 # TODO: add iterable to list, tuple
 class ChunkedBody(Body):
-	u"""A body which consists of an iterable (to support WSGI)
-	"""
+	u"""A body which consists of an iterable"""
 
-	def __init__(self, body=None):
-		super(ChunkedBody, self).__init__(body)
+	def __init__(self, body=None, encoding=None):
+		super(ChunkedBody, self).__init__(body, encoding)
 		self.trailer = Headers()
 
 	def parse(self, data):
@@ -131,14 +144,18 @@ class ChunkedBody(Body):
 			self.content = body
 		super(ChunkedBody, self).set(body)
 
+	def close(self):
+		if hasattr(self.content, 'close'):
+			return self.content.close()
+
 	def __len__(self):
 		body = self.content
 		if isinstance(body, (list, tuple)):
 			return len(body)  # FIXME
 		return super(ChunkedBody, self).__len__()
 
-	def __bytes__(self):
-		return self.compose()
+	def __nonzero__(self):
+		return bool(self.content)
 
 	def __repr__(self):
 		return '<ChunkedBody(%d)>' % len(self)

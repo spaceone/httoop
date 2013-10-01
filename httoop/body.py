@@ -7,34 +7,21 @@
 from os.path import getsize
 from io import BytesIO  # hmm, six implements StringIO for this, which is wrong...
 
+from httoop.exceptions import InvalidBody
 from httoop.headers import Headers
-from httoop.util import ByteString, text_type, binary_type
-
-# TODO: check if we need circuits.web.wrappers.file_generator
-
-# TODO: implement a nice way to support files, BytesIO and iterables, with methods to write, truncate, tell, read, etc.
-# We need to support the following cases:
-# 	response.body = open(filename)
-# 	response.body = u''
-# 	response.body = b''
-# 	response.body = ['this', 'is', 'a', 'chunk'] → if we want to send chunked output
-# 	response.body = BytesIO('')
+from httoop.util import ByteString, IFile, text_type, binary_type, get_bytes_from_unknown, file_generator
 
 
-def get_bytes_from_unknown(unistr):
-	for encoding in ('UTF-8', 'ISO8859-1'):
-		try:
-			return unistr.encode(encoding)
-		except UnicodeEncodeError:
-			pass
-
-
-class Body(ByteString):
+class Body(IFile, ByteString):
 	u"""A HTTP message body"""
 
 	@property
 	def chunked(self):
 		return isinstance(self, ChunkedBody)
+
+	@property
+	def fileable(self):
+		return all(hasattr(self.content, method) for method in ('read', 'write', 'close'))
 
 	def __init__(self, body=None, encoding=None):
 		self.content = BytesIO()
@@ -48,24 +35,27 @@ class Body(ByteString):
 			if not body:
 				body = BytesIO()
 			elif isinstance(body, text_type):
-				body = BytesIO(body.encode('UTF-8'))
+				body = BytesIO(body.encode(self.encoding or 'UTF-8'))
 			elif isinstance(body, binary_type):
 				body = BytesIO(body)
 			elif isinstance(body, Body):
 				body = body.content
+			elif not hasattr(body, '__iter__'):
+				raise InvalidBody() # TODO: description
 		self.content = body
 
 	def compose(self):
-		bytesio = self.content
-		if not hasattr(bytesio, 'tell'):
-			return str(bytesio)  # FIXME: don't allow dicts anymore
-		t = bytesio.tell()
-		bytesio.seek(0)
-		body = bytesio.read()
-		bytesio.seek(t)
+		if not self.fileable:
+			return b''.join(self.content)  # TODO: map(any_to_bytes, self.content)
 
-		if isinstance(bytesio, file) and bytesio.encoding is not None:
-			body = body.encode(bytesio.encoding)
+		t = self.tell()
+		self.seek(0)
+		body = self.read()
+		self.seek(t)
+
+		if getattr(self.content, 'encoding', None) is not None:
+			# we have a real file here
+			body = body.encode(self.content.encoding)
 
 		return body
 
@@ -91,46 +81,22 @@ class Body(ByteString):
 		if isinstance(body, BytesIO):
 			return len(body.getvalue())
 
-		return len(bytes(self))
+		return len(Body.compose(self))
 
-	# the file interface
-	def close(self):
-		return self.content.close()
-
-	def flush(self):
-		return self.content.flush()
-
-	def read(self, *size):
-		return self.content.read(*size[:1])
-
-	def readline(self, *size):
-		return self.content.readline(*size[:1])
-
-	def readlines(self, *size):
-		return self.content.readlines(*size[:1])
-
-	def write(self, bytes_):
-		return self.content.write(bytes_)
-
-	def writelines(sequence_of_strings):
-		return self.content.writelines(sequence_of_strings)
-
-	def seek(self, offset, whence=0):
-		return self.content.seek(offset, whence)
-
-	def tell(self):
-		return self.content.tell()
-
-	def truncate(self, size=None):
-		return self.content.truncate(size)
+	def __iter__(self):
+		if isinstance(self.content, file):
+			# don't iterate over every single byte
+			return file_generator(self.content)
+		if hasattr(self.content, '__iter__'):
+			return self.content.__iter__
+		return [Body.compose(self)].__iter__
 
 	def __repr__(self):
 		return '<HTTP Body(%d)>' % len(self)
 
 
-# TODO: add iterable to list, tuple
 class ChunkedBody(Body):
-	u"""A body which consists of an iterable"""
+	u"""A body which can consists of any iterable"""
 
 	def __init__(self, body=None, encoding=None):
 		super(ChunkedBody, self).__init__(body, encoding)
@@ -139,35 +105,17 @@ class ChunkedBody(Body):
 	def parse(self, data):
 		pass
 
-	def set(self, body):
-		if isinstance(body, (list, tuple)):
-			self.content = body
-		super(ChunkedBody, self).set(body)
-
-	def close(self):
-		if hasattr(self.content, 'close'):
-			return self.content.close()
-
-	def __len__(self):
-		body = self.content
-		if isinstance(body, (list, tuple)):
-			return len(body)  # FIXME
-		return super(ChunkedBody, self).__len__()
-
-	def __nonzero__(self):
-		return bool(self.content)
-
-	def __repr__(self):
-		return '<ChunkedBody(%d)>' % len(self)
-
 	def compose(self):
 		while True:
 			try:
-				data = next(self)
+				data = next(self.content)
 				yield "%s\r\n%s\r\n" % (hex(len(data))[2:], data)
 			except StopIteration:
 				break
-		if self.trailer is not None:
+		if self.trailer:
 			yield b"0\r\n%s" % bytes(self.trailer)
 		else:
 			yield b"0\r\n\r\n"
+
+	def __repr__(self):
+		return '<ChunkedBody(%d)>' % len(self)

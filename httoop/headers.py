@@ -28,7 +28,8 @@ class Headers(ByteString, CaseInsensitiveDict):
 	RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"/\[\]\?=]')
 
 	def elements(self, fieldname):
-		u"""Return a sorted list of HeaderElements from the given comma-separated header string."""
+		u"""Return a sorted list of HeaderElements from
+			the given comma-separated header string."""
 
 		fieldvalue = self.get(fieldname)
 		if not fieldvalue:
@@ -98,7 +99,7 @@ class Headers(ByteString, CaseInsensitiveDict):
 			# Parse initial header name : value pair.
 			curr = lines.pop(0)
 			if b':' not in curr:
-				raise InvalidHeader(u"Invalid header line: %s" % curr.strip().decode('ISO8859-1'))
+				raise InvalidHeader(u"Invalid header line: %r" % curr.decode('ISO8859-1'))
 
 			name, value = curr.split(":", 1)
 			name = name.rstrip(" \t")

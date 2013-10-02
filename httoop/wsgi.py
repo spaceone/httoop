@@ -58,7 +58,8 @@ class WSGI(object):
 	def _get_environ(self):
 		environ = {}
 		environ.update(dict(self.os_environ.items()))
-		environ.update(dict([('HTTP_%s' % name.upper(), value) for name, value in self.request.headers.iteritems()]))
+		environ.update(dict([('HTTP_%s' % name.upper(), value)
+			for name, value in self.request.headers.iteritems()]))
 		environ.update({
 			'REQUEST_METHOD': bytes(self.request.method),
 			'SCRIPT_NAME': b'',

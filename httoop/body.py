@@ -5,11 +5,12 @@
 """
 
 from os.path import getsize
-from io import BytesIO  # hmm, six implements StringIO for this, which is wrong...
+from io import BytesIO
 
 from httoop.exceptions import InvalidBody
 from httoop.headers import Headers
-from httoop.util import ByteString, IFile, text_type, binary_type, get_bytes_from_unknown, file_generator
+from httoop.util import ByteString, IFile, file_generator
+from httoop.util import text_type, binary_type, get_bytes_from_unknown
 
 
 class Body(IFile, ByteString):
@@ -41,7 +42,7 @@ class Body(IFile, ByteString):
 			elif isinstance(body, Body):
 				body = body.content
 			elif not hasattr(body, '__iter__'):
-				raise InvalidBody() # TODO: description
+				raise InvalidBody()  # TODO: description
 		self.content = body
 
 	def compose(self):

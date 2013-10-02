@@ -256,7 +256,9 @@ class Host(HeaderElement):
 
 	@property
 	def hostname(self):
-		return self.ip6address or self.ip4address or self.RE_HOSTNAME.match(self.value).group(1).lower()
+		return self.ip6address or\
+			self.ip4address or\
+			self.RE_HOSTNAME.match(self.value).group(1).lower()
 
 	@property
 	def ip6address(self):

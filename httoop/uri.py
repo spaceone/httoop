@@ -53,12 +53,19 @@ class URI(ByteString):
 		self.validate_http_uri()
 
 	def validate_http_uri(self):
-		if self.fragment or\
-			self.username or\
-			self.password or\
-			not self.path or\
-			(self.path != '*' and self.path[0] != '/'):
-				raise InvalidURI(self.uri)
+		if self.fragment:
+			pass
+		elif self.username:
+			pass
+		elif self.password:
+			pass
+		elif not self.path:
+			pass
+		elif (self.path != '*' and self.path[0] != '/'):
+			pass
+		else:
+			return
+		raise InvalidURI(self.uri)
 
 	# this is ripped from url-parse project which is MIT licensed
 	def abspath(self):
@@ -110,7 +117,7 @@ class URI(ByteString):
 		pass
 
 	def __bytes__(self):
-		# TODO: we have a problem here, we don't know if we need to get the abspath or a relpath
+		# TODO: we don't know if we need to get the abspath or a relpath
 		return self.path
 
 	def __repr__(self):

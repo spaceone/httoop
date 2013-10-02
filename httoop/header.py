@@ -18,6 +18,7 @@ from httoop.exceptions import InvalidHeader
 # a mapping of all headers to HeaderElement classes
 headerfields = CaseInsensitiveDict()
 
+
 class HeaderElement(object):
 	"""An element (with parameters) from an HTTP header's element list."""
 

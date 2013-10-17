@@ -38,7 +38,7 @@ class WSGI(object):
 		self.run_once = False
 		self.server_name = bytes(self.request.uri.host)
 		self.server_port = bytes(self.request.uri.port)
-		self.os_environ = os.environ
+		self.environ = os.environ
 
 	def __call__(self, application):
 		def start_response(status, response_headers, exc_info=None):
@@ -57,8 +57,8 @@ class WSGI(object):
 
 	def _get_environ(self):
 		environ = {}
-		environ.update(dict(self.os_environ.items()))
-		environ.update(dict([('HTTP_%s' % name.upper(), value)
+		environ.update(dict(self.environ.items()))
+		environ.update(dict([('HTTP_%s' % name.upper().replace('-', '_'), value)
 			for name, value in self.request.headers.iteritems()]))
 		environ.update({
 			'REQUEST_METHOD': bytes(self.request.method),
@@ -79,3 +79,28 @@ class WSGI(object):
 			'wsgi.run_once': self.run_once,
 		})
 		return environ
+
+	def from_environ(self, environ=os.environ):
+		environ = environ.copy()
+
+		for name, value in environ.iteritems():
+			if name.startswith('HTTP_'):
+				self.request.headers[name[5:].replace('_', '-')] = value
+
+		self.request.body = environ['REQUEST_METHOD']
+		self.request.uri.path = environ['PATH_INFO']
+		self.request.uri.query_string = environ['QUERY_STRING']
+		self.request.headers['Content-Type'] = environ.get('CONTENT_TYPE')
+		self.request.headers['Content-Length'] = environ.get('Content-Length')
+		self.server_name = environ.get('SERVER_NAME')
+		self.server_port = environ.get('SERVER_PORT')
+		self.request.protocol = environ['SERVER_PROTOCOL']
+		self.wsgi_version = environ['wsgi.version']
+		self.request.uri.scheme = environ['wsgi.url_scheme']
+		self.request.body = environ['wsgi.input']
+		self.errors = environ['wsgi.errors']
+		self.multithread = environ['wsgi.multithread']
+		self.multiprocess = environ['wsgi.multiprocess']
+		self.run_once = environ['wsgi.run_once']
+
+		self.environ = environ

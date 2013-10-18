@@ -6,6 +6,9 @@
 """
 
 from httoop.util import ByteString, text_type
+from httoop.extensions import InvalidLine
+
+import re
 
 
 class Status(ByteString):
@@ -45,6 +48,8 @@ class Status(ByteString):
 
 	reason = None
 
+	STATUS_RE = re.compile(r"^([1-5]\d{2})(?:\s+([\s\w]*))\Z")
+
 	def __init__(self, code=None, reason=None):
 		u"""
 			:param code:
@@ -61,14 +66,17 @@ class Status(ByteString):
 		if code:
 			self.set((code, reason,))
 
-	def parse(self, data):
+	def parse(self, status):
 		u"""parse a Statuscode and Reason-Phrase
 
-			:param data: the code and reason
-			:type  data: bytes
+			:param status: the code and reason
+			:type  status: bytes
 		"""
-		code, reason = data.split(None, 1)
-		self.code, self.reason = int(code), reason.decode('ascii')
+		match = self.STATUS_RE.match(status)
+		if match is None:
+			raise InvalidLine(u"Invalid status %r" % status.decode('ISO8859-1'))
+
+		self.set(int(match.group(1)), match.group(2).decode('ascii'))
 
 	def compose(self):
 		return b'%d %s' % (self.code, self.reason.encode('ascii'))

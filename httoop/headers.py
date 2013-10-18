@@ -82,6 +82,11 @@ class Headers(ByteString, CaseInsensitiveDict):
 		for name in self:
 			self.elements(name)
 
+	def set(self, headers):
+		for key in self.keys():
+			del self[key]
+		self.update(headers)
+
 	def parse(self, data):
 		r"""parses HTTP headers
 

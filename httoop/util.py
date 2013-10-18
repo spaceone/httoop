@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from six import PY3, text_type, binary_type, BytesIO, iteritems
 
+__all__ = ['PY3', 'text_type', 'binary_type', 'BytesIO', 'iteritems', 'urlparse']
+__all__ += ['file_generator', 'to_unicode', 'to_ascii', 'get_bytes_from_unknown']
+__all__ += ['IFile', 'ByteString']
+
 # TODO: from six
 try:
 	import urlparse
@@ -82,7 +86,7 @@ class IFile(object):
 		return self.content.write(bytes_)
 
 	@if_has
-	def writelines(sequence_of_strings):
+	def writelines(self, sequence_of_strings):
 		return self.content.writelines(sequence_of_strings)
 
 	@if_has
@@ -166,3 +170,8 @@ class ByteString(object):
 
 	def __bytes__(self):
 		raise NotImplemented
+
+	def __cmp__(self, other):
+		if isinstance(other, text_type):
+			return cmp(text_type(self), other)
+		return cmp(bytes(self), other)

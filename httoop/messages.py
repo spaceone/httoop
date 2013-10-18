@@ -18,15 +18,12 @@ from httoop.exceptions import InvalidLine, InvalidURI
 from httoop.util import ByteString, text_type
 
 
-class Protocol(tuple):
+class Protocol(ByteString):
 	u"""The HTTP protocol version"""
 
-	def __str__(self):
-		return 'HTTP/%d.%d' % self
-
 	@property
-	def name(self):
-		return 'HTTP'
+	def version(self):
+		return tuple(self)
 
 	@property
 	def major(self):
@@ -36,25 +33,73 @@ class Protocol(tuple):
 	def minor(self):
 		return self[1]
 
+	PROTOCOL_RE = re.compile(r"^(HTTP)/(\d+).(\d+)\Z")
 
-class Method(text_type):
+	def __init__(self, protocol=(1, 1)):
+		self.__protocol = protocol
+		self.name = b'HTTP'
+		self.set(protocol)
+
+	def set(self, protocol):
+		if isinstance(protocol, (bytes, text_type)):
+			protocol = self.parse(protocol)
+		else:
+			self.__protocol = tuple(protocol)
+
+	def parse(self, protocol):
+		match = self.PROTOCOL_RE.match(protocol)
+		if match is None:
+			raise InvalidLine(u"Invalid HTTP protocol: %r" % protocol.decode('ISO8859-1'))
+		self.__protocol = (int(match.group(2)), int(match.group(3)))
+		self.name = match.group(1)
+
+	def __bytes__(self):
+		return b'%s/%d.%d' % (self.name, self.major, self.minor)
+
+	def __iter__(self):
+		return self.__protocol.__iter__()
+
+	def __getitem__(self, key):
+		return self.version[key]
+
+	def __cmp__(self, other):
+		if isinstance(other, (bytes, text_type)):
+			return super(Protocol, self).__cmp__(other)
+		return cmp(self.__protocol, other)
+
+
+class Method(ByteString):
 	u"""A HTTP request method"""
+
+	@property
+	def safe(self):
+		return self in self.safe_methods
+
+	@property
+	def idempotent(self):
+		return self in self.idempotent_methods
 
 	safe_methods = (u'GET', u'HEAD', u'PUT', u'DELETE', u'OPTIONS', u'TRACE')
 
 	idempotent_methods = (u'GET', u'HEAD')
 
+	METHOD_RE = re.compile(r"^[A-Z0-9$-_.]{1,20}\Z", re.IGNORECASE)
+
 	def __init__(self, method):
-		# TODO: make sure the method is HTTP "token"
+		self.set(method)
+
+	def set(self, method):
 		if isinstance(method, text_type):
-			method = method.encode('ascii').decode('ascii')
-		elif isinstance(method, bytes):
-			method = method.decode('ascii')
+			method = method.encode('ascii')
+		self.parse(method)
 
-		super(Method, self).__init__(method)
+	def parse(self, method):
+		if not self.METHOD_RE.match(method):
+			raise InvalidLine(u"Invalid method: %r" % method.decode('ISO8859-1'))
+		self.__method = method
 
-		self.idempotent = self in self.safe_methods
-		self.safe = self in self.idempotent_methods
+	def __bytes__(self):
+		return self.__method
 
 
 class Message(ByteString):
@@ -62,8 +107,6 @@ class Message(ByteString):
 
 		.. seealso:: :rfc:`2616#section-4`
 	"""
-
-	VERSION_RE = re.compile(r"^HTTP/(\d+).(\d+)\Z")
 
 	def __init__(self, protocol=None, headers=None, body=None):
 		u"""Initiates a new Message to hold information about the message.
@@ -81,17 +124,14 @@ class Message(ByteString):
 		self.__headers = Headers(headers or {})
 		self.__body = Body(body or b'')
 
-	def parse(self, version):
+	def parse(self, protocol):
 		u"""parses the HTTP protocol version
 
-			:param version: the version string
-			:type  version: bytes
+			:param protocol: the protocol version string
+			:type  protocol: bytes
 		"""
-		match = self.VERSION_RE.match(version)
-		if match is None:
-			raise InvalidLine(u"Invalid HTTP version: %r" % version.decode('ISO8859-1'))
 
-		self.protocol = (int(match.group(1)), int(match.group(2)))
+		self.protocol.parse(protocol)
 
 	def prepare(self):
 		pass
@@ -102,12 +142,7 @@ class Message(ByteString):
 
 	@protocol.setter
 	def protocol(self, protocol):
-		if not isinstance(protocol, Protocol):
-			protocol = Protocol(protocol)
-		self.__protocol = protocol
-
-	# alias
-	version = protocol
+		self.__protocol.set(protocol)
 
 	@property
 	def headers(self):
@@ -115,9 +150,7 @@ class Message(ByteString):
 
 	@headers.setter
 	def headers(self, headers):
-		if not isinstance(headers, Headers):
-			headers = type(self.__headers)(headers)
-		self.__headers = headers
+		self.__headers.set(headers)
 
 	@property
 	def body(self):
@@ -144,8 +177,6 @@ class Request(Message):
 		.. seealso:: :rfc:`2616#section-5`
 	"""
 
-	METHOD_RE = re.compile(r"^[A-Z0-9$-_.]{1,20}\Z")
-
 	def __init__(self, method=None, uri=None, protocol=None, headers=None, body=None):
 		"""Creates a new Request object to hold information about a request.
 
@@ -170,17 +201,15 @@ class Request(Message):
 		if len(bits) != 3:
 			raise InvalidLine(line)
 
-		# version
+		# protocol version
 		super(Request, self).parse(bits[2])
 
 		# method
-		if None is self.METHOD_RE.match(bits[0]):
-			raise InvalidLine(u"Invalid method: %r" % bits[0].decode('ISO8859-1'))
-		self.method = bits[0]  # HTTP method is case sensitive
+		self.method.parse(bits[0])
 
 		# URI
 		try:
-			self.uri = bits[1]
+			self.uri.parse(bits[1])
 		except InvalidURI as exc:
 			raise InvalidLine(u"Invalid request URL: %r" % text_type(exc))
 
@@ -197,7 +226,7 @@ class Request(Message):
 
 	@method.setter
 	def method(self, method):
-		self.__method = Method(method)
+		self.__method.set(method)
 
 	@property
 	def uri(self):
@@ -219,8 +248,6 @@ class Response(Message):
 
 		.. seealso:: :rfc:`2616#section-6`
 	"""
-
-	STATUS_RE = re.compile(r"^([1-5]\d{2})(?:\s+([\s\w]*))\Z")
 
 	def __init__(self, status=None, protocol=None, headers=None, body=None):
 		"""Creates a new Response object to hold information about the response.
@@ -246,11 +273,7 @@ class Response(Message):
 		super(Response, self).parse(bits[0])
 
 		# status
-		match = self.STATUS_RE.match(bits[1])
-		if match is None:
-			raise InvalidLine(u"Invalid status %r" % bits[1].decode('ISO8859-1'))
-
-		self.status = (int(match.group(1)), match.group(2))
+		self.status.parse(bits[1])
 
 	def compose(self):
 		u"""composes the response line"""

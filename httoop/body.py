@@ -10,7 +10,7 @@ from io import BytesIO
 from httoop.exceptions import InvalidBody
 from httoop.headers import Headers
 from httoop.util import ByteString, IFile, file_generator
-from httoop.util import text_type, binary_type, get_bytes_from_unknown
+from httoop.util import text_type, binary_type
 
 
 class Body(IFile, ByteString):

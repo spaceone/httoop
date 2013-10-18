@@ -6,7 +6,7 @@
 
 # TODO: PEP3101
 
-__all__ = ['Status', 'Body', 'Headers', 'URI', 'Method',
+__all__ = ['Status', 'Body', 'Headers', 'URI', 'Method', 'HTTP',
            'Request', 'Response', 'Protocol', 'Date', 'StateMachine',
            'InvalidLine', 'InvalidHeader', 'InvalidURI', 'InvalidBody', 'InvalidDate',
            'CONTINUE', 'SWITCHING_PROTOCOLS', 'OK', 'CREATED', 'ACCEPTED',
@@ -31,7 +31,8 @@ from httoop.body import Body
 from httoop.uri import URI
 from httoop.messages import Request, Response, Protocol, Method
 from httoop.exceptions import InvalidLine, InvalidHeader, InvalidURI, InvalidBody, InvalidDate
-from httoop.parser import StateMachine, HTTP
+from httoop.parser import StateMachine
+from httoop.http import HTTP
 
 from httoop.statuses import HTTPStatusException
 from httoop.statuses import CONTINUE, SWITCHING_PROTOCOLS, OK, CREATED, ACCEPTED, NON_AUTHORITATIVE_INFORMATION

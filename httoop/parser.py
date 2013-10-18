@@ -6,17 +6,12 @@ CR = b'\r'
 LF = b'\n'
 CRLF = CR + LF
 
-from httoop.messages import Request, Response
+from httoop.messages import Request
 from httoop.headers import Headers
-from httoop.exceptions import InvalidLine, InvalidHeader, InvalidURI, InvalidBody
+from httoop.exceptions import InvalidLine, InvalidHeader, InvalidBody
 from httoop.util import text_type
 from httoop.statuses import BAD_REQUEST, NOT_IMPLEMENTED, LENGTH_REQUIRED
-from httoop.statuses import HTTPStatusException, MOVED_PERMANENTLY
-from httoop.statuses import REQUEST_URI_TOO_LONG, HTTP_VERSION_NOT_SUPPORTED
-
-import zlib
-
-ServerProtocol = (1, 1)
+from httoop.statuses import HTTPStatusException, REQUEST_URI_TOO_LONG
 
 
 class StateMachine(object):
@@ -24,7 +19,6 @@ class StateMachine(object):
 
 	def __init__(self):
 		self.request = Request()
-		self.response = Response()
 		self.buffer = b''
 		self.httperror = None
 
@@ -223,75 +217,3 @@ class StateMachine(object):
 				if self.buffer:
 					raise BAD_REQUEST(u'too much input')
 				break
-
-
-class HTTP(StateMachine):
-	def __init__(self, *args, **kwargs):
-		super(HTTP, self).__init__(*args, **kwargs)
-		self._decompress_obj = None
-
-	def state_changed(self, state):
-		super(HTTP, self).state_changed(state)
-		request = self.request
-		response = self.response
-		if state == "requestline":
-			# check if we speak the same major HTTP version
-			if request.protocol.major != response.protocol.major or request.protocol.minor not in (0, 1):
-				# the major HTTP version differs
-				raise HTTP_VERSION_NOT_SUPPORTED('The server only supports HTTP/1.0 and HTTP/1.1.')
-
-			# set correct response protocol version
-			response.protocol = min(request.protocol, ServerProtocol)
-
-			# sanitize request URI (./, ../, /.$, etc.)
-			path = bytes(request.uri.path)
-			request.uri.sanitize()
-			if path != bytes(request.uri.path):
-				raise MOVED_PERMANENTLY(request.uri.path)
-
-			# validate scheme if given
-			if request.uri.scheme:
-				if request.uri.scheme not in ('http', 'https'):
-					raise BAD_REQUEST('wrong scheme')
-			# FIXME: add these information
-			#else:
-			#	# set correct scheme, host and port
-			#	request.uri.scheme = 'https' if self.server.secure else 'http'
-			#	request.uri.host = self.local.host.name
-			#	request.uri.port = self.local.host.port
-
-			## set Server header
-			#response.headers['Server'] = self.version
-
-		if state == "headers":
-			# check if Host header exists for > HTTP 1.0
-			if request.protocol >= (1, 1) and not 'Host' in request.headers:
-				raise BAD_REQUEST('Missing Host header')
-
-			# set decompressor
-			encoding = request.headers.get('content-encoding')
-			if encoding == "gzip":
-				self._decompress_obj = zlib.decompressobj(16 + zlib.MAX_WBITS)
-			elif encoding == "deflate":
-				self._decompress_obj = zlib.decompressobj()
-
-		if state == "message":
-			# TODO: (re)move if RFC 2616 allows this (probably)
-			# GET request with body
-			if request.method in ('GET', 'HEAD', 'OPTIONS') and request.body:
-				raise BAD_REQUEST('A %s request MUST NOT contain a request body.' % request.method)
-			# maybe decompress
-			if self._decompress_obj is not None:
-				try:
-					request.body = self._decompress_obj.decompress(request.body.read())
-				except zlib.error as exc:
-					raise BAD_REQUEST('Invalid compressed bytes: %r' % (exc))
-
-	def prepare_response(self):
-		u"""prepare for sending the response"""
-
-		self.response.prepare()
-
-		if self.request.method == 'HEAD':
-			# RFC 2616 Section 9.4
-			self.response.body = None

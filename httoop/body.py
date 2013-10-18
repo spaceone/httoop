@@ -27,22 +27,24 @@ class Body(IFile, ByteString):
 	def __init__(self, body=None, encoding=None):
 		self.content = BytesIO()
 		self.encoding = encoding
+		# TODO: should we add something like self.mimetype ?
 
 		if body is not None:
 			self.set(body)
 
 	def set(self, body):
-		if not isinstance(body, (BytesIO, file)):
-			if not body:
-				body = BytesIO()
-			elif isinstance(body, text_type):
-				body = BytesIO(body.encode(self.encoding or 'UTF-8'))
-			elif isinstance(body, binary_type):
-				body = BytesIO(body)
-			elif isinstance(body, Body):
-				body = body.content
-			elif not hasattr(body, '__iter__'):
-				raise InvalidBody()  # TODO: description
+		if not body:
+			body = BytesIO()
+		elif isinstance(body, (BytesIO, file)):
+			pass
+		elif isinstance(body, text_type):
+			body = BytesIO(body.encode(self.encoding or 'UTF-8'))
+		elif isinstance(body, binary_type):
+			body = BytesIO(body)
+		elif isinstance(body, Body):
+			body = body.content
+		elif not hasattr(body, '__iter__'):
+			raise InvalidBody('Could not convert data structure of this type')
 		self.content = body
 
 	def compose(self):

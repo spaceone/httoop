@@ -115,9 +115,8 @@ class Message(ByteString):
 
 	@headers.setter
 	def headers(self, headers):
-		headertype = type(self.__headers)
-		if not isinstance(headers, headertype):
-			headers = headertype(headers)
+		if not isinstance(headers, Headers):
+			headers = type(self.__headers)(headers)
 		self.__headers = headers
 
 	@property

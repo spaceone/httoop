@@ -18,62 +18,71 @@ class HTTP(StateMachine):
 		self.response = Response()
 		self._decompress_obj = None
 
-	def state_changed(self, state):
-		super(HTTP, self).state_changed(state)
+	def on_protocol_complete(self):
+		super(HTTP, self).on_protocol_complete()
 		request = self.request
 		response = self.response
-		if state == "requestline":
-			# check if we speak the same major HTTP version
-			if request.protocol.major != response.protocol.major or request.protocol.minor not in (0, 1):
-				# the major HTTP version differs
-				raise HTTP_VERSION_NOT_SUPPORTED('The server only supports HTTP/1.0 and HTTP/1.1.')
 
-			# set correct response protocol version
-			response.protocol = min(request.protocol, ServerProtocol)
+		# check if we speak the same major HTTP version
+		if request.protocol.major != response.protocol.major or request.protocol.minor not in (0, 1):
+			# the major HTTP version differs
+			raise HTTP_VERSION_NOT_SUPPORTED('The server only supports HTTP/1.0 and HTTP/1.1.')
 
-			# sanitize request URI (./, ../, /.$, etc.)
-			path = bytes(request.uri.path)
-			request.uri.sanitize()
-			if path != bytes(request.uri.path):
-				raise MOVED_PERMANENTLY(request.uri.path)
+		# set correct response protocol version
+		response.protocol = min(request.protocol, ServerProtocol)
 
-			# validate scheme if given
-			if request.uri.scheme:
-				if request.uri.scheme not in ('http', 'https'):
-					raise BAD_REQUEST('wrong scheme')
-			# FIXME: add these information
-			#else:
-			#	# set correct scheme, host and port
-			#	request.uri.scheme = 'https' if self.server.secure else 'http'
-			#	request.uri.host = self.local.host.name
-			#	request.uri.port = self.local.host.port
+	def on_uri_complete(self):
+		super(HTTP, self).on_uri_complete()
+		request = self.request
+		# sanitize request URI (./, ../, /.$, etc.)
+		path = bytes(request.uri.path)
+		request.uri.sanitize()
+		if path != bytes(request.uri.path):
+			raise MOVED_PERMANENTLY(request.uri.path)
 
-			## set Server header
-			#response.headers['Server'] = self.version
+		# validate scheme if given
+		if request.uri.scheme:
+			if request.uri.scheme not in ('http', 'https'):
+				raise BAD_REQUEST('wrong scheme')
+		# FIXME: add these information
+		#else:
+		#	# set correct scheme, host and port
+		#	request.uri.scheme = 'https' if self.server.secure else 'http'
+		#	request.uri.host = self.local.host.name
+		#	request.uri.port = self.local.host.port
 
-		if state == "headers":
-			# check if Host header exists for > HTTP 1.0
-			if request.protocol >= (1, 1) and not 'Host' in request.headers:
-				raise BAD_REQUEST('Missing Host header')
+		## set Server header
+		#response.headers['Server'] = self.version
 
-			# set decompressor
-			encoding = request.headers.get('content-encoding')
-			if encoding == "gzip":
-				self._decompress_obj = zlib.decompressobj(16 + zlib.MAX_WBITS)
-			elif encoding == "deflate":
-				self._decompress_obj = zlib.decompressobj()
+	def on_headers_complete(self):
+		super(HTTP, self).on_headers_complete()
+		request = self.request
 
-		if state == "message":
-			# TODO: (re)move if RFC 2616 allows this (probably)
-			# GET request with body
-			if request.method in ('GET', 'HEAD', 'OPTIONS') and request.body:
-				raise BAD_REQUEST('A %s request MUST NOT contain a request body.' % request.method)
-			# maybe decompress
-			if self._decompress_obj is not None:
-				try:
-					request.body = self._decompress_obj.decompress(request.body.read())
-				except zlib.error as exc:
-					raise BAD_REQUEST('Invalid compressed bytes: %r' % (exc))
+		# check if Host header exists for > HTTP 1.0
+		if request.protocol >= (1, 1) and not 'Host' in request.headers:
+			raise BAD_REQUEST('Missing Host header')
+
+		# set decompressor
+		encoding = request.headers.get('content-encoding')
+		if encoding == "gzip":
+			self._decompress_obj = zlib.decompressobj(16 + zlib.MAX_WBITS)
+		elif encoding == "deflate":
+			self._decompress_obj = zlib.decompressobj()
+
+	def on_message_complete(self):
+		super(HTTP, self).on_message_complete()
+		request = self.request
+
+		# TODO: (re)move if RFC 2616 allows this (probably)
+		# GET request with body
+		if request.method in ('GET', 'HEAD', 'OPTIONS') and request.body:
+			raise BAD_REQUEST('A %s request MUST NOT contain a request body.' % request.method)
+		# maybe decompress
+		if self._decompress_obj is not None:
+			try:
+				request.body = self._decompress_obj.decompress(request.body.read())
+			except zlib.error as exc:
+				raise BAD_REQUEST('Invalid compressed bytes: %r' % (exc))
 
 	def prepare_response(self):
 		u"""prepare for sending the response"""

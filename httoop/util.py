@@ -175,3 +175,6 @@ class ByteString(object):
 		if isinstance(other, text_type):
 			return cmp(text_type(self), other)
 		return cmp(bytes(self), other)
+
+	def __hash__(self):
+		return bytes(self).__hash__()

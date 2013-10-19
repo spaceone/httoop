@@ -6,7 +6,7 @@
 """
 
 from httoop.util import ByteString, text_type
-from httoop.extensions import InvalidLine
+from httoop.exceptions import InvalidLine
 
 import re
 

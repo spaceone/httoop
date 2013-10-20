@@ -199,7 +199,7 @@ class Request(Message):
 		"""
 		bits = line.split(None, 2)
 		if len(bits) != 3:
-			raise InvalidLine(line)
+			raise InvalidLine(line.decode('ISO8859-1'))
 
 		# protocol version
 		super(Request, self).parse(bits[2])
@@ -267,7 +267,7 @@ class Response(Message):
 
 		bits = line.split(None, 1)
 		if len(bits) != 2:
-			raise InvalidLine(line)
+			raise InvalidLine(line.decode('ISO8859-1'))
 
 		# version
 		super(Response, self).parse(bits[0])
@@ -322,9 +322,9 @@ class Response(Message):
 
 	@property
 	def close(self):
-		# 413 Request Entity Too Large
-		# RFC 2616 Section 10.4.14
 		if self.status == 413:
+			# 413 Request Entity Too Large
+			# RFC 2616 Section 10.4.14
 			pass
 		elif self.headers.get('Connection') == 'close':
 			pass

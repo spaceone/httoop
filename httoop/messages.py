@@ -158,7 +158,7 @@ class Message(ByteString):
 
 	@body.setter
 	def body(self, body):
-		self.__body.set(body)
+		self.__body.set(body)  # FIXME: prevents that we can change the class to ChunkedBody
 
 	def compose_message(self):
 		u"""Compose the whole HTTP Message"""
@@ -166,6 +166,18 @@ class Message(ByteString):
 		headers = bytes(self.headers)
 		body = bytes(self.body)
 		return b"%s%s%s" % (start_line, headers, body)
+
+	@property
+	def chunked(self):
+		return self.body.chunked or self.headers.get("Transfer-Encoding") == 'chunked'
+
+	@chunked.setter
+	def chunked(self, chunked):
+		if chunked:
+			self.headers['Transfer-Encoding'] = 'chunked'
+			self.headers.pop('Content-Length', None)
+		else:
+			self.headers.pop('Transfer-Encoding', None)
 
 	def __repr__(self):
 		return '<HTTP Message(protocol=%s)>' % (self.protocol,)
@@ -176,6 +188,23 @@ class Request(Message):
 
 		.. seealso:: :rfc:`2616#section-5`
 	"""
+
+	@property
+	def method(self):
+		return self.__method
+
+	@method.setter
+	def method(self, method):
+		self.__method.set(method)
+
+	@property
+	def uri(self):
+		return self.__uri
+
+	@uri.setter
+	def uri(self, uri):
+		self.__uri.set(uri)
+
 
 	def __init__(self, method=None, uri=None, protocol=None, headers=None, body=None):
 		"""Creates a new Request object to hold information about a request.
@@ -218,23 +247,26 @@ class Request(Message):
 		return b"%s %s %s\r\n" % (bytes(self.__method), bytes(self.__uri), bytes(self.protocol))
 
 	def prepare(self):
-		pass  # TODO: chunked, Content-Length, close?
+		if self.body:
+			self.headers['Content-Length'] = bytes(len(self.body))
+
+		self.chunked = self.chunked
+
+		self.close = self.close
+
+		if self.method in ('PUT', 'POST') and self.body:
+			self.headers['Date'] = bytes(Date())  # RFC 2616 Section 14.18
 
 	@property
-	def method(self):
-		return self.__method
+	def close(self):
+		return self.headers.get('Connection') == 'close'
 
-	@method.setter
-	def method(self, method):
-		self.__method.set(method)
-
-	@property
-	def uri(self):
-		return self.__uri
-
-	@uri.setter
-	def uri(self, uri):
-		self.__uri.set(uri)
+	@close.setter
+	def close(self, close):
+		if close:
+			self.headers['Connection'] = 'close'
+		else:
+			self.headers.pop('Connection', None)
 
 	def __bytes__(self):
 		return self.compose()
@@ -248,6 +280,14 @@ class Response(Message):
 
 		.. seealso:: :rfc:`2616#section-6`
 	"""
+
+	@property
+	def status(self):
+		return self.__status
+
+	@status.setter
+	def status(self, status):
+		self.__status.set(status)
 
 	def __init__(self, status=None, protocol=None, headers=None, body=None):
 		"""Creates a new Response object to hold information about the response.
@@ -279,7 +319,7 @@ class Response(Message):
 		u"""composes the response line"""
 		return b"%s %s\r\n" % (bytes(self.protocol), bytes(self.status))
 
-	def prepare(self):
+	def prepare(self, request=None):
 		u"""prepares the response for being ready for transmitting"""
 
 		status = self.status
@@ -291,7 +331,7 @@ class Response(Message):
 		if not self.chunked:
 			self.headers['Content-Length'] = bytes(len(self.body))
 
-		self.headers['Date'] = bytes(Date())
+		self.headers['Date'] = bytes(Date())  # RFC 2616 Section 14.18
 
 		# remove header which should not occur along with this status
 		if int(status) in STATUSES:
@@ -300,28 +340,18 @@ class Response(Message):
 
 		self.close = self.close
 
-	@property
-	def status(self):
-		return self.__status
+		if request is None:
+			return
 
-	@status.setter
-	def status(self, status):
-		self.__status.set(status)
+		if request.headers.get('Connection') == 'close':
+			self.close = True  # RFC 2616 Section 14.10
 
-	@property
-	def chunked(self):
-		return self.body.chunked or self.headers.get("Transfer-Encoding") == 'chunked'
-
-	@chunked.setter
-	def chunked(self, chunked):
-		if chunked:
-			self.headers['Transfer-Encoding'] = 'chunked'
-			self.headers.pop('Content-Length', None)
-		else:
-			self.headers.pop('Transfer-Encoding', None)
+		if request.method == 'HEAD':
+			self.body = None  # RFC 2616 Section 9.4
 
 	@property
 	def close(self):
+		# TODO: 100 Continue
 		if self.status == 413:
 			# 413 Request Entity Too Large
 			# RFC 2616 Section 10.4.14
@@ -336,10 +366,15 @@ class Response(Message):
 
 	@close.setter
 	def close(self, close):
-		if close and self.protocol >= (1, 1):
-			self.headers['Connection'] = 'close'
-		if not close and self.protocol < (1, 1):
-			self.headers['Connection'] = 'keep-alive'
+		if close:
+			if self.protocol >= (1, 1):
+				self.headers['Connection'] = 'close'
+				return
+		else:
+			if self.protocol < (1, 1):
+				self.headers['Connection'] = 'keep-alive'
+				return
+		self.headers.pop('Connection', None)
 
 	def __bytes__(self):
 		return self.compose()

@@ -87,8 +87,4 @@ class HTTP(StateMachine):
 	def prepare_response(self):
 		u"""prepare for sending the response"""
 
-		self.response.prepare()
-
-		if self.request.method == 'HEAD':
-			# RFC 2616 Section 9.4
-			self.response.body = None
+		self.response.prepare(self.request)

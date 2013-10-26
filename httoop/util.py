@@ -12,16 +12,6 @@ except ImportError:
 	import urllib.parse as urlparse  # NOQA
 
 
-def file_generator(input_, chunksize=4096):
-	t = input_.tell()
-	input_.seek(0)
-	chunk = input_.read(chunksize)
-	while chunk:
-		yield chunk
-		chunk = input_.read(chunksize)
-	input_.seek(t)
-
-
 def to_unicode(string):
 	if isinstance(string, type):
 		# FIXME FIXME: CaseInsensitiveDict is also used for Header elements

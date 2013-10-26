@@ -9,7 +9,7 @@ from io import BytesIO
 
 from httoop.exceptions import InvalidBody
 from httoop.headers import Headers
-from httoop.util import ByteString, IFile, file_generator
+from httoop.util import ByteString, IFile
 from httoop.util import text_type, binary_type
 
 
@@ -17,17 +17,20 @@ class Body(IFile, ByteString):
 	u"""A HTTP message body"""
 
 	@property
-	def chunked(self):
-		return isinstance(self, ChunkedBody)
-
-	@property
 	def fileable(self):
 		return all(hasattr(self.content, method) for method in ('read', 'write', 'close'))
 
+	MAX_CHUNK_SIZE = 4069
+
 	def __init__(self, body=None, encoding=None):
+		# TODO: should we add something like self.mimetype?
+		# or a ContentType HeaderField instance which describes
+		# the content type (and then also self.encoding)
 		self.content = BytesIO()
 		self.encoding = encoding
-		# TODO: should we add something like self.mimetype ?
+
+		self.chunked = False
+		self.trailer = Headers()
 
 		if body is not None:
 			self.set(body)
@@ -47,23 +50,14 @@ class Body(IFile, ByteString):
 			raise InvalidBody('Could not convert data structure of this type')
 		self.content = body
 
+	def parse(self, data):
+		pass
+
 	def compose(self):
-		if not self.fileable:
-			return b''.join(self.content)  # TODO: map(any_to_bytes, self.content)
-
-		t = self.tell()
-		self.seek(0)
-		body = self.read()
-		self.seek(t)
-
-		if getattr(self.content, 'encoding', None) is not None:
-			# we have a real file here
-			body = body.encode(self.content.encoding)
-
-		return body
+		return b''.join(self.__iter__())
 
 	def __bytes__(self):
-		return self.compose()
+		return b''.join(self.__compose_iter())
 
 	def __unicode__(self):
 		body = bytes(self)
@@ -84,41 +78,59 @@ class Body(IFile, ByteString):
 		if isinstance(body, BytesIO):
 			return len(body.getvalue())
 
-		return len(Body.compose(self))
+		return len(b''.join(self.__compose_iter()))
 
 	def __iter__(self):
-		if isinstance(self.content, file):
-			# don't iterate over every single byte
-			return file_generator(self.content)
-		if hasattr(self.content, '__iter__'):
-			return self.content.__iter__
-		return [Body.compose(self)].__iter__
+		if self.chunked:
+			self.iter = self.__compose_chunked_iter()
+		self.iter = self.__compose_iter()
+		return self.iter
 
-	def __repr__(self):
-		return '<HTTP Body(%d)>' % len(self)
+	def __next__(self):
+		return next(self.iter)
+	next = __next__
 
-
-class ChunkedBody(Body):
-	u"""A body which can consists of any iterable"""
-
-	def __init__(self, body=None, encoding=None):
-		super(ChunkedBody, self).__init__(body, encoding)
-		self.trailer = Headers()
-
-	def parse(self, data):
-		pass
-
-	def compose(self):
-		while True:
-			try:
-				data = next(self.content)
-				yield "%s\r\n%s\r\n" % (hex(len(data))[2:], data)
-			except StopIteration:
-				break
+	def __compose_chunked_iter(self):
+		for data in self.__compose_iter():
+			yield "%s\r\n%s\r\n" % (hex(len(data))[2:], data)
 		if self.trailer:
 			yield b"0\r\n%s" % bytes(self.trailer)
 		else:
 			yield b"0\r\n\r\n"
 
+	def __compose_iter(self):
+		if self.fileable:
+			return self.__compose_file_iter()
+		return self.__compose_iterable_iter()
+
+	def __compose_file_iter(self, chunksize=MAX_CHUNK_SIZE):
+		t = self.tell()
+		self.seek(0)
+
+		# real files in python3 have an encoding attribute
+		encoding = getattr(self.content, 'encoding', None)
+
+		data = self.read(chunksize)
+		while data:
+			if encoding is not None:
+				data = data.encode(encoding)
+			yield data
+			data = self.read(chunksize)
+
+		self.seek(t)
+
+	def __compose_iterable_iter(self):
+		for data in self.content:
+			if isinstance(data, text_type):
+				for encoding in (self.encoding or 'UTF-8', 'UTF-8'):
+					try:
+						data = data.encode(encoding)
+						break
+					except UnicodeEncodeError:
+						pass
+			elif not isinstance(data, bytes):
+				raise InvalidBody()
+			yield data
+
 	def __repr__(self):
-		return '<ChunkedBody(%d)>' % len(self)
+		return '<HTTP Body(%d)>' % len(self)

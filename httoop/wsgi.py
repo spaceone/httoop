@@ -9,10 +9,10 @@ __all__ = ['WSGI']
 import sys
 import os
 
-from httoop.body import ChunkedBody
+from httoop.body import Body
 
 
-class WSGIBody(ChunkedBody):
+class WSGIBody(Body):
 	u"""A Body for WSGI requests and responses"""
 
 	def __init__(self, wsgi, body=None, encoding=None):
@@ -40,6 +40,10 @@ class WSGI(object):
 		self.server_port = bytes(self.request.uri.port)
 		self.environ = os.environ
 
+		self.request._Request__body = WSGIBody(self)
+		self.response._Response__body = WSGIBody(self)
+		self.response.chunked = True
+
 	def __call__(self, application):
 		def start_response(status, response_headers, exc_info=None):
 			self.response.status = status
@@ -47,8 +51,6 @@ class WSGI(object):
 			return self.response.body.write
 
 		environ = self._get_environ()
-
-		self.response.body = WSGIBody(self)
 
 		self.start_response(application(environ, start_response))
 

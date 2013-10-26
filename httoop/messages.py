@@ -158,7 +158,7 @@ class Message(ByteString):
 
 	@body.setter
 	def body(self, body):
-		self.__body.set(body)  # FIXME: prevents that we can change the class to ChunkedBody
+		self.__body.set(body)
 
 	def compose_message(self):
 		u"""Compose the whole HTTP Message"""
@@ -173,6 +173,7 @@ class Message(ByteString):
 
 	@chunked.setter
 	def chunked(self, chunked):
+		self.body.chunked = chunked
 		if chunked:
 			self.headers['Transfer-Encoding'] = 'chunked'
 			self.headers.pop('Content-Length', None)
@@ -204,7 +205,6 @@ class Request(Message):
 	@uri.setter
 	def uri(self, uri):
 		self.__uri.set(uri)
-
 
 	def __init__(self, method=None, uri=None, protocol=None, headers=None, body=None):
 		"""Creates a new Request object to hold information about a request.

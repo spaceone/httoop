@@ -35,6 +35,8 @@ class Body(IFile, ByteString):
 		if body is not None:
 			self.set(body)
 
+		self.__iter = None
+
 	def set(self, body):
 		if not body:
 			body = BytesIO()
@@ -82,12 +84,17 @@ class Body(IFile, ByteString):
 
 	def __iter__(self):
 		if self.chunked:
-			self.iter = self.__compose_chunked_iter()
-		self.iter = self.__compose_iter()
-		return self.iter
+			return self.__compose_chunked_iter()
+		return self.__compose_iter()
 
 	def __next__(self):
-		return next(self.iter)
+		if self.__iter is None:
+			self.__iter = self.__iter__()
+		try:
+			return next(self.__iter)
+		except StopIteration:
+			self.__iter = None
+			raise
 	next = __next__
 
 	def __compose_chunked_iter(self):

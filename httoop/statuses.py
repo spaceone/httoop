@@ -676,6 +676,6 @@ class HTTP_VERSION_NOT_SUPPORTED(object):
 #	__metaclass__ = StatusType
 #	status = 599
 
-for local in locals().values():
+for local in locals().copy().values():
 	if isinstance(local, StatusType):
 		STATUSES[local.status] = local

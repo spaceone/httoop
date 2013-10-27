@@ -72,6 +72,7 @@ class HeaderElement(object):
 	def __repr__(self):
 		return '<%s(%r)>' % (self.__class__.__name__, self.value)
 
+
 class MimeType(object):
 	u"""
 		.. seealso:: rfc:`2046`
@@ -120,6 +121,7 @@ class MimeType(object):
 	@version.setter
 	def version(self, version):
 		self.params['version'] = version
+
 
 class AcceptElement(HeaderElement):
 	"""An Accept element with quality value

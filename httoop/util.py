@@ -3,13 +3,43 @@ from six import PY3, text_type, binary_type, BytesIO, iteritems
 
 __all__ = ['PY3', 'text_type', 'binary_type', 'BytesIO', 'iteritems', 'urlparse']
 __all__ += ['to_unicode', 'to_ascii', 'get_bytes_from_unknown']
-__all__ += ['IFile', 'ByteString']
+__all__ += ['IFile', 'ByteString', 'parse_qsl', 'urlencode', 'partial']
+
+
+from functools import partial
 
 # TODO: from six
 try:
 	import urlparse
 except ImportError:
 	import urllib.parse as urlparse  # NOQA
+
+try:
+	from urlparse import parse_qsl
+except ImportError:
+	try:
+		from urllib.parse import parse_qsl
+	except ImportError:
+		try:
+			from cgi import parse_qsl
+		except ImportError:
+			import warnings
+			warnings.warn('''No library for application/x-www-form-urlencoded processing
+				could be found (urlparse, urllib.parse, cgi)''')
+
+			def parse_qsl(*a, **k):
+				raise NotImplemented
+
+
+try:
+	from urllib import urlencode
+except ImportError:
+	import warnings
+	warnings.warn('''No library for application/x-www-form-urlencoded processing
+		could be found (urllib)''')
+
+	def urlencode(*a, **k):
+		raise NotImplemented
 
 
 def to_unicode(string):

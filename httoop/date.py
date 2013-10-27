@@ -8,18 +8,15 @@ __all__ = ['Date']
 
 import time
 from datetime import datetime
-from functools import partial
+
+from httoop.util import ByteString, partial
+from httoop.exceptions import InvalidDate
 
 try:
 	from email.utils import formatdate, parsedate
 	formatdate = partial(formatdate, usegmt=True)
 except ImportError:
 	from rfc822 import formatdate, parsedate
-
-from httoop.util import ByteString
-from httoop.exceptions import InvalidDate
-
-# TODO: this is bloatet, do we need it?
 
 
 class Date(ByteString):

@@ -2,7 +2,7 @@
 from six import PY3, text_type, binary_type, BytesIO, iteritems
 
 __all__ = ['PY3', 'text_type', 'binary_type', 'BytesIO', 'iteritems', 'urlparse']
-__all__ += ['file_generator', 'to_unicode', 'to_ascii', 'get_bytes_from_unknown']
+__all__ += ['to_unicode', 'to_ascii', 'get_bytes_from_unknown']
 __all__ += ['IFile', 'ByteString']
 
 # TODO: from six

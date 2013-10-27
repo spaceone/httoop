@@ -72,6 +72,54 @@ class HeaderElement(object):
 	def __repr__(self):
 		return '<%s(%r)>' % (self.__class__.__name__, self.value)
 
+class MimeType(object):
+	u"""
+		.. seealso:: rfc:`2046`
+
+		.. seealso:: rfc:`3023`
+	"""
+	@property
+	def type(self):
+		return self.value.split('/', 1)[0]
+
+	@type.setter
+	def type(self, type_):
+		self.value = '%s/%s' % (type_, self.subtype)
+
+	@property
+	def subtype(self):
+		return (self.value.split('/', 1) + [b''])[1]
+
+	@subtype.setter
+	def subtype(self, subtype):
+		self.value = '%s/%s' % (self.type, subtype)
+
+	# TODO: official name
+	@property
+	def subtype_wo_vendor(self):
+		return self.subtype.split('+', 1).pop()
+
+	@subtype_wo_vendor.setter
+	def subtype_wo_vendor(self, subtype_wo_vendor):
+		self.subtype = '%s+%s' % (self.vendor, subtype_wo_vendor)
+
+	@property
+	def vendor(self):
+		if b'+' in self.subtype:
+			return self.subtype.split('+', 1)[0]
+		return b''
+
+	@vendor.setter
+	def vendor(self, vendor):
+		self.subtype = '%s+%s' % (vendor, self.subtype_wo_vendor)
+
+	@property
+	def version(self):
+		return self.params.get('version', '')
+
+	@version.setter
+	def version(self, version):
+		self.params['version'] = version
 
 class AcceptElement(HeaderElement):
 	"""An Accept element with quality value
@@ -129,14 +177,8 @@ class AcceptElement(HeaderElement):
 			return self.quality < other.quality
 
 
-class Accept(AcceptElement):
-	@property
-	def version(self):
-		return self.params.get('version', '')
-
-	@version.setter
-	def version(self, version):
-		self.params['version'] = version
+class Accept(AcceptElement, MimeType):
+	pass
 
 
 class AcceptCharset(AcceptElement):
@@ -199,7 +241,7 @@ class ContentRange(HeaderElement):
 	pass
 
 
-class ContentType(HeaderElement):
+class ContentType(HeaderElement, MimeType):
 	@property
 	def charset(self):
 		return self.params.get('charset', '')
@@ -207,14 +249,6 @@ class ContentType(HeaderElement):
 	@charset.setter
 	def charset(self, charset):
 		self.params['charset'] = charset
-
-	@property
-	def version(self):
-		return self.params.get('version', '')
-
-	@version.setter
-	def version(self, version):
-		self.params['version'] = version
 
 
 class Date(HeaderElement):

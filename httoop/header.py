@@ -7,7 +7,7 @@
 
 .. seealso:: :rfc:`2616#section-14`
 """
-__all__ = ['headerfields', 'HeaderElement']
+__all__ = ['HEADER', 'HeaderElement']
 
 import re
 # TODO: Via, Server, User-Agent can contain comments, parse them
@@ -16,11 +16,19 @@ from httoop.util import CaseInsensitiveDict, iteritems
 from httoop.exceptions import InvalidHeader
 
 # a mapping of all headers to HeaderElement classes
-headerfields = CaseInsensitiveDict()
+HEADER = CaseInsensitiveDict()
+
+
+class HeaderType(type):
+	def __new__(mcs, name, bases, dict):
+		name = dict.get('__name__', name)
+		return type.__new__(mcs, name, bases, dict)
 
 
 class HeaderElement(object):
-	"""An element (with parameters) from an HTTP header's element list."""
+	u"""An element (with parameters) from an HTTP header's element list."""
+
+	__metaclass__ = HeaderType
 
 	def __init__(self, value, params=None):
 		self.value = value
@@ -184,19 +192,19 @@ class Accept(AcceptElement, MimeType):
 
 
 class AcceptCharset(AcceptElement):
-	pass
+	__name__ = 'Accept-Charset'
 
 
 class AcceptEncoding(AcceptElement):
-	pass
+	__name__ = 'Accept-Encoding'
 
 
 class AcceptLanguage(AcceptElement):
-	pass
+	__name__ = 'Accept-Language'
 
 
 class AcceptRanges(AcceptElement):
-	pass
+	__name__ = 'Accept-Ranges'
 
 
 class Age(HeaderElement):
@@ -212,7 +220,7 @@ class Authorization(HeaderElement):
 
 
 class CacheControl(HeaderElement):
-	pass
+	__name__ = 'Cache-Control'
 
 
 class Connection(HeaderElement):
@@ -220,30 +228,32 @@ class Connection(HeaderElement):
 
 
 class ContentEncoding(HeaderElement):
-	pass
+	__name__ = 'Content-Encoding'
 
 
 class ContentLanguage(HeaderElement):
-	pass
+	__name__ = 'Content-Language'
 
 
 class ContentLength(HeaderElement):
-	pass
+	__name__ = 'Content-Length'
 
 
 class ContentLocation(HeaderElement):
-	pass
+	__name__ = 'Content-Location'
 
 
 class ContentMD5(HeaderElement):
-	pass
+	__name__ = 'Content-MD5'
 
 
 class ContentRange(HeaderElement):
-	pass
+	__name__ = 'Content-Range'
 
 
 class ContentType(HeaderElement, MimeType):
+	__name__ = 'Content-Type'
+
 	@property
 	def charset(self):
 		return self.params.get('charset', '')
@@ -315,19 +325,19 @@ class Host(HeaderElement):
 
 
 class XForwardedHost(Host):
-	pass
+	__name__ = 'X-Forwarded-Host'
 
 
 class IfMatch(HeaderElement):
-	pass
+	__name__ = 'If-Match'
 
 
 class IfModifiedSince(HeaderElement):
-	pass
+	__name__ = 'If-Modified-Since'
 
 
 class IfNoneMatch(HeaderElement):
-	pass
+	__name__ = 'If-None-Match'
 
 
 class IfRange(HeaderElement):
@@ -335,11 +345,11 @@ class IfRange(HeaderElement):
 
 
 class IfUnmodifiedSince(HeaderElement):
-	pass
+	__name__ = 'If-Unmodified-Since'
 
 
 class LastModified(HeaderElement):
-	pass
+	__name__ = 'Last-Modified'
 
 
 class Location(HeaderElement):
@@ -347,7 +357,7 @@ class Location(HeaderElement):
 
 
 class MaxForwards(HeaderElement):
-	pass
+	__name__ = 'Max-Forwards'
 
 
 class Pragma(HeaderElement):
@@ -355,11 +365,11 @@ class Pragma(HeaderElement):
 
 
 class ProxyAuthenticate(HeaderElement):
-	pass
+	__name__ = 'Proxy-Authenticate'
 
 
 class ProxyAuthorization(HeaderElement):
-	pass
+	__name__ = 'Proxy-Authorization'
 
 
 class Range(HeaderElement):
@@ -371,14 +381,14 @@ class Referer(HeaderElement):
 
 
 class RetryAfter(HeaderElement):
-	pass
+	__name__ = 'Retry-After'
 
 
 class Server(HeaderElement):
 	pass
 
 
-class TE(HeaderElement):
+class TE(AcceptElement):
 	pass
 
 
@@ -390,7 +400,7 @@ class Trailer(HeaderElement):
 
 
 class TransferEncoding(HeaderElement):
-	pass
+	__name__ = 'Transfer-Encoding'
 
 
 class Upgrade(HeaderElement):
@@ -398,7 +408,7 @@ class Upgrade(HeaderElement):
 
 
 class UserAgent(HeaderElement):
-	pass
+	__name__ = 'User-Agent'
 
 
 class Vary(HeaderElement):
@@ -414,54 +424,9 @@ class Warning(HeaderElement):
 
 
 class WWWAuthenticate(HeaderElement):
-	pass
+	__name__ = 'WWW-Authenticate'
 
-headerfields.update({
-	'TE': AcceptElement,
-	'Accept': AcceptElement,
-	'Accept-Charset': AcceptCharset,
-	'Accept-Language': AcceptLanguage,
-	'Accept-Encoding': AcceptEncoding,
-	'Accept-Ranges': AcceptRanges,
-	'Age': Age,
-	'Allow': Allow,
-	'Authorization': Authorization,
-	'Cache-Control': CacheControl,
-	'Connection': Connection,
-	'Content-Encoding': ContentEncoding,
-	'Content-Language': ContentLanguage,
-	'Content-Length': ContentLength,
-	'Content-Location': ContentLocation,
-	'Content-MD5': ContentMD5,
-	'Content-Range': ContentRange,
-	'Content-Type': ContentType,
-	'Date': Date,
-	'ETag': ETag,
-	'Expect': Expect,
-	'Expires': Expires,
-	'From': From,
-	'Host': Host,
-	'If-Match': IfMatch,
-	'If-Modified-Since': IfModifiedSince,
-	'If-None-Match': IfNoneMatch,
-	'If-Unmodified-Since': IfUnmodifiedSince,
-	'LastModified': LastModified,
-	'Location': Location,
-	'Max-Forwards': MaxForwards,
-	'Pragma': Pragma,
-	'Proxy-Authenticate': ProxyAuthenticate,
-	'Proxy-Authorization': ProxyAuthorization,
-	'Range': Range,
-	'Referer': Referer,
-	'Retry-After': RetryAfter,
-	'Server': Server,
-	'Trailer': Trailer,
-	'Transfer-Encoding': TransferEncoding,
-	'Upgrade': Upgrade,
-	'User-Agent': UserAgent,
-	'Vary': Vary,
-	'Via': Via,
-	'Warning': Warning,
-	'WWW-Authenticate': WWWAuthenticate,
-	'X-Forwarded-Host': XForwardedHost,
-})
+
+for local in locals().copy().values():
+	if isinstance(local, HeaderType) and local is not HeaderElement:
+		HEADER[local.__name__] = local

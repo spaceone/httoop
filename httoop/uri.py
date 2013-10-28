@@ -52,7 +52,7 @@ class URI(ByteString):
 		self.parse_query()
 
 	def parse_query(self):
-		codec = codecs['application/x-www-form-urlencoded']
+		codec = CODECS['application/x-www-form-urlencoded']
 		self.query = tuple(codec.decode(self.query_string))
 
 	def validate_http_uri(self):

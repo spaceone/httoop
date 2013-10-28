@@ -16,7 +16,7 @@ import re
 
 from httoop.util import CaseInsensitiveDict, ByteString, iteritems
 from httoop.exceptions import InvalidHeader
-from httoop.header import headerfields, HeaderElement
+from httoop.header import HEADER, HeaderElement
 
 
 class Headers(ByteString, CaseInsensitiveDict):
@@ -35,7 +35,7 @@ class Headers(ByteString, CaseInsensitiveDict):
 		if not fieldvalue:
 			return []
 
-		Element = headerfields.get(fieldname, HeaderElement)
+		Element = HEADER.get(fieldname, HeaderElement)
 
 		# FIXME: quoted strings
 		result = []
@@ -48,7 +48,7 @@ class Headers(ByteString, CaseInsensitiveDict):
 	def element(self, fieldname):
 		u"""Treat the field as single element"""
 		if fieldname in self:
-			Element = headerfields.get(fieldname, HeaderElement)
+			Element = HEADER.get(fieldname, HeaderElement)
 			return Element.from_str(self[fieldname])
 
 	def values(self, key=None):

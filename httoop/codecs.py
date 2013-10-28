@@ -3,7 +3,7 @@ u"""Module containing various codecs which are
 	common used in combination with HTTP
 """
 
-__all__ = ['codecs', 'Codec', 'FormURLEncoded', 'MultipartFormData',
+__all__ = ['CODECS', 'Codec', 'FormURLEncoded', 'MultipartFormData',
 	'MultipartMixed', 'JSON', 'HTML', 'XML', 'PlainText']
 
 from httoop.util import text_type, partial
@@ -90,4 +90,4 @@ class HTML(Codec):
 	mimetype = 'text/html'
 
 
-codecs = dict((cls.mimetype, cls) for cls in locals().copy().values() if cls is not Codec and isinstance(cls, type) and issubclass(cls, Codec))
+CODECS = dict((cls.mimetype, cls) for cls in locals().copy().values() if cls is not Codec and isinstance(cls, type) and issubclass(cls, Codec))

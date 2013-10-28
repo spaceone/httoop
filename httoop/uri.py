@@ -6,6 +6,7 @@
 
 from httoop.exceptions import InvalidURI
 from httoop.util import ByteString, urlparse
+from httoop.codecs import CODECS
 
 import re
 
@@ -22,6 +23,7 @@ class URI(ByteString):
 
 	"""
 	def __init__(self, uri=None):
+		self.query = {}
 		self.parse(uri or '')
 
 	def parse(self, uri):
@@ -31,9 +33,6 @@ class URI(ByteString):
 				sanitizing (../, ./, //, %00)
 		"""
 		self.uri = uri
-		# TODO: remove this? A URI MUST NOT start with //
-		if uri.startswith('//'):
-			uri = uri[1:]  # FIXME: //foo would result in a wrong result
 
 		parts = urlparse.urlsplit(uri)
 
@@ -47,10 +46,14 @@ class URI(ByteString):
 		self.query_string = parts.query
 		self.fragment = parts.fragment
 
-		if self.uri.startswith('//'):
-			self.path = '/%s' % self.path
-
+		# FIXME: remove from here
 		self.validate_http_uri()
+
+		self.parse_query()
+
+	def parse_query(self):
+		codec = codecs['application/x-www-form-urlencoded']
+		self.query = tuple(codec.decode(self.query_string))
 
 	def validate_http_uri(self):
 		if self.fragment:

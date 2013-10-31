@@ -10,7 +10,7 @@ from io import BytesIO
 from httoop.exceptions import InvalidBody
 from httoop.headers import Headers
 from httoop.util import ByteString, IFile
-from httoop.util import text_type, binary_type
+from httoop.util import Unicode
 
 
 class Body(IFile, ByteString):
@@ -42,9 +42,9 @@ class Body(IFile, ByteString):
 			body = BytesIO()
 		elif isinstance(body, (BytesIO, file)):
 			pass
-		elif isinstance(body, text_type):
+		elif isinstance(body, Unicode):
 			body = BytesIO(body.encode(self.encoding or 'UTF-8'))
-		elif isinstance(body, binary_type):
+		elif isinstance(body, bytes):
 			body = BytesIO(body)
 		elif isinstance(body, Body):
 			body = body.content
@@ -128,7 +128,7 @@ class Body(IFile, ByteString):
 
 	def __compose_iterable_iter(self):
 		for data in self.content:
-			if isinstance(data, text_type):
+			if isinstance(data, Unicode):
 				for encoding in (self.encoding or 'UTF-8', 'UTF-8'):
 					try:
 						data = data.encode(encoding)

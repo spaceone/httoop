@@ -5,6 +5,7 @@
 
 from httoop.body import Body  # TODO: remove ?
 from httoop.status import Status, REASONS
+from httoop.util import iteritems
 
 # mapping of status -> Class, will be filled at the bottom
 STATUSES = dict()
@@ -80,7 +81,7 @@ class HTTPStatusException(Status, Exception):
 		Status.__init__(self, **statuskw)
 
 	def __repr__(self):
-		return '<HTTPStatusException(%s)>' % ' '.join('%s=%r' % (k, v) for k, v in self.to_dict().iteritems())
+		return '<HTTPStatusException(%s)>' % ' '.join('%s=%r' % (k, v) for k, v in iteritems(self.to_dict()))
 
 	def to_dict(self):
 		u"""the default body arguments"""

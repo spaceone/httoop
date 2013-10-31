@@ -6,7 +6,7 @@ u"""Module containing various codecs which are
 __all__ = ['CODECS', 'Codec', 'FormURLEncoded', 'MultipartFormData',
 	'MultipartMixed', 'JSON', 'HTML', 'XML', 'PlainText']
 
-from httoop.util import text_type
+from httoop.util import Unicode
 
 CODECS = dict()
 
@@ -42,7 +42,7 @@ class Enconv(Codec):
 
 	@classmethod
 	def encode(cls, data):
-		if isinstance(data, text_type):
+		if isinstance(data, Unicode):
 			return data
 		return data.encode('UTF-8')
 

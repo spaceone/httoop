@@ -10,6 +10,7 @@ import sys
 import os
 
 from httoop.body import Body
+from httoop.util import iteritems
 
 
 class WSGIBody(Body):
@@ -61,7 +62,7 @@ class WSGI(object):
 		environ = {}
 		environ.update(dict(self.environ.items()))
 		environ.update(dict([('HTTP_%s' % name.upper().replace('-', '_'), value)
-			for name, value in self.request.headers.iteritems()]))
+			for name, value in iteritems(self.request.headers)]))
 		environ.update({
 			'REQUEST_METHOD': bytes(self.request.method),
 			'SCRIPT_NAME': b'',
@@ -85,7 +86,7 @@ class WSGI(object):
 	def from_environ(self, environ=os.environ):
 		environ = environ.copy()
 
-		for name, value in environ.iteritems():
+		for name, value in iteritems(environ):
 			if name.startswith('HTTP_'):
 				self.request.headers[name[5:].replace('_', '-')] = value
 

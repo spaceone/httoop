@@ -15,7 +15,7 @@ from httoop.body import Body
 from httoop.uri import URI
 from httoop.date import Date
 from httoop.exceptions import InvalidLine, InvalidURI
-from httoop.util import ByteString, text_type
+from httoop.util import ByteString, Unicode
 
 
 class Protocol(ByteString):
@@ -41,7 +41,7 @@ class Protocol(ByteString):
 		self.set(protocol)
 
 	def set(self, protocol):
-		if isinstance(protocol, (bytes, text_type)):
+		if isinstance(protocol, (bytes, Unicode)):
 			protocol = self.parse(protocol)
 		else:
 			self.__protocol = tuple(protocol)
@@ -63,7 +63,7 @@ class Protocol(ByteString):
 		return self.version[key]
 
 	def __cmp__(self, other):
-		if isinstance(other, (bytes, text_type)):
+		if isinstance(other, (bytes, Unicode)):
 			return super(Protocol, self).__cmp__(other)
 		return cmp(self.__protocol, other)
 
@@ -89,7 +89,7 @@ class Method(ByteString):
 		self.set(method)
 
 	def set(self, method):
-		if isinstance(method, text_type):
+		if isinstance(method, Unicode):
 			method = method.encode('ascii')
 		self.parse(method)
 
@@ -240,7 +240,7 @@ class Request(Message):
 		try:
 			self.uri.parse(bits[1])
 		except InvalidURI as exc:
-			raise InvalidLine(u"Invalid request URL: %r" % text_type(exc))
+			raise InvalidLine(u"Invalid request URL: %r" % Unicode(exc))
 
 	def compose(self):
 		u"""composes the request line"""

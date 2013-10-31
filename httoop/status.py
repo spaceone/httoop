@@ -5,7 +5,7 @@
 .. seealso:: :rfc:`2616#section-10`
 """
 
-from httoop.util import ByteString, text_type
+from httoop.util import ByteString, Unicode
 from httoop.exceptions import InvalidLine
 
 import re
@@ -119,7 +119,7 @@ class Status(ByteString):
 			self.code, self.reason = status, REASONS.get(status, ('', ''))[0]
 		elif isinstance(status, tuple):
 			self.code, self.reason = status
-		elif isinstance(status, (bytes, text_type)):
+		elif isinstance(status, (bytes, Unicode)):
 			code, reason = status.split(None, 1)
 			if isinstance(reason, bytes):
 				reason = reason.decode('ascii')

@@ -1,11 +1,18 @@
 # -*- coding: utf-8 -*-
-from six import PY3, text_type, binary_type, BytesIO, iteritems
+from six import PY3, iteritems
 
-__all__ = ['PY3', 'text_type', 'binary_type', 'BytesIO', 'iteritems', 'urlparse']
+__all__ = ['PY3', 'Unicode', 'BytesIO', 'iteritems', 'urlparse']
 __all__ += ['to_unicode', 'to_ascii', 'get_bytes_from_unknown']
 __all__ += ['IFile', 'ByteString', 'parse_qsl', 'urlencode', 'partial']
 
 from functools import partial
+
+try:
+	Unicode = unicode
+except NameError:
+	Unicode = str
+
+from io import BytesIO
 
 try:
 	from email.utils import formatdate, parsedate

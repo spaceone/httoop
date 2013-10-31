@@ -9,7 +9,7 @@ CRLF = CR + LF
 from httoop.messages import Request
 from httoop.headers import Headers
 from httoop.exceptions import InvalidLine, InvalidHeader, InvalidBody
-from httoop.util import text_type
+from httoop.util import Unicode
 from httoop.statuses import BAD_REQUEST, NOT_IMPLEMENTED, LENGTH_REQUIRED
 from httoop.statuses import HTTPStatusException, REQUEST_URI_TOO_LONG
 
@@ -130,7 +130,7 @@ class StateMachine(object):
 		try:
 			request.parse(requestline)
 		except InvalidLine as exc:
-			raise BAD_REQUEST(text_type(exc))
+			raise BAD_REQUEST(Unicode(exc))
 
 	def parse_headers(self):
 		request = self.request
@@ -153,7 +153,7 @@ class StateMachine(object):
 			try:
 				request.headers.parse(headers)
 			except InvalidHeader as exc:
-				raise BAD_REQUEST(text_type(exc))
+				raise BAD_REQUEST(Unicode(exc))
 
 	def parse_body(self):
 		request = self.request
@@ -244,7 +244,7 @@ class StateMachine(object):
 		try:
 			request.trailers.parse(trailers)
 		except InvalidHeader as exc:
-			raise BAD_REQUEST(u'Invalid trailers: %s' % text_type(exc))
+			raise BAD_REQUEST(u'Invalid trailers: %s' % Unicode(exc))
 		for name in request.headers.values('Trailer'):
 			value = request.trailers.pop(name, None)
 			if value is not None:

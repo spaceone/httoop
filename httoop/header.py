@@ -21,6 +21,7 @@ HEADER = CaseInsensitiveDict()
 
 class HeaderType(type):
 	def __new__(mcs, name, bases, dict):
+		__all__.append(name)
 		name = dict.get('__name__', name)
 		return type.__new__(mcs, name, bases, dict)
 

@@ -1,19 +1,23 @@
 # -*- coding: utf-8 -*-
-class InvalidLine(ValueError):
+class Invalid(ValueError):
+	u"""base class for invalid values"""
+
+
+class InvalidLine(Invalid):
 	u"""error raised when first line is invalid"""
 
 
-class InvalidHeader(ValueError):
+class InvalidHeader(Invalid):
 	u"""error raised when header is invalid"""
 
 
-class InvalidURI(ValueError):
+class InvalidURI(Invalid):
 	u"""error raised when URI is invalid"""
 
 
-class InvalidDate(ValueError):
+class InvalidDate(Invalid):
 	u"""error raised when Date is invalid"""
 
 
-class InvalidBody(ValueError):
+class InvalidBody(Invalid):
 	u"error raised when Body is invalid"""

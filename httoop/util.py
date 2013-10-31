@@ -5,8 +5,13 @@ __all__ = ['PY3', 'text_type', 'binary_type', 'BytesIO', 'iteritems', 'urlparse'
 __all__ += ['to_unicode', 'to_ascii', 'get_bytes_from_unknown']
 __all__ += ['IFile', 'ByteString', 'parse_qsl', 'urlencode', 'partial']
 
-
 from functools import partial
+
+try:
+	from email.utils import formatdate, parsedate
+	formatdate = partial(formatdate, usegmt=True)
+except ImportError:
+	from rfc822 import formatdate, parsedate
 
 # TODO: from six
 try:

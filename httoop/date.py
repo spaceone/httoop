@@ -9,14 +9,8 @@ __all__ = ['Date']
 import time
 from datetime import datetime
 
-from httoop.util import ByteString, partial
+from httoop.util import ByteString, formatdate, parsedate
 from httoop.exceptions import InvalidDate
-
-try:
-	from email.utils import formatdate, parsedate
-	formatdate = partial(formatdate, usegmt=True)
-except ImportError:
-	from rfc822 import formatdate, parsedate
 
 
 class Date(ByteString):

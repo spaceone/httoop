@@ -34,10 +34,11 @@ class HTTP(StateMachine):
 	def on_uri_complete(self):
 		super(HTTP, self).on_uri_complete()
 		request = self.request
+		request.uri.validate_http_request_uri()
 		# sanitize request URI (./, ../, /.$, etc.)
-		path = bytes(request.uri.path)
-		request.uri.sanitize()
-		if path != bytes(request.uri.path):
+		path = request.uri.path
+		request.uri.normalize()
+		if path != request.uri.path:
 			raise MOVED_PERMANENTLY(request.uri.path)
 
 		# validate scheme if given

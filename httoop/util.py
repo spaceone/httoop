@@ -4,6 +4,7 @@ from six import PY3, iteritems
 __all__ = ['PY3', 'Unicode', 'BytesIO', 'iteritems', 'urlparse']
 __all__ += ['to_unicode', 'to_ascii', 'get_bytes_from_unknown']
 __all__ += ['IFile', 'ByteString', 'parse_qsl', 'urlencode', 'partial']
+__all__ += ['formatdate', 'parsedate']
 
 from functools import partial
 
@@ -65,11 +66,11 @@ def to_unicode(string):
 			return string.decode('UTF-8')
 		except UnicodeDecodeError:
 			return string.decode('ISO8859-1')
-	return text_type(string)
+	return Unicode(string)
 
 
 def to_ascii(string):
-	if isinstance(string, text_type):
+	if isinstance(string, Unicode):
 		return string.encode('ascii', 'ignore')
 	return bytes(string).decode('ascii', 'ignore').encode('ascii')
 
@@ -204,8 +205,8 @@ class ByteString(object):
 		raise NotImplemented
 
 	def __cmp__(self, other):
-		if isinstance(other, text_type):
-			return cmp(text_type(self), other)
+		if isinstance(other, Unicode):
+			return cmp(Unicode(self), other)
 		return cmp(bytes(self), other)
 
 	def __hash__(self):

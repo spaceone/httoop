@@ -34,7 +34,8 @@ class Enconv(Codec):
 
 	@classmethod
 	def decode(cls, data):
-		# TODO: if the data is already bytes we can also try to .decode(guess).encode('UTF-8').decode('UTF-8')
+		if isinstance(data, Unicode):
+			return data
 		try:
 			return data.decode('UTF-8')
 		except UnicodeDecodeError:
@@ -42,8 +43,11 @@ class Enconv(Codec):
 
 	@classmethod
 	def encode(cls, data):
-		if isinstance(data, Unicode):
-			return data
+		if isinstance(data, bytes):
+			try:
+				return data.decode('UTF-8').encode('UTF-8')
+			except UnicodeDecodeError:
+				return data.decode('ISO8859-1').encode('UTF-8')
 		return data.encode('UTF-8')
 
 
@@ -62,23 +66,26 @@ class Percent(Codec):
 
 	RESERVED_CHARS = GEN_DELIMS + SUB_DELIMS + b'%'
 
-	HEX_MAP = dict((a+b, chr(int(a+b, 16))) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef')
+	HEX_MAP = dict((a + b, chr(int(a + b, 16))) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef')
 
 	@classmethod
 	def decode(cls, data):
-		if '%' not in data:
-			return Enconv.decode(data)
-		def _decode(data):
-			data = data.split(b'%')
-			yield data.pop(0)
-			for item in data:
-				try:
-					yield cls.HEX_MAP[item[:2]]
-					yield item[2:]
-				except KeyError:
-					yield b'%'
-					yield item
-		return Enconv.decode(b''.join(_decode(data)))
+		return Enconv.decode(b''.join(cls._decode_iter(data)))
+
+	@classmethod
+	def _decode_iter(cls, data):
+		if b'%' not in data:
+			yield data
+			return
+		data = data.split(b'%')
+		yield data.pop(0)
+		for item in data:
+			try:
+				yield cls.HEX_MAP[item[:2]]
+				yield item[2:]
+			except KeyError:
+				yield b'%'
+				yield item
 
 	@classmethod
 	def encode(cls, data):
@@ -96,8 +103,7 @@ class FormURLEncoded(Codec):
 
 	@classmethod
 	def decode(cls, data):
-		fields = (field.split(b'=', 1) + [b''] for field in data.split(b'&'))
-		fields = ((field[0], field[1]) for field in fields)
+		fields = ((field.split(b'=', 1) + [b''])[:2] for field in data.split(b'&'))
 		return tuple((cls.unquote(name), cls.unquote(value)) for name, value in fields)
 
 	@classmethod

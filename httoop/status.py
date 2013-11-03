@@ -5,17 +5,19 @@
 .. seealso:: :rfc:`2616#section-10`
 """
 
-from httoop.util import ByteString, Unicode
+from httoop.util import Unicode
 from httoop.exceptions import InvalidLine
+from httoop.meta import HTTPType
 
 import re
 
 
-class Status(ByteString):
+class Status(object):
 	u"""A HTTP Status
 
 		:rfc:`2616#section-6.2`
 	"""
+	__metaclass__ = HTTPType
 
 	@property
 	def informational(self):

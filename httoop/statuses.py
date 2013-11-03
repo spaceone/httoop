@@ -6,11 +6,13 @@
 from httoop.body import Body  # TODO: remove ?
 from httoop.status import Status, REASONS
 from httoop.util import iteritems
+from httoop.meta import HTTPType
 
 # mapping of status -> Class, will be filled at the bottom
 STATUSES = dict()
 
 
+# TODO: create HTTPEntity ?
 # TODO: inherit from response?
 # TODO: also inherit from circuits.Event/SF.http.server.Response,
 # implement __call__ for additional arguments then?
@@ -144,7 +146,7 @@ class HTTPServerError(HTTPStatusException):
 		return dct
 
 
-class StatusType(type):
+class StatusType(HTTPType):
 	def __new__(mcs, name, bases, dict):
 		status = int(dict['status'])
 		if 99 < status < 200:

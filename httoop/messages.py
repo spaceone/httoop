@@ -15,11 +15,13 @@ from httoop.body import Body
 from httoop.uri import URI
 from httoop.date import Date
 from httoop.exceptions import InvalidLine, InvalidURI
-from httoop.util import ByteString, Unicode
+from httoop.util import Unicode
+from httoop.meta import HTTPType
 
 
-class Protocol(ByteString):
+class Protocol(object):
 	u"""The HTTP protocol version"""
+	__metaclass__ = HTTPType
 
 	@property
 	def version(self):
@@ -68,8 +70,9 @@ class Protocol(ByteString):
 		return cmp(self.__protocol, other)
 
 
-class Method(ByteString):
+class Method(object):
 	u"""A HTTP request method"""
+	__metaclass__ = HTTPType
 
 	@property
 	def safe(self):
@@ -102,11 +105,12 @@ class Method(ByteString):
 		return self.__method
 
 
-class Message(ByteString):
+class Message(object):
 	u"""A HTTP message
 
 		.. seealso:: :rfc:`2616#section-4`
 	"""
+	__metaclass__ = HTTPType
 
 	def __init__(self, protocol=None, headers=None, body=None):
 		u"""Initiates a new Message to hold information about the message.

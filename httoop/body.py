@@ -9,12 +9,13 @@ from io import BytesIO
 
 from httoop.exceptions import InvalidBody
 from httoop.headers import Headers
-from httoop.util import ByteString, IFile
-from httoop.util import Unicode
+from httoop.util import IFile, Unicode
+from httoop.meta import HTTPType
 
 
-class Body(IFile, ByteString):
+class Body(IFile):
 	u"""A HTTP message body"""
+	__metaclass__ = HTTPType
 
 	@property
 	def fileable(self):

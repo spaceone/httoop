@@ -43,3 +43,8 @@ from httoop.statuses import (
 	I_AM_A_TEAPOT, INTERNAL_SERVER_ERROR, NOT_IMPLEMENTED, BAD_GATEWAY, SERVICE_UNAVAILABLE,
 	GATEWAY_TIMEOUT, HTTP_VERSION_NOT_SUPPORTED
 )
+
+try:
+	__import__('pkg_resources').declare_namespace(__name__)
+except ImportError:
+	__path___ = __import__('pkgutil').extend_path(__path__, __name__)

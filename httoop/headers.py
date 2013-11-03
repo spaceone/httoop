@@ -14,12 +14,15 @@ __all__ = ['Headers']
 
 import re
 
-from httoop.util import CaseInsensitiveDict, ByteString, iteritems
+from httoop.util import CaseInsensitiveDict, iteritems
 from httoop.exceptions import InvalidHeader
 from httoop.header import HEADER, HeaderElement
+from httoop.meta import HTTPType
 
 
-class Headers(ByteString, CaseInsensitiveDict):
+class Headers(CaseInsensitiveDict):
+	__metaclass__ = HTTPType
+
 	# disallowed bytes for HTTP header field names
 	HEADER_RE = re.compile(b"[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]")
 

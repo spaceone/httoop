@@ -8,8 +8,9 @@ import re
 from os.path import join
 
 from httoop.exceptions import InvalidURI
-from httoop.util import ByteString, Unicode
+from httoop.util import Unicode
 from httoop.codecs import CODECS, Percent
+from httoop.meta import HTTPType
 
 DEFAULT_PORTS = {'http': 80, 'https': 443}
 QueryString = CODECS['application/x-www-form-urlencoded']
@@ -18,7 +19,7 @@ QueryString = CODECS['application/x-www-form-urlencoded']
 
 
 # TODO: abstracter: URI, HTTP11_URL, HTTP10URL
-class URI(ByteString):
+class URI(object):
 	u"""Uniform Resource Identifier
 
 		.. seealso:: :rfc:`3986`
@@ -28,6 +29,7 @@ class URI(ByteString):
 		.. seealso:: :rfc:`2616#section-3.2.2`
 
 	"""
+	__metaclass__ = HTTPType
 
 	quote = Percent.encode
 	unquote = Percent.decode

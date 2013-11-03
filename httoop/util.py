@@ -3,7 +3,7 @@ from six import PY3, iteritems
 
 __all__ = ['PY3', 'Unicode', 'BytesIO', 'iteritems', 'urlparse']
 __all__ += ['to_unicode', 'to_ascii', 'get_bytes_from_unknown']
-__all__ += ['IFile', 'ByteString', 'parse_qsl', 'urlencode', 'partial']
+__all__ += ['IFile', 'parse_qsl', 'urlencode', 'partial']
 __all__ += ['formatdate', 'parsedate']
 
 from functools import partial
@@ -184,30 +184,3 @@ class CaseInsensitiveDict(dict):
 		for k in seq:
 			newdict[k] = to_unicode(value)
 		return newdict
-
-
-# TODO: rename
-class ByteString(object):
-	def __str__(self):
-		if PY3:
-			return self.__unicode__()
-		else:
-			return self.__bytes__()
-
-	def __unicode__(self):
-		bstr = bytes(self)
-		try:
-			return bstr.decode('UTF-8')
-		except UnicodeDecodeError:
-			return bstr.decode('ISO8859-1')
-
-	def __bytes__(self):
-		raise NotImplemented
-
-	def __cmp__(self, other):
-		if isinstance(other, Unicode):
-			return cmp(Unicode(self), other)
-		return cmp(bytes(self), other)
-
-	def __hash__(self):
-		return bytes(self).__hash__()

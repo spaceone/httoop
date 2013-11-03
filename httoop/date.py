@@ -9,17 +9,19 @@ __all__ = ['Date']
 import time
 from datetime import datetime
 
-from httoop.util import ByteString, formatdate, parsedate
+from httoop.util import formatdate, parsedate
 from httoop.exceptions import InvalidDate
+from httoop.meta import HTTPType
 
 
-class Date(ByteString):
+class Date(object):
 	u"""HTTP Date
 
 		.. seealso:: :rfc:`2616#section-3.3`
 
 		.. seealso:: :rfc:`2616#section-19.3`
 	"""
+	__metaclass__ = HTTPType
 
 	def __init__(self, timeval=None):
 		u"""

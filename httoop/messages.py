@@ -85,8 +85,8 @@ class Method(ByteString):
 
 	METHOD_RE = re.compile(r"^[A-Z0-9$-_.]{1,20}\Z", re.IGNORECASE)
 
-	def __init__(self, method):
-		self.set(method)
+	def __init__(self, method=None):
+		self.set(method or u'GET')
 
 	def set(self, method):
 		if isinstance(method, Unicode):
@@ -206,7 +206,7 @@ class Request(Message):
 	def uri(self, uri):
 		self.__uri.set(uri)
 
-	def __init__(self, method=None, uri=None, protocol=None, headers=None, body=None):
+	def __init__(self, method=None, uri=None, headers=None, body=None, protocol=None):
 		"""Creates a new Request object to hold information about a request.
 
 			:param method: the requested method
@@ -289,7 +289,7 @@ class Response(Message):
 	def status(self, status):
 		self.__status.set(status)
 
-	def __init__(self, status=None, protocol=None, headers=None, body=None):
+	def __init__(self, status=None, headers=None, body=None, protocol=None):
 		"""Creates a new Response object to hold information about the response.
 
 			:param status:

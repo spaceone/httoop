@@ -54,7 +54,7 @@ class URI(ByteString):
 
 	def __init__(self, uri=None):
 		self.query = {}
-		self.parse(uri or b'/')
+		self.set(uri or b'/')
 		self.normalize()
 
 	def normalize(self):
@@ -68,8 +68,10 @@ class URI(ByteString):
 
 	def join(self, relative):
 		relative = URI(relative)
-		self.path = join(self.path, relative.path)
-		self.abspath()
+		joined = URI(self)
+		joined.path = join(joined.path, relative.path)
+		joined.abspath()
+		return joined
 
 	def validate_http_request_uri(self):  # TODO: remove
 		if self.fragment:
@@ -104,7 +106,8 @@ class URI(ByteString):
 			self.tuple = uri
 		elif isinstance(uri, dict):
 			self.dict = uri
-		raise InvalidURI()  # TypeError
+		else:
+			raise InvalidURI()  # TypeError
 
 	@property
 	def dict(self):

@@ -76,7 +76,7 @@ class Status(ByteString):
 		if match is None:
 			raise InvalidLine(u"Invalid status %r" % status.decode('ISO8859-1'))
 
-		self.set(int(match.group(1)), match.group(2).decode('ascii'))
+		self.set((int(match.group(1)), match.group(2).decode('ascii'),))
 
 	def compose(self):
 		return b'%d %s' % (self.code, self.reason.encode('ascii'))

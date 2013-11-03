@@ -24,7 +24,7 @@ class HTTP(StateMachine):
 		response = self.response
 
 		# check if we speak the same major HTTP version
-		if request.protocol.major != response.protocol.major or request.protocol.minor not in (0, 1):
+		if request.protocol > ServerProtocol:
 			# the major HTTP version differs
 			raise HTTP_VERSION_NOT_SUPPORTED('The server only supports HTTP/1.0 and HTTP/1.1.')
 
@@ -44,16 +44,15 @@ class HTTP(StateMachine):
 		# validate scheme if given
 		if request.uri.scheme:
 			if request.uri.scheme not in ('http', 'https'):
-				raise BAD_REQUEST('wrong scheme')
-		# FIXME: add these information
-		#else:
+				raise BAD_REQUEST('Invalid URL: wrong scheme')
+		#else:  # FIXME: add these information
 		#	# set correct scheme, host and port
 		#	request.uri.scheme = 'https' if self.server.secure else 'http'
 		#	request.uri.host = self.local.host.name
 		#	request.uri.port = self.local.host.port
 
 		## set Server header
-		#response.headers['Server'] = self.version
+		#response.headers.setdefault('Server', self.version)
 
 	def on_headers_complete(self):
 		super(HTTP, self).on_headers_complete()
@@ -78,6 +77,7 @@ class HTTP(StateMachine):
 		# GET request with body
 		if request.method in ('GET', 'HEAD', 'OPTIONS') and request.body:
 			raise BAD_REQUEST('A %s request MUST NOT contain a request body.' % request.method)
+
 		# maybe decompress
 		if self._decompress_obj is not None:
 			try:

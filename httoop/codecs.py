@@ -13,19 +13,19 @@ CODECS = dict()
 
 class Codec(object):
 	@classmethod
-	def decode(cls, data):
+	def decode(cls, data, charset=None):
 		raise NotImplemented
 
 	@classmethod
-	def encode(cls, data):
+	def encode(cls, data, charset=None):
 		raise NotImplemented
 
 	@classmethod
-	def iterencode(cls, data):
+	def iterencode(cls, data, charset=None):
 		raise NotImplemented
 
 	@classmethod
-	def iterdecode(cls, data):
+	def iterdecode(cls, data, charset=None):
 		raise NotImplemented
 
 
@@ -33,29 +33,31 @@ class Enconv(Codec):
 	mimetype = None
 
 	@classmethod
-	def decode(cls, data):
+	def decode(cls, data, charset=None):
 		if isinstance(data, Unicode):
 			return data
-		try:
-			return data.decode('UTF-8')
-		except UnicodeDecodeError:
-			return data.decode('ISO8859-1')
+		for encoding in (charset or 'UTF-8', 'UTF-8', 'ISO8859-1'):
+			try:
+				return data.decode(encoding)
+			except UnicodeDecodeError:
+				pass
 
 	@classmethod
-	def encode(cls, data):
+	def encode(cls, data, charset=None):
+		charset = charset or 'UTF-8'
 		if isinstance(data, bytes):
 			try:
-				return data.decode('UTF-8').encode('UTF-8')
+				return data.decode('UTF-8').encode(charset)
 			except UnicodeDecodeError:
-				return data.decode('ISO8859-1').encode('UTF-8')
-		return data.encode('UTF-8')
+				return data.decode('ISO8859-1').encode(charset)
+		return data.encode(charset)
 
 
 class Percent(Codec):
 	u"""Percentage encoding
 
 		>>> Percent.encode(u"!#$&'()*+,/:;=?@[]")
-		'%21%23%24%26%27%28%29%2a%2b%2c%2f%3a%3b%3d%3f%40%5b%5d'
+		'%21%23%24%26%27%28%29%2A%2B%2C%2F%3A%3B%3D%3F%40%5B%5D'
 		>>> Percent.decode('%21%23%24%26%27%28%29%2a%2b%2c%2f%3a%3b%3d%3f%40%5b%5d')
 		u"!#$&'()*+,/:;=?@[]"
 	"""
@@ -69,8 +71,8 @@ class Percent(Codec):
 	HEX_MAP = dict((a + b, chr(int(a + b, 16))) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef')
 
 	@classmethod
-	def decode(cls, data):
-		return Enconv.decode(b''.join(cls._decode_iter(data)))
+	def decode(cls, data, charset=None):
+		return Enconv.decode(b''.join(cls._decode_iter(data)), charset)
 
 	@classmethod
 	def _decode_iter(cls, data):
@@ -88,11 +90,11 @@ class Percent(Codec):
 				yield item
 
 	@classmethod
-	def encode(cls, data):
-		data = Enconv.encode(data)
+	def encode(cls, data, charset=None):
+		data = Enconv.encode(data, charset)
 		if not any(d in data for d in cls.RESERVED_CHARS):
 			return data
-		return b''.join('%%%s' % (hex(ord(d))[2:]) if d in cls.RESERVED_CHARS else d for d in data)
+		return b''.join('%%%s' % (hex(ord(d))[2:].upper()) if d in cls.RESERVED_CHARS else d for d in data)
 
 
 class FormURLEncoded(Codec):
@@ -102,13 +104,15 @@ class FormURLEncoded(Codec):
 	quote = Percent.encode
 
 	@classmethod
-	def decode(cls, data):
-		fields = ((field.split(b'=', 1) + [b''])[:2] for field in data.split(b'&'))
-		return tuple((cls.unquote(name), cls.unquote(value)) for name, value in fields)
+	def decode(cls, data, charset=None):
+		if not data:
+			return ()
+		fields = (field.partition(b'=')[::2] for field in data.split(b'&'))
+		return tuple((cls.unquote(name, charset), cls.unquote(value, charset)) for name, value in fields)
 
 	@classmethod
-	def encode(cls, data):
-		return b'&'.join(b'%s=%s' % (cls.quote(name), cls.quote(value)) for name, value in data if name and value)
+	def encode(cls, data, charset=None):
+		return b'&'.join(b'%s=%s' % (cls.quote(name, charset), cls.quote(value, charset)) for name, value in data if name and value)
 
 
 class MultipartFormData(Codec):
@@ -130,11 +134,11 @@ class JSON(Codec):
 		from json import loads as json_decode
 
 	@classmethod
-	def encode(cls, data):
+	def encode(cls, data, charset=None):
 		return cls.json_encode(data)
 
 	@classmethod
-	def decode(cls, data):
+	def decode(cls, data, charset=None):
 		return cls.json_decode(data)
 
 

@@ -82,9 +82,9 @@ class Method(object):
 	def idempotent(self):
 		return self in self.idempotent_methods
 
-	safe_methods = (u'GET', u'HEAD', u'PUT', u'DELETE', u'OPTIONS', u'TRACE')
+	safe_methods = (u'GET', u'HEAD')
 
-	idempotent_methods = (u'GET', u'HEAD')
+	idempotent_methods = (u'GET', u'HEAD', u'PUT', u'DELETE', u'OPTIONS', u'TRACE')
 
 	METHOD_RE = re.compile(r"^[A-Z0-9$-_.]{1,20}\Z", re.IGNORECASE)
 

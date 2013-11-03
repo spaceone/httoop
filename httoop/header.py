@@ -88,6 +88,11 @@ class MimeType(object):
 
 		.. seealso:: rfc:`3023`
 	"""
+
+	@property
+	def mimetype(self):
+		return '%s/%s' % (self.type, self.subtype_wo_vendor)
+
 	@property
 	def type(self):
 		return self.value.split('/', 1)[0]

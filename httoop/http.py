@@ -5,6 +5,8 @@ from httoop.messages import Response, Protocol
 from httoop.parser import StateMachine
 from httoop.statuses import MOVED_PERMANENTLY, BAD_REQUEST
 from httoop.statuses import HTTP_VERSION_NOT_SUPPORTED
+from httoop.util import Unicode
+from httoop.exceptions import InvalidURI
 
 import zlib
 
@@ -34,12 +36,17 @@ class HTTP(StateMachine):
 	def on_uri_complete(self):
 		super(HTTP, self).on_uri_complete()
 		request = self.request
-		request.uri.validate_http_request_uri()
+
+		try:
+			request.uri.validate_http_request_uri()
+		except InvalidURI, exc:
+			raise BAD_REQUEST(Unicode(exc))
+
 		# sanitize request URI (./, ../, /.$, etc.)
 		path = request.uri.path
 		request.uri.normalize()
 		if path != request.uri.path:
-			raise MOVED_PERMANENTLY(request.uri.path)
+			raise MOVED_PERMANENTLY(request.uri.path.encode('UTF-8'))
 
 		# validate scheme if given
 		if request.uri.scheme:
@@ -63,11 +70,14 @@ class HTTP(StateMachine):
 			raise BAD_REQUEST('Missing Host header')
 
 		# set decompressor
-		encoding = request.headers.get('content-encoding')
+		encoding = request.headers.get('Content-Encoding')
 		if encoding == "gzip":
 			self._decompress_obj = zlib.decompressobj(16 + zlib.MAX_WBITS)
 		elif encoding == "deflate":
 			self._decompress_obj = zlib.decompressobj()
+
+		if 'Content-Type' in request.headers:
+			request.body.mimetype = request.headers.element('Content-Type')
 
 	def on_message_complete(self):
 		super(HTTP, self).on_message_complete()

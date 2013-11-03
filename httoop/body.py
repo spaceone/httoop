@@ -9,6 +9,8 @@ from io import BytesIO
 
 from httoop.exceptions import InvalidBody
 from httoop.headers import Headers
+from httoop.header import ContentType
+from httoop.codecs import CODECS
 from httoop.util import IFile, Unicode
 from httoop.meta import HTTPType
 
@@ -17,18 +19,39 @@ class Body(IFile):
 	u"""A HTTP message body"""
 	__metaclass__ = HTTPType
 
+	MAX_CHUNK_SIZE = 4096
+
 	@property
 	def fileable(self):
 		return all(hasattr(self.content, method) for method in ('read', 'write', 'close'))
 
-	MAX_CHUNK_SIZE = 4069
+	@property
+	def encoding(self):
+		return self.mimetype.charset or 'UTF-8'
 
-	def __init__(self, body=None, encoding=None):
-		# TODO: should we add something like self.mimetype?
-		# or a ContentType HeaderField instance which describes
-		# the content type (and then also self.encoding)
+	@encoding.setter
+	def encoding(self, charset):
+		self.mimetype.charset = charset
+
+	@property
+	def mimetype(self):
+		return self._mimetype
+
+	@mimetype.setter
+	def mimetype(self, mimetype):
+		self._mimetype = ContentType.from_str(bytes(mimetype))
+
+	@property
+	def codec(self):
+		mimetype = self.mimetype.mimetype
+		if self.mimetype.vendor:
+			codec = CODECS.get(self.mimetype.value)
+		return codec or CODECS.get(mimetype)
+
+	def __init__(self, body=None, mimetype=None):
 		self.content = BytesIO()
-		self.encoding = encoding
+		self.mimetype = mimetype or b'text/plain; charset=UTF-8'
+		self.data = None
 
 		self.chunked = False
 		self.trailer = Headers()
@@ -44,7 +67,7 @@ class Body(IFile):
 		elif isinstance(body, (BytesIO, file)):
 			pass
 		elif isinstance(body, Unicode):
-			body = BytesIO(body.encode(self.encoding or 'UTF-8'))
+			body = BytesIO(body.encode(self.encoding))
 		elif isinstance(body, bytes):
 			body = BytesIO(body)
 		elif isinstance(body, Body):
@@ -56,6 +79,17 @@ class Body(IFile):
 	def parse(self, data):
 		pass
 
+	def encode(self):
+		codec = self.codec
+		if codec:
+			value = codec.encode(self.data, self.encoding)
+			self.set(value)
+
+	def decode(self):
+		codec = self.codec
+		if codec:
+			self.data = codec.decode(bytes(self), self.encoding)
+
 	def compose(self):
 		return b''.join(self.__iter__())
 
@@ -64,7 +98,7 @@ class Body(IFile):
 
 	def __unicode__(self):
 		body = bytes(self)
-		for encoding in (self.encoding or 'UTF-8', 'UTF-8', 'ISO8859-1'):
+		for encoding in (self.encoding, 'UTF-8', 'ISO8859-1'):
 			try:
 				return body.decode(encoding)
 			except UnicodeDecodeError:
@@ -130,7 +164,7 @@ class Body(IFile):
 	def __compose_iterable_iter(self):
 		for data in self.content:
 			if isinstance(data, Unicode):
-				for encoding in (self.encoding or 'UTF-8', 'UTF-8'):
+				for encoding in (self.encoding, 'UTF-8'):
 					try:
 						data = data.encode(encoding)
 						break

@@ -37,11 +37,6 @@ class HTTP(StateMachine):
 		super(HTTP, self).on_uri_complete()
 		request = self.request
 
-		try:
-			request.uri.validate_http_request_uri()
-		except InvalidURI, exc:
-			raise BAD_REQUEST(Unicode(exc))
-
 		# sanitize request URI (./, ../, /.$, etc.)
 		path = request.uri.path
 		request.uri.normalize()

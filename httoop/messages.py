@@ -241,10 +241,8 @@ class Request(Message):
 		self.method.parse(bits[0])
 
 		# URI
-		try:
-			self.uri.parse(bits[1])
-		except InvalidURI as exc:
-			raise InvalidLine(u"Invalid request URL: %r" % Unicode(exc))
+		self.uri.parse(bits[1])
+		self.uri.validate_http_request_uri()
 
 	def compose(self):
 		u"""composes the request line"""
@@ -343,6 +341,9 @@ class Response(Message):
 				self.headers.pop(header, None)
 
 		self.close = self.close
+
+		if self.body:
+			self.headers['Content-Type'] = bytes(self.body.mimetype)
 
 		if request is None:
 			return

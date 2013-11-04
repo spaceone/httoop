@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""Exception classes
+
+"""
+
 class Invalid(ValueError):
 	u"""base class for invalid values"""
 
@@ -21,3 +25,11 @@ class InvalidDate(Invalid):
 
 class InvalidBody(Invalid):
 	u"error raised when Body is invalid"""
+
+
+class EncodeError(ValueError):
+	u"""error raised when encoding failed"""
+
+
+class DecodeError(ValueError):
+	u"""error raised when decoding failed"""

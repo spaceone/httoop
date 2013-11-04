@@ -186,6 +186,11 @@ class AcceptElement(HeaderElement):
 		# reverse
 		return {-1: 1, 0: 0, 1: -1}.get(diff, diff)
 
+	def __eq__(self, other):
+		if not isinstance(other, AcceptElement):
+			other = AcceptElement(other)
+		return other.value == self.value and other.quality == self.quality
+
 	def __lt__(self, other):
 		if self.quality == other.quality:
 			return str(self) < str(other)

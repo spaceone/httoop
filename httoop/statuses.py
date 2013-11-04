@@ -27,7 +27,8 @@ class HTTPStatusException(Status, Exception):
 	@property
 	def body(self):
 		if not hasattr(self, '_body'):
-			self._body = Body(self.to_dict())
+			self._body = Body(mimetype='application/json')
+			self._body.data = self.to_dict()
 		return self._body
 
 	@body.setter
@@ -83,7 +84,7 @@ class HTTPStatusException(Status, Exception):
 		Status.__init__(self, **statuskw)
 
 	def __repr__(self):
-		return '<HTTPStatusException(%s)>' % ' '.join('%s=%r' % (k, v) for k, v in iteritems(self.to_dict()))
+		return '<HTTP<%s>(%s)>' % (self.__class__.__name__, ' '.join('%s=%r' % (k, v) for k, v in iteritems(self.to_dict())))
 
 	def to_dict(self):
 		u"""the default body arguments"""

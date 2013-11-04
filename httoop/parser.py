@@ -8,7 +8,7 @@ CRLF = CR + LF
 
 from httoop.messages import Request
 from httoop.headers import Headers
-from httoop.exceptions import InvalidLine, InvalidHeader, InvalidBody
+from httoop.exceptions import InvalidLine, InvalidHeader, InvalidBody, InvalidURI
 from httoop.util import Unicode
 from httoop.statuses import BAD_REQUEST, NOT_IMPLEMENTED, LENGTH_REQUIRED
 from httoop.statuses import HTTPStatusException, REQUEST_URI_TOO_LONG
@@ -129,7 +129,7 @@ class StateMachine(object):
 		# parse request line
 		try:
 			request.parse(requestline)
-		except InvalidLine as exc:
+		except (InvalidLine, InvalidURI) as exc:
 			raise BAD_REQUEST(Unicode(exc))
 
 	def parse_headers(self):
@@ -201,7 +201,7 @@ class StateMachine(object):
 				msg_inv_chunk = self.buffer.decode('ISO8859-1')
 				raise InvalidBody(u'chunk invalid terminator: [%r]' % msg_inv_chunk)
 
-			request.body.write(body_part)
+			request.body.parse(body_part)
 
 			self.buffer = rest_chunk[len(self.line_end):]
 
@@ -210,7 +210,7 @@ class StateMachine(object):
 				return False
 
 		elif self.message_length:
-			request.body.write(self.buffer)
+			request.body.parse(self.buffer)
 			self.buffer = b''
 
 			blen = len(request.body)

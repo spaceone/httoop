@@ -71,11 +71,11 @@ class Body(IFile):
 		elif isinstance(body, bytes):
 			body = BytesIO(body)
 		elif isinstance(body, Body):
-			body = body.content
 			self.mimetype = body.mimetype
 			self.data = body.data
 			self.chunked = body.chunked
 			self.trailer = body.trailer
+			body = body.content
 		elif not hasattr(body, '__iter__'):
 			raise InvalidBody('Could not convert data structure of this type')
 		self.content = body

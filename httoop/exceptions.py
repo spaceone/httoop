@@ -3,6 +3,7 @@
 
 """
 
+
 class Invalid(ValueError):
 	u"""base class for invalid values"""
 

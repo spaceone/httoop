@@ -131,8 +131,10 @@ except ImportError:
 	from json import dumps as json_encode
 	from json import loads as json_decode
 
+
 class JSON(Codec):
 	mimetype = 'application/json'
+
 	@classmethod
 	def encode(cls, data, charset=None):
 		return json_encode(data)

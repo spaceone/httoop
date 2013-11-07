@@ -62,6 +62,13 @@ class Body(IFile):
 		self.__iter = None
 
 	def set(self, body):
+		if isinstance(body, Body):
+			self.mimetype = body.mimetype
+			self.data = body.data
+			self.chunked = body.chunked
+			self.trailer = body.trailer
+			self.content = body.content
+			return
 		if not body:
 			body = BytesIO()
 		elif isinstance(body, (BytesIO, file)):
@@ -70,12 +77,6 @@ class Body(IFile):
 			body = BytesIO(body.encode(self.encoding))
 		elif isinstance(body, bytes):
 			body = BytesIO(body)
-		elif isinstance(body, Body):
-			self.mimetype = body.mimetype
-			self.data = body.data
-			self.chunked = body.chunked
-			self.trailer = body.trailer
-			body = body.content
 		elif not hasattr(body, '__iter__'):
 			raise InvalidBody('Could not convert data structure of this type')
 		self.content = body

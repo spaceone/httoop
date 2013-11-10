@@ -54,21 +54,10 @@ class HeaderElement(object):
 		"""Transform 'token;key=val' to ('token', {'key': 'val'})."""
 		# Split the element into a value and parameters. The 'value' may
 		# be of the form, "token=token", but we don't split that here.
-		# FIXME: elementstr = 'name; =value'
-		atoms = [x.strip() for x in elementstr.split(";") if x.strip()]
+		atoms = [x.strip() for x in elementstr.split(";") if x.strip()] or ['']
 
-		if not atoms:
-			initial_value = ''
-		else:
-			initial_value = atoms.pop(0).strip()
-
-		params = {}
-		for atom in atoms:
-			if '=' not in atom:
-				params[atom] = ''
-			else:
-				key, val = atom.split("=", 1)
-				params[key.strip()] = val.strip()
+		initial_value = atoms.pop(0)
+		params = dict((key.strip(), value.strip()) for key, _, value in (atom.partition('=') for atom in atoms))
 
 		return initial_value, params
 
@@ -176,10 +165,14 @@ class AcceptElement(HeaderElement):
 		media_type, params = cls.parse(media_range)
 		if qvalue is not None:
 			params["q"] = qvalue
+		if media_type == '*':
+			media_type = '*/*'
 
 		return cls(media_type, params)
 
 	def __cmp__(self, other):
+		if not isinstance(other, AcceptElement):
+			other = AcceptElement(other)
 		diff = cmp(self.quality, other.quality)
 		if diff == 0:
 			diff = cmp(str(self), str(other))
@@ -192,6 +185,8 @@ class AcceptElement(HeaderElement):
 		return other.value == self.value and other.quality == self.quality
 
 	def __lt__(self, other):
+		if not isinstance(other, AcceptElement):
+			other = AcceptElement(other)
 		if self.quality == other.quality:
 			return str(self) < str(other)
 		else:
@@ -272,6 +267,24 @@ class ContentType(HeaderElement, MimeType):
 	@charset.setter
 	def charset(self, charset):
 		self.params['charset'] = charset
+
+	VALID_BOUNDARY = re.compile('^[ -~]{0,200}[!-~]$')
+
+	@property
+	def boundary(self):
+		if 'boundary' not in self.params:
+			return
+
+		boundary = self.params['boundary'].strip('"')  # FIXME: ? remove this generic?
+		if not self.VALID_BOUNDARY.match(boundary):
+			raise InvalidHeader('Invalid boundary in multipart form: %r' % (boundary))
+		return boundary
+
+	@boundary.setter
+	def boundary(self, boundary):
+		if not self.VALID_BOUNDARY.match(boundary):
+			raise InvalidHeader('Invalid boundary in multipart form: %r' % (boundary))
+		self.params['boundary'] = boundary
 
 
 class Date(HeaderElement):
@@ -438,6 +451,6 @@ class WWWAuthenticate(HeaderElement):
 	__name__ = 'WWW-Authenticate'
 
 
-for local in locals().copy().values():
-	if isinstance(local, HeaderType) and local is not HeaderElement:
-		HEADER[local.__name__] = local
+for member in locals().copy().values():
+	if isinstance(member, HeaderType) and member is not HeaderElement:
+		HEADER[member.__name__] = member

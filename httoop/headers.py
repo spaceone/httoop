@@ -48,11 +48,12 @@ class Headers(CaseInsensitiveDict):
 		return list(reversed(sorted(result)))
 		# TODO: remove the reversed() (fix in AcceptElement)
 
-	def element(self, fieldname):
+	def element(self, fieldname, default=None):
 		u"""Treat the field as single element"""
 		if fieldname in self:
 			Element = HEADER.get(fieldname, HeaderElement)
 			return Element.from_str(self[fieldname])
+		return default
 
 	def values(self, key=None):
 		# if key is set return a ordered list of element values

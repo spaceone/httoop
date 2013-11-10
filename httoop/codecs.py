@@ -6,7 +6,10 @@ u"""Module containing various codecs which are
 __all__ = ['CODECS', 'Codec', 'FormURLEncoded', 'MultipartFormData',
 	'MultipartMixed', 'JSON', 'HTML', 'XML', 'PlainText']
 
+import re
+
 from httoop.util import Unicode
+from httoop.exceptions import DecodeError
 
 CODECS = dict()
 
@@ -115,6 +118,44 @@ class FormURLEncoded(Codec):
 		return b'&'.join(b'%s=%s' % (cls.quote(name, charset), cls.quote(value, charset)) for name, value in data if name and value)
 
 
+class QueryString(FormURLEncoded):
+	INVALID = set(map(chr, list(range(32)) + [127]))
+#	INVALID_HEX = [Percent.decode(i) for i in INVALID]
+#	INVALID_RE = re.compile('(?:{})'.format((u'|'.join(INVALID_HEX)).encode('ascii')))
+
+	@classmethod
+	def quote(cls, data, charset):
+		return super(QueryString, cls).quote(data, charset).replace(b' ', b'+')
+
+	@classmethod
+	def unquote(cls, data, charset):
+		data = Enconv.decode(data, charset)
+		return super(QueryString, cls).unquote(data.replace(b'+', b' '), charset)
+
+	@classmethod
+	def decode(cls, data, charset=None):
+		if set(Percent.decode(data)) & cls.INVALID:
+			raise DecodeError('Invalid query string: contains invalid token')
+
+		return super(QueryString, cls).decode(data, charset)
+
+	@classmethod
+	def encode(cls, data, charset=None):
+		data = super(QueryString, cls).encode(data, charset)
+
+# TODO: decide to remove invalid chars or strip them out
+# FIXME: broken?
+#		if set(Percent.encode(data)) & cls.INVALID:
+#			raise DecodeError('Invalid query string: contains invalid token')
+
+		# strip out illegal chars
+		for invalid in cls.INVALID:
+			data = data.replace(Percent.decode(invalid.encode('ascii')), u'')
+		# data = cls.INVALID_RE.sub(data, u'')
+
+		return data
+
+
 class MultipartFormData(Codec):
 	mimetype = 'multipart/form-data'
 
@@ -156,6 +197,6 @@ class HTML(Codec):
 	mimetype = 'text/html'
 
 
-for cls in locals().copy().values():
-	if cls is not Codec and isinstance(cls, type) and issubclass(cls, Codec):
-		CODECS[cls.mimetype] = cls
+for member in locals().copy().values():
+	if member is not Codec and isinstance(member, type) and issubclass(member, Codec):
+		CODECS[member.mimetype] = member

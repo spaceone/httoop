@@ -5,8 +5,6 @@ from httoop.messages import Response, Protocol
 from httoop.parser import StateMachine
 from httoop.statuses import MOVED_PERMANENTLY, BAD_REQUEST
 from httoop.statuses import HTTP_VERSION_NOT_SUPPORTED
-from httoop.util import Unicode
-from httoop.exceptions import InvalidURI
 
 import zlib
 

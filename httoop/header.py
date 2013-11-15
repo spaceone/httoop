@@ -11,6 +11,8 @@ __all__ = ['HEADER', 'HeaderElement']
 
 import re
 # TODO: Via, Server, User-Agent can contain comments, parse them
+# TODO: parse encoded words like =?UTF-8?B?…?= (RFC 2047); seealso quopri
+# TODO: unify the use of unicode / bytes
 
 from httoop.util import CaseInsensitiveDict, iteritems
 from httoop.exceptions import InvalidHeader
@@ -165,8 +167,6 @@ class AcceptElement(HeaderElement):
 		media_type, params = cls.parse(media_range)
 		if qvalue is not None:
 			params["q"] = qvalue
-		if media_type == '*':
-			media_type = '*/*'
 
 		return cls(media_type, params)
 
@@ -194,7 +194,10 @@ class AcceptElement(HeaderElement):
 
 
 class Accept(AcceptElement, MimeType):
-	pass
+	def __init__(self, value, params):
+		if value == '*':
+			value = '*/*'
+		super(Accept, self).__init__(value, params)
 
 
 class AcceptCharset(AcceptElement):

@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
-from six import PY3, iteritems
+u"""Utilities for python2/3 compatibility"""
 
-__all__ = ['PY3', 'Unicode', 'BytesIO', 'iteritems', 'urlparse']
-__all__ += ['to_unicode', 'to_ascii', 'get_bytes_from_unknown']
-__all__ += ['IFile', 'parse_qsl', 'urlencode', 'partial']
-__all__ += ['formatdate', 'parsedate']
+__all__ = [
+	'PY3', 'Unicode', 'BytesIO', 'iteritems',
+	'to_unicode', 'to_ascii', 'get_bytes_from_unknown',
+	'IFile', 'partial', 'formatdate', 'parsedate'
+]
 
+import sys
 from functools import partial
+
+PY3 = sys.version_info[0] == 3
 
 try:
 	Unicode = unicode
@@ -21,38 +25,9 @@ try:
 except ImportError:
 	from rfc822 import formatdate, parsedate
 
-# TODO: from six
-try:
-	import urlparse
-except ImportError:
-	import urllib.parse as urlparse  # NOQA
 
-try:
-	from urlparse import parse_qsl
-except ImportError:
-	try:
-		from urllib.parse import parse_qsl
-	except ImportError:
-		try:
-			from cgi import parse_qsl
-		except ImportError:
-			import warnings
-			warnings.warn('''No library for application/x-www-form-urlencoded processing
-				could be found (urlparse, urllib.parse, cgi)''')
-
-			def parse_qsl(*a, **k):
-				raise NotImplemented
-
-
-try:
-	from urllib import urlencode
-except ImportError:
-	import warnings
-	warnings.warn('''No library for application/x-www-form-urlencoded processing
-		could be found (urllib)''')
-
-	def urlencode(*a, **k):
-		raise NotImplemented
+def iteritems(d, **kw):
+	return iter(getattr(d, 'items' if PY3 else 'iteritems')(**kw))
 
 
 def to_unicode(string):

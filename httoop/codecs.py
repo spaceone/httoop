@@ -6,8 +6,6 @@ u"""Module containing various codecs which are
 __all__ = ['CODECS', 'Codec', 'FormURLEncoded', 'MultipartFormData',
 	'MultipartMixed', 'JSON', 'HTML', 'XML', 'PlainText']
 
-import re
-
 from httoop.util import Unicode
 from httoop.exceptions import DecodeError
 
@@ -97,7 +95,7 @@ class Percent(Codec):
 		data = Enconv.encode(data, charset)
 		if not any(d in data for d in cls.RESERVED_CHARS):
 			return data
-		return b''.join('%%%s' % (hex(ord(d))[2:].upper()) if d in cls.RESERVED_CHARS else d for d in data)
+		return b''.join(b'%%%s' % (d.encode('hex').upper()) if d in cls.RESERVED_CHARS else d for d in data)
 
 
 class FormURLEncoded(Codec):

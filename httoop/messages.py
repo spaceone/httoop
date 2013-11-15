@@ -14,7 +14,7 @@ from httoop.statuses import STATUSES
 from httoop.body import Body
 from httoop.uri import URI
 from httoop.date import Date
-from httoop.exceptions import InvalidLine, InvalidURI
+from httoop.exceptions import InvalidLine
 from httoop.util import Unicode
 from httoop.meta import HTTPType
 
@@ -249,12 +249,11 @@ class Request(Message):
 		return b"%s %s %s\r\n" % (bytes(self.__method), bytes(self.__uri), bytes(self.protocol))
 
 	def prepare(self):
-		if self.body:
-			self.headers['Content-Length'] = bytes(len(self.body))
-
 		self.chunked = self.chunked
-
 		self.close = self.close
+
+		if self.body and not self.chunked:
+			self.headers['Content-Length'] = bytes(len(self.body))
 
 		if self.method in ('PUT', 'POST') and self.body:
 			self.headers['Date'] = bytes(Date())  # RFC 2616 Section 14.18

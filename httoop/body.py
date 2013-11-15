@@ -109,7 +109,7 @@ class Body(IFile):
 			except UnicodeDecodeError:
 				pass
 
-	def __nonzero__(self):
+	def __bool__(self):
 		return bool(len(self))
 
 	def __len__(self):

@@ -48,7 +48,8 @@ class HTTPStatusException(Status, Exception):
 
 	@traceback.setter
 	def traceback(self, tb):
-		self._traceback = tb
+		if self.server_error:
+			self._traceback = tb
 
 	def __init__(self, description=None, reason=None, headers=None, traceback=None):
 		u"""
@@ -70,7 +71,7 @@ class HTTPStatusException(Status, Exception):
 
 		statuskw = dict()
 		self._headers = dict()
-		self._traceback = traceback or ''
+		self.traceback = traceback or ''
 
 		if isinstance(headers, dict):
 			self._headers.update(headers)

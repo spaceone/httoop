@@ -40,9 +40,16 @@ class HTTPSemantic(object):
 
 
 class HTTPType(type):
-	def __new__(mcs, name, bases, dict):
+	def __new__(mcs, name, bases, dict_):
+		# add HTTPSemantic interface
 		bases = list(bases)
 		if object in bases:
 			bases.remove(object)
 		bases.append(HTTPSemantic)
-		return type.__new__(mcs, name, tuple(bases), dict)
+
+		# python 2/3 unifying
+		if '__bool__' in dict_ or '__nonzero__' in dict_:
+			dict_.setdefault('__bool__', dict_.get('__nonzero__'))
+			dict_.setdefault('__nonzero__', dict_.get('__bool__'))
+
+		return type.__new__(mcs, name, tuple(bases), dict_)

@@ -15,7 +15,7 @@ class HTTPSemantic(type):
 			for base in bases:
 				if base in (object, Exception):
 					continue
-				if name in dir(base):
+				if name in getattr(base, '__dict__', dict_):
 					return
 			dict_.setdefault(name, method)
 

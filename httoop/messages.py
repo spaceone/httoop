@@ -55,7 +55,7 @@ class Protocol(object):
 		self.__protocol = (int(match.group(2)), int(match.group(3)))
 		self.name = match.group(1)
 
-	def __bytes__(self):
+	def compose(self):
 		return b'%s/%d.%d' % (self.name, self.major, self.minor)
 
 	def __iter__(self):
@@ -83,9 +83,7 @@ class Method(object):
 		return self in self.idempotent_methods
 
 	safe_methods = (u'GET', u'HEAD')
-
 	idempotent_methods = (u'GET', u'HEAD', u'PUT', u'DELETE', u'OPTIONS', u'TRACE')
-
 	METHOD_RE = re.compile(r"^[A-Z0-9$-_.]{1,20}\Z", re.IGNORECASE)
 
 	def __init__(self, method=None):
@@ -93,7 +91,7 @@ class Method(object):
 
 	def set(self, method):
 		if isinstance(method, Unicode):
-			method = method.encode('ascii')
+			method = method.encode('ASCII')
 		self.parse(method)
 
 	def parse(self, method):
@@ -101,7 +99,7 @@ class Method(object):
 			raise InvalidLine(u"Invalid method: %r" % method.decode('ISO8859-1'))
 		self.__method = method
 
-	def __bytes__(self):
+	def compose(self):
 		return self.__method
 
 
@@ -116,7 +114,7 @@ class Message(object):
 		u"""Initiates a new Message to hold information about the message.
 
 			:param protocol: the requested protocol
-			:type  protocol: str
+			:type  protocol: str|tuple
 
 			:param headers: the request headers
 			:type  headers: dict or :class:`Headers`
@@ -249,6 +247,10 @@ class Request(Message):
 		return b"%s %s %s\r\n" % (bytes(self.__method), bytes(self.__uri), bytes(self.protocol))
 
 	def prepare(self):
+		if self.method.safe:
+			self.body = None
+			self.chunked = False
+
 		self.chunked = self.chunked
 		self.close = self.close
 
@@ -268,9 +270,6 @@ class Request(Message):
 			self.headers['Connection'] = 'close'
 		else:
 			self.headers.pop('Connection', None)
-
-	def __bytes__(self):
-		return self.compose()
 
 	def __repr__(self):
 		return "<HTTP Request(%s %s %s)>" % (bytes(self.__method), bytes(self.__uri.path), bytes(self.protocol))
@@ -350,7 +349,7 @@ class Response(Message):
 		if request.headers.get('Connection') == 'close':
 			self.close = True  # RFC 2616 Section 14.10
 
-		if request.method == 'HEAD':
+		if request.method == u'HEAD':
 			self.body = None  # RFC 2616 Section 9.4
 
 	@property
@@ -379,9 +378,6 @@ class Response(Message):
 				self.headers['Connection'] = 'keep-alive'
 				return
 		self.headers.pop('Connection', None)
-
-	def __bytes__(self):
-		return self.compose()
 
 	def __repr__(self):
 		# TODO: do we really want to check the body length here?

@@ -43,10 +43,10 @@ class Body(IFile):
 
 	@property
 	def codec(self):
-		mimetype = self.mimetype.mimetype
+		codec = None
 		if self.mimetype.vendor:
 			codec = CODECS.get(self.mimetype.value)
-		return codec or CODECS.get(mimetype)
+		return codec or CODECS.get(self.mimetype.mimetype)
 
 	def __init__(self, body=None, mimetype=None):
 		self.content = BytesIO()

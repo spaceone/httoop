@@ -76,10 +76,8 @@ class HTTP(StateMachine):
 		super(HTTP, self).on_message_complete()
 		request = self.request
 
-		# TODO: (re)move if RFC 2616 allows this (probably)
-		# GET request with body
-		if request.method in ('GET', 'HEAD', 'OPTIONS') and request.body:
-			raise BAD_REQUEST('A %s request MUST NOT contain a request body.' % request.method)
+		if request.method.safe and request.body:
+			raise BAD_REQUEST('A %s request is considered as safe and MUST NOT contain a request body.' % request.method)
 
 		# maybe decompress
 		if self._decompress_obj is not None:

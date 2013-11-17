@@ -83,9 +83,6 @@ class Status(object):
 	def compose(self):
 		return b'%d %s' % (self.code, self.reason.encode('ascii'))
 
-	def __bytes__(self):
-		return self.compose()
-
 	def __unicode__(self):
 		return self.compose().decode('ascii')
 

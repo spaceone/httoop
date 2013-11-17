@@ -132,9 +132,6 @@ class Headers(CaseInsensitiveDict):
 		# TODO: if value contains UTF-8 chars encode them in MIME
 		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, v.encode('ISO8859-1', 'replace')) for k, v in iteritems(self))
 
-	def __bytes__(self):
-		return self.compose()
-
 	def __repr__(self):
 		return "<HTTP Headers(%s)>" % repr(list(self.items()))
 

@@ -61,7 +61,7 @@ class Date(object):
 			self.http_string = formatdate(self.to_unix_timestamp())
 		return self.http_string
 
-	def __bytes__(self):
+	def compose(self):
 		return self.to_http_string()
 
 	# TODO: implement __cmp__, __int__, (__float__), etc.

@@ -30,7 +30,7 @@ from httoop.uri import URI
 from httoop.messages import Request, Response, Protocol, Method
 from httoop.exceptions import InvalidLine, InvalidHeader, InvalidURI, InvalidBody, InvalidDate
 from httoop.parser import StateMachine
-from httoop.http import HTTP
+from httoop.server import HTTP
 
 from httoop.statuses import (
 	HTTPStatusException,

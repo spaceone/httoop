@@ -69,9 +69,10 @@ class HTTPStatusException(Status, Exception):
 			:type traceback: str
 		"""
 
-		statuskw = dict()
+		Status.__init__(self, reason=reason)
+
 		self._headers = dict()
-		self.traceback = traceback or ''
+		self._traceback = None
 
 		if isinstance(headers, dict):
 			self._headers.update(headers)
@@ -79,10 +80,8 @@ class HTTPStatusException(Status, Exception):
 		if description is not None:
 			self.description = description
 
-		if reason is not None:
-			statuskw['reason'] = reason
-
-		Status.__init__(self, **statuskw)
+		if traceback:
+			self.traceback = traceback
 
 	def __repr__(self):
 		return '<HTTP<%s>(%s)>' % (self.__class__.__name__, ' '.join('%s=%r' % (k, v) for k, v in iteritems(self.to_dict())))

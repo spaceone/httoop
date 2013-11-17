@@ -15,19 +15,19 @@ CODECS = dict()
 class Codec(object):
 	@classmethod
 	def decode(cls, data, charset=None):
-		raise NotImplemented
+		raise NotImplementedError
 
 	@classmethod
 	def encode(cls, data, charset=None):
-		raise NotImplemented
+		raise NotImplementedError
 
 	@classmethod
 	def iterencode(cls, data, charset=None):
-		raise NotImplemented
+		raise NotImplementedError
 
 	@classmethod
 	def iterdecode(cls, data, charset=None):
-		raise NotImplemented
+		raise NotImplementedError
 
 
 class Enconv(Codec):

@@ -11,7 +11,7 @@ from datetime import datetime
 
 from httoop.util import formatdate, parsedate
 from httoop.exceptions import InvalidDate
-from httoop.meta import HTTPType
+from httoop.meta import HTTPSemantic
 
 
 class Date(object):
@@ -21,7 +21,7 @@ class Date(object):
 
 		.. seealso:: :rfc:`2616#section-19.3`
 	"""
-	__metaclass__ = HTTPType
+	__metaclass__ = HTTPSemantic
 
 	def __init__(self, timeval=None):
 		u"""

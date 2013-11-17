@@ -7,7 +7,7 @@
 
 from httoop.util import Unicode
 from httoop.exceptions import InvalidLine
-from httoop.meta import HTTPType
+from httoop.meta import HTTPSemantic
 
 import re
 
@@ -17,7 +17,7 @@ class Status(object):
 
 		:rfc:`2616#section-6.2`
 	"""
-	__metaclass__ = HTTPType
+	__metaclass__ = HTTPSemantic
 
 	@property
 	def informational(self):

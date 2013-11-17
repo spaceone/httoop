@@ -17,11 +17,11 @@ import re
 from httoop.util import CaseInsensitiveDict, iteritems
 from httoop.exceptions import InvalidHeader
 from httoop.header import HEADER, HeaderElement
-from httoop.meta import HTTPType
+from httoop.meta import HTTPSemantic
 
 
 class Headers(CaseInsensitiveDict):
-	__metaclass__ = HTTPType
+	__metaclass__ = HTTPSemantic
 
 	# disallowed bytes for HTTP header field names
 	HEADER_RE = re.compile(b"[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]")

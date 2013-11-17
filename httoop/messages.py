@@ -16,12 +16,13 @@ from httoop.uri import URI
 from httoop.date import Date
 from httoop.exceptions import InvalidLine
 from httoop.util import Unicode
-from httoop.meta import HTTPType
+from httoop.meta import HTTPSemantic
 
 
 class Protocol(object):
 	u"""The HTTP protocol version"""
-	__metaclass__ = HTTPType
+	__metaclass__ = HTTPSemantic
+	__slots__ = ('name', '__protocol')
 
 	@property
 	def version(self):
@@ -72,7 +73,8 @@ class Protocol(object):
 
 class Method(object):
 	u"""A HTTP request method"""
-	__metaclass__ = HTTPType
+	__metaclass__ = HTTPSemantic
+	__slots__ = ('__method')
 
 	@property
 	def safe(self):
@@ -108,7 +110,8 @@ class Message(object):
 
 		.. seealso:: :rfc:`2616#section-4`
 	"""
-	__metaclass__ = HTTPType
+	__metaclass__ = HTTPSemantic
+	__slots__ = ('__protocol', '__headers', '__body')
 
 	def __init__(self, protocol=None, headers=None, body=None):
 		u"""Initiates a new Message to hold information about the message.
@@ -191,6 +194,7 @@ class Request(Message):
 
 		.. seealso:: :rfc:`2616#section-5`
 	"""
+	__slots__ = ('__protocol', '__headers', '__body', '__uri', '__method')
 
 	@property
 	def method(self):
@@ -280,6 +284,7 @@ class Response(Message):
 
 		.. seealso:: :rfc:`2616#section-6`
 	"""
+	__slots__ = ('__protocol', '__headers', '__body', '__status')
 
 	@property
 	def status(self):

@@ -12,12 +12,12 @@ from httoop.headers import Headers
 from httoop.header import ContentType
 from httoop.codecs import CODECS
 from httoop.util import IFile, Unicode
-from httoop.meta import HTTPType
+from httoop.meta import HTTPSemantic
 
 
 class Body(IFile):
 	u"""A HTTP message body"""
-	__metaclass__ = HTTPType
+	__metaclass__ = HTTPSemantic
 
 	MAX_CHUNK_SIZE = 4096
 

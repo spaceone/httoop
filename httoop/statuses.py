@@ -6,7 +6,7 @@
 from httoop.body import Body  # TODO: remove ?
 from httoop.status import Status, REASONS
 from httoop.util import iteritems
-from httoop.meta import HTTPType
+from httoop.meta import HTTPSemantic
 
 # mapping of status -> Class, will be filled at the bottom
 STATUSES = dict()
@@ -148,7 +148,7 @@ class HTTPServerError(HTTPStatusException):
 		return dct
 
 
-class StatusType(HTTPType):
+class StatusType(HTTPSemantic):
 	def __new__(mcs, name, bases, dict):
 		status = int(dict['status'])
 		if 99 < status < 200:

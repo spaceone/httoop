@@ -10,7 +10,7 @@ from os.path import join
 from httoop.exceptions import InvalidURI
 from httoop.util import Unicode
 from httoop.codecs import Percent, QueryString
-from httoop.meta import HTTPType
+from httoop.meta import HTTPSemantic
 
 DEFAULT_PORTS = {'http': 80, 'https': 443}
 # TODO: abstracter: URI, HTTP11_URL, HTTP10URL
@@ -27,7 +27,7 @@ class URI(object):
 		.. seealso:: :rfc:`2616#section-3.2.2`
 
 	"""
-	__metaclass__ = HTTPType
+	__metaclass__ = HTTPSemantic
 
 	slots = ('scheme', 'username', 'password', 'host', 'port', 'path', 'query_string', 'fragment')
 
@@ -66,7 +66,7 @@ class URI(object):
 			try:
 				port = int(port)
 				if not (0 <= int(port) <= 65535):
-					raise ValueError()
+					raise ValueError
 			except ValueError:
 				raise InvalidURI('Invalid port: %r' % (port))  # TODO: TypeError
 		self._port = port
@@ -165,7 +165,7 @@ class URI(object):
 		elif isinstance(uri, dict):
 			self.dict = uri
 		else:
-			raise TypeError()
+			raise TypeError
 
 	@property
 	def dict(self):
@@ -297,7 +297,7 @@ class URI(object):
 				except UnicodeDecodeError:
 					value = value.decode('ISO8859-1')
 			if not isinstance(value, Unicode):
-				raise TypeError()
+				raise TypeError
 
 		super(URI, self).__setattr__(name, value)
 

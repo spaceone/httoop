@@ -22,10 +22,10 @@ HEADER = CaseInsensitiveDict()
 
 
 class HeaderType(type):
-	def __new__(mcs, name, bases, dict):
+	def __new__(mcs, name, bases, dict_):
 		__all__.append(name)
-		name = dict.get('__name__', name)
-		return type.__new__(mcs, name, bases, dict)
+		name = dict_.get('__name__', name)
+		return super(HeaderType, mcs).__new__(mcs, name, bases, dict_)
 
 
 class HeaderElement(object):

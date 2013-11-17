@@ -12,12 +12,12 @@ class HTTPSemantic(type):
 
 	def __new__(mcs, name, bases, dict_):
 		def setdefault(name, method):
-			for base in bases:
-				if base in (object, Exception):
-					continue
-				if name in getattr(base, '__dict__', dict_):
-					return
-			dict_.setdefault(name, method)
+			if name in dict_:
+				return
+			methods = set(getattr(base, name, None) for base in bases)
+			methods = methods - set(getattr(base, name, None) for base in (object, dict, list, Exception, tuple))
+			if not methods:
+				dict_.setdefault(name, method)
 
 		def __str__(self):
 			if PY3:
@@ -65,4 +65,4 @@ class HTTPSemantic(type):
 			dict_.setdefault('__bool__', dict_.get('__nonzero__'))
 			dict_.setdefault('__nonzero__', dict_.get('__bool__'))
 
-		return type.__new__(mcs, name, tuple(bases), dict_)
+		return super(HTTPSemantic, mcs).__new__(mcs, name, tuple(bases), dict_)

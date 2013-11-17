@@ -51,6 +51,8 @@ class HTTPStatusException(Status, Exception):
 		if self.server_error:
 			self._traceback = tb
 
+	code = 0
+
 	def __init__(self, description=None, reason=None, headers=None, traceback=None):
 		u"""
 			:param description:
@@ -69,7 +71,7 @@ class HTTPStatusException(Status, Exception):
 			:type traceback: str
 		"""
 
-		Status.__init__(self, reason=reason)
+		Status.__init__(self, self.__class__.code, reason=reason)
 
 		self._headers = dict()
 		self._traceback = None
@@ -148,25 +150,25 @@ class HTTPServerError(HTTPStatusException):
 
 
 class StatusType(HTTPSemantic):
-	def __new__(mcs, name, bases, dict):
-		status = int(dict['status'])
-		if 99 < status < 200:
+	def __new__(mcs, name, bases, dict_):
+		code = int(dict_['code'])
+		if 99 < code < 200:
 			scls = HTTPInformational
-		elif status < 300:
+		elif code < 300:
 			scls = HTTPSuccess
-		elif status < 400:
+		elif code < 400:
 			scls = HTTPRedirect
-		elif status < 500:
+		elif code < 500:
 			scls = HTTPClientError
-		elif status < 600:
+		elif code < 600:
 			scls = HTTPServerError
 		else:
 			raise ValueError('A HTTP Status code can not be greater than 599 or lower than 100')
 
-		reason = REASONS.get(status, ('', ''))
-		dict.setdefault('reason', reason[0])
-		dict.setdefault('description', reason[1])
-		return type.__new__(mcs, name, (scls,), dict)
+		reason = REASONS.get(code, ('', ''))
+		dict_.setdefault('reason', reason[0])
+		dict_.setdefault('description', reason[1])
+		return super(StatusType, mcs).__new__(mcs, name, (scls,), dict_)
 
 
 class CONTINUE(object):
@@ -175,7 +177,7 @@ class CONTINUE(object):
 
 		.. seealso:: :rfc:`2616#section-10.1`"""
 	__metaclass__ = StatusType
-	status = 100
+	code = 100
 	body = None
 
 
@@ -184,12 +186,12 @@ class SWITCHING_PROTOCOLS(object):
 		this is the response that the TCP server now speaks another protocol.
 	"""
 	__metaclass__ = StatusType
-	status = 101
+	code = 101
 	body = None
 
 #class PROCESSING(object):
 #	__metaclass__ = StatusType
-#	status = 102
+#	code = 102
 
 
 class OK(object):
@@ -200,7 +202,7 @@ class OK(object):
 		the current state of the resource or a description of the performed action
 	"""
 	__metaclass__ = StatusType
-	status = 200
+	code = 200
 
 
 class CREATED(object):
@@ -210,7 +212,7 @@ class CREATED(object):
 		The entity-body should describe and link to the created resource.
 	"""
 	__metaclass__ = StatusType
-	status = 201
+	code = 201
 
 	def __init__(self, location, *args, **kwargs):
 		kwargs.setdefault('headers', {})['Location'] = location
@@ -230,14 +232,14 @@ class ACCEPTED(object):
 		If this is not possible it should give an estimate
 		time when the request will be processed."""
 	__metaclass__ = StatusType
-	status = 202
+	code = 202
 
 
 class NON_AUTHORITATIVE_INFORMATION(object):
 	u"""Everything is OK but the response headers
 		may be altered by a third party."""
 	__metaclass__ = StatusType
-	status = 203
+	code = 203
 
 
 class NO_CONTENT(object):
@@ -247,7 +249,7 @@ class NO_CONTENT(object):
 		It is also useful for making series of edits
 		to a single record (a HTML POST form)."""
 	__metaclass__ = StatusType
-	status = 204
+	code = 204
 	body = None
 
 
@@ -258,7 +260,7 @@ class RESET_CONTENT(object):
 		in succession (a HTML POST form).
 	"""
 	__metaclass__ = StatusType
-	status = 205
+	code = 205
 	body = None
 
 
@@ -271,11 +273,11 @@ class PARTIAL_CONTENT(object):
 		and Content-Location-header are useful.
 	"""
 	__metaclass__ = StatusType
-	status = 206
+	code = 206
 
 #class MULTI_STATUS(object):
 #	__metaclass__ = StatusType
-#	status = 207
+#	code = 207
 
 	#"""This status code indicated that the entity-body contains information
 	#about the states of the batch request.
@@ -285,12 +287,12 @@ class PARTIAL_CONTENT(object):
 
 #class ALREADY_REPORTED(object):
 #	__metaclass__ = StatusType
-#	status = 208
+#	code = 208
 
 
 #class IM_USED(object):
 #	__metaclass__ = StatusType
-#	status = 226
+#	code = 226
 
 
 class MULTIPLE_CHOICES(object):
@@ -299,7 +301,7 @@ class MULTIPLE_CHOICES(object):
 		the requested representation does not exists.
 	"""
 	__metaclass__ = StatusType
-	status = 300
+	code = 300
 
 	def __init__(self, locations, *args, **kwargs):
 		if isinstance(locations, basestring):
@@ -314,12 +316,12 @@ class MOVED_PERMANENTLY(object):
 		It can also be send if a resource have moved or
 		renamed to prevent broken links."""
 	__metaclass__ = StatusType
-	status = 301
+	code = 301
 
 
 class FOUND(object):
 	__metaclass__ = StatusType
-	status = 302
+	code = 302
 
 
 class SEE_OTHER(object):
@@ -330,7 +332,7 @@ class SEE_OTHER(object):
 		This is also useful for links like
 		/release-latest.tar.gz -> /release-1.2.tar.gz"""
 	__metaclass__ = StatusType
-	status = 303
+	code = 303
 
 
 class NOT_MODIFIED(object):
@@ -344,7 +346,7 @@ class NOT_MODIFIED(object):
 		changed but not the representation itself?
 		The response body has to be empty."""
 	__metaclass__ = StatusType
-	status = 304
+	code = 304
 	body = None
 
 	def __init__(self, *args, **kwargs):
@@ -358,12 +360,12 @@ class NOT_MODIFIED(object):
 
 class USE_PROXY(object):
 	__metaclass__ = StatusType
-	status = 305
+	code = 305
 
 # Unused, HTTP1.0
 #SWITCH_PROXY = class (object):
 #	__metaclass__ = StatusType
-#	status = 306
+#	code = 306
 
 
 class TEMPORARY_REDIRECT(object):
@@ -373,12 +375,12 @@ class TEMPORARY_REDIRECT(object):
 		for GET this is the same as 303 but for POST, PUT and DELETE it is
 		important that the request was not processed."""
 	__metaclass__ = StatusType
-	status = 307
+	code = 307
 
 # Unused, HTTP1.0
 #PERMANENT_REDIRECT = class (object):
 #	__metaclass__ = StatusType
-#	status = 308
+#	code = 308
 
 
 class BAD_REQUEST(object):
@@ -386,7 +388,7 @@ class BAD_REQUEST(object):
 		The response entity-body should contain information
 		about what is wrong with the request."""
 	__metaclass__ = StatusType
-	status = 400
+	code = 400
 
 
 class UNAUTHORIZED(object):
@@ -398,7 +400,7 @@ class UNAUTHORIZED(object):
 		the given credentials and where to register a new account.
 	"""
 	__metaclass__ = StatusType
-	status = 401
+	code = 401
 
 	def __init__(self, authenticate, *args, **kwargs):
 		kwargs.setdefault('headers', {})['WWW-Authenticate'] = authenticate
@@ -412,7 +414,7 @@ class UNAUTHORIZED(object):
 
 class PAYMENT_REQUIRED(object):
 	__metaclass__ = StatusType
-	status = 402
+	code = 402
 	# Reserved for future use
 
 
@@ -420,13 +422,13 @@ class FORBIDDEN(object):
 	u"""The resource can only be served for specific users, at a specific time
 		or from a certain IP address, etc."""
 	__metaclass__ = StatusType
-	status = 403
+	code = 403
 
 
 class NOT_FOUND(object):
 	u"""No resource could be found at the given URI."""
 	__metaclass__ = StatusType
-	status = 404
+	code = 404
 
 	def __init__(self, path, **kwargs):
 		self.path = path
@@ -439,7 +441,7 @@ class METHOD_NOT_ALLOWED(object):
 		The Allow-header has to contain the allowed methods for this resource.
 	"""
 	__metaclass__ = StatusType
-	status = 405
+	code = 405
 
 	def __init__(self, allow, *args, **kwargs):
 		kwargs.setdefault('headers', {})['Allow'] = allow
@@ -457,19 +459,19 @@ class NOT_ACCEPTABLE(object):
 		The entity body should contain a list of links with
 		acceptable representations (similar to 300)."""
 	__metaclass__ = StatusType
-	status = 406
+	code = 406
 
 
 class PROXY_AUTHENTICATION_REQUIRED(object):
 	__metaclass__ = StatusType
-	status = 407
+	code = 407
 
 
 class REQUEST_TIMEOUT(object):
 	u"""The client opens a connection to a server without sending a
 		request after a specific amount of time."""
 	__metaclass__ = StatusType
-	status = 408
+	code = 408
 
 
 class CONFLICT(object):
@@ -480,27 +482,27 @@ class CONFLICT(object):
 		The location header can point to the conflicting resource.
 		The entity body should contain a description of the conflict."""
 	__metaclass__ = StatusType
-	status = 409
+	code = 409
 
 
 class GONE(object):
 	u"""The resource exists but is not anymore available (propably DELETEd)"""
 	__metaclass__ = StatusType
-	status = 410
+	code = 410
 
 
 class LENGTH_REQUIRED(object):
 	u"""If a request representation is given but no Content-Length-header
 		the HTTP server can decide to respond with this status code."""
 	__metaclass__ = StatusType
-	status = 411
+	code = 411
 
 
 class PRECONDITION_FAILED(object):
 	u"""If a condition from any of the If-\*-headers except for conditional
 		GET fails this status code is the respond."""
 	__metaclass__ = StatusType
-	status = 412
+	code = 412
 
 
 class REQUEST_ENTITY_TOO_LARGE(object):
@@ -509,13 +511,13 @@ class REQUEST_ENTITY_TOO_LARGE(object):
 		If the server can only not handle the request e.g. because of
 		full disk space it can send the Retry-After-header."""
 	__metaclass__ = StatusType
-	status = 413
+	code = 413
 
 
 class REQUEST_URI_TOO_LONG(object):
 	u"""Raised if the given URI is too long for the server."""
 	__metaclass__ = StatusType
-	status = 414
+	code = 414
 
 
 class UNSUPPORTED_MEDIA_TYPE(object):
@@ -523,122 +525,122 @@ class UNSUPPORTED_MEDIA_TYPE(object):
 		the representation media type given in Content-Type-header.
 		If the representation is just broken use 400 or 422."""
 	__metaclass__ = StatusType
-	status = 415
+	code = 415
 
 
 class REQUEST_RANGE_NOT_SATISFIABLE(object):
 	__metaclass__ = StatusType
-	status = 416
+	code = 416
 
 
 class EXPECTATION_FAILED(object):
 	u"""This is the response code if a LBYL request (Expect-header) fails.
 		It is the flip side of 100 Continue."""
 	__metaclass__ = StatusType
-	status = 417
+	code = 417
 
 
 class I_AM_A_TEAPOT(object):
 	__metaclass__ = StatusType
-	status = 418
+	code = 418
 
 
 #class ENHANCE_YOUR_CALM(object):
 #	__metaclass__ = StatusType
-#	status = 420
+#	code = 420
 
 
 #class UNPROCESSABLE_ENTITY(object):
 #	__metaclass__ = StatusType
-#	status = 422
+#	code = 422
 
 
 #class LOCKED(object):
 #	__metaclass__ = StatusType
-#	status = 423
+#	code = 423
 
 
 #class FAILED_DEPENDENCY(object):
 #	__metaclass__ = StatusType
-#	status = 424
+#	code = 424
 
 
 #class METHOD_FAILURE(object):
 #	__metaclass__ = StatusType
-#	status = 424
+#	code = 424
 
 
 #class UNORDERED_COLLECTION(object):
 #	__metaclass__ = StatusType
-#	status = 425
+#	code = 425
 
 
 #class UPGRADE_REQUIRED(object):
 #	__metaclass__ = StatusType
-#	status = 426
+#	code = 426
 
 
 #class PRECONDITION_REQUIRED(object):
 #	__metaclass__ = StatusType
-#	status = 428
+#	code = 428
 
 
 #class TOO_MANY_REQUESTS(object):
 #	__metaclass__ = StatusType
-#	status = 429
+#	code = 429
 
 
 #class REQUEST_HEADER_FIELDS_TOO_LARGE(object):
 #	__metaclass__ = StatusType
-#	status = 431
+#	code = 431
 
 
 #class NO_RESPONSE(object):
 #	__metaclass__ = StatusType
-#	status = 444
+#	code = 444
 
 
 #class UNAVAILABLE_FOR_LEGAL_REASONS(object):
 #	__metaclass__ = StatusType
-#	status = 451
+#	code = 451
 
 
 #class CLIENT_CLOSED_REQUEST(object):
 #	__metaclass__ = StatusType
-#	status = 499
+#	code = 499
 
 
 class INTERNAL_SERVER_ERROR(object):
 	u"""The generic status code.
 		Mostly used when an exception in the request handler occurrs."""
 	__metaclass__ = StatusType
-	status = 500
+	code = 500
 
 
 class NOT_IMPLEMENTED(object):
 	u"""The client tried to use a HTTP feature which the server does not support.
 		Used if the server does not know the request method."""
 	__metaclass__ = StatusType
-	status = 501
+	code = 501
 
 
 class BAD_GATEWAY(object):
 	u"""Problem with the proxy server."""
 	__metaclass__ = StatusType
-	status = 502
+	code = 502
 
 
 class SERVICE_UNAVAILABLE(object):
 	u"""There is currently a problem with the server.
 		Propably too many requests at once."""
 	__metaclass__ = StatusType
-	status = 503
+	code = 503
 
 
 class GATEWAY_TIMEOUT(object):
 	u"""The proxy could not connect to the upstream server."""
 	__metaclass__ = StatusType
-	status = 504
+	code = 504
 
 
 class HTTP_VERSION_NOT_SUPPORTED(object):
@@ -646,39 +648,39 @@ class HTTP_VERSION_NOT_SUPPORTED(object):
 		This should not happen since HTTP 1.1 is backward compatible.
 		The entity-body should contain a list of supported protocols."""
 	__metaclass__ = StatusType
-	status = 505
+	code = 505
 
 #class VARIANT_ALSO_NEGOTIATES(object):
 #	__metaclass__ = StatusType
-#	status = 506
+#	code = 506
 
 #class INSUFFICIENT_STORAGE(object):
 #	__metaclass__ = StatusType
-#	status = 507
+#	code = 507
 
 #class LOOP_DETECTED(object):
 #	__metaclass__ = StatusType
-#	status = 508
+#	code = 508
 
 #class BANDWIDTH_LIMIT_EXCEEDET(object):
 #	__metaclass__ = StatusType
-#	status = 509
+#	code = 509
 
 #class NOT_EXTENDED(object):
 #	__metaclass__ = StatusType
-#	status = 510
+#	code = 510
 
 #class NETWORK_AUTHENTICATION_REQUIRED(object):
 #	__metaclass__ = StatusType
-#	status = 511
+#	code = 511
 
 #class NETWORK_READ_TIMEOUT_ERROR(object):
 #	__metaclass__ = StatusType
-#	status = 598
+#	code = 598
 
 #class NETWORK_CONNECT_TIMEOUT_ERROR(object):
 #	__metaclass__ = StatusType
-#	status = 599
+#	code = 599
 
 for member in locals().copy().values():
 	if isinstance(member, StatusType):

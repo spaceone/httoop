@@ -68,6 +68,7 @@ def if_has(func):
 
 class IFile(object):
 	u"""The file interface"""
+	__slots__ = ('content')
 
 	@if_has
 	def close(self):

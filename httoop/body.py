@@ -18,6 +18,7 @@ from httoop.meta import HTTPSemantic
 class Body(IFile):
 	u"""A HTTP message body"""
 	__metaclass__ = HTTPSemantic
+	__slots__ = ('content', 'data', '_mimetype', 'chunked', '__iter', 'trailer')
 
 	MAX_CHUNK_SIZE = 4096
 

@@ -28,8 +28,7 @@ class URI(object):
 
 	"""
 	__metaclass__ = HTTPSemantic
-
-	slots = ('scheme', 'username', 'password', 'host', 'port', 'path', 'query_string', 'fragment')
+	__slots__ = ('scheme', 'username', 'password', 'host', '_port', 'path', 'query_string', 'fragment')
 
 	quote = Percent.encode
 	unquote = Percent.decode
@@ -114,7 +113,7 @@ class URI(object):
 			>>> _ = [uri.abspath() for uri in uris]
 			>>> all(all(d not in uri.path for d in dangerous) for uri in uris)
 			True
-			>>> URI(b'/foo/../bar/.').path == u'/bar/'
+			>>> u = URI(b'/foo/../bar/.'); u.abspath(); u.path == u'/bar/'
 			True
 		"""
 		# Remove double forward-slashes from the path
@@ -169,16 +168,16 @@ class URI(object):
 
 	@property
 	def dict(self):
-		return dict((key, getattr(self, key)) for key in self.slots)
+		return dict((key, getattr(self, key)) for key in self.__slots__)
 
 	@dict.setter
 	def dict(self, uri):
-		for key in self.slots:
+		for key in self.__slots__:
 			setattr(self, key, uri.get(key, u''))
 
 	@property
 	def tuple(self):
-		return tuple(getattr(self, key) for key in self.slots)
+		return tuple(getattr(self, key) for key in self.__slots__)
 
 	@tuple.setter
 	def tuple(self, tuple_):
@@ -290,7 +289,7 @@ class URI(object):
 		return self_.tuple == other.tuple
 
 	def __setattr__(self, name, value):
-		if name in self.slots:
+		if name in self.__slots__ and name != '_port':
 			if isinstance(value, bytes):
 				try:
 					value = value.decode('UTF-8')

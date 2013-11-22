@@ -1,57 +1,6 @@
 # -*- coding: utf-8 -*-
-u"""Module containing various codecs which are
-	common used in combination with HTTP
-"""
-
-__all__ = ['CODECS', 'Codec', 'FormURLEncoded', 'MultipartFormData',
-	'MultipartMixed', 'JSON', 'HTML', 'XML', 'PlainText']
-
-from httoop.util import Unicode
-from httoop.exceptions import DecodeError
-
-CODECS = dict()
-
-
-class Codec(object):
-	@classmethod
-	def decode(cls, data, charset=None):
-		raise NotImplementedError
-
-	@classmethod
-	def encode(cls, data, charset=None):
-		raise NotImplementedError
-
-	@classmethod
-	def iterencode(cls, data, charset=None):
-		raise NotImplementedError
-
-	@classmethod
-	def iterdecode(cls, data, charset=None):
-		raise NotImplementedError
-
-
-class Enconv(Codec):
-	mimetype = None
-
-	@classmethod
-	def decode(cls, data, charset=None):
-		if isinstance(data, Unicode):
-			return data
-		for encoding in (charset or 'UTF-8', 'UTF-8', 'ISO8859-1'):
-			try:
-				return data.decode(encoding)
-			except UnicodeDecodeError:
-				pass
-
-	@classmethod
-	def encode(cls, data, charset=None):
-		charset = charset or 'UTF-8'
-		if isinstance(data, bytes):
-			try:
-				return data.decode('UTF-8').encode(charset)
-			except UnicodeDecodeError:
-				return data.decode('ISO8859-1').encode(charset)
-		return data.encode(charset)
+from httoop.codecs.common import Codec, Enconv
+from httoop.exceptions import DecodeError, EncodeError
 
 
 class Percent(Codec):
@@ -154,14 +103,6 @@ class QueryString(FormURLEncoded):
 		return data
 
 
-class MultipartFormData(Codec):
-	mimetype = 'multipart/form-data'
-
-
-class MultipartMixed(Codec):
-	mimetype = 'multipart/mixed'
-
-
 # TODO: http://stackoverflow.com/questions/712791/what-are-the-differences-between-json-and-simplejson-python-modules#answer-16131316
 try:
 	from simplejson import dumps as json_encode
@@ -183,18 +124,46 @@ class JSON(Codec):
 		return json_decode(data)
 
 
-class PlainText(Enconv):
-	mimetype = 'text/plain'
+import zlib
+
+
+class GZip(Codec):
+	mimetype = 'application/gzip'
+
+	@classmethod
+	def encode(cls, data, charset=None):
+		try:
+			return zlib.compress(Enconv.encode(data, charset), 16 + zlib.MAX_WBITS)
+		except zlib.error:
+			raise EncodeError('Invalid gzip data')
+
+	@classmethod
+	def decode(cls, data, charset=None):
+		try:
+			data = zlib.decompress(data, 16 + zlib.MAX_WBITS)
+		except zlib.error:
+			raise DecodeError('Invalid gzip data')
+		return Enconv.decode(data, charset)
+
+
+class Deflate(Codec):
+	mimetype = 'application/zlib'
+
+	@classmethod
+	def encode(cls, data, charset=None):
+		try:
+			return zlib.compress(Enconv.encode(data, charset))
+		except zlib.error:
+			raise EncodeError('Invalid zlib/deflate data')
+
+	@classmethod
+	def decode(cls, data, charset=None):
+		try:
+			data = zlib.decompress(data)
+		except zlib.error:
+			raise EncodeError('Invalid zlib/deflate data')
+		return Enconv.decode(data, charset)
 
 
 class XML(Codec):
 	mimetype = 'application/xml'
-
-
-class HTML(Codec):
-	mimetype = 'text/html'
-
-
-for member in locals().copy().values():
-	if member is not Codec and isinstance(member, type) and issubclass(member, Codec):
-		CODECS[member.mimetype] = member

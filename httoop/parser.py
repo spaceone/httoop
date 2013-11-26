@@ -6,20 +6,26 @@ CR = b'\r'
 LF = b'\n'
 CRLF = CR + LF
 
-from httoop.messages import Request
+from httoop.messages import Request, Response
 from httoop.headers import Headers
-from httoop.exceptions import InvalidLine, InvalidHeader, InvalidBody, InvalidURI
+from httoop.exceptions import InvalidLine, InvalidHeader, InvalidBody, InvalidURI, Invalid
 from httoop.util import Unicode
-from httoop.statuses import BAD_REQUEST, NOT_IMPLEMENTED, LENGTH_REQUIRED
-from httoop.statuses import HTTPStatusException, REQUEST_URI_TOO_LONG
+from httoop.statuses import (
+	BAD_REQUEST, NOT_IMPLEMENTED, LENGTH_REQUIRED,
+	HTTPStatusException, REQUEST_URI_TOO_LONG,
+	MOVED_PERMANENTLY, HTTP_VERSION_NOT_SUPPORTED
+)
+from httoop import ServerProtocol, ServerHeader
 
 
 class StateMachine(object):
-	u"""A HTTP Parser"""
+	u"""A HTTP protocol state machine parsing messages and turn them into
+		appropriate objects."""
 
 	def __init__(self):
 		self.request = Request()
-		self.buffer = b''
+		self.response = Response()
+		self.buffer = b''  # TODO: use bytearray
 		self.httperror = None
 
 		# public events
@@ -49,12 +55,6 @@ class StateMachine(object):
 		setattr(self, 'on_%s' % (state), True)
 		getattr(self, 'on_%s_complete' % (state), lambda: None)()
 
-	def on_message_complete(self):
-		pass
-
-	def on_headers_complete(self):
-		pass
-
 	def on_requestline_complete(self):
 		self.state_changed('method')
 		self.state_changed('uri')
@@ -64,10 +64,22 @@ class StateMachine(object):
 		pass
 
 	def on_uri_complete(self):
-		pass
+		self.sanitize_request_uri()
+		self.validate_request_uri_scheme()
+		self.set_server_header()
+		# TODO: set default URI scheme, host, port
 
 	def on_protocol_complete(self):
-		pass
+		self.check_request_protocol()
+		self.set_response_protocol()
+
+	def on_headers_complete(self):
+		self.check_host_header_exists()
+		self.set_body_content_encoding()
+		self.set_body_content_type()
+
+	def on_message_complete(self):
+		self.check_methods_without_body()
 
 	def parse(self, data):
 		u"""Appends the given data to the internal buffer
@@ -256,3 +268,53 @@ class StateMachine(object):
 			msg_trailers = u'" ,"'.join(request.trailers.keys())
 			raise BAD_REQUEST(u'untold trailers: "%s"' % msg_trailers)
 		del request.trailers
+
+	def check_request_protocol(self):
+		# check if we speak the same major HTTP version
+		if self.request.protocol > ServerProtocol:
+			# the major HTTP version differs
+			raise HTTP_VERSION_NOT_SUPPORTED('The server only supports HTTP/1.0 and HTTP/1.1.')
+
+	def set_response_protocol(self):
+		# set correct response protocol version
+		self.response.protocol = min(self.request.protocol, ServerProtocol)
+
+	def sanitize_request_uri(self):
+		path = self.request.uri.path
+		self.request.uri.normalize()
+		if path != self.request.uri.path:
+			raise MOVED_PERMANENTLY(self.request.uri.path.encode('UTF-8'))
+
+	def validate_request_uri_scheme(self):
+		if self.request.uri.scheme:
+			if self.request.uri.scheme not in ('http', 'https'):
+				raise BAD_REQUEST('Invalid URL: wrong scheme')
+
+	def set_server_header(self):
+		self.response.headers.setdefault('Server', ServerHeader)
+
+	def check_host_header_exists(self):
+		if self.request.protocol >= (1, 1) and not 'Host' in self.request.headers:
+			raise BAD_REQUEST('Missing Host header')
+
+	def set_body_content_encoding(self):
+		if 'Content-Encoding' in self.request.headers:
+			self.request.body.content_encoding = self.request.headers.element('Content-Encoding')
+
+			try:
+				self.request.body.content_encoding.codec
+			except Invalid as exc:
+				raise NOT_IMPLEMENTED('%s' % (exc,))
+
+	def set_body_content_type(self):
+		if 'Content-Type' in self.request.headers:
+			self.request.body.mimetype = self.request.headers.element('Content-Type')
+
+	def check_methods_without_body(self):
+		if self.request.method.safe and self.request.body:
+			raise BAD_REQUEST('A %s request is considered as safe and MUST NOT contain a request body.' % self.request.method)
+
+	def prepare_response(self):
+		u"""prepare for sending the response"""
+
+		self.response.prepare(self.request)

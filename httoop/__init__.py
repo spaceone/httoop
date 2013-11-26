@@ -5,7 +5,7 @@
 """
 
 __version__ = 0.0
-__all__ = ['Status', 'Body', 'Headers', 'URI', 'Method', 'HTTP',
+__all__ = ['Status', 'Body', 'Headers', 'URI', 'Method',
            'Request', 'Response', 'Protocol', 'Date', 'StateMachine',
            'InvalidLine', 'InvalidHeader', 'InvalidURI', 'InvalidBody', 'InvalidDate',
            'CONTINUE', 'SWITCHING_PROTOCOLS', 'OK', 'CREATED', 'ACCEPTED',
@@ -20,7 +20,12 @@ __all__ = ['Status', 'Body', 'Headers', 'URI', 'Method', 'HTTP',
            'REQUEST_RANGE_NOT_SATISFIABLE', 'EXPECTATION_FAILED',
            'I_AM_A_TEAPOT', 'INTERNAL_SERVER_ERROR', 'NOT_IMPLEMENTED',
            'SERVICE_UNAVAILABLE', 'GATEWAY_TIMEOUT',
-           'HTTP_VERSION_NOT_SUPPORTED', 'HTTPStatusException']
+           'HTTP_VERSION_NOT_SUPPORTED', 'HTTPStatusException', 'ServerProtocol']
+
+from httoop.header import Server as __Server
+from httoop.messages import Protocol
+ServerHeader = __Server.from_str('%s/%s' % (__name__, __version__))
+ServerProtocol = Protocol((1, 1))
 
 from httoop.status import Status
 from httoop.date import Date
@@ -30,7 +35,6 @@ from httoop.uri import URI
 from httoop.messages import Request, Response, Protocol, Method
 from httoop.exceptions import InvalidLine, InvalidHeader, InvalidURI, InvalidBody, InvalidDate
 from httoop.parser import StateMachine
-from httoop.server import HTTP
 
 from httoop.statuses import (
 	HTTPStatusException,

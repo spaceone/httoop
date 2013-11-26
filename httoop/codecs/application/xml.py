@@ -7,6 +7,7 @@ from xml.etree.ElementTree import parse, ParseError, tostring
 import sys
 
 from httoop.codecs.common import Codec
+from httoop.exceptions import DecodeError
 
 
 class XML(Codec):

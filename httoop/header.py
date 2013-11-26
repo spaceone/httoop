@@ -16,6 +16,7 @@ import re
 
 from httoop.util import CaseInsensitiveDict, iteritems
 from httoop.exceptions import InvalidHeader
+from httoop.codecs import CODECS
 
 # a mapping of all headers to HeaderElement classes
 HEADER = CaseInsensitiveDict()
@@ -238,6 +239,25 @@ class Connection(HeaderElement):
 
 class ContentEncoding(HeaderElement):
 	__name__ = 'Content-Encoding'
+
+	CODECS = dict(
+		gzip='application/gzip',
+		deflate='application/zlib'
+	)
+
+	@property
+	def codec(self):
+		encoding = self.value
+		try:
+			return CODECS[self.CODECS[encoding]]
+		except KeyError:
+			raise InvalidHeader(u'Unknown Content-Encoding: %r' % (encoding.decode('ISO8859-1')))
+
+	def __init__(self, value, params=None):
+		super(ContentEncoding, self).__init__(value.lower(), params)
+
+	def sanitize(self):
+		self.codec
 
 
 class ContentLanguage(HeaderElement):

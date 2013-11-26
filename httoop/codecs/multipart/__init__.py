@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-from httoop.codecs.common import Codec
+from httoop.codecs.multipart.mixed import MultipartMixed
+from httoop.codecs.multipart.form_data import MultipartFormData
 
-
-class MultipartFormData(Codec):
-	mimetype = 'multipart/form-data'
-
-
-class MultipartMixed(Codec):
-	mimetype = 'multipart/mixed'
+__all__ = ['MultipartMixed', 'MultipartFormData']

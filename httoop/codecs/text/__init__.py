@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-from httoop.codecs.common import Codec, Enconv
+from httoop.codecs.text.plain import PlainText
+from httoop.codecs.text.html import HTML
 
-
-class PlainText(Enconv):
-	mimetype = 'text/plain'
-
-
-class HTML(Codec):
-	mimetype = 'text/html'
+__all__ = ['PlainText', 'HTML']

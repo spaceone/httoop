@@ -10,11 +10,11 @@
 __all__ = ['HEADER', 'HeaderElement']
 
 import re
-# TODO: Via, Server, User-Agent can contain comments, parse them
+# TODO: Via, Server, User-Agent can contain comments → parse them
 # TODO: parse encoded words like =?UTF-8?B?…?= (RFC 2047); seealso quopri
 # TODO: unify the use of unicode / bytes
 
-from httoop.util import CaseInsensitiveDict, iteritems
+from httoop.util import CaseInsensitiveDict, iteritems, Unicode
 from httoop.exceptions import InvalidHeader
 from httoop.codecs import CODECS
 
@@ -80,6 +80,10 @@ class MimeType(object):
 
 		.. seealso:: rfc:`3023`
 	"""
+
+	@property
+	def codec(self):
+		return CODECS.get(self.mimetype.value) or CODECS.get(self.mimetype.mimetype)
 
 	@property
 	def mimetype(self):
@@ -194,6 +198,25 @@ class AcceptElement(HeaderElement):
 			return self.quality < other.quality
 
 
+class CodecElement(object):
+	@property
+	def codec(self):
+		encoding = self.value
+		try:
+			encoding = self.CODECS[encoding]
+			if not isinstance(encoding, (bytes, Unicode)):
+				return encoding
+			return CODECS[encoding]
+		except KeyError:
+			raise InvalidHeader(u'Unknown %s: %r' % (self.__name__, encoding.decode('ISO8859-1')))
+
+	def __init__(self, value, params=None):
+		super(CodecElement, self).__init__(value.lower(), params)
+
+	def sanitize(self):
+		self.codec
+
+
 class Accept(AcceptElement, MimeType):
 	def __init__(self, value, params):
 		if value == '*':
@@ -237,27 +260,19 @@ class Connection(HeaderElement):
 	pass
 
 
-class ContentEncoding(HeaderElement):
+class ContentEncoding(CodecElement, HeaderElement):
 	__name__ = 'Content-Encoding'
 
-	CODECS = dict(
-		gzip='application/gzip',
-		deflate='application/zlib'
-	)
-
-	@property
-	def codec(self):
-		encoding = self.value
-		try:
-			return CODECS[self.CODECS[encoding]]
-		except KeyError:
-			raise InvalidHeader(u'Unknown Content-Encoding: %r' % (encoding.decode('ISO8859-1')))
-
-	def __init__(self, value, params=None):
-		super(ContentEncoding, self).__init__(value.lower(), params)
-
-	def sanitize(self):
-		self.codec
+	# IANA assigned HTTP Content-Encoding values
+	CODECS = {
+		'gzip': 'application/gzip',
+		'deflate': 'application/zlib',
+		# TODO: implement the following
+		'compress': NotImplementedError,
+		'identity': NotImplementedError,
+		'exi': NotImplementedError,
+		'pack200-gzip': NotImplementedError,
+	}
 
 
 class ContentLanguage(HeaderElement):
@@ -440,14 +455,25 @@ class TE(AcceptElement):
 
 
 class Trailer(HeaderElement):
+	forbidden_headers = ('Transfer-Encoding', 'Content-Length', 'Trailer')
+
 	def __init__(self, value, params):
 		super(HeaderElement, self).__init__(value, params)
-		if value.title() in ('Transfer-Encoding', 'Content-Length', 'Trailer'):
+		if value.title() in self.forbidden_headers:
 			raise InvalidHeader(u'A Trailer header MUST NOT contain %r field' % value.title())
 
 
-class TransferEncoding(HeaderElement):
+class TransferEncoding(CodecElement, HeaderElement):
 	__name__ = 'Transfer-Encoding'
+
+	# IANA assigned HTTP Transfer-Encoding values
+	CODECS = {
+		'chunked': None,
+		'compress': NotImplementedError,
+		'deflate': 'application/zlib',
+		'gzip': 'application/gzip',
+		'identity': NotImplementedError,
+	}
 
 
 class Upgrade(HeaderElement):

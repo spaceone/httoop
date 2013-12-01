@@ -57,7 +57,7 @@ class HTTPSemantic(type):
 		setdefault('__hash__', __hash__)
 
 		def __repr__(self):
-			return '<HTTP %s>' % (self.__class__.__name__)
+			return '<HTTP %s(0x%x)>' % (self.__class__.__name__, id(self))
 		setdefault('__repr__', __repr__)
 
 		# python 2/3 unifying

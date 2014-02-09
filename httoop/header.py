@@ -457,8 +457,8 @@ class TE(AcceptElement):
 class Trailer(HeaderElement):
 	forbidden_headers = ('Transfer-Encoding', 'Content-Length', 'Trailer')
 
-	def __init__(self, value, params):
-		super(HeaderElement, self).__init__(value, params)
+	def __init__(self, value, params=None):
+		super(Trailer, self).__init__(value, params)
 		if value.title() in self.forbidden_headers:
 			raise InvalidHeader(u'A Trailer header MUST NOT contain %r field' % value.title())
 

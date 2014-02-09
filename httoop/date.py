@@ -40,7 +40,7 @@ class Date(object):
 		elif isinstance(timeval, float):
 			self.timestamp = timeval
 		elif isinstance(timeval, tuple):
-			self.timestamp = time.mktime(**timeval)
+			self.timestamp = time.mktime(timeval)
 		elif isinstance(timeval, datetime):
 			self.datetime = timeval
 			self.timestamp = time.mktime(self.datetime.timetuple())
@@ -85,7 +85,7 @@ class Date(object):
 		# parse the most common HTTP Date format (RFC 2822)
 		date = parsedate(timestr)
 		if date is not None:
-			return cls(date[:7])
+			return cls(date[:9])
 
 		# propably invalid here (if email.utils is installed)
 

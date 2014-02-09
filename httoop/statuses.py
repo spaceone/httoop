@@ -88,6 +88,8 @@ class HTTPStatusException(Status, Exception):
 	def __repr__(self):
 		return '<HTTP<%s>(%s)>' % (self.__class__.__name__, ' '.join('%s=%r' % (k, v) for k, v in iteritems(self.to_dict())))
 
+	__str__ = __repr__
+
 	def to_dict(self):
 		u"""the default body arguments"""
 		return dict(status=self.status,
@@ -168,6 +170,7 @@ class StatusType(HTTPSemantic):
 		reason = REASONS.get(code, ('', ''))
 		dict_.setdefault('reason', reason[0])
 		dict_.setdefault('description', reason[1])
+		dict_.setdefault('__str__', HTTPStatusException.__str__)  # TODO: remove metaclass / inheritance
 		return super(StatusType, mcs).__new__(mcs, name, (scls,), dict_)
 
 

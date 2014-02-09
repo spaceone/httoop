@@ -50,10 +50,10 @@ class Status(object):
 
 	reason = None
 
-	STATUS_RE = re.compile(r"^([1-5]\d{2})(?:\s+([\s\w]*))\Z")
+	STATUS_RE = re.compile(br"^([1-5]\d{2})(?:\s+([\s\w]*))\Z")
 
 	def __init__(self, code=None, reason=None):
-		u"""
+		"""
 			:param code:
 				the HTTP Statuscode
 			:type  code: int
@@ -69,7 +69,7 @@ class Status(object):
 			self.set((code, reason,))
 
 	def parse(self, status):
-		u"""parse a Statuscode and Reason-Phrase
+		"""parse a Statuscode and Reason-Phrase
 
 			:param status: the code and reason
 			:type  status: bytes
@@ -115,7 +115,7 @@ class Status(object):
 				int or tuple or bytes or Status
 		"""
 		if isinstance(status, int):
-			self.code, self.reason = status, REASONS.get(status, ('', ''))[0]
+			self.code, self.reason = status, REASONS.get(status, (u'', u''))[0]
 		elif isinstance(status, tuple):
 			self.code, self.reason = status
 		elif isinstance(status, (bytes, Unicode)):
@@ -126,7 +126,7 @@ class Status(object):
 		elif isinstance(status, Status):
 			self.code, self.reason = status.code, status.reason
 		else:
-			raise ValueError('invalid type for an HTTP Status')
+			raise TypeError('invalid status')
 
 	def __repr__(self):
 		return '<HTTP Status (code=%d, reason=%r)>' % (self.code, self.reason)

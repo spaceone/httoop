@@ -29,6 +29,17 @@ types = (application, audio, example, image, message, model, multipart, text, vi
 from httoop.codecs.application import Percent, QueryString
 from httoop.codecs.common import Codec
 
+
+def lookup(encoding, raise_errors=True):
+	if raise_errors:
+		return CODECS[encoding]
+	return CODECS.get(encoding)
+
+
+def register(encoding, codec):
+	CODECS[encoding] = codec
+
+
 for _, member in (member for type_ in types for member in inspect.getmembers(type_, inspect.isclass)):
 	if issubclass(member, Codec) and getattr(member, 'mimetype', None):
 		CODECS[member.mimetype] = member

@@ -16,7 +16,7 @@ import re
 
 from httoop.util import CaseInsensitiveDict, iteritems, Unicode
 from httoop.exceptions import InvalidHeader
-from httoop.codecs import CODECS
+from httoop.codecs import lookup
 
 # a mapping of all headers to HeaderElement classes
 HEADER = CaseInsensitiveDict()
@@ -83,7 +83,7 @@ class MimeType(object):
 
 	@property
 	def codec(self):
-		return CODECS.get(self.mimetype.value) or CODECS.get(self.mimetype.mimetype)
+		return lookup(self.mimetype.value, False) or lookup(self.mimetype.mimetype, False)
 
 	@property
 	def mimetype(self):
@@ -206,7 +206,7 @@ class CodecElement(object):
 			encoding = self.CODECS[encoding]
 			if not isinstance(encoding, (bytes, Unicode)):
 				return encoding
-			return CODECS[encoding]
+			return lookup(encoding)
 		except KeyError:
 			raise InvalidHeader(u'Unknown %s: %r' % (self.__name__, encoding.decode('ISO8859-1')))
 

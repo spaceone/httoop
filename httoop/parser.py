@@ -8,7 +8,7 @@ CRLF = CR + LF
 NOT_RECEIVED_YET = True
 
 from httoop.messages import Message
-from httoop.headers import Headers
+from httoop.header import Headers
 from httoop.exceptions import InvalidLine, InvalidHeader, InvalidBody, InvalidURI, Invalid
 from httoop.util import Unicode
 from httoop.statuses import BAD_REQUEST, NOT_IMPLEMENTED

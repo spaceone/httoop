@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""HTTP Header elements
+"""HTTP header elements
 
 .. seealso:: :rfc:`2616#section-2.2`
 
@@ -11,7 +11,7 @@ __all__ = ['HEADER', 'HeaderElement']
 
 import re
 # TODO: Via, Server, User-Agent can contain comments → parse them
-# TODO: parse encoded words like =?UTF-8?B?…?= (RFC 2047); seealso quopri
+# TODO: parse encoded words like =?UTF-8?B?…?= (RFC 2047); seealso quopri; '=?utf-8?q?=E2=86=92?='.decode('quopri')
 # TODO: unify the use of unicode / bytes
 
 from httoop.util import CaseInsensitiveDict, iteritems, Unicode
@@ -69,6 +69,12 @@ class HeaderElement(object):
 		"""Construct an instance from a string of the form 'token;key=val'."""
 		ival, params = cls.parse(elementstr)
 		return cls(ival, params)
+
+	@classmethod
+	def split(cls, fieldvalue):
+		# FIXME: quoted strings
+		# TODO: elements which aren't comma separated
+		return fieldvalue.split(',')
 
 	def __repr__(self):
 		return '<%s(%r)>' % (self.__class__.__name__, self.value)

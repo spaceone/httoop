@@ -7,7 +7,7 @@
 from os.path import getsize
 from io import BytesIO
 
-from httoop.headers import Headers
+from httoop.header import Headers
 from httoop.util import IFile, Unicode
 from httoop.meta import HTTPSemantic
 

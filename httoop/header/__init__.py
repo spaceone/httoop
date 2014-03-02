@@ -11,13 +11,15 @@
 __all__ = ['Headers']
 
 # FIXME: python3?
+# TODO: add a MAXIMUM of 500 headers?
 
 import re
 
 from httoop.util import CaseInsensitiveDict, iteritems
 from httoop.exceptions import InvalidHeader
-from httoop.header import HEADER, HeaderElement
+from httoop.header.header import HEADER, HeaderElement
 from httoop.meta import HTTPSemantic
+from httoop.header.header import *  # FIXME
 
 
 class Headers(CaseInsensitiveDict):
@@ -40,9 +42,8 @@ class Headers(CaseInsensitiveDict):
 
 		Element = HEADER.get(fieldname, HeaderElement)
 
-		# FIXME: quoted strings
 		result = []
-		for element in fieldvalue.split(","):
+		for element in Element.split(fieldvalue):
 			result.append(Element.from_str(element))
 
 		return list(reversed(sorted(result)))
@@ -85,6 +86,9 @@ class Headers(CaseInsensitiveDict):
 		"""
 		for name in self:
 			self.elements(name)
+
+	def merge(self, other):
+		raise NotImplementedError
 
 	def set(self, headers):
 		for key in self.keys():

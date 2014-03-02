@@ -29,7 +29,7 @@ ServerProtocol = Protocol((1, 1))
 
 from httoop.status import Status
 from httoop.date import Date
-from httoop.headers import Headers
+from httoop.header import Headers
 from httoop.body import Body
 from httoop.uri import URI
 from httoop.messages import Request, Response, Protocol, Method

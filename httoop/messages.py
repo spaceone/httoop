@@ -8,7 +8,7 @@ __all__ = ['Message', 'Request', 'Response', 'Protocol']
 
 import re
 
-from httoop.headers import Headers
+from httoop.header import Headers
 from httoop.status import Status
 from httoop.body import Body
 from httoop.uri import URI

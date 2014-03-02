@@ -32,4 +32,3 @@ class ClientStateMachine(StateMachine):
 			self.headers['Connection'] = 'close'
 		else:
 			self.headers.pop('Connection', None)
-

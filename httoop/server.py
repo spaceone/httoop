@@ -16,7 +16,7 @@ class ServerStateMachine(StateMachine):
 
 	def __init__(self, scheme, host, port):
 		super(ServerStateMachine, self).__init__()
-		self.MAX_URI_LENGTH = float('inf')  #8000
+		self.MAX_URI_LENGTH = float('inf')  # 8000
 		self._default_scheme = scheme
 		self._default_host = host
 		self._default_port = port

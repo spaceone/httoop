@@ -6,7 +6,7 @@
 
 __version__ = 0.0
 __all__ = ['Status', 'Body', 'Headers', 'URI', 'Method',
-           'Request', 'Response', 'Protocol', 'Date', 'StateMachine',
+           'Request', 'Response', 'Protocol', 'Date', 'ServerStateMachine', 'ClientStateMachine',
            'InvalidLine', 'InvalidHeader', 'InvalidURI', 'InvalidBody', 'InvalidDate',
            'CONTINUE', 'SWITCHING_PROTOCOLS', 'OK', 'CREATED', 'ACCEPTED',
            'NON_AUTHORITATIVE_INFORMATION', 'NO_CONTENT', 'RESET_CONTENT',
@@ -34,7 +34,8 @@ from httoop.body import Body
 from httoop.uri import URI
 from httoop.messages import Request, Response, Protocol, Method
 from httoop.exceptions import InvalidLine, InvalidHeader, InvalidURI, InvalidBody, InvalidDate
-from httoop.parser import StateMachine
+from httoop.server import ServerStateMachine
+from httoop.client import ClientStateMachine
 
 from httoop.statuses import (
 	HTTPStatusException,

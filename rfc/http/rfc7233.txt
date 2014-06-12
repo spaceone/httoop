@@ -1,17 +1,19 @@
 
 
 
-HTTPbis Working Group                                   R. Fielding, Ed.
-Internet-Draft                                                     Adobe
-Obsoletes: 2616 (if approved)                              Y. Lafon, Ed.
-Intended status: Standards Track                                     W3C
-Expires: August 10, 2014                                 J. Reschke, Ed.
+
+
+
+Internet Engineering Task Force (IETF)                  R. Fielding, Ed.
+Request for Comments: 7233                                         Adobe
+Obsoletes: 2616                                            Y. Lafon, Ed.
+Category: Standards Track                                            W3C
+ISSN: 2070-1721                                          J. Reschke, Ed.
                                                               greenbytes
-                                                        February 6, 2014
+                                                              June 2014
 
 
          Hypertext Transfer Protocol (HTTP/1.1): Range Requests
-                     draft-ietf-httpbis-p5-range-26
 
 Abstract
 
@@ -20,41 +22,42 @@ Abstract
    systems.  This document defines range requests and the rules for
    constructing and combining responses to those requests.
 
-Editorial Note (To be removed by RFC Editor)
-
-   Discussion of this draft takes place on the HTTPBIS working group
-   mailing list (ietf-http-wg@w3.org), which is archived at
-   <http://lists.w3.org/Archives/Public/ietf-http-wg/>.
-
-   The current issues list is at
-   <http://tools.ietf.org/wg/httpbis/trac/report/3> and related
-   documents (including fancy diffs) can be found at
-   <http://tools.ietf.org/wg/httpbis/>.
-
-   The changes in this draft are summarized in Appendix E.2.
-
 Status of This Memo
 
-   This Internet-Draft is submitted in full conformance with the
-   provisions of BCP 78 and BCP 79.
+   This is an Internet Standards Track document.
 
-   Internet-Drafts are working documents of the Internet Engineering
-   Task Force (IETF).  Note that other groups may also distribute
-   working documents as Internet-Drafts.  The list of current Internet-
-   Drafts is at http://datatracker.ietf.org/drafts/current/.
+   This document is a product of the Internet Engineering Task Force
+   (IETF).  It represents the consensus of the IETF community.  It has
+   received public review and has been approved for publication by the
+   Internet Engineering Steering Group (IESG).  Further information on
+   Internet Standards is available in Section 2 of RFC 5741.
 
-   Internet-Drafts are draft documents valid for a maximum of six months
-   and may be updated, replaced, or obsoleted by other documents at any
-   time.  It is inappropriate to use Internet-Drafts as reference
-   material or to cite them other than as "work in progress."
-
-   This Internet-Draft will expire on August 10, 2014.
+   Information about the current status of this document, any errata,
+   and how to provide feedback on it may be obtained at
+   http://www.rfc-editor.org/info/rfc7233.
 
 
 
-Fielding, et al.         Expires August 10, 2014                [Page 1]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Fielding, et al.             Standards Track                    [Page 1]
 
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
 
 
 Copyright Notice
@@ -108,51 +111,47 @@ Copyright Notice
 
 
 
-Fielding, et al.         Expires August 10, 2014                [Page 2]
+Fielding, et al.             Standards Track                    [Page 2]
 
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
 
 
 Table of Contents
 
-   1.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  4
-     1.1.  Conformance and Error Handling . . . . . . . . . . . . . .  4
-     1.2.  Syntax Notation  . . . . . . . . . . . . . . . . . . . . .  4
-   2.  Range Units  . . . . . . . . . . . . . . . . . . . . . . . . .  4
-     2.1.  Byte Ranges  . . . . . . . . . . . . . . . . . . . . . . .  5
-     2.2.  Other Range Units  . . . . . . . . . . . . . . . . . . . .  7
-     2.3.  Accept-Ranges  . . . . . . . . . . . . . . . . . . . . . .  7
-   3.  Range Requests . . . . . . . . . . . . . . . . . . . . . . . .  7
-     3.1.  Range  . . . . . . . . . . . . . . . . . . . . . . . . . .  7
-     3.2.  If-Range . . . . . . . . . . . . . . . . . . . . . . . . .  9
-   4.  Responses to a Range Request . . . . . . . . . . . . . . . . . 10
-     4.1.  206 Partial Content  . . . . . . . . . . . . . . . . . . . 10
-     4.2.  Content-Range  . . . . . . . . . . . . . . . . . . . . . . 12
-     4.3.  Combining Ranges . . . . . . . . . . . . . . . . . . . . . 14
-     4.4.  416 Range Not Satisfiable  . . . . . . . . . . . . . . . . 15
-   5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 15
-     5.1.  Range Unit Registry  . . . . . . . . . . . . . . . . . . . 15
-       5.1.1.  Procedure  . . . . . . . . . . . . . . . . . . . . . . 15
-       5.1.2.  Registrations  . . . . . . . . . . . . . . . . . . . . 16
-     5.2.  Status Code Registration . . . . . . . . . . . . . . . . . 16
-     5.3.  Header Field Registration  . . . . . . . . . . . . . . . . 16
-     5.4.  Internet Media Type Registration . . . . . . . . . . . . . 17
-       5.4.1.  Internet Media Type multipart/byteranges . . . . . . . 17
-   6.  Security Considerations  . . . . . . . . . . . . . . . . . . . 18
-     6.1.  Denial of Service Attacks using Range  . . . . . . . . . . 18
-   7.  Acknowledgments  . . . . . . . . . . . . . . . . . . . . . . . 18
-   8.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 19
-     8.1.  Normative References . . . . . . . . . . . . . . . . . . . 19
-     8.2.  Informative References . . . . . . . . . . . . . . . . . . 19
-   Appendix A.  Internet Media Type multipart/byteranges  . . . . . . 20
-   Appendix B.  Changes from RFC 2616 . . . . . . . . . . . . . . . . 21
-   Appendix C.  Imported ABNF . . . . . . . . . . . . . . . . . . . . 21
-   Appendix D.  Collected ABNF  . . . . . . . . . . . . . . . . . . . 21
-   Appendix E.  Change Log (to be removed by RFC Editor before
-                publication)  . . . . . . . . . . . . . . . . . . . . 23
-     E.1.  Since draft-ietf-httpbis-p5-range-24 . . . . . . . . . . . 23
-     E.2.  Since draft-ietf-httpbis-p5-range-25 . . . . . . . . . . . 23
-   Index  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+   1. Introduction ....................................................4
+      1.1. Conformance and Error Handling .............................4
+      1.2. Syntax Notation ............................................4
+   2. Range Units .....................................................5
+      2.1. Byte Ranges ................................................5
+      2.2. Other Range Units ..........................................7
+      2.3. Accept-Ranges ..............................................7
+   3. Range Requests ..................................................8
+      3.1. Range ......................................................8
+      3.2. If-Range ...................................................9
+   4. Responses to a Range Request ...................................10
+      4.1. 206 Partial Content .......................................10
+      4.2. Content-Range .............................................12
+      4.3. Combining Ranges ..........................................14
+      4.4. 416 Range Not Satisfiable .................................15
+   5. IANA Considerations ............................................16
+      5.1. Range Unit Registry .......................................16
+           5.1.1. Procedure ..........................................16
+           5.1.2. Registrations ......................................16
+      5.2. Status Code Registration ..................................17
+      5.3. Header Field Registration .................................17
+      5.4. Internet Media Type Registration ..........................17
+           5.4.1. Internet Media Type multipart/byteranges ...........18
+   6. Security Considerations ........................................19
+      6.1. Denial-of-Service Attacks Using Range .....................19
+   7. Acknowledgments ................................................19
+   8. References .....................................................20
+      8.1. Normative References ......................................20
+      8.2. Informative References ....................................20
+   Appendix A. Internet Media Type multipart/byteranges ..............21
+   Appendix B. Changes from RFC 2616 .................................22
+   Appendix C. Imported ABNF .........................................22
+   Appendix D. Collected ABNF ........................................23
+   Index .............................................................24
 
 
 
@@ -164,9 +163,13 @@ Table of Contents
 
 
 
-Fielding, et al.         Expires August 10, 2014                [Page 3]
+
+
+
+
+Fielding, et al.             Standards Track                    [Page 3]
 
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
 
 
 1.  Introduction
@@ -201,30 +204,34 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    document are to be interpreted as described in [RFC2119].
 
    Conformance criteria and considerations regarding error handling are
-   defined in Section 2.5 of [Part1].
+   defined in Section 2.5 of [RFC7230].
 
 1.2.  Syntax Notation
 
    This specification uses the Augmented Backus-Naur Form (ABNF)
    notation of [RFC5234] with a list extension, defined in Section 7 of
-   [Part1], that allows for compact definition of comma-separated lists
-   using a '#' operator (similar to how the '*' operator indicates
+   [RFC7230], that allows for compact definition of comma-separated
+   lists using a '#' operator (similar to how the '*' operator indicates
    repetition).  Appendix C describes rules imported from other
    documents.  Appendix D shows the collected grammar with all list
    operators expanded to standard ABNF notation.
+
+
+
+
+
+
+
+
+Fielding, et al.             Standards Track                    [Page 4]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
 
 2.  Range Units
 
    A representation can be partitioned into subranges according to
    various structural units, depending on the structure inherent in the
-
-
-
-Fielding, et al.         Expires August 10, 2014                [Page 4]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
-
    representation's media type.  This "range unit" is used in the
    Accept-Ranges (Section 2.3) response header field to advertise
    support for range requests, the Range (Section 3.1) request header
@@ -238,13 +245,13 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
 
    Since representation data is transferred in payloads as a sequence of
    octets, a byte range is a meaningful substructure for any
-   representation transferable over HTTP (Section 3 of [Part2]).  The
+   representation transferable over HTTP (Section 3 of [RFC7231]).  The
    "bytes" range unit is defined for expressing subranges of the data's
    octet sequence.
 
      bytes-unit       = "bytes"
 
-   A byte range request can specify a single range of bytes, or a set of
+   A byte-range request can specify a single range of bytes or a set of
    ranges within a single representation.
 
      byte-ranges-specifier = bytes-unit "=" byte-range-set
@@ -268,19 +275,20 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
 
         bytes=500-999
 
+
+
+
+
+Fielding, et al.             Standards Track                    [Page 5]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
+
    A byte-range-spec is invalid if the last-byte-pos value is present
    and less than the first-byte-pos.
 
    A client can limit the number of bytes requested without knowing the
    size of the selected representation.  If the last-byte-pos value is
-
-
-
-Fielding, et al.         Expires August 10, 2014                [Page 5]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
-
    absent, or if the value is greater than or equal to the current
    length of the representation data, the byte range is interpreted as
    the remainder of the representation (i.e., the server replaces the
@@ -293,8 +301,8 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
      suffix-byte-range-spec = "-" suffix-length
      suffix-length = 1*DIGIT
 
-   If the selected representation is shorter than the specified suffix-
-   length, the entire representation is used.
+   If the selected representation is shorter than the specified
+   suffix-length, the entire representation is used.
 
    Additional examples, assuming a representation of length 10000:
 
@@ -302,7 +310,7 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
 
         bytes=-500
 
-      Or:
+   Or:
 
         bytes=9500-
 
@@ -318,24 +326,25 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
 
    If a valid byte-range-set includes at least one byte-range-spec with
    a first-byte-pos that is less than the current length of the
-   representation, or at least one suffix-byte-range-spec with a non-
-   zero suffix-length, then the byte-range-set is satisfiable.
+   representation, or at least one suffix-byte-range-spec with a
+   non-zero suffix-length, then the byte-range-set is satisfiable.
    Otherwise, the byte-range-set is unsatisfiable.
 
-   In the byte range syntax, first-byte-pos, last-byte-pos, and suffix-
-   length are expressed as decimal number of octets.  Since there is no
-   predefined limit to the length of a payload, recipients MUST
+
+
+
+
+
+Fielding, et al.             Standards Track                    [Page 6]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
+
+   In the byte-range syntax, first-byte-pos, last-byte-pos, and
+   suffix-length are expressed as decimal number of octets.  Since there
+   is no predefined limit to the length of a payload, recipients MUST
    anticipate potentially large decimal numerals and prevent parsing
    errors due to integer conversion overflows.
-
-
-
-
-
-Fielding, et al.         Expires August 10, 2014                [Page 6]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
 
 2.2.  Other Range Units
 
@@ -368,6 +377,25 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
 
    to advise the client not to attempt a range request.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Fielding, et al.             Standards Track                    [Page 7]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
+
 3.  Range Requests
 
 3.1.  Range
@@ -385,14 +413,6 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    and intermediate caches ought to support byte ranges when possible,
    since Range supports efficient recovery from partially failed
    transfers and partial retrieval of large representations.  A server
-
-
-
-Fielding, et al.         Expires August 10, 2014                [Page 7]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
-
    MUST ignore a Range header field received with a request method other
    than GET.
 
@@ -404,7 +424,7 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    header field that consists of more than two overlapping ranges, or a
    set of many small ranges that are not listed in ascending order,
    since both are indications of either a broken client or a deliberate
-   denial of service attack (Section 6.1).  A client SHOULD NOT request
+   denial-of-service attack (Section 6.1).  A client SHOULD NOT request
    multiple ranges that are inherently less efficient to process and
    transfer than a single range that encompasses the same data.
 
@@ -418,10 +438,19 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    agent wishes to transfer one page at a time.
 
    The Range header field is evaluated after evaluating the precondition
-   header fields defined in [Part4], and only if the result in absence
+   header fields defined in [RFC7232], and only if the result in absence
    of the Range header field would be a 200 (OK) response.  In other
    words, Range is ignored when a conditional GET would result in a 304
    (Not Modified) response.
+
+
+
+
+
+Fielding, et al.             Standards Track                    [Page 8]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
 
    The If-Range header field (Section 3.2) can be used as a precondition
    to applying the Range header field.
@@ -438,17 +467,6 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    invalid or unsatisfiable, the server SHOULD send a 416 (Range Not
    Satisfiable) response.
 
-
-
-
-
-
-
-Fielding, et al.         Expires August 10, 2014                [Page 8]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
-
 3.2.  If-Range
 
    If a client has a partial copy of a representation and wishes to have
@@ -460,30 +478,38 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    representation.
 
    The "If-Range" header field allows a client to "short-circuit" the
-   second request.  Informally, its meaning is: if the representation is
-   unchanged, send me the part(s) that I am requesting in Range;
-   otherwise, send me the entire representation.
+   second request.  Informally, its meaning is as follows: if the
+   representation is unchanged, send me the part(s) that I am requesting
+   in Range; otherwise, send me the entire representation.
 
      If-Range = entity-tag / HTTP-date
 
    A client MUST NOT generate an If-Range header field in a request that
-   does not contain a Range header field.  A server MUST ignore an If-
-   Range header field received in a request that does not contain a
+   does not contain a Range header field.  A server MUST ignore an
+   If-Range header field received in a request that does not contain a
    Range header field.  An origin server MUST ignore an If-Range header
    field received in a request for a target resource that does not
    support Range requests.
 
    A client MUST NOT generate an If-Range header field containing an
-   entity-tag that is marked as weak.  A client MUST NOT generate an If-
-   Range header field containing an HTTP-date unless the client has no
-   entity-tag for the corresponding representation and the date is a
-   strong validator in the sense defined by Section 2.2.2 of [Part4].
+   entity-tag that is marked as weak.  A client MUST NOT generate an
+   If-Range header field containing an HTTP-date unless the client has
+   no entity-tag for the corresponding representation and the date is a
+   strong validator in the sense defined by Section 2.2.2 of [RFC7232].
 
    A server that evaluates an If-Range precondition MUST use the strong
    comparison function when comparing entity-tags (Section 2.3.2 of
-   [Part4]) and MUST evaluate the condition as false if an HTTP-date
+   [RFC7232]) and MUST evaluate the condition as false if an HTTP-date
+
+
+
+Fielding, et al.             Standards Track                    [Page 9]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
+
    validator is provided that is not a strong validator in the sense
-   defined by Section 2.2.2 of [Part4].  A valid entity-tag can be
+   defined by Section 2.2.2 of [RFC7232].  A valid entity-tag can be
    distinguished from a valid HTTP-date by examining the first two
    characters for a DQUOTE.
 
@@ -493,17 +519,8 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    requested.  If the validator does not match, the server MUST ignore
    the Range header field.  Note that this comparison by exact match,
    including when the validator is an HTTP-date, differs from the
-   "earlier than or equal to" comparison used when evaluating an If-
-   Unmodified-Since conditional.
-
-
-
-
-
-Fielding, et al.         Expires August 10, 2014                [Page 9]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
+   "earlier than or equal to" comparison used when evaluating an
+   If-Unmodified-Since conditional.
 
 4.  Responses to a Range Request
 
@@ -533,10 +550,19 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    206 response MUST generate a "multipart/byteranges" payload, as
    defined in Appendix A, and a Content-Type header field containing the
    multipart/byteranges media type and its required boundary parameter.
-   To avoid confusion with single part responses, a server MUST NOT
+   To avoid confusion with single-part responses, a server MUST NOT
    generate a Content-Range header field in the HTTP header section of a
    multiple part response (this field will be sent in each part
    instead).
+
+
+
+
+
+Fielding, et al.             Standards Track                   [Page 10]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
 
    Within the header area of each body part in the multipart payload,
    the server MUST generate a Content-Range header field corresponding
@@ -544,22 +570,6 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    representation would have had a Content-Type header field in a 200
    (OK) response, the server SHOULD generate that same Content-Type
    field in the header area of each body part.  For example:
-
-
-
-
-
-
-
-
-
-
-
-
-Fielding, et al.         Expires August 10, 2014               [Page 10]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
 
      HTTP/1.1 206 Partial Content
      Date: Wed, 15 Nov 1995 06:25:24 GMT
@@ -600,22 +610,22 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    a request that asks for multiple ranges.
 
    When a multipart response payload is generated, the server SHOULD
-   send the parts in the same order that the corresponding byte-range-
-   spec appeared in the received Range header field, excluding those
-   ranges that were deemed unsatisfiable or that were coalesced into
-   other ranges.  A client that receives a multipart response MUST
-   inspect the Content-Range header field present in each body part in
-   order to determine which range is contained in that body part; a
-   client cannot rely on receiving the same ranges that it requested,
-   nor the same order that it requested.
+   send the parts in the same order that the corresponding
+   byte-range-spec appeared in the received Range header field,
 
 
 
-
-Fielding, et al.         Expires August 10, 2014               [Page 11]
+Fielding, et al.             Standards Track                   [Page 11]
 
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
 
+
+   excluding those ranges that were deemed unsatisfiable or that were
+   coalesced into other ranges.  A client that receives a multipart
+   response MUST inspect the Content-Range header field present in each
+   body part in order to determine which range is contained in that body
+   part; a client cannot rely on receiving the same ranges that it
+   requested, nor the same order that it requested.
 
    When a 206 response is generated, the server MUST generate the
    following header fields, in addition to those required above, if the
@@ -632,7 +642,8 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    response to the same request.
 
    A 206 response is cacheable by default; i.e., unless otherwise
-   indicated by explicit cache controls (see Section 4.2.2 of [Part6]).
+   indicated by explicit cache controls (see Section 4.2.2 of
+   [RFC7234]).
 
 4.2.  Content-Range
 
@@ -658,6 +669,13 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
      other-content-range = other-range-unit SP other-range-resp
      other-range-resp    = *CHAR
 
+
+
+Fielding, et al.             Standards Track                   [Page 12]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
+
    If a 206 (Partial Content) response contains a Content-Range header
    field with a range unit (Section 2) that the recipient does not
    understand, the recipient MUST NOT attempt to recombine it with a
@@ -665,14 +683,6 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    forward it downstream.
 
    For byte ranges, a sender SHOULD indicate the complete length of the
-
-
-
-Fielding, et al.         Expires August 10, 2014               [Page 12]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
-
    representation from which the range has been extracted, unless the
    complete length is unknown or difficult to determine.  An asterisk
    character ("*") in place of the complete-length indicates that the
@@ -689,15 +699,15 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
 
      Content-Range: bytes 42-1233/*
 
-   A Content-Range field value is invalid if it contains a byte-range-
-   resp that has a last-byte-pos value less than its first-byte-pos
-   value, or a complete-length value less than or equal to its last-
-   byte-pos value.  The recipient of an invalid Content-Range MUST NOT
-   attempt to recombine the received content with a stored
-   representation.
+   A Content-Range field value is invalid if it contains a
+   byte-range-resp that has a last-byte-pos value less than its
+   first-byte-pos value, or a complete-length value less than or equal
+   to its last-byte-pos value.  The recipient of an invalid
+   Content-Range MUST NOT attempt to recombine the received content with
+   a stored representation.
 
-   A server generating a 416 (Range Not Satisfiable) response to a byte
-   range request SHOULD send a Content-Range header field with an
+   A server generating a 416 (Range Not Satisfiable) response to a
+   byte-range request SHOULD send a Content-Range header field with an
    unsatisfied-range value, as in the following example:
 
      Content-Range: bytes */1234
@@ -705,10 +715,22 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    The complete-length in a 416 response indicates the current length of
    the selected representation.
 
-   The "Content-Range" header field has no meaning for status codes that
+   The Content-Range header field has no meaning for status codes that
    do not explicitly describe its semantic.  For this specification,
    only the 206 (Partial Content) and 416 (Range Not Satisfiable) status
    codes describe a meaning for Content-Range.
+
+
+
+
+
+
+
+
+Fielding, et al.             Standards Track                   [Page 13]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
 
    The following are examples of Content-Range values in which the
    selected representation contains a total of 1234 bytes:
@@ -720,14 +742,6 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    o  The second 500 bytes:
 
         Content-Range: bytes 500-999/1234
-
-
-
-
-Fielding, et al.         Expires August 10, 2014               [Page 13]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
 
    o  All except for the first 500 bytes:
 
@@ -744,7 +758,7 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    Range specifications.  After several such transfers, a client might
    have received several ranges of the same representation.  These
    ranges can only be safely combined if they all have in common the
-   same strong validator (Section 2.1 of [Part4]).
+   same strong validator (Section 2.1 of [RFC7232]).
 
    A client that has received multiple partial responses to GET requests
    on a target resource MAY combine those responses into a larger
@@ -765,6 +779,15 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    all instances of the corresponding header fields in the stored
    response.
 
+
+
+
+
+Fielding, et al.             Standards Track                   [Page 14]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
+
    The combined response message body consists of the union of partial
    content ranges in the new response and each of the selected
    responses.  If the union consists of the entire range of the
@@ -778,13 +801,6 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    (Partial Content) responses, each with one continuous range that is
    indicated by a Content-Range header field.
 
-
-
-Fielding, et al.         Expires August 10, 2014               [Page 14]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
-
 4.4.  416 Range Not Satisfiable
 
    The 416 (Range Not Satisfiable) status code indicates that none of
@@ -796,7 +812,7 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    For byte ranges, failing to overlap the current extent means that the
    first-byte-pos of all of the byte-range-spec values were greater than
    the current length of the selected representation.  When this status
-   code is generated in response to a byte range request, the sender
+   code is generated in response to a byte-range request, the sender
    SHOULD generate a Content-Range header field specifying the current
    length of the selected representation (Section 4.2).
 
@@ -816,13 +832,25 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
       on receiving a 416 (Range Not Satisfiable) response even when it
       is most appropriate.
 
+
+
+
+
+
+
+
+Fielding, et al.             Standards Track                   [Page 15]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
+
 5.  IANA Considerations
 
 5.1.  Range Unit Registry
 
-   The HTTP Range Unit Registry defines the name space for the range
+   The "HTTP Range Unit Registry" defines the namespace for the range
    unit names and refers to their corresponding specifications.  The
-   registry will be created and maintained at (the suggested URI)
+   registry has been created and is now maintained at
    <http://www.iana.org/assignments/http-parameters>.
 
 5.1.1.  Procedure
@@ -833,23 +861,14 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
 
    o  Description
 
-
-
-
-Fielding, et al.         Expires August 10, 2014               [Page 15]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
-
    o  Pointer to specification text
 
-   Values to be added to this name space require IETF Review (see
+   Values to be added to this namespace require IETF Review (see
    [RFC5226], Section 4.1).
 
 5.1.2.  Registrations
 
-   The initial HTTP Range Unit Registry shall contain the registrations
-   below:
+   The initial range unit registry contains the registrations below:
 
    +-------------+---------------------------------------+-------------+
    | Range Unit  | Description                           | Reference   |
@@ -863,11 +882,29 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    The change controller is: "IETF (iesg@ietf.org) - Internet
    Engineering Task Force".
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+Fielding, et al.             Standards Track                   [Page 16]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
+
 5.2.  Status Code Registration
 
-   The HTTP Status Code Registry located at
-   <http://www.iana.org/assignments/http-status-codes> shall be updated
-   with the registrations below:
+   The "Hypertext Transfer Protocol (HTTP) Status Code Registry" located
+   at <http://www.iana.org/assignments/http-status-codes> has been
+   updated to include the registrations below:
 
    +-------+-----------------------+-------------+
    | Value | Description           | Reference   |
@@ -878,24 +915,13 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
 
 5.3.  Header Field Registration
 
-   HTTP header fields are registered within the Message Header Field
-   Registry maintained at <http://www.iana.org/assignments/
-   message-headers/message-header-index.html>.
+   HTTP header fields are registered within the "Message Headers"
+   registry maintained at
+   <http://www.iana.org/assignments/message-headers/>.
 
    This document defines the following HTTP header fields, so their
-   associated registry entries shall be updated according to the
+   associated registry entries have been updated according to the
    permanent registrations below (see [BCP90]):
-
-
-
-
-
-
-
-Fielding, et al.         Expires August 10, 2014               [Page 16]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
 
    +-------------------+----------+----------+-------------+
    | Header Field Name | Protocol | Status   | Reference   |
@@ -915,7 +941,20 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    <http://www.iana.org/assignments/media-types>.
 
    This document serves as the specification for the Internet media type
-   "multipart/byteranges".  The following is to be registered with IANA.
+   "multipart/byteranges".  The following has been registered with IANA.
+
+
+
+
+
+
+
+
+
+Fielding, et al.             Standards Track                   [Page 17]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
 
 5.4.1.  Internet Media Type multipart/byteranges
 
@@ -943,16 +982,6 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
 
    Additional information:
 
-
-
-
-
-
-Fielding, et al.         Expires August 10, 2014               [Page 17]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
-
       Deprecated alias names for this type:  N/A
 
       Magic number(s):  N/A
@@ -962,26 +991,37 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
       Macintosh file type code(s):  N/A
 
    Person and email address to contact for further information:  See
-      Authors Section.
+      Authors' Addresses section.
 
    Intended usage:  COMMON
 
    Restrictions on usage:  N/A
 
-   Author:  See Authors Section.
+   Author:  See Authors' Addresses section.
 
    Change controller:  IESG
+
+
+
+
+
+
+
+Fielding, et al.             Standards Track                   [Page 18]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
 
 6.  Security Considerations
 
    This section is meant to inform developers, information providers,
    and users of known security concerns specific to the HTTP range
    request mechanisms.  More general security considerations are
-   addressed in HTTP messaging [Part1] and semantics [Part2].
+   addressed in HTTP messaging [RFC7230] and semantics [RFC7231].
 
-6.1.  Denial of Service Attacks using Range
+6.1.  Denial-of-Service Attacks Using Range
 
-   Unconstrained multiple range requests are susceptible to denial of
+   Unconstrained multiple range requests are susceptible to denial-of-
    service attacks because the effort required to request many
    overlapping ranges of the same data is tiny compared to the time,
    memory, and bandwidth consumed by attempting to serve the requested
@@ -994,42 +1034,43 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
 
 7.  Acknowledgments
 
-   See Section 10 of [Part1].
+   See Section 10 of [RFC7230].
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Fielding, et al.             Standards Track                   [Page 19]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
 
 8.  References
 
-
-
-
-
-
-
-Fielding, et al.         Expires August 10, 2014               [Page 18]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
-
 8.1.  Normative References
-
-   [Part1]    Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Message Syntax and Routing",
-              draft-ietf-httpbis-p1-messaging-26 (work in progress),
-              February 2014.
-
-   [Part2]    Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Semantics and Content",
-              draft-ietf-httpbis-p2-semantics-26 (work in progress),
-              February 2014.
-
-   [Part4]    Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Conditional Requests",
-              draft-ietf-httpbis-p4-conditional-26 (work in progress),
-              February 2014.
-
-   [Part6]    Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
-              Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
-              draft-ietf-httpbis-p6-cache-26 (work in progress),
-              February 2014.
 
    [RFC2046]  Freed, N. and N. Borenstein, "Multipurpose Internet Mail
               Extensions (MIME) Part Two: Media Types", RFC 2046,
@@ -1040,6 +1081,22 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
 
    [RFC5234]  Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
               Specifications: ABNF", STD 68, RFC 5234, January 2008.
+
+   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Message Syntax and Routing",
+              RFC 7230, June 2014.
+
+   [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
+              June 2014.
+
+   [RFC7232]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Conditional Requests", RFC 7232,
+              June 2014.
+
+   [RFC7234]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
+              Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
+              RFC 7234, June 2014.
 
 8.2.  Informative References
 
@@ -1057,15 +1114,15 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
 
    [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
               IANA Considerations Section in RFCs", BCP 26, RFC 5226,
-
-
-
-Fielding, et al.         Expires August 10, 2014               [Page 19]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
-
               May 2008.
+
+
+
+
+Fielding, et al.             Standards Track                   [Page 20]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
 
 Appendix A.  Internet Media Type multipart/byteranges
 
@@ -1113,15 +1170,15 @@ Appendix A.  Internet Media Type multipart/byteranges
      Content-Range: exampleunit 11.2-14.3/25
 
      ...the second range
-
-
-
-Fielding, et al.         Expires August 10, 2014               [Page 20]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
-
      --THIS_STRING_SEPARATES--
+
+
+
+
+Fielding, et al.             Standards Track                   [Page 21]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
 
 Appendix B.  Changes from RFC 2616
 
@@ -1147,45 +1204,52 @@ Appendix C.  Imported ABNF
    8-bit sequence of data), SP (space), and VCHAR (any visible US-ASCII
    character).
 
-   Note that all rules derived from token are to be compared case-
-   insensitively, like range-unit and acceptable-ranges.
+   Note that all rules derived from token are to be compared
+   case-insensitively, like range-unit and acceptable-ranges.
 
-   The rules below are defined in [Part1]:
+   The rules below are defined in [RFC7230]:
 
-     OWS        = <OWS, defined in [Part1], Section 3.2.3>
-     token      = <token, defined in [Part1], Section 3.2.6>
+     OWS        = <OWS, see [RFC7230], Section 3.2.3>
+     token      = <token, see [RFC7230], Section 3.2.6>
 
    The rules below are defined in other parts:
 
-     HTTP-date  = <HTTP-date, defined in [Part2], Section 7.1.1.1>
-     entity-tag = <entity-tag, defined in [Part4], Section 2.3>
+     HTTP-date  = <HTTP-date, see [RFC7231], Section 7.1.1.1>
+     entity-tag = <entity-tag, see [RFC7232], Section 2.3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Fielding, et al.             Standards Track                   [Page 22]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
 
 Appendix D.  Collected ABNF
 
    In the collected ABNF below, list rules are expanded as per Section
-   1.2 of [Part1].
-
-
-
-
-
-
-
-
-Fielding, et al.         Expires August 10, 2014               [Page 21]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
+   1.2 of [RFC7230].
 
    Accept-Ranges = acceptable-ranges
 
    Content-Range = byte-content-range / other-content-range
 
-   HTTP-date = <HTTP-date, defined in [Part2], Section 7.1.1.1>
+   HTTP-date = <HTTP-date, see [RFC7231], Section 7.1.1.1>
 
    If-Range = entity-tag / HTTP-date
 
-   OWS = <OWS, defined in [Part1], Section 3.2.3>
+   OWS = <OWS, see [RFC7230], Section 3.2.3>
 
    Range = byte-ranges-specifier / other-ranges-specifier
 
@@ -1205,7 +1269,7 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
 
    complete-length = 1*DIGIT
 
-   entity-tag = <entity-tag, defined in [Part4], Section 2.3>
+   entity-tag = <entity-tag, see [RFC7232], Section 2.3>
 
    first-byte-pos = 1*DIGIT
 
@@ -1220,55 +1284,19 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
    range-unit = bytes-unit / other-range-unit
 
    suffix-byte-range-spec = "-" suffix-length
+
+
+
+Fielding, et al.             Standards Track                   [Page 23]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
+
    suffix-length = 1*DIGIT
 
-   token = <token, defined in [Part1], Section 3.2.6>
+   token = <token, see [RFC7230], Section 3.2.6>
 
    unsatisfied-range = "*/" complete-length
-
-
-
-Fielding, et al.         Expires August 10, 2014               [Page 22]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
-
-Appendix E.  Change Log (to be removed by RFC Editor before publication)
-
-   Changes up to the IETF Last Call draft are summarized in <http://
-   tools.ietf.org/html/draft-ietf-httpbis-p5-range-24#appendix-E>.
-
-E.1.  Since draft-ietf-httpbis-p5-range-24
-
-   Closed issues:
-
-   o  <http://tools.ietf.org/wg/httpbis/trac/ticket/506>: "APPSDIR
-      review of draft-ietf-httpbis-p5-range-24"
-
-   o  <http://tools.ietf.org/wg/httpbis/trac/ticket/507>: "integer value
-      parsing"
-
-   o  <http://tools.ietf.org/wg/httpbis/trac/ticket/508>: "broken
-      sentence in description of 206"
-
-E.2.  Since draft-ietf-httpbis-p5-range-25
-
-   Closed issues:
-
-   o  <http://tools.ietf.org/wg/httpbis/trac/ticket/526>: "check media
-      type registration templates"
-
-   o  <http://tools.ietf.org/wg/httpbis/trac/ticket/527>: "use of CHAR
-      for other-range-set"
-
-   o  <http://tools.ietf.org/wg/httpbis/trac/ticket/538>: "add
-      'stateless' to Abstract"
-
-   o  <http://tools.ietf.org/wg/httpbis/trac/ticket/542>: "improve
-      introduction of list rule"
-
-   o  <http://tools.ietf.org/wg/httpbis/trac/ticket/549>: "augment
-      security considerations with pointers to current research"
 
 Index
 
@@ -1280,14 +1308,6 @@ Index
 
    A
       Accept-Ranges header field  7
-
-
-
-
-Fielding, et al.         Expires August 10, 2014               [Page 23]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
 
    C
       Content-Range header field  12
@@ -1311,39 +1331,35 @@ Internet-Draft           HTTP/1.1 Range Requests           February 2014
          other-content-range  12
          other-range-resp  12
          other-range-unit  5, 7
-         Range  7
+         Range  8
          range-unit  5
          ranges-specifier  5
          suffix-byte-range-spec  6
          suffix-length  6
          unsatisfied-range  12
 
+
+
+
+
+
+Fielding, et al.             Standards Track                   [Page 24]
+
+RFC 7233                 HTTP/1.1 Range Requests               June 2014
+
+
    I
       If-Range header field  9
 
    M
       Media Type
-         multipart/byteranges  17, 20
-         multipart/x-byteranges  20
-      multipart/byteranges Media Type  17, 20
-      multipart/x-byteranges Media Type  20
+         multipart/byteranges  18, 21
+         multipart/x-byteranges  19
+      multipart/byteranges Media Type  18, 21
+      multipart/x-byteranges Media Type  21
 
    R
-      Range header field  7
-
-
-
-
-
-
-
-
-
-
-Fielding, et al.         Expires August 10, 2014               [Page 24]
-
-Internet-Draft           HTTP/1.1 Range Requests           February 2014
-
+      Range header field  8
 
 Authors' Addresses
 
@@ -1383,18 +1399,5 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-Fielding, et al.         Expires August 10, 2014               [Page 25]
+Fielding, et al.             Standards Track                   [Page 25]
 

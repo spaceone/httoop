@@ -25,7 +25,7 @@ class InvalidDate(Invalid):
 
 
 class InvalidBody(Invalid):
-	u"error raised when Body is invalid"""
+	u"""error raised when Body is invalid"""
 
 
 class EncodeError(ValueError):

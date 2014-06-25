@@ -380,10 +380,9 @@ class TEMPORARY_REDIRECT(object):
 	__metaclass__ = StatusType
 	code = 307
 
-# Unused, HTTP1.0
-#PERMANENT_REDIRECT = class (object):
-#	__metaclass__ = StatusType
-#	code = 308
+class PERMANENT_REDIRECT(object):
+	__metaclass__ = StatusType
+	code = 308
 
 
 class BAD_REQUEST(object):

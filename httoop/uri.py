@@ -15,6 +15,7 @@ from httoop.meta import HTTPSemantic
 DEFAULT_PORTS = {'http': 80, 'https': 443}
 # TODO: abstracter: URI, HTTP11_URL, HTTP10URL
 # TODO: allow params?
+# TODO: not able to have absolute paths
 
 
 class URI(object):

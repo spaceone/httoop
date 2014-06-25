@@ -3,8 +3,8 @@
 
 .. seealso:: :rfc:`2616#section-10`"""
 
-from httoop.body import Body  # TODO: remove ?
-from httoop.status import Status, REASONS
+from httoop.messages import Body  # TODO: remove ?
+from httoop.status.status import Status, REASONS
 from httoop.util import iteritems
 from httoop.meta import HTTPSemantic
 

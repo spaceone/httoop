@@ -9,7 +9,7 @@ __all__ = ['WSGI']
 import sys
 import os
 
-from httoop.body import Body
+from httoop.messages import Body
 from httoop.util import iteritems
 
 

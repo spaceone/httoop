@@ -11,7 +11,7 @@ from httoop.messages import Message
 from httoop.header import Headers
 from httoop.exceptions import InvalidLine, InvalidHeader, InvalidBody, InvalidURI, Invalid
 from httoop.util import Unicode
-from httoop.statuses import BAD_REQUEST, NOT_IMPLEMENTED
+from httoop.status import BAD_REQUEST, NOT_IMPLEMENTED
 
 
 class StateMachine(object):

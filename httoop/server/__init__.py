@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from httoop.parser import StateMachine, NOT_RECEIVED_YET
-from httoop.statuses import (
+from httoop.status import (
 	BAD_REQUEST, LENGTH_REQUIRED, REQUEST_URI_TOO_LONG,
 	MOVED_PERMANENTLY, HTTP_VERSION_NOT_SUPPORTED
 )
 from httoop.messages import Request, Response
-from httoop.statuses import STATUSES
+from httoop.status import STATUSES
 from httoop.date import Date
 from httoop import ServerProtocol, ServerHeader
 

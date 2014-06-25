@@ -4,13 +4,14 @@
 .. seealso:: :rfc:`2616#section-4`
 """
 
-__all__ = ['Message', 'Request', 'Response', 'Protocol']
+__all__ = ['Message', 'Request', 'Response', 'Protocol', 'Body', 'Method']
 
 import re
 
+from httoop.messages.body import Body
+
 from httoop.header import Headers
 from httoop.status import Status
-from httoop.body import Body
 from httoop.uri import URI
 from httoop.exceptions import InvalidLine
 from httoop.util import Unicode

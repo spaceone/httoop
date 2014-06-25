@@ -30,14 +30,13 @@ ServerProtocol = Protocol((1, 1))
 from httoop.status import Status
 from httoop.date import Date
 from httoop.header import Headers
-from httoop.body import Body
 from httoop.uri import URI
-from httoop.messages import Request, Response, Protocol, Method
+from httoop.messages import Body, Request, Response, Protocol, Method
 from httoop.exceptions import InvalidLine, InvalidHeader, InvalidURI, InvalidBody, InvalidDate
 from httoop.server import ServerStateMachine
 from httoop.client import ClientStateMachine
 
-from httoop.statuses import (
+from httoop.status import (
 	HTTPStatusException,
 	CONTINUE, SWITCHING_PROTOCOLS, OK, CREATED, ACCEPTED, NON_AUTHORITATIVE_INFORMATION,
 	NO_CONTENT, RESET_CONTENT, PARTIAL_CONTENT, MULTIPLE_CHOICES, MOVED_PERMANENTLY, FOUND,

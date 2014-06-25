@@ -230,7 +230,7 @@ class Body(IFile):
 	def __len__(self):  # FIXME
 		body = self.content
 
-		if isinstance(body, file):
+		if isinstance(body, file):  # FIXME: py3
 			return getsize(body.name)
 		if isinstance(body, BytesIO):
 			return len(body.getvalue())

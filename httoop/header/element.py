@@ -88,7 +88,7 @@ class MimeType(object):
 
 	@property
 	def codec(self):
-		return lookup(self.mimetype.value, False) or lookup(self.mimetype.mimetype, False)
+		return lookup(self.value, False) or lookup(self.mimetype, False)
 
 	@property
 	def mimetype(self):

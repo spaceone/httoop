@@ -29,6 +29,8 @@ HTTP and extensions are defined in the following RFC's:
 
 * HTTP/1.1 RFC 7235 [Authentication](http://tools.ietf.org/html/7235)
 
+* RFC 5987 [Character Set and Language Encoding for Hypertext Transfer Protocol (HTTP) Header Field Parameters](https://tools.ietf.org/html/rfc5987)
+
 * RFC 7239 [Forwarded HTTP Extension](http://tools.ietf.org/html/7239)
 
 * Internet Message Format ([RFC 822](http://tools.ietf.org/html/822), [2822](http://tools.ietf.org/html/2822), [5322](http://tools.ietf.org/html/5322))
@@ -56,3 +58,5 @@ Extended information about hypermedia, WWW and how HTTP is meant to be used:
 * Web Linking ([RFC 5988](http://tools.ietf.org/html/5988))
 
 * Representational State Transfer [REST](http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
+
+* [Test Cases for HTTP Content-Disposition header field](http://greenbytes.de/tech/tc2231/)

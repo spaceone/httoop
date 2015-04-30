@@ -49,7 +49,7 @@ class ServerStateMachine(StateMachine):
 				return  # prevent to respond pipelined requests in wrong order
 			self.parsed.remove((request, response))
 			responses.remove(response)
-			yield Composer(response, request)
+			yield ComposedResponse(response, request)
 
 	def parse_startline(self):
 		state = super(ServerStateMachine, self).parse_startline()
@@ -133,7 +133,7 @@ class ServerStateMachine(StateMachine):
 			raise BAD_REQUEST('A %s request is considered as safe and MUST NOT contain a request body.' % self.message.method)
 
 
-class Composer(object):
+class ComposedResponse(object):
 
 	def __init__(self, response, request):
 		self.message = request

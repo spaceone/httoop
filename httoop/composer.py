@@ -1,6 +1,6 @@
 
 
-class Composer(object):
+class ComposedMessage(object):
 
 	# FIXME: use it
 	@property
@@ -29,11 +29,11 @@ class Composer(object):
 	def chunked(self, chunked):
 		if chunked:
 			self.message.headers.pop('Content-Length', None)
-			if self.message.chunked:
+			if self.chunked:
 				return
 			self.message.headers.append('Transfer-Encoding', 'chunked')
 		else:
-			if not self.message.chunked:
+			if not self.chunked:
 				return
 			te = self.message.headers.elements('Transfer-Encoding')
 			te.remove('chunked')
@@ -44,8 +44,8 @@ class Composer(object):
 		headers = bytes(self.message.headers)
 		yield start_line + headers
 		body = self.message.body.__iter__()
-		if self.message.chunked:
-			body = self.message.__compose_chunked_iter(body)
+		if self.chunked:
+			body = self.__compose_chunked_iter(body)
 		for chunk in body:
 			yield chunk
 

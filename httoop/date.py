@@ -9,7 +9,7 @@ __all__ = ['Date']
 import time
 from datetime import datetime
 
-from httoop.util import formatdate, parsedate
+from httoop.util import formatdate, parsedate, Unicode
 from httoop.exceptions import InvalidDate
 from httoop.meta import HTTPSemantic
 
@@ -44,6 +44,14 @@ class Date(object):
 		elif isinstance(timeval, datetime):
 			self.datetime = timeval
 			self.timestamp = time.mktime(self.datetime.timetuple())
+		elif isinstance(timeval, (bytes, Unicode)):
+			if isinstance(timeval, Unicode):
+				timeval = timeval.encode('ascii')
+			date = self.parse(timeval)
+			self.datetime = date.datetime
+			self.timestamp = date.timestamp
+		else:
+			raise TypeError('Date(): got invalid argument')
 
 	def to_timetuple(self):
 		return parsedate(formatdate(self.timestamp))[:7]

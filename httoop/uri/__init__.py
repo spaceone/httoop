@@ -31,8 +31,10 @@ class URI(object):
 	__metaclass__ = HTTPSemantic
 	__slots__ = ('scheme', 'username', 'password', 'host', '_port', 'path', 'query_string', 'fragment')
 
-	quote = Percent.encode
-	unquote = Percent.decode
+	class _PercentAll(Percent):
+		RESERVED_CHARS = b'%s %s' % (Percent.RESERVED_CHARS, ''.join(chr(x) for x in list(range(32)) + [127]))
+	quote = _PercentAll.encode
+	unquote = _PercentAll.decode
 
 	@property
 	def query(self):
@@ -154,7 +156,7 @@ class URI(object):
 
 	def set(self, uri):
 		if isinstance(uri, Unicode):
-			uri = uri.encode('UTF-8')
+			uri = uri.encode('UTF-8')  # FIXME
 
 		if isinstance(uri, bytes):
 			self.parse(uri)
@@ -207,7 +209,7 @@ class URI(object):
 		username, _, password = userinfo.partition(b':')
 		host, _, port = hostport.partition(b':')
 
-		unquote = URI.unquote
+		unquote = self.unquote
 		path = u'/'.join([unquote(seq).replace(u'/', u'%2f') for seq in path.split(b'/')])
 
 		try:
@@ -222,13 +224,13 @@ class URI(object):
 			unquote(host),
 			port,
 			path,
-			query_string,
+			QueryString.encode(QueryString.decode(query_string)),
 			unquote(fragment)
 		)
 
 	def _compose_uri_iter(self):
 		u"""composes the whole URI"""
-		quote = URI.quote
+		quote = self.quote
 		scheme, username, password, host, port, path, query_string, fragment = self.tuple
 		if path == u'*':
 			yield b'*'

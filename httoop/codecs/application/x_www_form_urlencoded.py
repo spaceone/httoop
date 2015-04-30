@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from httoop.codecs.common import Codec, Enconv
 from httoop.exceptions import DecodeError
+from httoop.util import Unicode
 
 __name__ = 'x-www-form-urlencoded'
 
@@ -64,7 +65,11 @@ class FormURLEncoded(Codec):
 
 	@classmethod
 	def encode(cls, data, charset=None):
-		return b'&'.join(b'%s=%s' % (cls.quote(name, charset), cls.quote(value, charset)) for name, value in data if name and value)
+		if isinstance(data, (Unicode, bytes)):
+			data = cls.decode(data, charset)
+		elif isinstance(data, dict):
+			data = data.items()
+		return b'&'.join(b'%s=%s' % (cls.quote(name, charset), cls.quote(value, charset)) for name, value in tuple(data) if name and value)
 
 
 class QueryString(FormURLEncoded):

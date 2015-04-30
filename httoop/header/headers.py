@@ -59,7 +59,7 @@ class Headers(CaseInsensitiveDict):
 					parts.append(Headers._formatparam(k, v))
 			_value = "; ".join(parts)
 
-		if not _name in self:
+		if not _name in self or not self[_name]:
 			self[_name] = _value
 		else:
 			self[_name] = ", ".join([self[_name], _value])

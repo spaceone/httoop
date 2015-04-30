@@ -1,0 +1,105 @@
+# -*- coding: utf-8 -*-
+
+from httoop.status.types import StatusType
+
+
+class OK(object):
+	u"""The request was successful.
+		On GET requests the entity body will be a
+		representation of the requested resource.
+		For other methods the entity body contains a representation of
+		the current state of the resource or a description of the performed action
+	"""
+	__metaclass__ = StatusType
+	code = 200
+
+
+class CREATED(object):
+	u"""A new resource was created.
+		This should only be send on POST and PUT requests.
+		The Location-Header should contain the URI to the created resource.
+		The entity-body should describe and link to the created resource.
+	"""
+	__metaclass__ = StatusType
+	code = 201
+
+	def __init__(self, location, *args, **kwargs):
+		kwargs.setdefault('headers', {})['Location'] = location
+		super(CREATED, self).__init__(*args, **kwargs)
+
+	def to_dict(self):
+		dct = super(CREATED, self).to_dict()
+		dct.update(dict(Location=self.headers['Location']))
+		return dct
+
+
+class ACCEPTED(object):
+	u"""The request looks valid but will be procecced later.
+		It is an asynchronous action.
+		The Location-Header should contain a URI where
+		the status of processing can be found.
+		If this is not possible it should give an estimate
+		time when the request will be processed."""
+	__metaclass__ = StatusType
+	code = 202
+
+
+class NON_AUTHORITATIVE_INFORMATION(object):
+	u"""Everything is OK but the response headers
+		may be altered by a third party."""
+	__metaclass__ = StatusType
+	code = 203
+
+
+class NO_CONTENT(object):
+	u"""GET: The representation of the resource is empty.
+		other request methods: the status message or representation is not needed.
+		This is useful for ajax requests.
+		It is also useful for making series of edits
+		to a single record (a HTML POST form)."""
+	__metaclass__ = StatusType
+	code = 204
+	body = None
+
+
+class RESET_CONTENT(object):
+	u"""The same as 204 but this indicated that the client should
+		reset the view of its data structure.
+		This is useful for entering a series of records
+		in succession (a HTML POST form).
+	"""
+	__metaclass__ = StatusType
+	code = 205
+	body = None
+
+
+class PARTIAL_CONTENT(object):
+	u"""Partial GET:
+		The response does not contain the full representation of a resource
+		but only the bytes requested in the Content-Range-header.
+		It is often use to resume an interrupted download.
+		The Date-header is required, the ETag-header
+		and Content-Location-header are useful.
+	"""
+	__metaclass__ = StatusType
+	code = 206
+
+#class MULTI_STATUS(object):
+#	__metaclass__ = StatusType
+#	code = 207
+
+	#"""This status code indicated that the entity-body contains information
+	#about the states of the batch request.
+	#It is not an official HTTP-Status-Code: WebDAV
+	#It is not realy RESTful to use.
+	#The entity-body is descripted in RFC 2518."""
+
+#class ALREADY_REPORTED(object):
+#	__metaclass__ = StatusType
+#	code = 208
+
+
+#class IM_USED(object):
+#	__metaclass__ = StatusType
+#	code = 226
+

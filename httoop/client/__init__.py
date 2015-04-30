@@ -19,6 +19,9 @@ class ClientStateMachine(StateMachine):
 		if self.body and not self.chunked:
 			self.headers['Content-Length'] = bytes(len(self.body))
 
+		if 'Host' not in self.headers and self.uri.host:
+			self.headers['Host'] = bytes(self.uri.host)
+
 		if self.method in ('PUT', 'POST') and self.body:
 			self.headers['Date'] = bytes(Date())  # RFC 2616 Section 14.18
 

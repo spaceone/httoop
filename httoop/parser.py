@@ -206,7 +206,7 @@ class StateMachine(object):
 		line, rest_chunk = self.buffer.split(self.line_end, 1)
 		chunk_size = line.split(b";", 1)[0].strip()
 		try:
-			chunk_size = int(chunk_size, 16)
+			chunk_size = int(bytes(chunk_size), 16)
 			if chunk_size < 0:
 				raise ValueError
 		except (ValueError, OverflowError):

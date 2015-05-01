@@ -22,8 +22,9 @@ __all__ = ['Status', 'Body', 'Headers', 'URI', 'Method',
            'SERVICE_UNAVAILABLE', 'GATEWAY_TIMEOUT',
            'HTTP_VERSION_NOT_SUPPORTED', 'HTTPStatusException', 'ServerProtocol']
 
-from httoop.header import Server as __Server
+from httoop.header import Server as __Server, UserAgent as __UserAgent
 from httoop.messages import Protocol
+UserAgentHeader = __UserAgent.from_str('%s/%s' % (__name__, __version__))
 ServerHeader = __Server.from_str('%s/%s' % (__name__, __version__))
 ServerProtocol = Protocol((1, 1))
 

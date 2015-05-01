@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from httoop import UserAgentHeader
 from httoop.parser import StateMachine
 from httoop.date import Date
 from httoop.messages import Response
@@ -11,6 +12,8 @@ class ClientStateMachine(StateMachine):
 
 
 class ComposedRequest(ComposedMessage):
+
+	USER_AGENT = UserAgentHeader
 
 	def __init__(self, request):
 		self.message = request
@@ -36,6 +39,9 @@ class ComposedRequest(ComposedMessage):
 		if self.message.method in ('PUT', 'POST') and self.message.body:
 			if 'Date' not in self.message.headers:
 				self.message.headers['Date'] = bytes(Date())  # RFC 2616 Section 14.18
+
+		self.message.headers.setdefault('User-Agent', self.USER_AGENT)
+		self.message.headers.setdefault('Accept', '*/*')
 
 	@property
 	def close(self):

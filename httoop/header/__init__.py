@@ -16,7 +16,7 @@ __all__ = ['Headers']
 import inspect
 
 from httoop.header.element import HEADER, HeaderElement, HeaderType
-from httoop.header.messaging import Server
+from httoop.header.messaging import Server, UserAgent
 from httoop.header.headers import Headers
 
 from httoop.header import semantics

@@ -9,7 +9,11 @@ class _DateComparable(object):
 		self.value = self.Date.parse(self.value)
 
 class ETag(HeaderElement):
-	pass
+
+	def __eq__(self, other):
+		if not isinstance(other, Etag):
+			other = self.__class__(other)
+		return other.value == self.value or other.value == '*'
 
 
 class LastModified(_DateComparable, HeaderElement):

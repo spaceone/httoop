@@ -20,8 +20,6 @@ class ServerStateMachine(StateMachine):
 		self._default_scheme = scheme
 		self._default_host = host
 		self._default_port = port
-		self.parsed = []
-		self.responses = set()
 
 	def _reset_state(self):
 		super(ServerStateMachine, self)._reset_state()
@@ -33,23 +31,7 @@ class ServerStateMachine(StateMachine):
 
 	def _parse(self):
 		for request in super(ServerStateMachine, self)._parse():
-			parsed = (request, self.response)
-			self.parsed.append(parsed)
-			yield parsed
-
-	def compose(self, *responses):
-		self.responses.update(responses)
-		responses = self.responses
-
-		if not self.parsed:
-			return
-
-		for request, response in list(self.parsed):
-			if response not in responses:
-				return  # prevent to respond pipelined requests in wrong order
-			self.parsed.remove((request, response))
-			responses.remove(response)
-			yield ComposedResponse(response, request)
+			yield (request, self.response)
 
 	def parse_startline(self):
 		state = super(ServerStateMachine, self).parse_startline()
@@ -202,3 +184,56 @@ class ComposedResponse(object):
 				response.headers['Connection'] = 'keep-alive'
 				return
 		response.headers.pop('Connection', None)
+
+
+class ServerPipeline(object):
+
+	def __init__(self):
+		self.parsed = []
+		self.responses = set()
+
+	def ready(self, response):
+		self.responses.add(response)
+		return self.parsed and self.parsed[0][1] is response
+#		responses = self.responses
+#
+#		for request, response_ in list(self.parsed):
+#			if response_ not in responses:
+#				return False # prevent to respond pipelined requests in wrong order
+#			return response_ is response  # composed
+
+	def compose(self, request, response):
+		assert self and self.parsed[0] == (request, response)
+		composed = ComposedResponse(response, request)
+		composed.prepare()
+
+	def __iter__(self):
+		if not self.parsed:
+			raise StopIteration()
+		for request, response in list(self.parsed):
+			if response not in self.responses:
+				return
+			self.compose(request, response)
+			yield response
+
+	def __next__(self):
+		return next(iter(self))
+		#if self.__iter is None:
+		#	self.__iter = self.__iter__()
+		#try:
+		#	return next(self.__iter)
+		#except StopIteration:
+		#	self.__iter = None
+		#	raise
+	next = __next__
+
+	def __len__(self):
+		return len(self.parsed)
+
+	def __add__(self, request_response):
+		request, response = request_response
+		self.parsed.append((request, response))
+
+	def __sub__(self, request_response):
+		request, response = request_response
+		self.parsed.remove((request, response))

@@ -33,7 +33,7 @@ from httoop.date import Date
 from httoop.header import Headers
 from httoop.uri import URI
 from httoop.messages import Body, Request, Response, Protocol, Method
-from httoop.exceptions import InvalidLine, InvalidHeader, InvalidURI, InvalidBody, InvalidDate
+from httoop.exceptions import InvalidLine, InvalidHeader, InvalidURI, InvalidBody, InvalidDate, DecodeError, EncodeError
 from httoop.server import ServerStateMachine
 from httoop.client import ClientStateMachine
 

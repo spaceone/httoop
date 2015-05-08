@@ -124,6 +124,7 @@ class ServerStateMachine(StateMachine):
 class ComposedResponse(ComposedMessage):
 
 	def __init__(self, response, request):
+		super(ComposedResponse, self).__init__()
 		self.message = request
 		self.response = response
 

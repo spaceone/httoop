@@ -139,7 +139,8 @@ class Body(IFile):
 		if not content:
 			content = BytesIO()
 		elif isinstance(content, (BytesIO, file)):
-			pass
+			if content.closed:
+				raise TypeError('I/O operation on closed file.')
 		elif isinstance(content, Unicode):
 			content = BytesIO(content.encode(self.encoding))
 		elif isinstance(content, bytes):
@@ -161,6 +162,11 @@ class Body(IFile):
 
 	def compose(self):
 		return b''.join(self.__iter__())
+
+	def close(self):
+		super(Body, self).close()
+		if isinstance(self.content, (file, BytesIO)):
+			self.set('')
 
 	def __unicode__(self):
 		return self.__content_bytes().decode(self.encoding)

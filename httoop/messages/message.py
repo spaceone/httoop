@@ -84,5 +84,8 @@ class Message(object):
 
 		self.protocol.parse(protocol)
 
+	def __hash__(self):
+		return id(self).__hash__()
+
 	def __repr__(self):
 		return '<HTTP Message(protocol=%s)>' % (self.protocol,)

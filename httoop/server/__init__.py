@@ -7,6 +7,7 @@ from httoop.status import (
 from httoop.messages import Request, Response
 from httoop.status import STATUSES
 from httoop.date import Date
+from httoop.composer import ComposedMessage
 from httoop import ServerProtocol, ServerHeader
 
 
@@ -20,10 +21,13 @@ class ServerStateMachine(StateMachine):
 		self._default_scheme = scheme
 		self._default_host = host
 		self._default_port = port
+		self.request = None
+		self.response = None
 
 	def _reset_state(self):
 		super(ServerStateMachine, self)._reset_state()
 		self.response = Response()
+		self.request = self.message
 		self.state.update(dict(
 			method=False,
 			uri=False
@@ -32,6 +36,8 @@ class ServerStateMachine(StateMachine):
 	def _parse(self):
 		for request in super(ServerStateMachine, self)._parse():
 			yield (request, self.response)
+			self.request = None
+			self.response = None
 
 	def parse_startline(self):
 		state = super(ServerStateMachine, self).parse_startline()
@@ -115,7 +121,7 @@ class ServerStateMachine(StateMachine):
 			raise BAD_REQUEST('A %s request is considered as safe and MUST NOT contain a request body.' % self.message.method)
 
 
-class ComposedResponse(object):
+class ComposedResponse(ComposedMessage):
 
 	def __init__(self, response, request):
 		self.message = request
@@ -191,6 +197,7 @@ class ServerPipeline(object):
 	def __init__(self):
 		self.parsed = []
 		self.responses = set()
+		self.close = False
 
 	def ready(self, response):
 		self.responses.add(response)
@@ -206,6 +213,8 @@ class ServerPipeline(object):
 		assert self and self.parsed[0] == (request, response)
 		composed = ComposedResponse(response, request)
 		composed.prepare()
+		if composed.close:
+			self.close = composed.close
 
 	def __iter__(self):
 		if not self.parsed:

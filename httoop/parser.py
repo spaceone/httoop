@@ -22,7 +22,7 @@ class StateMachine(object):
 
 	def __init__(self):
 		self.buffer = bytearray()
-		self._reset_state()
+		self.message = None
 
 	def _reset_state(self):
 		self.message = self.Message()
@@ -72,8 +72,10 @@ class StateMachine(object):
 		return tuple(self._parse())
 
 	def _parse(self):
-		state = self.state
-		while True:
+		while self.buffer:
+			if self.message is None:
+				self._reset_state()
+			state = self.state
 			if not state['startline']:
 				if self.parse_startline():
 					return
@@ -93,8 +95,7 @@ class StateMachine(object):
 				self.on_body_complete()
 
 			yield self.message
-			self._reset_state()
-			break  # FIXME
+			self.message = None
 
 	def parse_startline(self):
 		if CRLF not in self.buffer:

@@ -82,7 +82,7 @@ class HTTPStatusException(Status, Exception):
 			self.traceback = traceback
 
 	def __repr__(self):
-		return '<HTTP<%s>(%s)>' % (self.__class__.__name__, ' '.join('%s=%r' % (k, v) for k, v in iteritems(self.to_dict())))
+		return '<HTTP Status %d %r>' % (int(self), self.reason)
 
 	__str__ = __repr__
 

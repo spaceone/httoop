@@ -34,7 +34,7 @@ class HeaderElement(object):
 	__metaclass__ = HeaderType
 
 	def __init__(self, value, params=None):
-		self.value = value
+		self.value = bytes(value)
 		self.params = params or {}
 		self.sanitize()
 

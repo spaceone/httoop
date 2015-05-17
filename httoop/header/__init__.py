@@ -31,3 +31,4 @@ types = (semantics, messaging, conditional, range, cache, auth)
 for _, member in (member for type_ in types for member in inspect.getmembers(type_, inspect.isclass)):
 	if isinstance(member, HeaderType) and member is not HeaderElement:
 		HEADER[member.__name__] = member
+		globals()[_] = member

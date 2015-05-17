@@ -37,8 +37,8 @@ class Date(object):
 		if timeval is None:
 			self.datetime = datetime.now()
 			self.timestamp = time.mktime(self.datetime.timetuple())
-		elif isinstance(timeval, float):
-			self.timestamp = timeval
+		elif isinstance(timeval, (float, int)):
+			self.timestamp = float(timeval)
 		elif isinstance(timeval, tuple):
 			self.timestamp = time.mktime(timeval)
 		elif isinstance(timeval, datetime):

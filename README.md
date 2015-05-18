@@ -1,7 +1,7 @@
 httoop
 ======
 
-An object oriented HTTP library.
+An object oriented HTTP/1.1 library. (HTTP/2 will probably follow in the future).
 
 Httoop can be used to parse, compose and work with HTTP-Request- and Response-Messages.
 
@@ -28,6 +28,10 @@ HTTP and extensions are defined in the following RFC's:
 * HTTP/1.1 RFC 7234 [Caching](http://tools.ietf.org/html/7234)
 
 * HTTP/1.1 RFC 7235 [Authentication](http://tools.ietf.org/html/7235)
+
+* HTTP/2 RFC 7540 [Hypertext Transfer Protocol Version 2](https://tools.ietf.org/html/rfc7540)
+
+* HTTP/2 RFC 7541 [HPACK: Header Compression for HTTP/2](https://tools.ietf.org/html/rfc7541)
 
 * RFC 5987 [Character Set and Language Encoding for Hypertext Transfer Protocol (HTTP) Header Field Parameters](https://tools.ietf.org/html/rfc5987)
 

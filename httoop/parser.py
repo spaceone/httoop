@@ -264,6 +264,7 @@ class StateMachine(object):
 			self.message.body.mimetype = self.message.headers.element('Content-Type')
 
 	def set_content_length(self):
-		self.message.headers['Content-Length'] = bytes(len(self.message.body))
+		if 'Content-Length' not in self.message.headers:
+			self.message.headers['Content-Length'] = bytes(len(self.message.body))
 		if self.chunked:
 			self.message.headers.pop('Transfer-Encoding')  # FIXME: there could be other transfer codings as well, only pop out chunked!

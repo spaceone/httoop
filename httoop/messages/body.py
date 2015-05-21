@@ -233,7 +233,7 @@ class Body(IFile):
 	def __bool__(self):
 		return bool(len(self))
 
-	def __len__(self):  # FIXME
+	def __len__(self):
 		body = self.content
 
 		if isinstance(body, file):  # FIXME: py3
@@ -241,7 +241,9 @@ class Body(IFile):
 		if isinstance(body, BytesIO):
 			return len(body.getvalue())
 
-		return len(self.__content_bytes())
+		content = self.__content_bytes()
+		self.set(content)
+		return len(content)
 
 	def __next__(self):
 		if self.__iter is None:

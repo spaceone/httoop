@@ -155,7 +155,7 @@ class ComposedResponse(ComposedMessage):
 
 		self.close = self.close
 
-		if response.body:
+		if 'Content-Type' not in response.headers and response.body.mimetype and response.body:
 			response.headers['Content-Type'] = bytes(response.body.mimetype)
 
 		if request is None:

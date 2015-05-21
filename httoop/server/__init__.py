@@ -125,14 +125,14 @@ class ComposedResponse(ComposedMessage):
 
 	def __init__(self, response, request):
 		super(ComposedResponse, self).__init__()
-		self.message = request
-		self.response = response
+		self.request = request
+		self.response = self.message = response
 
 	def prepare(self):
 		u"""prepares the response for being ready for transmitting"""
 
 		response = self.response
-		request = self.message
+		request = self.request
 
 		status = int(response.status)
 		if status < 200 or status in (204, 205, 304):

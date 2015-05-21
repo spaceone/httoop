@@ -27,6 +27,7 @@ class ComposedMessage(object):
 
 	@chunked.setter
 	def chunked(self, chunked):
+		self.message.body.chunked = chunked
 		if chunked:
 			self.message.headers.pop('Content-Length', None)
 			if self.chunked:

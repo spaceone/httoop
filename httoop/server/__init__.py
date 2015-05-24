@@ -2,7 +2,7 @@
 from httoop.parser import StateMachine, NOT_RECEIVED_YET
 from httoop.status import (
 	BAD_REQUEST, LENGTH_REQUIRED, REQUEST_URI_TOO_LONG,
-	MOVED_PERMANENTLY, HTTP_VERSION_NOT_SUPPORTED
+	MOVED_PERMANENTLY, HTTP_VERSION_NOT_SUPPORTED, SWITCHING_PROTOCOLS
 )
 from httoop.messages import Request, Response
 from httoop.status import STATUSES
@@ -119,6 +119,25 @@ class ServerStateMachine(StateMachine):
 	def check_methods_without_body(self):
 		if self.message.method.safe and self.message.body:
 			raise BAD_REQUEST('A %s request is considered as safe and MUST NOT contain a request body.' % self.message.method)
+
+	def check_http2_upgrade(self):
+		def is_http2_upgrade():
+			connection = self.message.headers.values('Connection')
+			yield 'Upgrade' in connection
+			yield 'HTTP2-Settings' in connection
+			yield 'Upgrade' in self.message.headers
+			yield self.message.headers.element('Upgrade') == 'h2c'
+			yield 'HTTP2-Settings' in self.message.headers
+			yield self.message.headers.element('HTTP2-Settings')
+		if all(is_http2_upgrade()):
+			self.response.headers['Upgrade'] = 'h2c'
+			self.response.headers['Connection'] = 'Upgrade'
+			self.__class__ = _H2ServerStateMachine
+			raise SWITCHING_PROTOCOLS()
+
+
+class _H2ServerStateMachine(object):
+	pass
 
 
 class ComposedResponse(ComposedMessage):

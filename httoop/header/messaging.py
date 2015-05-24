@@ -219,3 +219,7 @@ class UserAgent(HeaderElement):
 
 class Via(HeaderElement):
 	pass
+
+
+class HTTP2Settings(HeaderElement):
+	__name__ = 'HTTP2-Settings'

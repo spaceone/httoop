@@ -13,12 +13,12 @@ from httoop.exceptions import DecodeError
 class XML(Codec):
 	mimetype = 'application/xml'
 
-	def decode(self, data, charset=None):
+	def decode(self, data, charset=None, mimetype=None):
 		try:
 			return parse(data)
 		except ParseError:
 			exc = sys.exc_info()
 			raise DecodeError, exc[1], exc[2]
 
-	def encode(self, root, charset=None):
+	def encode(self, root, charset=None, mimetype=None):
 		return tostring(root, charset)

@@ -24,7 +24,7 @@ class Percent(Codec):
 	HEX_MAP = dict((a + b, chr(int(a + b, 16))) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef')
 
 	@classmethod
-	def decode(cls, data, charset=None):
+	def decode(cls, data, charset=None, mimetype=None):
 		return Enconv.decode(b''.join(cls._decode_iter(data)), charset)
 
 	@classmethod
@@ -43,7 +43,7 @@ class Percent(Codec):
 				yield item
 
 	@classmethod
-	def encode(cls, data, charset=None):
+	def encode(cls, data, charset=None, mimetype=None):
 		data = Enconv.encode(data, charset)
 		if not any(d in data for d in cls.RESERVED_CHARS):
 			return data
@@ -57,14 +57,14 @@ class FormURLEncoded(Codec):
 	quote = Percent.encode
 
 	@classmethod
-	def decode(cls, data, charset=None):
+	def decode(cls, data, charset=None, mimetype=None):
 		if not data:
 			return ()
 		fields = (field.partition(b'=')[::2] for field in data.split(b'&'))
 		return tuple((cls.unquote(name, charset), cls.unquote(value, charset)) for name, value in fields)
 
 	@classmethod
-	def encode(cls, data, charset=None):
+	def encode(cls, data, charset=None, mimetype=None):
 		if isinstance(data, (Unicode, bytes)):
 			data = cls.decode(data, charset)
 		elif isinstance(data, dict):
@@ -87,14 +87,14 @@ class QueryString(FormURLEncoded):
 		return super(QueryString, cls).unquote(data.replace(b'+', b' '), charset)
 
 	@classmethod
-	def decode(cls, data, charset=None):
+	def decode(cls, data, charset=None, mimetype=None):
 		if set(Percent.decode(data)) & cls.INVALID:
 			raise DecodeError('Invalid query string: contains invalid token')
 
 		return super(QueryString, cls).decode(data, charset)
 
 	@classmethod
-	def encode(cls, data, charset=None):
+	def encode(cls, data, charset=None, mimetype=None):
 		data = super(QueryString, cls).encode(data, charset)
 
 # TODO: decide to remove invalid chars or strip them out

@@ -110,7 +110,7 @@ class Body(IFile):
 		u"""Encode the object in :attr:`data` if a codec for the mimetype exists"""
 		codec = self.mimetype.codec
 		if codec:
-			value = codec.encode(self.data, self.encoding)
+			value = codec.encode(self.data, self.encoding, self.mimetype)
 			self.set(value)
 
 	def decode(self):
@@ -119,7 +119,7 @@ class Body(IFile):
 		"""
 		codec = self.mimetype.codec
 		if codec:
-			self.data = codec.decode(self.__content_bytes(), self.encoding)
+			self.data = codec.decode(self.__content_bytes(), self.encoding, self.mimetype)
 
 	def compress(self):
 		u"""Applies the Content-Encoding codec to the content"""

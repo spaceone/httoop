@@ -16,9 +16,9 @@ class JSON(Codec):
 	mimetype = 'application/json'
 
 	@classmethod
-	def encode(cls, data, charset=None):
+	def encode(cls, data, charset=None, mimetype=None):
 		return json_encode(data)
 
 	@classmethod
-	def decode(cls, data, charset=None):
+	def decode(cls, data, charset=None, mimetype=None):
 		return json_decode(data)

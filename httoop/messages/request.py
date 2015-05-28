@@ -9,7 +9,7 @@ __all__ = ('Request',)
 from httoop.messages.method import Method
 from httoop.messages.message import Message
 from httoop.uri import URI
-from httoop.exceptions import InvalidLine
+from httoop.exceptions import InvalidLine, InvalidURI
 
 
 class Request(Message):
@@ -68,6 +68,8 @@ class Request(Message):
 		self.method.parse(method)
 
 		# URI
+		if uri.startswith(b'//'):
+			raise InvalidURI(u'Invalid URI: must be an absolute path or contain a scheme')
 		self.uri.parse(uri)
 		self.uri.validate_http_request_uri()  # TODO: move the method into here
 

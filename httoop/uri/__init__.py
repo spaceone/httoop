@@ -212,6 +212,9 @@ class URI(object):
 		unquote = self.unquote
 		path = u'/'.join([unquote(seq).replace(u'/', u'%2f') for seq in path.split(b'/')])
 
+		if path.startswith(u'//'):
+			raise InvalidURI(u'Invalid path: must not start with "//"')
+
 		try:
 			scheme = scheme.decode('ascii')
 		except UnicodeDecodeError:

@@ -106,18 +106,32 @@ class Body(IFile):
 		self.mimetype = mimetype or b'text/plain; charset=UTF-8'
 		self.set(content)
 
-	def encode(self):
+	def encode(self, *data):
 		u"""Encode the object in :attr:`data` if a codec for the mimetype exists"""
 		codec = self.mimetype.codec
 		if codec:
-			value = codec.encode(self.data, self.encoding, self.mimetype)
+			if self.data is None and not data:
+				return
+			data = data[0] if data else self.data
+			value = codec.encode(data, self.encoding, self.mimetype)
 			self.set(value)
+			self.data = data
 
-	def decode(self):
+	def iterencode(self, *data):
+		codec = self.mimetype.codec
+		if codec:
+			data = data[0] if data else self.data
+			value = codec.iterencode(data, self.encoding, self.mimetype)
+			self.set(value)
+			self.data = data
+
+	def decode(self, *data):
 		u"""Decodes the body content if a codec for the mimetype exists.
 			Stores the decoded object in :attr:`data`
 		"""
 		codec = self.mimetype.codec
+		if data:
+			self.set(data[0])
 		if codec:
 			self.data = codec.decode(self.__content_bytes(), self.encoding, self.mimetype)
 
@@ -136,6 +150,7 @@ class Body(IFile):
 			self.content = content.content
 			return
 
+		self.data = None
 		if not content:
 			content = BytesIO()
 		elif isinstance(content, (BytesIO, file)):

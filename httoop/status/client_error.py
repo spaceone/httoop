@@ -52,7 +52,7 @@ class NOT_FOUND(object):
 
 	def __init__(self, path, **kwargs):
 		self.path = path
-		kwargs.update(dict(description='The requested resource "%s" was not found on this server.' % (path)))
+		kwargs.update(dict(description='The requested resource "%s" was not found on this server.' % (path,)))
 		super(NOT_FOUND, self).__init__(**kwargs)
 
 

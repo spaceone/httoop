@@ -91,7 +91,6 @@ class HTTPStatusException(Status, Exception):
 		return dict(status=self.status,
 		            reason=self.reason,
 		            description=self.description,
-		            traceback=self.traceback or "",
 		            headers=self.headers)
 
 
@@ -143,7 +142,7 @@ class HTTPServerError(HTTPStatusException):
 	"""
 	def to_dict(self):
 		dct = super(HTTPServerError, self).to_dict()
-		dct.update(dict(traceback=self.traceback))
+		dct.update(dict(traceback=self.traceback or ""))
 		return dct
 
 

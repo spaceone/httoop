@@ -26,7 +26,7 @@ from httoop.codecs import video
 types = (application, audio, example, image, message, model, multipart, text, video)
 
 from httoop.codecs.application import Percent, QueryString
-from httoop.codecs.common import Codec
+from httoop.codecs.common import Codec, Enconv
 
 
 def lookup(encoding, raise_errors=True):

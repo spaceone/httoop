@@ -7,6 +7,8 @@
 
 import inspect
 
+__all__ = ['Status', 'REASONS', 'StatusType', 'HTTPStatusException']
+
 from httoop.status.status import Status, REASONS
 from httoop.status.types import StatusType, HTTPStatusException
 
@@ -24,3 +26,4 @@ for _, member in (member for type_ in types for member in inspect.getmembers(typ
 	if isinstance(member, StatusType) and member is not StatusType:
 		STATUSES[member.status] = member
 		globals()[_] = member
+		__all__.append(_)

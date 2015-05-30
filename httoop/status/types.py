@@ -5,7 +5,6 @@
 
 from httoop.messages import Body  # TODO: remove ?
 from httoop.status.status import Status, REASONS
-from httoop.util import iteritems
 from httoop.meta import HTTPSemantic
 
 # TODO: create HTTPEntity ?
@@ -88,10 +87,12 @@ class HTTPStatusException(Status, Exception):
 
 	def to_dict(self):
 		u"""the default body arguments"""
-		return dict(status=self.status,
-		            reason=self.reason,
-		            description=self.description,
-		            headers=self.headers)
+		return dict(
+			status=self.status,
+			reason=self.reason,
+			description=self.description,
+			headers=self.headers
+		)
 
 
 class HTTPInformational(HTTPStatusException):

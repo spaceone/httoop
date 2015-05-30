@@ -108,7 +108,7 @@ class ServerStateMachine(StateMachine):
 		self.response.headers.setdefault('Server', ServerHeader)
 
 	def check_host_header_exists(self):
-		if self.message.protocol >= (1, 1) and not 'Host' in self.message.headers:
+		if self.message.protocol >= (1, 1) and 'Host' not in self.message.headers:
 			raise BAD_REQUEST('Missing Host header')
 
 	def check_message_without_body_containing_data(self):

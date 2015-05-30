@@ -32,3 +32,4 @@ for _, member in (member for type_ in types for member in inspect.getmembers(typ
 	if isinstance(member, HeaderType) and member is not HeaderElement:
 		HEADER[member.__name__] = member
 		globals()[_] = member
+		__all__.append(_)

@@ -16,10 +16,6 @@ from httoop.util import iteritems
 class WSGIBody(Body):
 	u"""A Body for WSGI requests and responses"""
 
-	def __init__(self, wsgi, body=None, encoding=None):
-		super(WSGIBody, self).__init__(body, encoding)
-		self.wsgi = wsgi
-
 	def write(self, bytes_):
 		return super(WSGIBody, self).write(bytes_)
 
@@ -41,8 +37,8 @@ class WSGI(object):
 		self.server_port = bytes(self.request.uri.port)
 		self.environ = os.environ
 
-		self.request._Request__body = WSGIBody(self)
-		self.response._Response__body = WSGIBody(self)
+		self.request.body.__class__ = WSGIBody
+		self.response.body.__class__ = WSGIBody
 		self.response.chunked = True
 
 	def __call__(self, application):
@@ -83,7 +79,8 @@ class WSGI(object):
 		})
 		return environ
 
-	def from_environ(self, environ=os.environ):
+	def from_environ(self, environ=None):
+		environ = os.environ if environ is None else environ
 		environ = environ.copy()
 
 		for name, value in iteritems(environ):

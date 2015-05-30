@@ -11,7 +11,7 @@ class _DateComparable(object):
 class ETag(HeaderElement):
 
 	def __eq__(self, other):
-		if not isinstance(other, Etag):
+		if not isinstance(other, ETag):
 			other = self.__class__(other)
 		return other.value == self.value or other.value == '*'
 

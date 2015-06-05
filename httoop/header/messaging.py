@@ -7,10 +7,10 @@ from httoop.exceptions import InvalidHeader
 
 
 class Accept(AcceptElement, MimeType):
-	def __init__(self, value, params):
-		if value == '*':
-			value = '*/*'
-		super(Accept, self).__init__(value, params)
+
+	def sanitize(self):
+		if self.value == '*':
+			self.value = '*/*'
 
 
 class AcceptCharset(AcceptElement):
@@ -81,20 +81,20 @@ class ContentType(HeaderElement, MimeType):
 
 	VALID_BOUNDARY = re.compile('^[ -~]{0,200}[!-~]$')
 
-	@property
-	def boundary(self):
+	def sanitize(self):
 		if 'boundary' not in self.params:
 			return
 
-		boundary = self.params['boundary'].strip('"')  # FIXME: ? remove this generic?
+		boundary = self.params['boundary'] = self.params['boundary'].strip('"')
 		if not self.VALID_BOUNDARY.match(boundary):
-			raise InvalidHeader('Invalid boundary in multipart form: %r' % (boundary))
-		return boundary
+			raise InvalidHeader(u'Invalid boundary in multipart form: %r' % (boundary,))
+
+	@property
+	def boundary(self):
+		return self.params.get('boundary')
 
 	@boundary.setter
 	def boundary(self, boundary):
-		if not self.VALID_BOUNDARY.match(boundary):
-			raise InvalidHeader('Invalid boundary in multipart form: %r' % (boundary))
 		self.params['boundary'] = boundary
 
 
@@ -190,10 +190,9 @@ class TE(AcceptElement):
 class Trailer(HeaderElement):
 	forbidden_headers = ('Transfer-Encoding', 'Content-Length', 'Trailer')
 
-	def __init__(self, value, params=None):
-		super(Trailer, self).__init__(value, params)
-		if value.title() in self.forbidden_headers:
-			raise InvalidHeader(u'A Trailer header MUST NOT contain %r field' % value.title())
+	def sanitize(self):
+		if self.value.title() in self.forbidden_headers:
+			raise InvalidHeader(u'A Trailer header MUST NOT contain %r field' % self.value.title())
 
 
 class TransferEncoding(CodecElement, HeaderElement):

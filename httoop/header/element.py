@@ -22,6 +22,7 @@ HEADER = CaseInsensitiveDict()
 
 
 class HeaderType(type):
+
 	def __new__(mcs, name, bases, dict_):
 		__all__.append(name)
 		name = dict_.get('__name__', name)
@@ -32,6 +33,10 @@ class HeaderElement(object):
 	u"""An element (with parameters) from an HTTP header's element list."""
 
 	__metaclass__ = HeaderType
+
+	# Regular expression that matches `special' characters in parameters, the
+	# existance of which force quoting of the parameter value.
+	RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"/\[\]\?=]')
 
 	def __init__(self, value, params=None):
 		self.value = bytes(value)
@@ -47,19 +52,27 @@ class HeaderElement(object):
 	def __lt__(self, other):
 		return self.value < getattr(other, 'value', other)
 
-	def __str__(self):
-		params = ["; %s=%s" % (k, v) for k, v in iteritems(self.params)]
-		return "%s%s" % (self.value, "".join(params))
+	def __bytes__(self):
+		params = [b'; %s' % self.formatparam(k, v) for k, v in iteritems(self.params)]
+		return b'%s%s' % (self.value, ''.join(params))
+
+	def __unicode__(self):
+		return bytes(self).decode('ISO8859-1')
+
+	if str is bytes:
+		__str__ = __bytes__
+	else:
+		__str__ = __unicode__
 
 	@staticmethod
 	def parse(elementstr):
 		"""Transform 'token;key=val' to ('token', {'key': 'val'})."""
 		# Split the element into a value and parameters. The 'value' may
 		# be of the form, "token=token", but we don't split that here.
-		atoms = [x.strip() for x in elementstr.split(";") if x.strip()] or ['']
+		atoms = [x.strip() for x in elementstr.split(';') if x.strip()] or ['']
 
 		initial_value = atoms.pop(0)
-		params = dict((key.strip(), value.strip()) for key, _, value in (atom.partition('=') for atom in atoms))
+		params = dict((key.strip(), value.strip().strip('"')) for key, _, value in (atom.partition('=') for atom in atoms))
 
 		return initial_value, params
 
@@ -71,9 +84,28 @@ class HeaderElement(object):
 
 	@classmethod
 	def split(cls, fieldvalue):
-		# FIXME: quoted strings
+		# FIXME: quoted strings may contain ","
 		# TODO: elements which aren't comma separated
 		return fieldvalue.split(',')
+
+	@classmethod
+	def join(cls, values):
+		return b', '.join(values)
+
+	@classmethod
+	def formatparam(cls, param, value=None, quote=1):
+		"""Convenience function to format and return a key=value pair.
+
+		This will quote the value if needed or if quote is true.
+		"""
+		if value:
+			if quote or cls.RE_TSPECIALS.search(value):
+				value = value.replace('\\', '\\\\').replace('"', r'\"')
+				return '%s="%s"' % (param, value)
+			else:
+				return '%s=%s' % (param, value)
+		else:
+			return param
 
 	def __repr__(self):
 		return '<%s(%r)>' % (self.__class__.__name__, self.value)

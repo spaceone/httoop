@@ -8,14 +8,11 @@ from httoop.exceptions import InvalidHeader
 
 
 class Headers(CaseInsensitiveDict):
+
 	__metaclass__ = HTTPSemantic
 
 	# disallowed bytes for HTTP header field names
 	HEADER_RE = re.compile(b"[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]")
-
-	# Regular expression that matches `special' characters in parameters, the
-	# existance of which force quoting of the parameter value.
-	RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"/\[\]\?=]')
 
 	def elements(self, fieldname):
 		u"""Return a sorted list of HeaderElements from
@@ -50,19 +47,21 @@ class Headers(CaseInsensitiveDict):
 
 	def append(self, _name, _value, **params):
 		if params:
+			Element = HEADER.get(_name, HeaderElement)
 			parts = [_value or b'']
 			for k, v in iteritems(params):
 				k = k.replace('_', '-')  # TODO: find out why this is done
 				if v is None:
 					parts.append(k)
 				else:
-					parts.append(Headers._formatparam(k, v))
+					parts.append(Element.formatparam(k, v))
 			_value = "; ".join(parts)
 
 		if _name not in self or not self[_name]:
 			self[_name] = _value
 		else:
-			self[_name] = ", ".join([self[_name], _value])
+			Element = HEADER.get(_name, HeaderElement)
+			self[_name] = Element.join([self[_name], _value])
 
 	def validate(self):
 		u"""validates all header elements
@@ -123,18 +122,3 @@ class Headers(CaseInsensitiveDict):
 
 	def __repr__(self):
 		return "<HTTP Headers(%s)>" % repr(list(self.items()))
-
-	@classmethod
-	def _formatparam(cls, param, value=None, quote=1):
-		"""Convenience function to format and return a key=value pair.
-
-		This will quote the value if needed or if quote is true.
-		"""
-		if value:
-			if quote or cls.RE_TSPECIALS.search(value):
-				value = value.replace('\\', '\\\\').replace('"', r'\"')
-				return '%s="%s"' % (param, value)
-			else:
-				return '%s=%s' % (param, value)
-		else:
-			return param

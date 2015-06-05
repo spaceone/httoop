@@ -6,6 +6,7 @@
 
 from os.path import getsize
 from io import BytesIO
+from types import GeneratorType
 
 from httoop.header import Headers
 from httoop.util import IFile, Unicode
@@ -28,7 +29,7 @@ class Body(IFile):
 	"""
 	__metaclass__ = HTTPSemantic
 	__slots__ = (
-		'content', 'data', '__iter', 'headers', 'trailer',
+		'fd', 'data', '__iter', 'headers', 'trailer',
 		'content_codec', 'transfer_codec'
 	)
 
@@ -37,7 +38,11 @@ class Body(IFile):
 	@property
 	def fileable(self):
 		u"""Flag whether the set content provides the file interface"""
-		return all(hasattr(self.content, method) for method in ('read', 'write', 'close'))
+		return all(hasattr(self.fd, method) for method in ('read', 'write', 'close'))
+
+	@property
+	def generator(self):
+		return isinstance(self.fd, GeneratorType)
 
 	@property
 	def encoding(self):
@@ -97,7 +102,7 @@ class Body(IFile):
 	def __init__(self, content=None, mimetype=None):
 		self.data = None
 		self.__iter = None
-		self.content = BytesIO()
+		self.fd = BytesIO()
 		self.headers = Headers()
 		self.trailer = Headers()
 		self.transfer_codec = None
@@ -147,7 +152,7 @@ class Body(IFile):
 			self.data = content.data
 			self.chunked = content.chunked
 			self.trailer = content.trailer
-			self.content = content.content
+			self.fd = content.fd
 			return
 
 		self.data = None
@@ -164,7 +169,7 @@ class Body(IFile):
 			content = BytesIO(bytes(content))
 		elif not hasattr(content, '__iter__'):
 			raise TypeError('Content must be iterable.')
-		self.content = content
+		self.fd = content
 
 	def parse(self, data):
 		if self.transfer_codec:
@@ -180,7 +185,7 @@ class Body(IFile):
 
 	def close(self):
 		super(Body, self).close()
-		if isinstance(self.content, (file, BytesIO)):
+		if isinstance(self.fd, (file, BytesIO)):
 			self.set('')
 
 	def __unicode__(self):
@@ -229,7 +234,7 @@ class Body(IFile):
 	def __iterable(self):
 		if self.fileable:
 			return self.__iter_fileable()
-		return self.content
+		return self.fd
 
 	def __iter_fileable(self, chunksize=MAX_CHUNK_SIZE):
 		data = self.read(chunksize)
@@ -249,7 +254,7 @@ class Body(IFile):
 		return bool(len(self))
 
 	def __len__(self):
-		body = self.content
+		body = self.fd
 
 		if isinstance(body, file):  # FIXME: py3
 			return getsize(body.name)

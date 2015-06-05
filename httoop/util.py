@@ -60,7 +60,7 @@ def get_bytes_from_unknown(unistr):
 
 def if_has(func):
 	def _decorated(self, *args, **kwargs):
-		if hasattr(self.content, func.__name__):
+		if hasattr(self.fd, func.__name__):
 			return func(self, *args, **kwargs)
 		return False
 	return _decorated
@@ -68,47 +68,51 @@ def if_has(func):
 
 class IFile(object):
 	u"""The file interface"""
-	__slots__ = ('content')
+	__slots__ = ('fd')
+
+	@property
+	def name(self):
+		return getattr(self.fd, 'name', None)
 
 	@if_has
 	def close(self):
-		return self.content.close()
+		return self.fd.close()
 
 	@if_has
 	def flush(self):
-		return self.content.flush()
+		return self.fd.flush()
 
 	@if_has
 	def read(self, *size):
-		return self.content.read(*size[:1])
+		return self.fd.read(*size[:1])
 
 	@if_has
 	def readline(self, *size):
-		return self.content.readline(*size[:1])
+		return self.fd.readline(*size[:1])
 
 	@if_has
 	def readlines(self, *size):
-		return self.content.readlines(*size[:1])
+		return self.fd.readlines(*size[:1])
 
 	@if_has
 	def write(self, bytes_):
-		return self.content.write(bytes_)
+		return self.fd.write(bytes_)
 
 	@if_has
 	def writelines(self, sequence_of_strings):
-		return self.content.writelines(sequence_of_strings)
+		return self.fd.writelines(sequence_of_strings)
 
 	@if_has
 	def seek(self, offset, whence=0):
-		return self.content.seek(offset, whence)
+		return self.fd.seek(offset, whence)
 
 	@if_has
 	def tell(self):
-		return self.content.tell()
+		return self.fd.tell()
 
 	@if_has
 	def truncate(self, size=None):
-		return self.content.truncate(size)
+		return self.fd.truncate(size)
 
 
 class CaseInsensitiveDict(dict):

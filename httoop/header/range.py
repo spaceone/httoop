@@ -12,9 +12,11 @@ class IfRange(HeaderElement):
 
 
 class Range(HeaderElement):
-	@classmethod
-	def from_str(cls, elementstr):
-		pass
+
+	pass
+#	@classmethod
+#	def parse(cls, elementstr):
+#		pass
 
 #	def __get_ranges(self):
 #		bytesunit, _, byteranges = self.value.partition('=')

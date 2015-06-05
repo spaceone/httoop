@@ -26,7 +26,7 @@ class Headers(CaseInsensitiveDict):
 
 		result = []
 		for element in Element.split(fieldvalue):
-			result.append(Element.from_str(element))
+			result.append(Element.parse(element))
 
 		return list(reversed(sorted(result)))
 		# TODO: remove the reversed() (fix in AcceptElement)
@@ -35,7 +35,7 @@ class Headers(CaseInsensitiveDict):
 		u"""Treat the field as single element"""
 		if fieldname in self:
 			Element = HEADER.get(fieldname, HeaderElement)
-			return Element.from_str(self[fieldname])
+			return Element.parse(self[fieldname])
 		return default
 
 	def values(self, key=None):

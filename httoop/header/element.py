@@ -53,8 +53,7 @@ class HeaderElement(object):
 		return self.value < getattr(other, 'value', other)
 
 	def __bytes__(self):
-		params = [b'; %s' % self.formatparam(k, v) for k, v in iteritems(self.params)]
-		return b'%s%s' % (self.value, ''.join(params))
+		return self.compose()
 
 	def __unicode__(self):
 		return bytes(self).decode('ISO8859-1')
@@ -64,9 +63,14 @@ class HeaderElement(object):
 	else:
 		__str__ = __unicode__
 
+	def compose(self):
+		params = [b'; %s' % self.formatparam(k, v) for k, v in iteritems(self.params)]
+		return b'%s%s' % (self.value, ''.join(params))
+
 	@staticmethod
-	def parse(elementstr):
+	def parseparams(elementstr):
 		"""Transform 'token;key=val' to ('token', {'key': 'val'})."""
+		# FIXME: quoted strings may contain ";"
 		# Split the element into a value and parameters. The 'value' may
 		# be of the form, "token=token", but we don't split that here.
 		atoms = [x.strip() for x in elementstr.split(';') if x.strip()] or ['']
@@ -77,9 +81,9 @@ class HeaderElement(object):
 		return initial_value, params
 
 	@classmethod
-	def from_str(cls, elementstr):
+	def parse(cls, elementstr):
 		"""Construct an instance from a string of the form 'token;key=val'."""
-		ival, params = cls.parse(elementstr)
+		ival, params = cls.parseparams(elementstr)
 		return cls(ival, params)
 
 	@classmethod
@@ -195,7 +199,7 @@ class AcceptElement(HeaderElement):
 			raise InvalidHeader(u'Quality value must be float.')
 
 	@classmethod
-	def from_str(cls, elementstr):
+	def parse(cls, elementstr):
 		qvalue = None
 		# The first "q" parameter (if any) separates the initial
 		# media-range parameter(s) (if any) from the accept-params.
@@ -204,9 +208,9 @@ class AcceptElement(HeaderElement):
 		if atoms:
 			# The qvalue for an Accept header can have extensions. The other
 			# headers cannot, but it's easier to parse them as if they did.
-			qvalue = HeaderElement.from_str(atoms[0].strip())
+			qvalue = HeaderElement.parse(atoms[0].strip())
 
-		media_type, params = cls.parse(media_range)
+		media_type, params = cls.parseparams(media_range)
 		if qvalue is not None:
 			params["q"] = qvalue
 
@@ -236,6 +240,7 @@ class AcceptElement(HeaderElement):
 
 
 class CodecElement(object):
+
 	@property
 	def codec(self):
 		encoding = self.value

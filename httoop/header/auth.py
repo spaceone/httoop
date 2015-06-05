@@ -1,19 +1,30 @@
 # -*- coding: utf-8 -*-
 
-from httoop.header.element import HeaderElement
+from httoop.authentication import AuthRequestElement, AuthResponseElement, AuthInfoElement
 
 
-class Authorization(HeaderElement):
+class Authorization(AuthRequestElement):
 	pass
 
 
-class ProxyAuthenticate(HeaderElement):
+class ProxyAuthenticate(AuthResponseElement):
 	__name__ = 'Proxy-Authenticate'
 
 
-class ProxyAuthorization(HeaderElement):
+class ProxyAuthorization(AuthRequestElement):
 	__name__ = 'Proxy-Authorization'
 
 
-class WWWAuthenticate(HeaderElement):
+class WWWAuthenticate(AuthResponseElement):
 	__name__ = 'WWW-Authenticate'
+
+
+class AuthenticationInfo(AuthInfoElement):
+	__name__ = 'Authentication-Info'
+
+
+class ProxyAuthenticationInfo(AuthInfoElement):
+	__name__ = 'Proxy-Authentication-Info'
+
+
+del AuthResponseElement, AuthRequestElement, AuthInfoElement

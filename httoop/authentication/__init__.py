@@ -5,6 +5,7 @@ from httoop.exceptions import InvalidHeader
 from httoop.util import iteritems
 
 from httoop.authentication.basic import BasicAuthRequestScheme, BasicAuthResponseScheme
+from httoop.authentication.digest import DigestAuthResponseScheme, DigestAuthRequestScheme
 
 
 class AuthElement(HeaderElement):
@@ -23,7 +24,11 @@ class AuthElement(HeaderElement):
 		except KeyError:
 			raise InvalidHeader(u'Unsupported authentication scheme: %r' % (scheme,))
 
-		authinfo = parser.parse(authinfo)
+		try:
+			authinfo = parser.parse(authinfo)
+		except KeyError as key:
+			raise InvalidHeader(u'Missing paramter %r for authentication scheme %r' % (str(key), scheme))
+
 		return scheme, authinfo
 
 	def compose(self):
@@ -31,14 +36,20 @@ class AuthElement(HeaderElement):
 			scheme = self.schemes[self.value.lower()]
 		except KeyError:
 			raise InvalidHeader(u'Unsupported authentication scheme: %r' % (self.value,))
-		return b'%s %s' % (self.value.title(), scheme.compose(self.params))
+
+		try:
+			authinfo = scheme.compose(self.params)
+		except KeyError as key:
+			raise InvalidHeader(u'Missing paramter %r for authentication scheme %r' % (key, self.value))
+
+		return b'%s %s' % (self.value.title(), authinfo)
 
 
 class AuthRequestElement(AuthElement):
 
 	schemes = {
 		'basic': BasicAuthRequestScheme,
-#		'digest': DigestAuthRequestScheme
+		'digest': DigestAuthRequestScheme
 	}
 
 
@@ -46,7 +57,7 @@ class AuthResponseElement(AuthElement):
 
 	schemes = {
 		'basic': BasicAuthResponseScheme,
-#		'digest': DigestAuthResponseScheme
+		'digest': DigestAuthResponseScheme
 	}
 
 	# TODO: sort by security

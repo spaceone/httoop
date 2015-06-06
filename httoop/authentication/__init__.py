@@ -4,6 +4,8 @@ from httoop.header.element import HeaderElement
 from httoop.exceptions import InvalidHeader
 from httoop.util import iteritems
 
+from httoop.authentication.basic import BasicAuthRequestScheme, BasicAuthResponseScheme
+
 
 class AuthElement(HeaderElement):
 
@@ -25,14 +27,17 @@ class AuthElement(HeaderElement):
 		return scheme, authinfo
 
 	def compose(self):
-		params = [b', %s' % self.formatparam(k, v) for k, v in iteritems(self.params)]
-		return b'%s%s' % (self.value.title(), ''.join(params))
+		try:
+			scheme = self.schemes[self.value.lower()]
+		except KeyError:
+			raise InvalidHeader(u'Unsupported authentication scheme: %r' % (self.value,))
+		return b'%s %s' % (self.value.title(), scheme.compose(self.params))
 
 
 class AuthRequestElement(AuthElement):
 
 	schemes = {
-#		'basic': BasicAuthRequestScheme,
+		'basic': BasicAuthRequestScheme,
 #		'digest': DigestAuthRequestScheme
 	}
 
@@ -40,11 +45,19 @@ class AuthRequestElement(AuthElement):
 class AuthResponseElement(AuthElement):
 
 	schemes = {
-#		'basic': BasicAuthResponseScheme,
+		'basic': BasicAuthResponseScheme,
 #		'digest': DigestAuthResponseScheme
 	}
 
 	# TODO: sort by security
+
+	@property
+	def realm(self):
+		return self.params.get('realm')
+
+	@realm.setter
+	def realm(self, realm):
+		self.params['realm'] = realm.replace('"', '')
 
 	@staticmethod
 	def split(value):

@@ -31,9 +31,6 @@ def iteritems(d, **kw):
 
 
 def to_unicode(string):
-	if isinstance(string, type):
-		# FIXME FIXME: CaseInsensitiveDict is also used for Header elements
-		return string
 	if string is None:
 		return u''
 	if isinstance(string, bytes):
@@ -122,45 +119,53 @@ class CaseInsensitiveDict(dict):
 		Each value is stored as unicode
 	"""
 
+	@staticmethod
+	def formatkey(key):
+		return to_ascii(key).title()
+
+	@staticmethod
+	def formatvalue(value):
+		return value
+
 	def __init__(self, *args, **kwargs):
 		d = dict(*args, **kwargs)
 		for key, value in iteritems(d):
-			dict.__setitem__(self, to_ascii(key).title(), to_unicode(value))
+			dict.__setitem__(self, self.formatkey(key), self.formatvalue(value))
 		dict.__init__(self)
 
 	def __getitem__(self, key):
-		return dict.__getitem__(self, to_ascii(key).title())
+		return dict.__getitem__(self, self.formatkey(key))
 
 	def __setitem__(self, key, value):
-		dict.__setitem__(self, to_ascii(key).title(), to_unicode(value))
+		dict.__setitem__(self, self.formatkey(key), self.formatvalue(value))
 
 	def __delitem__(self, key):
-		dict.__delitem__(self, to_ascii(key).title())
+		dict.__delitem__(self, self.formatkey(key))
 
 	def __contains__(self, key):
-		return dict.__contains__(self, to_ascii(key).title())
+		return dict.__contains__(self, self.formatkey(key))
 
 	def get(self, key, default=None):
-		return dict.get(self, to_ascii(key).title(), default)
+		return dict.get(self, self.formatkey(key), default)
 
 	def update(self, E):
-		for k in E.keys():
-			self[to_ascii(k).title()] = to_unicode(E[k])
+		for key in E.keys():
+			self[self.formatkey(key)] = self.formatvalue(E[key])
 
 	def setdefault(self, key, x=None):
-		key = to_ascii(key).title()
+		key = self.formatkey(key)
 		try:
 			return dict.__getitem__(self, key)
 		except KeyError:
-			self[key] = to_unicode(x)
+			self[key] = self.formatvalue(x)
 			return dict.__getitem__(self, key)
 
 	def pop(self, key, default=None):
-		return dict.pop(self, to_ascii(key).title(), default)
+		return dict.pop(self, self.formatkey(key), default)
 
 	@classmethod
 	def fromkeys(cls, seq, value=None):
 		newdict = cls()
 		for k in seq:
-			newdict[k] = to_unicode(value)
+			newdict[k] = self.formatvalue(value)
 		return newdict

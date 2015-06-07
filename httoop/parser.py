@@ -155,7 +155,7 @@ class StateMachine(object):
 			te = message.headers['Transfer-Encoding'].lower()
 			self.chunked = 'chunked' == te
 			if not self.chunked:
-				raise NOT_IMPLEMENTED(u'Unknown HTTP/1.1 Transfer-Encoding: %s' % te)
+				raise NOT_IMPLEMENTED(u'Unknown HTTP/1.1 Transfer-Encoding: %r' % te)
 		else:
 			# Content-Length header defines the length of the message body
 			try:
@@ -211,7 +211,7 @@ class StateMachine(object):
 			if chunk_size < 0:
 				raise ValueError
 		except (ValueError, OverflowError):
-			raise BAD_REQUEST(u'Invalid chunk size: %s' % chunk_size.decode('ISO8859-1'))
+			raise BAD_REQUEST(u'Invalid chunk size: %r' % chunk_size.decode('ISO8859-1'))
 		else:
 			return chunk_size, rest_chunk
 
@@ -232,7 +232,7 @@ class StateMachine(object):
 		try:
 			self.trailers.parse(bytes(trailers))
 		except InvalidHeader as exc:
-			raise BAD_REQUEST(u'Invalid trailers: %s' % Unicode(exc))
+			raise BAD_REQUEST(u'Invalid trailers: %r' % Unicode(exc))
 
 		self.merge_trailer_into_header()
 		return False

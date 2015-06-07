@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 
-from httoop.util import CaseInsensitiveDict, iteritems
+from httoop.util import CaseInsensitiveDict, iteritems, to_unicode
 from httoop.meta import HTTPSemantic
 from httoop.header.element import HEADER, HeaderElement
 from httoop.exceptions import InvalidHeader
@@ -13,6 +13,17 @@ class Headers(CaseInsensitiveDict):
 
 	# disallowed bytes for HTTP header field names
 	HEADER_RE = re.compile(b"[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]")
+
+	@staticmethod
+	def formatvalue(value):
+		return to_unicode(value)  # TODO: do we really want unicode here?
+
+	@classmethod
+	def formatkey(cls, key):
+		key = CaseInsensitiveDict.formatkey(key)
+		if cls.HEADER_RE.search(key):
+			raise InvalidHeader(u"Invalid header name: %r" % key.decode('ISO8859-1'))
+		return key
 
 	def elements(self, fieldname):
 		u"""Return a sorted list of HeaderElements from
@@ -102,7 +113,7 @@ class Headers(CaseInsensitiveDict):
 			name = name.rstrip(" \t")
 
 			if self.HEADER_RE.search(name):
-				raise InvalidHeader(u"Invalid header name: %s" % name.decode('ISO8859-1'))
+				raise InvalidHeader(u"Invalid header name: %r" % name.decode('ISO8859-1'))
 
 			name, value = name.strip(), [value.lstrip()]
 

@@ -167,5 +167,5 @@ class CaseInsensitiveDict(dict):
 	def fromkeys(cls, seq, value=None):
 		newdict = cls()
 		for k in seq:
-			newdict[k] = self.formatvalue(value)
+			newdict[k] = cls.formatvalue(value)
 		return newdict

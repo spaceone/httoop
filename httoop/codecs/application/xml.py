@@ -4,7 +4,6 @@ from __future__ import absolute_import
 
 # TODO: http://docs.python.org/2/library/xml.html#xml-vulnerabilities
 from xml.etree.ElementTree import parse, ParseError, tostring
-import sys
 
 from httoop.codecs.common import Codec
 from httoop.exceptions import DecodeError
@@ -16,9 +15,8 @@ class XML(Codec):
 	def decode(self, data, charset=None, mimetype=None):
 		try:
 			return parse(data)
-		except ParseError:
-			exc = sys.exc_info()
-			raise DecodeError, exc[1], exc[2]
+		except ParseError as exc:
+			raise DecodeError(u'Could not decode as %s: %s' % (self.mimetype, exc,))
 
 	def encode(self, root, charset=None, mimetype=None):
 		return tostring(root, charset)

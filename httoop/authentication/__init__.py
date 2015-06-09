@@ -2,7 +2,6 @@
 
 from httoop.header.element import HeaderElement
 from httoop.exceptions import InvalidHeader
-from httoop.util import iteritems
 
 from httoop.authentication.basic import BasicAuthRequestScheme, BasicAuthResponseScheme
 from httoop.authentication.digest import DigestAuthResponseScheme, DigestAuthRequestScheme

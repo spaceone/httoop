@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from httoop.header.element import HeaderElement
+from httoop.date import Date
 
 
 class _DateComparable(object):
-	from httoop.date import Date
+	Date = Date
 	def sanitize(self):
 		self.value = self.Date.parse(self.value)
 

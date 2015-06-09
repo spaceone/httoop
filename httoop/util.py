@@ -4,7 +4,8 @@ u"""Utilities for python2/3 compatibility"""
 __all__ = [
 	'PY3', 'Unicode', 'BytesIO', 'iteritems',
 	'to_unicode', 'to_ascii', 'get_bytes_from_unknown',
-	'IFile', 'partial', 'formatdate', 'parsedate'
+	'IFile', 'partial', 'formatdate', 'parsedate',
+	'CaseInsensitiveDict'
 ]
 
 import sys

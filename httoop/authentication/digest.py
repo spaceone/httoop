@@ -120,7 +120,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):
 		return response == request_params['response']
 
 	@classmethod
-	def calculate_request_digest(cls, authinfo, A1=None):
+	def calculate_request_digest(cls, authinfo):
 		algorithm = authinfo.get('algorithm', 'MD5')
 		H = cls.get_algorithm(algorithm)
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from httoop.status.types import StatusType, HTTPStatusException
+from httoop.util import Unicode
 
 
 class MULTIPLE_CHOICES(object):
@@ -12,7 +13,7 @@ class MULTIPLE_CHOICES(object):
 	code = 300
 
 	def __init__(self, locations, *args, **kwargs):
-		if isinstance(locations, basestring):
+		if isinstance(locations, (bytes, Unicode)):
 			locations = [locations]
 		locations = ', '.join(locations)
 		super(MULTIPLE_CHOICES, self).__init__(locations, *args, **kwargs)

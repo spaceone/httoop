@@ -4,7 +4,7 @@
 .. seealso:: :rfc:`2616`
 """
 
-__all__ = (
+__all__ = [
 	'Status', 'Body', 'Headers', 'URI', 'Method',
 	'Request', 'Response', 'Protocol', 'Date', 'ServerStateMachine', 'ClientStateMachine',
 	'InvalidLine', 'InvalidHeader', 'InvalidURI', 'InvalidBody', 'InvalidDate',
@@ -20,8 +20,10 @@ __all__ = (
 	'REQUEST_RANGE_NOT_SATISFIABLE', 'EXPECTATION_FAILED',
 	'I_AM_A_TEAPOT', 'INTERNAL_SERVER_ERROR', 'NOT_IMPLEMENTED',
 	'SERVICE_UNAVAILABLE', 'GATEWAY_TIMEOUT',
-	'HTTP_VERSION_NOT_SUPPORTED', 'HTTPStatusException', 'ServerProtocol'
-)
+	'HTTP_VERSION_NOT_SUPPORTED', 'HTTPStatusException',
+	'DecodeError', 'EncodeError',
+	'__version__', 'ServerProtocol', 'UserAgentHeader', 'ServerHeader'
+]
 
 from httoop.version import UserAgentHeader, ServerHeader, ServerProtocol, __version__
 from httoop.status import Status

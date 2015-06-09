@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from httoop.codecs.common import Codec
-from httoop.exceptions import DecodeError, EncodeError
+from httoop.exceptions import DecodeError
 
 __name__ = 'form-data'
 

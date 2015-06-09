@@ -8,7 +8,7 @@
 .. seealso:: :rfc:`2616#section-14`
 """
 
-__all__ = ['Headers']
+__all__ = ['Headers', 'Server', 'UserAgent']
 
 # FIXME: python3?
 # TODO: add a MAXIMUM of 500 headers?

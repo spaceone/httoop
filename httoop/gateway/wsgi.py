@@ -19,8 +19,8 @@ class WSGIBody(Body):
 	def write(self, bytes_):
 		return super(WSGIBody, self).write(bytes_)
 
-	def read(self, bytes_):
-		return super(WSGIBody, self).read(bytes_)
+	def read(self, *size):
+		return super(WSGIBody, self).read(*size)
 
 
 class WSGI(object):

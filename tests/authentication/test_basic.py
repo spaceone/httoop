@@ -1,14 +1,27 @@
-from httoop.header import WWWAuthenticate, Authorization, Headers
+# -*- coding: utf-8 -*-
+import pytest
+
+from httoop.header import WWWAuthenticate, Authorization
+from httoop.exceptions import InvalidHeader
 
 
-def test_basic_www_authenticate():
+def test_basic_www_authenticate(headers):
 	www_auth = WWWAuthenticate('Basic', {'realm': 'simple'})
-	auth = Authorization('Basic', {'username': 'admin', 'password': '12345'})
 	assert bytes(www_auth) in ('Basic realm="simple"', 'Basic realm=simple')
+	headers.parse('WWW-Authenticate: %s' % www_auth)
+	assert headers.elements('WWW-Authenticate')[0].realm == u'simple'
+
+
+def test_basic_authorization(headers):
+	auth = Authorization('Basic', {'username': 'admin', 'password': '12345'})
 	assert bytes(auth) == 'Basic YWRtaW46MTIzNDU='
-	h = Headers()
-	h.parse('WWW-Authenticate: %s' % www_auth)
-	h.parse('Authorization: %s' % auth)
-	assert h.elements('WWW-Authenticate')[0].realm == u'simple'
-	assert h.element('Authorization').params['username'] == u'admin'
-	assert h.element('Authorization').params['password'] == u'12345'
+	headers.parse('Authorization: %s' % auth)
+	assert headers.element('Authorization').params['username'] == u'admin'
+	assert headers.element('Authorization').params['password'] == u'12345'
+
+def test_invalid_headers(headers):
+	for invalid in (b'foo', b'Zm9v', u'föo'.encode('latin1')):
+		headers.parse(b'Authorization: Basic %s' % (invalid,))
+		with pytest.raises(InvalidHeader):
+			headers.element('Authorization')
+		headers.clear()

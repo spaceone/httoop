@@ -30,6 +30,13 @@ class DigestAuthScheme(object):
 	def _compose(cls, authinfo):
 		return authinfo
 
+	@classmethod
+	def parse(cls, authinfo):
+		atoms = [x.strip() for x in authinfo.split(',') if x.strip()] or ['']
+
+		params = dict((key.strip(), value.strip().strip('"')) for key, _, value in (atom.partition('=') for atom in atoms))
+		return params
+
 
 class DigestAuthResponseScheme(DigestAuthScheme):
 
@@ -62,6 +69,25 @@ class DigestAuthResponseScheme(DigestAuthScheme):
 			auth_param
 		]
 		return [(k, v) for k, v in params if v is not None]
+
+	@classmethod
+	def parse(cls, authinfo):
+		params = super(cls, cls).parse(authinfo)
+		if '"' in params['nonce']:
+			raise InvalidHeader('Nonce must not contain double quote')
+		stale = params.get('stale')
+		if stale:
+			stale = {'false': False, 'true': True}.get(stale.lower())
+		params = [
+			('realm', params['realm']),
+			('domain', params.get('domain', '').split()),
+			('nonce', params['nonce']),
+			('opaque', params.get('opaque')),
+			('stale', stale),
+			('algorithm', params.get('algorithm')),
+			('qop', [p.strip() for p in params.get('qop', '').split(',')]),
+		]
+		return dict([(k, v) for k, v in params if v is not None])
 
 
 class DigestAuthRequestScheme(DigestAuthScheme):
@@ -102,6 +128,29 @@ class DigestAuthRequestScheme(DigestAuthScheme):
 			auth_param
 		]
 		return [(k, v) for k, v in params if v is not None]
+
+	@classmethod
+	def parse(cls, authinfo):
+		params = super(cls, cls).parse(authinfo)
+		message_qop = params.get('qop')
+		cnonce = None
+		nonce_count = None
+		if message_qop:
+			cnonce = params['cnonce']
+			nonce_count = params['nc']
+		params = [
+			('username', params['username']),
+			('realm', params['realm']),
+			('nonce', params['nonce']),
+			('uri', params['uri']),
+			('response', params['response']),
+			('algorithm', params.get('algorithm')),
+			('cnonce', cnonce),
+			('opaque', params.get('opaque')),
+			('qop', message_qop),
+			('nc', nonce_count),
+		]
+		return dict([(k, v) for k, v in params if v is not None])
 
 	@classmethod
 	def generate_nonce(cls, authinfo):

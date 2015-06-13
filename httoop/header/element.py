@@ -186,7 +186,7 @@ class MimeType(object):
 		self.params['version'] = version
 
 
-class AcceptElement(HeaderElement):
+class _AcceptElement(HeaderElement):
 	"""An Accept element with quality value
 
 		.. seealso:: :rfc:`2616#section-3.9`
@@ -206,7 +206,7 @@ class AcceptElement(HeaderElement):
 			return float(val)
 
 	def sanitize(self):
-		super(AcceptElement, self).sanitize()
+		super(_AcceptElement, self).sanitize()
 		try:
 			self.quality
 		except ValueError:
@@ -232,17 +232,17 @@ class AcceptElement(HeaderElement):
 
 	@classmethod
 	def sorted(cls, fieldvalue):
-		result = super(AcceptElement, cls).sorted(fieldvalue)
+		result = super(_AcceptElement, cls).sorted(fieldvalue)
 		return list(sorted(result, reverse=True))
 
 	def __eq__(self, other):
-		if not isinstance(other, AcceptElement):
-			other = AcceptElement(other)
+		if not isinstance(other, _AcceptElement):
+			other = _AcceptElement(other)
 		return other.value == self.value and other.quality == self.quality
 
 	def __lt__(self, other):
-		if not isinstance(other, AcceptElement):
-			other = AcceptElement(other)
+		if not isinstance(other, _AcceptElement):
+			other = _AcceptElement(other)
 		if self.quality == other.quality:
 			return str(self) < str(other)
 		else:

@@ -2,11 +2,11 @@
 # TODO: Via, Server, User-Agent can contain comments → parse them
 import re
 
-from httoop.header.element import HeaderElement, AcceptElement, MimeType, CodecElement
+from httoop.header.element import HeaderElement, _AcceptElement, MimeType, CodecElement
 from httoop.exceptions import InvalidHeader
 
 
-class Accept(AcceptElement, MimeType):
+class Accept(_AcceptElement, MimeType):
 
 	def sanitize(self):
 		super(Accept, self).sanitize()
@@ -14,19 +14,19 @@ class Accept(AcceptElement, MimeType):
 			self.value = '*/*'
 
 
-class AcceptCharset(AcceptElement):
+class AcceptCharset(_AcceptElement):
 	__name__ = 'Accept-Charset'
 
 
-class AcceptEncoding(AcceptElement):
+class AcceptEncoding(_AcceptElement):
 	__name__ = 'Accept-Encoding'
 
 
-class AcceptLanguage(AcceptElement):
+class AcceptLanguage(_AcceptElement):
 	__name__ = 'Accept-Language'
 
 
-class AcceptRanges(AcceptElement):
+class AcceptRanges(_AcceptElement):
 	__name__ = 'Accept-Ranges'
 
 
@@ -200,7 +200,7 @@ class Server(HeaderElement):
 	pass
 
 
-class TE(AcceptElement):
+class TE(_AcceptElement):
 	pass
 
 

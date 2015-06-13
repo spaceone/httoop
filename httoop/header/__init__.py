@@ -29,7 +29,7 @@ from httoop.header import auth
 types = (semantics, messaging, conditional, range, cache, auth)
 
 for _, member in (member for type_ in types for member in inspect.getmembers(type_, inspect.isclass)):
-	if isinstance(member, HeaderType) and member is not HeaderElement:
+	if isinstance(member, HeaderType) and member is not HeaderElement and not _.startswith('_'):
 		HEADER[member.__name__] = member
 		globals()[_] = member
 		__all__.append(_)

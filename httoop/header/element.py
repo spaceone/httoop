@@ -46,11 +46,17 @@ class HeaderElement(object):
 	def sanitize(self):
 		pass
 
-	def __cmp__(self, other):
-		return cmp(self.value, getattr(other, 'value', other))
-
 	def __lt__(self, other):
 		return self.value < getattr(other, 'value', other)
+
+	def __gt__(self, other):
+		return self.value > getattr(other, 'value', other)
+
+	def __eq__(self, other):
+		return self.value == getattr(other, 'value', other)
+
+	def __ne__(self, other):
+		return not (self == other)
 
 	def __bytes__(self):
 		return self.compose()
@@ -95,6 +101,12 @@ class HeaderElement(object):
 	@classmethod
 	def join(cls, values):
 		return b', '.join(values)
+
+	@classmethod
+	def sorted(cls, fieldvalue):
+		return [cls.parse(element) for element in cls.split(fieldvalue)]
+		# TODO: should we do:?
+		#return list(sorted(...))
 
 	@classmethod
 	def formatparam(cls, param, value=None, quote=1):
@@ -190,9 +202,11 @@ class AcceptElement(HeaderElement):
 		val = self.params.get("q", "1")
 		if isinstance(val, HeaderElement):
 			val = val.value
-		return float(val)
+		if val:
+			return float(val)
 
 	def sanitize(self):
+		super(AcceptElement, self).sanitize()
 		try:
 			self.quality
 		except ValueError:
@@ -216,14 +230,10 @@ class AcceptElement(HeaderElement):
 
 		return cls(media_type, params)
 
-	def __cmp__(self, other):
-		if not isinstance(other, AcceptElement):
-			other = AcceptElement(other)
-		diff = cmp(self.quality, other.quality)
-		if diff == 0:
-			diff = cmp(str(self), str(other))
-		# reverse
-		return {-1: 1, 0: 0, 1: -1}.get(diff, diff)
+	@classmethod
+	def sorted(cls, fieldvalue):
+		result = super(AcceptElement, cls).sorted(fieldvalue)
+		return list(sorted(result, reverse=True))
 
 	def __eq__(self, other):
 		if not isinstance(other, AcceptElement):

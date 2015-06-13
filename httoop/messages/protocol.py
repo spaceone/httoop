@@ -59,7 +59,38 @@ class Protocol(object):
 	def __getitem__(self, key):
 		return self.version[key]
 
-	def __cmp__(self, other):
-		if isinstance(other, (bytes, Unicode)):
-			return super(Protocol, self).__cmp__(other)
-		return cmp(self.__protocol, other)  # FIXME: py3
+	def __eq__(self, other):
+		try:
+			other = Protocol(other)
+		except (TypeError, InvalidLine):
+			if isinstance(other, int):
+				return self.major == other
+			return False
+		return self.version == other.version
+
+	def __ne__(self, other):
+		return not (self == other)
+
+	def __lt__(self, other):
+		try:
+			other = Protocol(other)
+		except (TypeError, InvalidLine):
+			if isinstance(other, int):
+				return self.major < other
+			raise  # pragma: no cover
+		return self.version < other.version
+
+	def __gt__(self, other):
+		try:
+			other = Protocol(other)
+		except (TypeError, InvalidLine):
+			if isinstance(other, int):
+				return self.major > other
+			raise  # pragma: no cover
+		return self.version > other.version
+
+	def __ge__(self, other):
+		return self == other or self > other
+
+	def __le__(self, other):
+		return self == other or self < other

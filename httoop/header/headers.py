@@ -34,13 +34,7 @@ class Headers(CaseInsensitiveDict):
 			return []
 
 		Element = HEADER.get(fieldname, HeaderElement)
-
-		result = []
-		for element in Element.split(fieldvalue):
-			result.append(Element.parse(element))
-
-		return list(reversed(sorted(result)))
-		# TODO: remove the reversed() (fix in AcceptElement)
+		return Element.sorted(fieldvalue)
 
 	def element(self, fieldname, default=None):
 		u"""Treat the field as single element"""
@@ -49,11 +43,10 @@ class Headers(CaseInsensitiveDict):
 			return Element.parse(self[fieldname])
 		return default
 
-	def values(self, key=None):
-		# if key is set return a ordered list of element values
-		# TODO: may move this into another method because values is a dict name
+	def values(self, key=None):  # FIXME: overwrites dict.values()
 		if key is None:
 			return super(Headers, self).values()
+		# if key is set return a ordered list of element values
 		return [e.value for e in self.elements(key)]
 
 	def append(self, _name, _value, **params):

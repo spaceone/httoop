@@ -38,19 +38,19 @@ class HTTPSemantic(type):
 			return self.compose()
 		setdefault('__bytes__', __bytes__)
 
-		def parse(self, data):
+		def parse(self, data):  # pragma: no cover
 			raise NotImplementedError
 		setdefault('parse', parse)
 
-		def compose(self):
+		def compose(self):  # pragma: no cover
 			raise NotImplementedError
 		setdefault('compose', compose)
 
-		def __cmp__(self, other):
+		def __eq__(self, other):
 			if isinstance(other, Unicode):
-				return cmp(Unicode(self), other)
-			return cmp(bytes(self), other)
-		setdefault('__cmp__', __cmp__)
+				return Unicode(self) == other
+			return bytes(self) == other
+		setdefault('__eq__', __eq__)
 
 		def __hash__(self):
 			return bytes(self).__hash__()

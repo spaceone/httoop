@@ -223,6 +223,8 @@ class Body(IFile):
 
 		try:
 			for data in iterable:
+				if data is None:
+					continue
 				if isinstance(data, Unicode):
 					data = data.encode(encoding)
 				elif not isinstance(data, bytes):

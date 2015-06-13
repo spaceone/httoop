@@ -207,7 +207,10 @@ class URI(object):
 		path = b'/%s' % path
 		userinfo, _, hostport = authority.rpartition(b'@')
 		username, _, password = userinfo.partition(b':')
-		host, _, port = hostport.partition(b':')
+		if hostport.endswith(b']') and hostport.startswith(b'['):
+			host, port = hostport, b''
+		else:
+			host, _, port = hostport.rpartition(b':')
 
 		unquote = self.unquote
 		path = u'/'.join([unquote(seq).replace(u'/', u'%2f') for seq in path.split(b'/')])

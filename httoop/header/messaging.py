@@ -9,6 +9,7 @@ from httoop.exceptions import InvalidHeader
 class Accept(AcceptElement, MimeType):
 
 	def sanitize(self):
+		super(Accept, self).sanitize()
 		if self.value == '*':
 			self.value = '*/*'
 
@@ -115,44 +116,60 @@ class From(HeaderElement):
 
 
 # TODO: add case insensitve HeaderElement
-# TODO: integrate ipaddr.IP4/6Address which parses every form of ip addresses
 class Host(HeaderElement):
-	RE_HOSTNAME = re.compile(r'^([^\x00-\x1F\x7F()<>@,;:/\[\]={} \t\\\\"]+)(?::\d+)?$')
-	RE_IP4 = re.compile(r'^([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})(?::\d+)?$')
-	# FIXME: implement IP parse, this matches 999.999.999.999
-	RE_IP6 = re.compile(r'^\[([0-9a-fA-F:]+)\](?::\d+)?$')
-	# FIXME: implement IP6 parse
+	RE_HOSTNAME = re.compile(r'^([^\x00-\x1F\x7F()^\'"<>@,;:/\[\]={} \t\\\\"]+)$')
+	HOSTPORT = re.compile(r'^(.*?)(?::(\d+))?$')
 
 	@property
 	def is_ip4(self):
-		return self.RE_IP4.match(self.value) is not None
+		from socket import inet_pton, AF_INET, error
+		try:
+			inet_pton(AF_INET, self.host)
+			return True
+		except error:
+			return False
 
 	@property
 	def is_ip6(self):
-		return self.RE_IP6.match(self.value) is not None
+		from socket import inet_pton, AF_INET6, error
+		try:
+			inet_pton(AF_INET6, self.host)
+			return True
+		except error:
+			return False
+
+	@property
+	def is_fqdn(self):
+		return not self.is_ip4 and not self.is_ip6 and self.RE_HOSTNAME.match(self.host) is not None
+
+	@property
+	def fqdn(self):
+		if self.is_fqdn:
+			return self.host
 
 	@property
 	def hostname(self):
-		return self.ip6address or \
-			self.ip4address or \
-			self.RE_HOSTNAME.match(self.value).group(1).lower()
+		return self.ip6address or self.ip4address or self.fqdn
 
 	@property
 	def ip6address(self):
-		# removes IPv6 brackets and port
 		if self.is_ip6:
-			return self.RE_IP6.match(self.value).group(1)
+			return self.host
 
 	@property
 	def ip4address(self):
-		# removes port
 		if self.is_ip4:
-			return self.RE_IP4.match(self.value).group(1)
+			return self.host
 
 	def sanitize(self):
-		if not self.RE_HOSTNAME.match(self.value):
-			raise InvalidHeader('Invalid Host header')
 		self.value = self.value.lower()
+		self.host, self.port = self.HOSTPORT.match(self.value).groups()
+		if self.host.endswith(']') and self.host.startswith('['):
+			self.host = self.host[1:-1]
+		if self.port:
+			self.port = int(self.port)
+		if not self.hostname:
+			raise InvalidHeader('Invalid Host header')
 
 
 class XForwardedHost(Host):

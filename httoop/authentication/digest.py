@@ -27,7 +27,7 @@ class DigestAuthScheme(object):
 		return b', '.join([HeaderElement.formatparam(k, v) for k, v in params])
 
 	@classmethod
-	def _compose(cls, authinfo):
+	def _compose(cls, authinfo):  # pragma: no cover
 		return authinfo
 
 	@classmethod

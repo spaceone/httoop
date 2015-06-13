@@ -4,7 +4,7 @@
 .. seealso:: :rfc:`2616#section-4.3`
 """
 
-from os.path import getsize
+from os import fstat
 from io import BytesIO
 from types import GeneratorType
 
@@ -21,8 +21,8 @@ class Body(IFile):
 
 		It provides an interface which makes it possible to use either
 		unicode, bytes, bytearray, file, file-like objects (e.g. from the
-		codecs module) or any iterable returning bytes/unicode as type
-		for the content.
+		codecs module), StringIO, BytesIO, NamedTemporaryFiles or any iterable
+		returning bytes/unicode as type for the content.
 
 		The encode and decode methods can also control the automatic en/decoding of
 		the content using the codec specified in the MIME media type.
@@ -158,9 +158,9 @@ class Body(IFile):
 		self.data = None
 		if not content:
 			content = BytesIO()
-		elif isinstance(content, (BytesIO, file)):
+		elif isinstance(content, BytesIO) or (hasattr(content, 'read') and hasattr(content, 'fileno') and hasattr(content, 'closed')):
 			if content.closed:
-				raise TypeError('I/O operation on closed file.')
+				raise ValueError('I/O operation on closed file.')
 		elif isinstance(content, Unicode):
 			content = BytesIO(content.encode(self.encoding))
 		elif isinstance(content, bytes):
@@ -184,8 +184,9 @@ class Body(IFile):
 		return b''.join(self.__iter__())
 
 	def close(self):
+		fileable = self.fileable
 		super(Body, self).close()
-		if isinstance(self.fd, (file, BytesIO)):
+		if fileable:
 			self.set('')
 
 	def __unicode__(self):
@@ -215,7 +216,6 @@ class Body(IFile):
 		return b''.join(self.__content_iter())
 
 	def __content_iter(self):
-		encoding = self.encoding
 		iterable = self.__iterable()
 
 		t = self.tell()
@@ -226,8 +226,8 @@ class Body(IFile):
 				if data is None:
 					continue
 				if isinstance(data, Unicode):
-					data = data.encode(encoding)
-				elif not isinstance(data, bytes):
+					data = data.encode(self.encoding)
+				elif not isinstance(data, bytes):  # pragma: no cover
 					raise TypeError('Iterable contained non-bytes')
 				yield data
 		finally:
@@ -236,6 +236,8 @@ class Body(IFile):
 	def __iterable(self):
 		if self.fileable:
 			return self.__iter_fileable()
+		elif self.generator:
+			return self.__iter_generator()
 		return self.fd
 
 	def __iter_fileable(self, chunksize=MAX_CHUNK_SIZE):
@@ -243,6 +245,19 @@ class Body(IFile):
 		while data:
 			yield data
 			data = self.read(chunksize)
+
+	def __iter_generator(self):
+		fd = self.fd
+		buffer_ = []
+		while True:
+			try:
+				data = next(fd)
+			except StopIteration:
+				self.set(buffer_)
+				raise
+			else:
+				buffer_.append(data)
+				yield data
 
 #	def __copy__(self):
 #		body = self.__class__(self.__content_bytes())
@@ -258,14 +273,12 @@ class Body(IFile):
 	def __len__(self):
 		body = self.fd
 
-		if isinstance(body, file):  # FIXME: py3
-			return getsize(body.name)
 		if isinstance(body, BytesIO):
 			return len(body.getvalue())
+		if hasattr(body, 'fileno'):
+			return fstat(body.fileno()).st_size
 
-		content = self.__content_bytes()
-		self.set(content)
-		return len(content)
+		return len(self.__content_bytes())
 
 	def __next__(self):
 		if self.__iter is None:

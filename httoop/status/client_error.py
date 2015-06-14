@@ -83,7 +83,7 @@ class METHOD_NOT_ALLOWED(ClientErrorStatus):
 
 
 class NOT_ACCEPTABLE(ClientErrorStatus):
-	u"""The clients Accept-\*-header wants a representation of
+	r"""The clients Accept-\*-header wants a representation of
 		the resource which the server can not deliver.
 		The entity body should contain a list of links with
 		acceptable representations (similar to 300)."""
@@ -128,7 +128,7 @@ class LENGTH_REQUIRED(ClientErrorStatus):
 
 
 class PRECONDITION_FAILED(ClientErrorStatus):
-	u"""If a condition from any of the If-\*-headers except for conditional
+	r"""If a condition from any of the If-\*-headers except for conditional
 		GET fails this status code is the respond."""
 
 	code = 412

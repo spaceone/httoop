@@ -4,6 +4,8 @@
 .. seealso:: :rfc:`2616#section-3.3`
 """
 
+from __future__ import absolute_import
+
 __all__ = ['Date']
 
 import time

@@ -11,7 +11,7 @@ from httoop.authentication.digest import DigestAuthResponseScheme, DigestAuthReq
 class AuthElement(HeaderElement):
 
 	schemes = {}
-	RE_SPACE_SPLIT = re.compile('\s+(?=(?:[^"]*"[^"]*")*[^"]*$)')
+	RE_SPACE_SPLIT = re.compile(br'\s+(?=(?:[^"]*"[^"]*")*[^"]*$)')
 
 	@classmethod
 	def parseparams(cls, elementstr):
@@ -40,7 +40,7 @@ class AuthElement(HeaderElement):
 		try:
 			authinfo = scheme.compose(self.params)
 		except KeyError as key:
-			raise InvalidHeader(u'Missing paramter %r for authentication scheme %r' % (key, self.value))
+			raise InvalidHeader(u'Missing paramter %r for authentication scheme %r' % (str(key), self.value))
 
 		return b'%s %s' % (self.value.title(), authinfo)
 

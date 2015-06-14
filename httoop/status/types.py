@@ -3,7 +3,6 @@
 
 .. seealso:: :rfc:`2616#section-10`"""
 
-from httoop.messages import Body  # TODO: remove ?
 from httoop.status.status import Status, REASONS
 from httoop.meta import HTTPSemantic
 
@@ -47,6 +46,7 @@ class StatusException(Status, Exception):
 	@property
 	def body(self):
 		if not hasattr(self, '_body'):
+			from httoop.messages.body import Body
 			self._body = Body(mimetype='application/json')
 			self._body.data = self.to_dict()
 		return self._body

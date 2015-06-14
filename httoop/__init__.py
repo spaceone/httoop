@@ -4,6 +4,8 @@
 .. seealso:: :rfc:`2616`
 """
 
+from __future__ import absolute_import
+
 __all__ = [
 	'Status', 'Body', 'Headers', 'URI', 'Method',
 	'Request', 'Response', 'Protocol', 'Date', 'ServerStateMachine', 'ClientStateMachine',

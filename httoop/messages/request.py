@@ -35,7 +35,7 @@ class Request(Message):
 	def uri(self, uri):
 		self.__uri.set(uri)
 
-	def __init__(self, method=None, uri=None, headers=None, body=None, protocol=None):
+	def __init__(self, method=None, uri=None, headers=None, body=None, protocol=None):  # pylint: disable=R0913
 		"""Creates a new Request object to hold information about a request.
 
 			:param method: the requested method

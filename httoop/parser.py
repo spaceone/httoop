@@ -2,6 +2,8 @@
 u"""Implements a state machine for the parsing process.
 """
 
+from __future__ import absolute_import
+
 CR = b'\r'
 LF = b'\n'
 CRLF = CR + LF

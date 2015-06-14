@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import
+
 __version__ = 0.0
 from httoop.header import Server as __Server, UserAgent as __UserAgent
 from httoop.messages import Protocol

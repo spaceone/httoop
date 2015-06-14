@@ -8,7 +8,7 @@ from httoop.messages import Request, Response
 from httoop.status import STATUSES
 from httoop.date import Date
 from httoop.composer import ComposedMessage
-from httoop import ServerProtocol, ServerHeader
+from httoop.version import ServerProtocol, ServerHeader
 
 
 class ServerStateMachine(StateMachine):

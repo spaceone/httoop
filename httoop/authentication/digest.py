@@ -49,7 +49,6 @@ class DigestAuthResponseScheme(DigestAuthScheme):
 			domain = ' '.join(domain)
 		nonce = authinfo['nonce'].replace('"', '')
 
-		opaque = authinfo.get('opaque')
 		stale = authinfo.get('stale')
 		if isinstance(stale, bool):
 			stale = 'true' if stale else 'false'
@@ -57,16 +56,16 @@ class DigestAuthResponseScheme(DigestAuthScheme):
 		qop_options = authinfo.get('qop', tuple(cls.qops))
 		if isinstance(qop_options, (list, tuple)):
 			qop_options = ','.join(qop_options)
-		auth_param = authinfo.get('auth-param', [None, None])
+
 		params = [
 			('realm', realm),
 			('domain', domain),
 			('nonce', nonce),
-			('opaque', opaque),
+			('opaque', authinfo.get('opaque')),
 			('stale', stale),
 			('algorithm', algorithm),
 			('qop', qop_options),
-			auth_param
+			authinfo.get('auth-param', [None, None])
 		]
 		return [(k, v) for k, v in params if v is not None]
 
@@ -96,36 +95,28 @@ class DigestAuthRequestScheme(DigestAuthScheme):
 	def _compose(cls, authinfo):
 		username = authinfo['username']
 		realm = authinfo['realm']
-		nonce = authinfo.get('nonce', '').replace('"', '')
-		if not nonce:
-			nonce = cls.generate_nonce(authinfo)
 		digest_uri = authinfo['uri']
+		nonce = authinfo.get('nonce', '').replace('"', '')
 		response = authinfo.get('response')
-		if response is None:
-			response = cls.calculate_request_digest(authinfo)
-
-		algorithm = authinfo.get('algorithm')
-		opaque = authinfo.get('opaque')
-		message_qop = authinfo.get('qop')
-		auth_param = authinfo.get('auth-param', [None, None])
-
 		cnonce = None
 		nonce_count = None
+		message_qop = authinfo.get('qop')
 		if message_qop:
 			cnonce = authinfo['cnonce']
 			nonce_count = authinfo['nc']
+
 		params = [
 			('username', username),
 			('realm', realm),
-			('nonce', nonce),
+			('nonce', nonce or cls.generate_nonce(authinfo)),
 			('uri', digest_uri),
-			('response', response),
-			('algorithm', algorithm),
+			('response', response or cls.calculate_request_digest(authinfo)),
+			('algorithm', authinfo.get('algorithm')),
 			('cnonce', cnonce),
-			('opaque', opaque),
+			('opaque', authinfo.get('opaque')),
 			('qop', message_qop),
 			('nc', nonce_count),
-			auth_param
+			authinfo.get('auth-param', [None, None])
 		]
 		return [(k, v) for k, v in params if v is not None]
 

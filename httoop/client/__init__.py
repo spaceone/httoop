@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from httoop import UserAgentHeader
+from httoop.version import UserAgentHeader
 from httoop.parser import StateMachine
 from httoop.date import Date
 from httoop.messages import Response

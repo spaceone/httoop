@@ -12,7 +12,7 @@ class Headers(CaseInsensitiveDict):
 	__metaclass__ = HTTPSemantic
 
 	# disallowed bytes for HTTP header field names
-	HEADER_RE = re.compile(b"[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]")
+	HEADER_RE = re.compile(br"[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]")
 
 	@staticmethod
 	def formatvalue(value):

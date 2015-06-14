@@ -67,7 +67,7 @@ class URI(object):
 		else:
 			try:
 				port = int(port)
-				if not (0 <= int(port) <= 65535):
+				if not 0 <= int(port) <= 65535:
 					raise ValueError
 			except ValueError:
 				raise InvalidURI('Invalid port: %r' % (port))  # TODO: TypeError
@@ -120,7 +120,7 @@ class URI(object):
 			True
 		"""
 		# Remove double forward-slashes from the path
-		path = re.sub(b'\/{2,}', b'/', self.path)
+		path = re.sub(br'\/{2,}', b'/', self.path)
 		# With that done, go through and remove all the relative references
 		unsplit = []
 		for part in path.split(b'/'):
@@ -148,7 +148,7 @@ class URI(object):
 			pass
 		elif not self.path:
 			pass
-		elif (self.path != u'*' and self.path[0] != u'/'):
+		elif self.path != u'*' and self.path[0] != u'/':
 			pass
 		else:
 			return
@@ -237,7 +237,7 @@ class URI(object):
 	def _compose_uri_iter(self):
 		u"""composes the whole URI"""
 		quote = self.quote
-		scheme, username, password, host, port, path, query_string, fragment = self.tuple
+		scheme, username, password, host, port, path, _, fragment = self.tuple
 		if path == u'*':
 			yield b'*'
 			return

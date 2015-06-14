@@ -5,7 +5,9 @@ from httoop.date import Date
 
 
 class _DateComparable(object):
+
 	Date = Date
+
 	def sanitize(self):
 		self.value = self.Date.parse(self.value)
 

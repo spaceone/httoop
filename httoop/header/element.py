@@ -56,7 +56,7 @@ class HeaderElement(object):
 		return self.value == getattr(other, 'value', other)
 
 	def __ne__(self, other):
-		return not (self == other)
+		return not self == other
 
 	def __bytes__(self):
 		return self.compose()

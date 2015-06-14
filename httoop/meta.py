@@ -2,6 +2,7 @@
 
 """
 
+from __future__ import absolute_import
 from httoop.util import Unicode, PY3
 
 __all__ = ['HTTPSemantic']
@@ -37,7 +38,7 @@ class Semantic(object):
 		return bytes(self) == other
 
 	def __ne__(self, other):
-		return not (self == other)
+		return not self == other
 
 	def __ge__(self, other):
 		return self == other or self > other

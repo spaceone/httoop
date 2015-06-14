@@ -134,7 +134,7 @@ class PRECONDITION_FAILED(ClientErrorStatus):
 	code = 412
 
 
-class REQUEST_ENTITY_TOO_LARGE(ClientErrorStatus):
+class PAYLOAD_TOO_LARGE(ClientErrorStatus):
 	u"""The HTTP server can deny too large representations.
 		A LBYL request can be useful.
 		If the server can only not handle the request e.g. because of
@@ -143,7 +143,7 @@ class REQUEST_ENTITY_TOO_LARGE(ClientErrorStatus):
 	code = 413
 
 
-class REQUEST_URI_TOO_LONG(ClientErrorStatus):
+class URI_TOO_LONG(ClientErrorStatus):
 	u"""Raised if the given URI is too long for the server."""
 
 	code = 414

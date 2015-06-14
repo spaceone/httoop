@@ -2,8 +2,6 @@
 from httoop.codecs.common import Codec
 from httoop.exceptions import DecodeError
 
-__name__ = 'form-data'
-
 
 class Multipart(Codec):
 

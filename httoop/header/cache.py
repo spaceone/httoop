@@ -15,5 +15,5 @@ class Vary(HeaderElement):
 	pass
 
 
-class Warning(HeaderElement):
+class Warning(HeaderElement):  # pylint: disable=W0622
 	pass

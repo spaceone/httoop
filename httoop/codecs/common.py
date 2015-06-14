@@ -5,19 +5,19 @@ from httoop.util import Unicode
 
 class Codec(object):
 	@classmethod
-	def decode(cls, data, charset=None, mimetype=None):
+	def decode(cls, data, charset=None, mimetype=None):  # pragma: no cover
 		raise NotImplementedError
 
 	@classmethod
-	def encode(cls, data, charset=None, mimetype=None):
+	def encode(cls, data, charset=None, mimetype=None):  # pragma: no cover
 		raise NotImplementedError
 
 	@classmethod
-	def iterencode(cls, data, charset=None, mimetype=None):
+	def iterencode(cls, data, charset=None, mimetype=None):  # pragma: no cover
 		raise NotImplementedError
 
 	@classmethod
-	def iterdecode(cls, data, charset=None, mimetype=None):
+	def iterdecode(cls, data, charset=None, mimetype=None):  # pragma: no cover
 		raise NotImplementedError
 
 

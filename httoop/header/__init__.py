@@ -22,7 +22,7 @@ from httoop.header.headers import Headers
 from httoop.header import semantics
 from httoop.header import messaging
 from httoop.header import conditional
-from httoop.header import range
+from httoop.header import range  # pylint: disable=W0622
 from httoop.header import cache
 from httoop.header import auth
 

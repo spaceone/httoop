@@ -3,8 +3,6 @@ from httoop.codecs.common import Codec, Enconv
 from httoop.exceptions import DecodeError
 from httoop.util import Unicode
 
-__name__ = 'x-www-form-urlencoded'
-
 
 class Percent(Codec):
 	u"""Percentage encoding

@@ -30,9 +30,8 @@ from httoop.codecs.common import Codec, Enconv
 
 
 def lookup(encoding, raise_errors=True):
-	if raise_errors:
-		return CODECS[encoding]
-	return CODECS.get(encoding)
+	type_ = '%s/*' % (encoding.split('/', 1)[0],)
+	return CODECS.get(encoding) or CODECS.get(type_) or (raise_errors and CODECS[encoding]) or None
 
 
 def register(encoding, codec):

@@ -5,11 +5,13 @@ from httoop.exceptions import DecodeError
 __name__ = 'form-data'
 
 
-class MultipartFormData(Codec):
-	mimetype = 'multipart/form-data'
+class Multipart(Codec):
+
+	mimetype = 'multipart/*'
+	default_content_type = 'text/plain; charset=US-ASCII'
 
 	@classmethod
-	def encode(self, data, charset=None, mimetype=None):
+	def encode(cls, data, charset=None, mimetype=None):
 		boundary = mimetype.boundary.encode('ISO8859-1')
 		multipart = b''
 		for body in data:
@@ -18,7 +20,7 @@ class MultipartFormData(Codec):
 		return multipart
 
 	@classmethod
-	def decode(self, data, charset=None, mimetype=None):
+	def decode(cls, data, charset=None, mimetype=None):
 		boundary = mimetype.boundary.encode('ISO8859-1')
 		parts = data.split(b'--%s' % (boundary,))
 		part = parts.pop(0)
@@ -44,7 +46,9 @@ class MultipartFormData(Codec):
 				raise DecodeError(u'Multipart does not end with CRLF: %r' % (content[-2].decode('ISO8859-1')))
 			content = content[:-2]
 			body = Body()
+			body.headers.clear()
 			body.headers.parse(headers)
+			body.headers.setdefault('Content-Type', cls.default_content_type)
 			body.parse(content)
 			multiparts.append(body)
 		return multiparts

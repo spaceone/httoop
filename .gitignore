@@ -1,0 +1,16 @@
+*~
+tmp
+.git
+.tox
+dist
+*.pyc
+*.pyo
+*.bak
+*.xml
+*.sw?
+build
+.cache
+coverage
+.coverage*
+docs/build
+*.egg-info

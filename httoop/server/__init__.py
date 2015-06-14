@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from httoop.parser import StateMachine, NOT_RECEIVED_YET
 from httoop.status import (
-	BAD_REQUEST, LENGTH_REQUIRED, REQUEST_URI_TOO_LONG,
+	BAD_REQUEST, LENGTH_REQUIRED, URI_TOO_LONG,
 	MOVED_PERMANENTLY, HTTP_VERSION_NOT_SUPPORTED, SWITCHING_PROTOCOLS
 )
 from httoop.messages import Request, Response
@@ -86,7 +86,7 @@ class ServerStateMachine(StateMachine):
 
 	def _check_uri_max_length(self, uri):
 		if len(uri) > self.MAX_URI_LENGTH:
-			raise REQUEST_URI_TOO_LONG(
+			raise URI_TOO_LONG(
 				u'The maximum length of the request is %d' % self.MAX_URI_LENGTH
 			)
 

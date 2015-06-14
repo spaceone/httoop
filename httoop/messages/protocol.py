@@ -68,9 +68,6 @@ class Protocol(object):
 			return False
 		return self.version == other.version
 
-	def __ne__(self, other):
-		return not (self == other)
-
 	def __lt__(self, other):
 		try:
 			other = Protocol(other)
@@ -88,9 +85,3 @@ class Protocol(object):
 				return self.major > other
 			raise  # pragma: no cover
 		return self.version > other.version
-
-	def __ge__(self, other):
-		return self == other or self > other
-
-	def __le__(self, other):
-		return self == other or self < other

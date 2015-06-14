@@ -52,6 +52,18 @@ class HTTPSemantic(type):
 			return bytes(self) == other
 		setdefault('__eq__', __eq__)
 
+		def __ne__(self, other):
+			return not (self == other)
+		setdefault('__ne__', __ne__)
+
+		def __ge__(self, other):
+			return self == other or self > other
+		setdefault('__ge__', __ge__)
+
+		def __le__(self, other):
+			return self == other or self < other
+		setdefault('__le__', __le__)
+
 		def __hash__(self):
 			return bytes(self).__hash__()
 		setdefault('__hash__', __hash__)

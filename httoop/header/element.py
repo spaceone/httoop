@@ -10,8 +10,6 @@
 __all__ = ['HEADER', 'HeaderElement']
 
 import re
-# TODO: parse encoded words like =?UTF-8?B?…?= (RFC 2047); seealso quopri; '=?utf-8?q?=E2=86=92?='.decode('quopri')
-# TODO: unify the use of unicode / bytes
 
 from httoop.util import CaseInsensitiveDict, iteritems, Unicode
 from httoop.exceptions import InvalidHeader
@@ -37,6 +35,7 @@ class HeaderElement(object):
 	# Regular expression that matches `special' characters in parameters, the
 	# existance of which force quoting of the parameter value.
 	RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"/\[\]\?=]')
+	RE_SPLIT = re.compile(',(?=(?:[^"]*"[^"]*")*[^"]*$)')
 
 	def __init__(self, value, params=None):
 		self.value = bytes(value)
@@ -94,27 +93,29 @@ class HeaderElement(object):
 
 	@classmethod
 	def split(cls, fieldvalue):
-		# FIXME: quoted strings may contain ","
 		# TODO: elements which aren't comma separated
-		return fieldvalue.split(',')
+		return cls.RE_SPLIT.split(fieldvalue)
 
 	@classmethod
 	def join(cls, values):
 		return b', '.join(values)
 
 	@classmethod
-	def sorted(cls, fieldvalue):
-		return [cls.parse(element) for element in cls.split(fieldvalue)]
-		# TODO: should we do:?
-		#return list(sorted(...))
+	def sorted(cls, elements):
+		return elements
 
 	@classmethod
-	def formatparam(cls, param, value=None, quote=1):
+	def merge(cls, elements, others):
+		return cls.join([bytes(x) for x in cls.sorted(elements + others)])
+
+	@classmethod
+	def formatparam(cls, param, value=None, quote=False):
 		"""Convenience function to format and return a key=value pair.
 
 		This will quote the value if needed or if quote is true.
 		"""
 		if value:
+			value = bytes(value)
 			if quote or cls.RE_TSPECIALS.search(value):
 				value = value.replace('\\', '\\\\').replace('"', r'\"')
 				return '%s="%s"' % (param, value)
@@ -124,7 +125,7 @@ class HeaderElement(object):
 			return param
 
 	def __repr__(self):
-		return '<%s(%r)>' % (self.__class__.__name__, self.value)
+		return '<%s(%r, %r)>' % (self.__class__.__name__, self.value, self.params)
 
 
 class MimeType(object):
@@ -194,7 +195,7 @@ class _AcceptElement(HeaderElement):
 	"""
 
 	# RFC 2616 Section 3.9
-	RE_Q_SEPARATOR = re.compile(r'; *q *= *(?:(?:0(?:\.[0-9]{3})?)|(?:1(?:\.00?0?)?))')
+	RE_Q_SEPARATOR = re.compile(r';\s*q\s*=\s*')
 
 	@property
 	def quality(self):
@@ -231,9 +232,8 @@ class _AcceptElement(HeaderElement):
 		return cls(media_type, params)
 
 	@classmethod
-	def sorted(cls, fieldvalue):
-		result = super(_AcceptElement, cls).sorted(fieldvalue)
-		return list(sorted(result, reverse=True))
+	def sorted(cls, elements):
+		return list(sorted(elements, reverse=True))
 
 	def __eq__(self, other):
 		if not isinstance(other, _AcceptElement):

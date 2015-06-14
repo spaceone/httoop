@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 
-from httoop.util import CaseInsensitiveDict, iteritems, to_unicode
+from httoop.util import CaseInsensitiveDict, iteritems, to_unicode, decode_header
 from httoop.meta import HTTPSemantic
 from httoop.header.element import HEADER, HeaderElement
 from httoop.exceptions import InvalidHeader
@@ -16,14 +16,14 @@ class Headers(CaseInsensitiveDict):
 
 	@staticmethod
 	def formatvalue(value):
-		return to_unicode(value)  # TODO: do we really want unicode here?
+		return to_unicode(value)  # TODO: using unicode here is not good if processed via HeaderElement
 
 	@classmethod
 	def formatkey(cls, key):
 		key = CaseInsensitiveDict.formatkey(key)
 		if cls.HEADER_RE.search(key):
 			raise InvalidHeader(u"Invalid header name: %r" % key.decode('ISO8859-1'))
-		return key
+		return key  # TODO: do we want bytes here?
 
 	def elements(self, fieldname):
 		u"""Return a sorted list of HeaderElements from
@@ -34,7 +34,7 @@ class Headers(CaseInsensitiveDict):
 			return []
 
 		Element = HEADER.get(fieldname, HeaderElement)
-		return Element.sorted(fieldvalue)
+		return Element.sorted([Element.parse(element) for element in Element.split(fieldvalue)])
 
 	def element(self, fieldname, default=None):
 		u"""Treat the field as single element"""
@@ -76,7 +76,10 @@ class Headers(CaseInsensitiveDict):
 			self.elements(name)
 
 	def merge(self, other):
-		raise NotImplementedError
+		other = self.__class__(other)
+		for key in other:
+			Element = HEADER.get(key, HeaderElement)
+			self[key] = Element.merge(self.elements(key), other.elements(key))
 
 	def set(self, headers):
 		for key in self.keys():
@@ -94,35 +97,36 @@ class Headers(CaseInsensitiveDict):
 
 		lines = data.split(b'\r\n')
 
-		# parse headers into key/value pairs paying attention
-		# to continuation lines.
 		while lines:
-			# Parse initial header name : value pair.
 			curr = lines.pop(0)
-			if b':' not in curr:
+			name, _, value = curr.partition(b':')
+			if _ != b':':
 				raise InvalidHeader(u"Invalid header line: %r" % curr.decode('ISO8859-1'))
-
-			name, value = curr.split(":", 1)
-			name = name.rstrip(" \t")
+			name = name.rstrip(' \t')
 
 			if self.HEADER_RE.search(name):
 				raise InvalidHeader(u"Invalid header name: %r" % name.decode('ISO8859-1'))
 
 			name, value = name.strip(), [value.lstrip()]
 
-			# Consume value continuation lines
-			while lines and lines[0].startswith((" ", "\t")):
+			# continuation lines
+			while lines and lines[0].startswith((' ', '\t')):
 				value.append(lines.pop(0)[1:])
 			value = b''.join(value).rstrip()
+			if b'=?' in value:
+				value = u''.join(atom.decode(charset or 'ISO8859-1') for atom, charset in decode_header(value))
+			else:
+				value = value.decode('ISO8859-1')
 
-			# TODO: parse encoded fields (MIME syntax)
-
-			# store new header value
 			self.append(name, value)
 
 	def compose(self):
-		# TODO: if value contains UTF-8 chars encode them in MIME
-		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, v.encode('ISO8859-1', 'replace')) for k, v in iteritems(self))
+		def _encode(v):
+			try:
+				return v.encode('ISO8859-1')
+			except UnicodeEncodeError:
+				return v.encode('ISO8859-1', 'replace')  # FIXME: if value contains UTF-8 chars encode them in MIME; =?UTF-8?B?…?= (RFC 2047); seealso quopri
+		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, _encode(v)) for k, v in iteritems(self))
 
 	def __repr__(self):
 		return "<HTTP Headers(%s)>" % repr(list(self.items()))

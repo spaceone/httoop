@@ -2,8 +2,8 @@
 u"""Utilities for python2/3 compatibility"""
 
 __all__ = [
-	'PY3', 'Unicode', 'BytesIO', 'iteritems',
-	'to_unicode', 'to_ascii', 'get_bytes_from_unknown',
+	'PY3', 'Unicode', 'iteritems',
+	'to_unicode', 'to_ascii', 'decode_header',
 	'IFile', 'partial', 'formatdate', 'parsedate',
 	'CaseInsensitiveDict'
 ]
@@ -18,13 +18,16 @@ try:
 except NameError:
 	Unicode = str
 
-from io import BytesIO
-
 try:
 	from email.utils import formatdate, parsedate
 	formatdate = partial(formatdate, usegmt=True)
 except ImportError:
 	from rfc822 import formatdate, parsedate
+
+try:
+	from email.Header import decode_header
+except ImportError: # Python 3
+	from email.header import decode_header
 
 
 def iteritems(d, **kw):
@@ -46,14 +49,6 @@ def to_ascii(string):
 	if isinstance(string, Unicode):
 		return string.encode('ascii', 'ignore')
 	return bytes(string).decode('ascii', 'ignore').encode('ascii')
-
-
-def get_bytes_from_unknown(unistr):
-	for encoding in ('UTF-8', 'ISO8859-1'):
-		try:
-			return unistr.encode(encoding)
-		except UnicodeEncodeError:
-			pass
 
 
 def if_has(func):

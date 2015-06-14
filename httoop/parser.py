@@ -39,6 +39,9 @@ class StateMachine(object):
 			body=False
 		)
 
+	def on_message_started(self):
+		self._reset_state()
+
 	def on_startline_complete(self):
 		self.state['protocol'] = True
 		self.on_protocol_complete()
@@ -60,6 +63,11 @@ class StateMachine(object):
 		self.message.body.seek(0)
 		self.set_content_length()
 
+	def on_message_complete(self):
+		message = self.message
+		self.message = None
+		return message
+
 	def parse(self, data):
 		u"""Appends the given data to the internal buffer
 			and parses it as HTTP Request-Messages.
@@ -69,33 +77,32 @@ class StateMachine(object):
 			:type  data: bytes
 		"""
 		self.buffer.extend(data)
-		return tuple(self._parse())
+		return tuple(x for x in self._parse() if x is not None)
 
 	def _parse(self):
 		while self.buffer:
 			if self.message is None:
-				self._reset_state()
+				yield self.on_message_started()
 			state = self.state
 			if not state['startline']:
 				if self.parse_startline():
 					return
 				state['startline'] = True
-				self.on_startline_complete()
+				yield self.on_startline_complete()
 
 			if not state['headers']:
 				if self.parse_headers():
 					return
 				state['headers'] = True
-				self.on_headers_complete()
+				yield self.on_headers_complete()
 
 			if not state['body']:
 				if self.parse_body():
 					return
 				state['body'] = True
-				self.on_body_complete()
+				yield self.on_body_complete()
 
-			yield self.message
-			self.message = None
+			yield self.on_message_complete()
 
 	def parse_startline(self):
 		if CRLF not in self.buffer:
@@ -141,8 +148,7 @@ class StateMachine(object):
 		elif self.message_length:
 			return self.parse_body_with_message_length()
 		else:
-			# no message body
-			return False
+			return False  # no message body
 
 	def determine_message_length(self):
 		# RFC 2616 Section 4.4

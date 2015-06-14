@@ -24,8 +24,8 @@ class ServerStateMachine(StateMachine):
 		self.request = None
 		self.response = None
 
-	def _reset_state(self):
-		super(ServerStateMachine, self)._reset_state()
+	def on_message_started(self):
+		super(ServerStateMachine, self).on_message_started()
 		self.response = Response()
 		self.request = self.message
 		self.state.update(dict(
@@ -33,11 +33,12 @@ class ServerStateMachine(StateMachine):
 			uri=False
 		))
 
-	def _parse(self):
-		for request in super(ServerStateMachine, self)._parse():
-			yield (request, self.response)
-			self.request = None
-			self.response = None
+	def on_message_complete(self):
+		request = super(ServerStateMachine, self).on_message_complete()
+		response = self.response
+		self.request = None
+		self.response = None
+		return (request, response)
 
 	def parse_startline(self):
 		state = super(ServerStateMachine, self).parse_startline()
@@ -67,10 +68,10 @@ class ServerStateMachine(StateMachine):
 	def on_headers_complete(self):
 		self.check_host_header_exists()
 		super(ServerStateMachine, self).on_headers_complete()
-		self.check_message_without_body_containing_data()
 
 	def on_body_complete(self):
 		super(ServerStateMachine, self).on_body_complete()
+		self.check_message_without_body_containing_data()
 		self.check_methods_without_body()
 
 	def check_request_protocol(self):
@@ -112,7 +113,7 @@ class ServerStateMachine(StateMachine):
 			raise BAD_REQUEST('Missing Host header')
 
 	def check_message_without_body_containing_data(self):
-		if self.buffer and 'Content-Length' not in self.message.headers:
+		if self.buffer and 'Content-Length' not in self.message.headers and not self.chunked:
 			# request without Content-Length header but body
 			raise LENGTH_REQUIRED(u'Missing Content-Length header.')
 

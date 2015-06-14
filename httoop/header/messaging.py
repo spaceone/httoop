@@ -2,8 +2,39 @@
 # TODO: Via, Server, User-Agent can contain comments → parse them
 import re
 
-from httoop.header.element import HeaderElement, _AcceptElement, MimeType, CodecElement
+from httoop.header.element import HeaderElement, _AcceptElement, MimeType
+from httoop.util import Unicode
 from httoop.exceptions import InvalidHeader
+from httoop.codecs import lookup
+
+
+class CodecElement(object):
+
+	CODECS = None
+
+	raise_on_missing_codec = True
+
+	def sanitize(self):
+		super(CodecElement, self).sanitize()
+		if self.value and self.codec is None and self.raise_on_missing_codec:
+			raise InvalidHeader(u'Unknown %s: %r' % (self.__name__, self.value))
+
+	@property
+	def codec(self):
+		try:
+			mimetype = self.mimetype
+		except AttributeError:
+			mimetype = self.value
+
+		for encoding in (self.value, mimetype):
+			if self.CODECS is not None:
+				encoding = self.CODECS.get(encoding)
+				if not isinstance(encoding, (bytes, Unicode)):
+					return encoding
+			try:
+				return lookup(encoding.lower())
+			except KeyError:
+				pass
 
 
 class Accept(_AcceptElement, MimeType):
@@ -69,8 +100,11 @@ class ContentMD5(HeaderElement):
 	__name__ = 'Content-MD5'
 
 
-class ContentType(HeaderElement, MimeType):
+class ContentType(HeaderElement, MimeType, CodecElement):
+
 	__name__ = 'Content-Type'
+
+	raise_on_missing_codec = False
 
 	@property
 	def charset(self):
@@ -83,6 +117,7 @@ class ContentType(HeaderElement, MimeType):
 	VALID_BOUNDARY = re.compile('^[ -~]{0,200}[!-~]$')
 
 	def sanitize(self):
+		super(ContentType, self).sanitize()
 		if 'boundary' not in self.params:
 			return
 
@@ -217,7 +252,7 @@ class TransferEncoding(CodecElement, HeaderElement):
 
 	# IANA assigned HTTP Transfer-Encoding values
 	CODECS = {
-		'chunked': None,
+		'chunked': False,
 		'compress': NotImplementedError,
 		'deflate': 'application/zlib',
 		'gzip': 'application/gzip',

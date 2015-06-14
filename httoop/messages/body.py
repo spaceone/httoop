@@ -139,6 +139,7 @@ class Body(IFile):
 			self.set(data[0])
 		if codec:
 			self.data = codec.decode(self.__content_bytes(), self.encoding, self.mimetype)
+			return self.data
 
 	def compress(self):
 		u"""Applies the Content-Encoding codec to the content"""

@@ -7,13 +7,38 @@ from httoop.messages import Body  # TODO: remove ?
 from httoop.status.status import Status, REASONS
 from httoop.meta import HTTPSemantic
 
-# TODO: create HTTPEntity ?
-# TODO: inherit from response?
-# TODO: also inherit from circuits.Event/SF.http.server.Response,
-# implement __call__ for additional arguments then?
-class HTTPStatusException(Status, Exception):
+
+class StatusType(HTTPSemantic):
+
+	def __new__(mcs, name, bases, dict_):
+		code = int(dict_.get('code', 0))
+		if 99 < code < 200:
+			scls = 'InformationalStatus'
+		elif code < 300:
+			scls = 'SuccessStatus'
+		elif code < 400:
+			scls = 'RedirectStatus'
+		elif code < 500:
+			scls = 'ClientErrorStatus'
+		elif code < 600:
+			scls = 'ServerErrorStatus'
+		else:
+			raise RuntimeError('A HTTP Status code can not be greater than 599 or lower than 100')
+
+		if code and not any(scls == base.__name__ for base in bases):
+			raise RuntimeError('%s must inherit from %s' % (name, scls))
+
+		reason = REASONS.get(code, ('', ''))
+		dict_.setdefault('reason', reason[0])
+		dict_.setdefault('description', reason[1])
+		return super(StatusType, mcs).__new__(mcs, name, bases, dict_)
+
+
+class StatusException(Status, Exception):
 	u"""This class represents a small HTTP Response message
 		for error handling purposes"""
+
+	__metaclass__ = StatusType
 
 	@property
 	def headers(self):
@@ -93,78 +118,3 @@ class HTTPStatusException(Status, Exception):
 			description=self.description,
 			headers=self.headers
 		)
-
-
-class HTTPInformational(HTTPStatusException):
-	u"""INFORMATIONAL = 1xx
-		Mostly used for negotiation with the HTTP Server
-	"""
-	pass
-
-
-class HTTPSuccess(HTTPStatusException):
-	u"""SUCCESS = 2xx
-		indicates that an operation was successful.
-	"""
-	pass
-
-
-class HTTPRedirect(HTTPStatusException):
-	u"""REDIRECTIONS = 3xx
-		A redirection to other URI(s) which are set in the Location-header.
-	"""
-	location = None
-	u"""TODO"""
-
-	def __init__(self, location, *args, **kwargs):
-		kwargs.setdefault('headers', {})['Location'] = location
-		super(HTTPRedirect, self).__init__(*args, **kwargs)
-
-	def to_dict(self):
-		dct = super(HTTPRedirect, self).to_dict()
-		if self.headers.get('Location'):
-			dct.update(dict(Location=self.headers['Location']))
-		return dct
-
-
-class HTTPClientError(HTTPStatusException):
-	u"""CLIENT_ERRORS = 4xx
-		Something is wrong with the client: e.g. authentication,
-		format of wanted representation, or error in the clients http library.
-	"""
-	pass
-
-
-class HTTPServerError(HTTPStatusException):
-	u"""SERVER_ERRORS = 5xx
-		Indicates that something gone wrong on the server side.
-		The server can send the Retry-After header if
-		it knows that the problem is temporary.
-	"""
-	def to_dict(self):
-		dct = super(HTTPServerError, self).to_dict()
-		dct.update(dict(traceback=self.traceback or ""))
-		return dct
-
-
-class StatusType(HTTPSemantic):
-	def __new__(mcs, name, bases, dict_):
-		code = int(dict_['code'])
-		if 99 < code < 200:
-			scls = HTTPInformational
-		elif code < 300:
-			scls = HTTPSuccess
-		elif code < 400:
-			scls = HTTPRedirect
-		elif code < 500:
-			scls = HTTPClientError
-		elif code < 600:
-			scls = HTTPServerError
-		else:
-			raise ValueError('A HTTP Status code can not be greater than 599 or lower than 100')
-
-		reason = REASONS.get(code, ('', ''))
-		dict_.setdefault('reason', reason[0])
-		dict_.setdefault('description', reason[1])
-		dict_.setdefault('__str__', HTTPStatusException.__str__)  # TODO: remove metaclass / inheritance
-		return super(StatusType, mcs).__new__(mcs, name, (scls,), dict_)

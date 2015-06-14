@@ -20,7 +20,7 @@ __all__ = [
 	'REQUEST_RANGE_NOT_SATISFIABLE', 'EXPECTATION_FAILED',
 	'I_AM_A_TEAPOT', 'INTERNAL_SERVER_ERROR', 'NOT_IMPLEMENTED',
 	'SERVICE_UNAVAILABLE', 'GATEWAY_TIMEOUT',
-	'HTTP_VERSION_NOT_SUPPORTED', 'HTTPStatusException',
+	'HTTP_VERSION_NOT_SUPPORTED', 'StatusException',
 	'DecodeError', 'EncodeError',
 	'__version__', 'ServerProtocol', 'UserAgentHeader', 'ServerHeader'
 ]
@@ -36,7 +36,7 @@ from httoop.server import ServerStateMachine
 from httoop.client import ClientStateMachine
 
 from httoop.status import (
-	HTTPStatusException,
+	StatusException,
 	CONTINUE, SWITCHING_PROTOCOLS, OK, CREATED, ACCEPTED, NON_AUTHORITATIVE_INFORMATION,
 	NO_CONTENT, RESET_CONTENT, PARTIAL_CONTENT, MULTIPLE_CHOICES, MOVED_PERMANENTLY, FOUND,
 	SEE_OTHER, NOT_MODIFIED, USE_PROXY, TEMPORARY_REDIRECT, BAD_REQUEST, UNAUTHORIZED, PAYMENT_REQUIRED,

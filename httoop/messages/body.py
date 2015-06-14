@@ -78,12 +78,12 @@ class Body(IFile):
 
 	@property
 	def transfer_encoding(self):
-		return self.headers.element('Transfer-Enconding')
+		return self.headers.element('Transfer-Encoding')
 
 	@transfer_encoding.setter
 	def transfer_encoding(self, transfer_encoding):
 		if transfer_encoding:
-			self.headers['Transfer-Enconding'] = bytes(transfer_encoding)
+			self.headers['Transfer-Encoding'] = bytes(transfer_encoding)
 			self.transfer_codec = None  #self.transfer_encoding.iterdecode()
 		else:
 			self.headers.pop('Transfer-Encoding', None)
@@ -176,7 +176,7 @@ class Body(IFile):
 			data = self.transfer_codec.decode(data)
 
 		if self.content_codec:
-			data = self.transfer_codec.decode(data)
+			data = self.content_codec.decode(data)
 
 		self.write(data)
 

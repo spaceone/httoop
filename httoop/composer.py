@@ -10,12 +10,12 @@ class ComposedMessage(object):
 
 	@property
 	def transfer_encoding(self):
-		return self.message.headers.elements('Transfer-Enconding')
+		return self.message.headers.elements('Transfer-Encoding')
 
 	@transfer_encoding.setter
 	def transfer_encoding(self, transfer_encoding):
 		if transfer_encoding:
-			self.message.headers['Transfer-Enconding'] = bytes(transfer_encoding)
+			self.message.headers['Transfer-Encoding'] = bytes(transfer_encoding)
 		#	self.message.transfer_codec = None  #self.message.transfer_encoding.iterdecode()
 		else:
 			self.message.headers.pop('Transfer-Encoding', None)
@@ -44,18 +44,5 @@ class ComposedMessage(object):
 		start_line = bytes(self.message)
 		headers = bytes(self.message.headers)
 		yield start_line + headers
-		body = self.message.body.__iter__()
-		if self.chunked:
-			body = self.__compose_chunked_iter(body)
-		for chunk in body:
-			yield chunk
-
-	def __compose_chunked_iter(self, iterable):
-		for data in iterable:
-			if not data:
-				continue
-			yield b"%x\r\n%s\r\n" % (len(data), data)
-		if self.message.trailer:
-			yield b"0\r\n%s" % bytes(self.message.trailer)
-		else:
-			yield b"0\r\n\r\n"
+		for data in self.message.body:
+			yield data

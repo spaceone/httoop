@@ -13,7 +13,7 @@ from httoop.messages import Body
 from httoop.util import iteritems
 
 
-class WSGIBody(Body):
+class WSGIBody(Body):  # pragma: no cover
 	u"""A Body for WSGI requests and responses"""
 
 	def write(self, bytes_):
@@ -23,7 +23,7 @@ class WSGIBody(Body):
 		return super(WSGIBody, self).read(*size)
 
 
-class WSGI(object):
+class WSGI(object):  # pragma: no cover
 	u"""A mixin class which implements the WSGI interface"""
 
 	def __init__(self, *args, **kwargs):

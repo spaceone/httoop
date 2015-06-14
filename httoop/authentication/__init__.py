@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 
 from httoop.header.element import HeaderElement
 from httoop.exceptions import InvalidHeader
@@ -10,6 +11,7 @@ from httoop.authentication.digest import DigestAuthResponseScheme, DigestAuthReq
 class AuthElement(HeaderElement):
 
 	schemes = {}
+	RE_SPACE_SPLIT = re.compile('\s+(?=(?:[^"]*"[^"]*")*[^"]*$)')
 
 	@classmethod
 	def parseparams(cls, elementstr):
@@ -42,9 +44,9 @@ class AuthElement(HeaderElement):
 
 		return b'%s %s' % (self.value.title(), authinfo)
 
-	@staticmethod
-	def split(value):
-		value = value.split()
+	@classmethod
+	def split(cls, value):
+		value = cls.RE_SPACE_SPLIT.split(value)
 		indexes = [i for i, val in enumerate(value) if val != b',' and b'=' not in val]
 		return [b' '.join(value[a:b]) for a, b in zip(indexes, indexes[1:] + [None])]
 

@@ -36,6 +36,7 @@ class HeaderElement(object):
 	# existance of which force quoting of the parameter value.
 	RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"/\[\]\?=]')
 	RE_SPLIT = re.compile(',(?=(?:[^"]*"[^"]*")*[^"]*$)')
+	RE_PARAMS = re.compile(';(?=(?:[^"]*"[^"]*")*[^"]*$)')
 
 	def __init__(self, value, params=None):
 		self.value = bytes(value)
@@ -72,13 +73,12 @@ class HeaderElement(object):
 		params = [b'; %s' % self.formatparam(k, v) for k, v in iteritems(self.params)]
 		return b'%s%s' % (self.value, ''.join(params))
 
-	@staticmethod
-	def parseparams(elementstr):
+	@classmethod
+	def parseparams(cls, elementstr):
 		"""Transform 'token;key=val' to ('token', {'key': 'val'})."""
-		# FIXME: quoted strings may contain ";"
 		# Split the element into a value and parameters. The 'value' may
 		# be of the form, "token=token", but we don't split that here.
-		atoms = [x.strip() for x in elementstr.split(';') if x.strip()] or ['']
+		atoms = [x.strip() for x in cls.RE_PARAMS.split(elementstr) if x.strip()] or ['']
 
 		initial_value = atoms.pop(0)
 		params = dict((key.strip(), value.strip().strip('"')) for key, _, value in (atom.partition('=') for atom in atoms))
@@ -93,7 +93,6 @@ class HeaderElement(object):
 
 	@classmethod
 	def split(cls, fieldvalue):
-		# TODO: elements which aren't comma separated
 		return cls.RE_SPLIT.split(fieldvalue)
 
 	@classmethod

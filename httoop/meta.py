@@ -11,17 +11,10 @@ __all__ = ['HTTPSemantic']
 class Semantic(object):
 
 	def __str__(self):
-		if PY3:
-			return self.__unicode__()
-		else:
-			return self.__bytes__()
+		return self.__unicode__() if PY3 else self.__bytes__()
 
 	def __unicode__(self):
-		bstr = bytes(self)
-		try:
-			return bstr.decode('UTF-8')
-		except UnicodeDecodeError:
-			return bstr.decode('ISO8859-1')
+		return bytes(self).decode(getattr(self, 'encoding', 'ISO8859-1'))
 
 	def __bytes__(self):
 		return self.compose()
@@ -45,9 +38,6 @@ class Semantic(object):
 
 	def __le__(self, other):
 		return self == other or self < other
-
-	def __hash__(self):
-		return bytes(self).__hash__()
 
 	def __repr__(self):
 		return '<HTTP %s(0x%x)>' % (self.__class__.__name__, id(self))

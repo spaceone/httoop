@@ -94,17 +94,15 @@ class Status(object):
 		u"""Compares a status with another :class:`Status` or :class:`int`"""
 		if isinstance(other, int):
 			return self.code == other
+		if isinstance(other, Status):
+			return self.code == other.code
 		return super(Status, self).__eq__(other)
 
 	def __lt__(self, other):
-		if isinstance(other, int):
-			return self.code < other
-		return super(Status, self).__lt__(other)
+		return self.code < other
 
 	def __gt__(self, other):
-		if isinstance(other, int):
-			return self.code > other
-		return super(Status, self).__gt__(other)
+		return self.code > other
 
 	def set(self, status):
 		u"""sets reason and status
@@ -114,10 +112,11 @@ class Status(object):
 			:type  status:
 				int or tuple or bytes or Status
 		"""
-		if isinstance(status, int):
+		if isinstance(status, int) and 99 < status < 600:
 			self.code, self.reason = status, REASONS.get(status, (u'', u''))[0]
 		elif isinstance(status, tuple):
-			self.code, self.reason = status
+			code, self.reason = status
+			self.code = int(code)
 		elif isinstance(status, (bytes, Unicode)):
 			code, reason = status.split(None, 1)
 			if isinstance(reason, bytes):
@@ -130,6 +129,7 @@ class Status(object):
 
 	def __repr__(self):
 		return '<HTTP Status (code=%d, reason=%r)>' % (self.code, self.reason)
+
 
 REASONS = {
 	# code: (reason, description)

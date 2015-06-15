@@ -1,3 +1,2 @@
 #!/bin/bash
-
-py.test -r fsxX --ignore=tmp --cov httoop --cov-report=html
+py.test2 -r fsxX --ignore=tmp --cov httoop --cov-report=html "$@"

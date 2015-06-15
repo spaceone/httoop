@@ -52,6 +52,7 @@ def test_digest_authorization(headers):
 def test_unknown_algorithm(headers):
 	auth = Authorization('Digest', {
 		'algorithm': 'bar', 'username': 'foo', 'realm': 'foo',
+		'uri': '/'
 	})
 	with pytest.raises(InvalidHeader) as excinfo:
 		bytes(auth)

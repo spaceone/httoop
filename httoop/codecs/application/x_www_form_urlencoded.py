@@ -23,7 +23,7 @@ class Percent(Codec):
 
 	@classmethod
 	def decode(cls, data, charset=None, mimetype=None):
-		return Enconv.decode(b''.join(cls._decode_iter(data)), charset)
+		return b''.join(cls._decode_iter(data)).decode(charset or 'ISO8859-1')
 
 	@classmethod
 	def _decode_iter(cls, data):

@@ -55,6 +55,21 @@ class Date(object):
 		else:
 			raise TypeError('Date(): got invalid argument')
 
+	def __eq__(self, other):
+		return self.timestamp == Date(other).timestamp
+
+	def __gt__(self, other):
+		return self.timestamp > Date(other).timestamp
+
+	def __lt__(self, other):
+		return self.timestamp < Date(other).timestamp
+
+	def __int__(self):
+		return int(self.timestamp)
+
+	def __float__(self):
+		return float(self.timestamp)
+
 	def to_timetuple(self):
 		return parsedate(formatdate(self.timestamp))[:7]
 
@@ -73,8 +88,6 @@ class Date(object):
 
 	def compose(self):
 		return self.to_http_string()
-
-	# TODO: implement __cmp__, __int__, (__float__), etc.
 
 	@classmethod
 	def parse(cls, timestr=None):

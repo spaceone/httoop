@@ -1,5 +1,5 @@
 import pytest
-from httoop.client import ComposedRequest
+from httoop.semantic.request import ComposedRequest
 
 
 def test_chunked_body_without_trailer(request):

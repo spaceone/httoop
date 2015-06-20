@@ -89,6 +89,9 @@ class Date(object):
 	def compose(self):
 		return self.to_http_string()
 
+	def __repr__(self):
+		return '<HTTP Date(%d)>' % (self.timestamp,)
+
 	@classmethod
 	def parse(cls, timestr=None):
 		u"""parses a HTTP date string and returns a :class:`Date` object

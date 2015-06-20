@@ -69,6 +69,47 @@ class Connection(HeaderElement):
 	pass
 
 
+class ContentDisposition(HeaderElement):
+
+	__name__ = 'Content-Disposition'
+
+	from httoop.date import Date
+
+	@property
+	def filename(self):
+		return self.params.get('filename')
+
+	@property
+	def attachment(self):
+		return self.value == 'attachment'
+
+	@property
+	def inline(self):
+		return self.value == 'inline'
+
+	@property
+	def creation_date(self):
+		if 'creation-date' in self.params:
+			return self.Date(self.params['creation-date'])
+
+	@property
+	def modification_date(self):
+		if 'modification-date' in self.params:
+			return self.Date(self.params['modification-date'])
+
+	def sanitize(self):
+		self.value = self.value.lower()
+		if self.attachment:
+			if b'inline' in self.params:
+				raise InvalidHeader('Mixed Content-Disposition')
+		elif self.inline:
+			if b'attachment' in self.params:
+				raise InvalidHeader('Mixed Content-Disposition')
+		else:
+			raise InvalidHeader(u'Unknown Content-Disposition: %r' % (self.value,))
+
+
+
 class ContentEncoding(CodecElement, HeaderElement):
 	__name__ = 'Content-Encoding'
 

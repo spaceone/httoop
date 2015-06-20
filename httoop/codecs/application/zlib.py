@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import
 
-from httoop.codecs.common import Codec, Enconv
+from httoop.codecs.codec import Codec
 from httoop.exceptions import DecodeError, EncodeError
 
 import zlib
@@ -14,7 +14,7 @@ class Deflate(Codec):
 	@classmethod
 	def encode(cls, data, charset=None, mimetype=None):
 		try:
-			return zlib.compress(Enconv.encode(data, charset))
+			return zlib.compress(Codec.encode(data, charset))
 		except zlib.error:
 			raise EncodeError('Invalid zlib/deflate data')
 
@@ -24,4 +24,4 @@ class Deflate(Codec):
 			data = zlib.decompress(data)
 		except zlib.error:
 			raise DecodeError('Invalid zlib/deflate data')
-		return Enconv.decode(data, charset)
+		return Codec.decode(data, charset)

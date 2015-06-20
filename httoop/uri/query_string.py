@@ -19,14 +19,14 @@ class QueryString(FormURLEncoded):
 		return super(QueryString, cls).unquote(data.replace(b'+', b' '), charset)
 
 	@classmethod
-	def decode(cls, data, charset=None, mimetype=None):
+	def decode(cls, data, charset=None):
 		if set(Percent.decode(data)) & cls.INVALID:
 			raise DecodeError('Invalid query string: contains invalid token')
 
 		return super(QueryString, cls).decode(data, charset)
 
 	@classmethod
-	def encode(cls, data, charset=None, mimetype=None):
+	def encode(cls, data, charset=None):
 		data = super(QueryString, cls).encode(data, charset)
 
 # TODO: decide to remove invalid chars or strip them out

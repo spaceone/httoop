@@ -4,7 +4,7 @@ u"""Module containing various codecs which are
 """
 
 __all__ = [
-	'CODECS', 'Codec', 'Enconv',
+	'CODECS', 'Codec',
 	'application', 'audio', 'example', 'image',
 	'message', 'model', 'multipart', 'text', 'video'
 ]
@@ -25,7 +25,7 @@ from httoop.codecs import video
 
 types = (application, audio, example, image, message, model, multipart, text, video)
 
-from httoop.codecs.common import Codec, Enconv
+from httoop.codecs.codec import Codec
 
 
 def lookup(encoding, raise_errors=True):

@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import
 
-from httoop.codecs.common import Codec, Enconv
+from httoop.codecs.codec import Codec
 from httoop.exceptions import DecodeError, EncodeError
 
 import zlib
@@ -14,7 +14,7 @@ class GZip(Codec):
 	@classmethod
 	def encode(cls, data, charset=None, mimetype=None):
 		try:
-			return zlib.compress(Enconv.encode(data, charset), 16 + zlib.MAX_WBITS)
+			return zlib.compress(Codec.encode(data, charset), 16 + zlib.MAX_WBITS)
 		except zlib.error:
 			raise EncodeError('Invalid gzip data')
 
@@ -24,4 +24,4 @@ class GZip(Codec):
 			data = zlib.decompress(data, 16 + zlib.MAX_WBITS)
 		except zlib.error:
 			raise DecodeError('Invalid gzip data')
-		return Enconv.decode(data, charset)
+		return Codec.decode(data, charset)

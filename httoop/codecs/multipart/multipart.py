@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from httoop.codecs.common import Codec
+from httoop.codecs.codec import Codec
 from httoop.exceptions import DecodeError
 
 

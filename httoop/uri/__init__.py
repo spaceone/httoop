@@ -9,8 +9,9 @@ from os.path import join
 
 from httoop.exceptions import InvalidURI
 from httoop.util import Unicode
-from httoop.codecs import Percent, QueryString
+from httoop._percent import Percent
 from httoop.meta import HTTPSemantic
+from httoop.uri.query_string import QueryString
 
 DEFAULT_PORTS = {'http': 80, 'https': 443}
 # TODO: abstracter: URI, HTTP11_URL, HTTP10URL

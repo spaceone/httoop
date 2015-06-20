@@ -4,7 +4,7 @@ u"""Module containing various codecs which are
 """
 
 __all__ = [
-	'CODECS', 'Codec', 'Percent', 'QueryString', 'Enconv',
+	'CODECS', 'Codec', 'Enconv',
 	'application', 'audio', 'example', 'image',
 	'message', 'model', 'multipart', 'text', 'video'
 ]
@@ -25,7 +25,6 @@ from httoop.codecs import video
 
 types = (application, audio, example, image, message, model, multipart, text, video)
 
-from httoop.codecs.application import Percent, QueryString
 from httoop.codecs.common import Codec, Enconv
 
 

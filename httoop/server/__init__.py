@@ -14,6 +14,7 @@ from httoop.version import ServerProtocol, ServerHeader
 class ServerStateMachine(StateMachine):
 
 	Message = Request
+	HTTP2 = None
 
 	def __init__(self, scheme, host, port):
 		super(ServerStateMachine, self).__init__()
@@ -131,14 +132,12 @@ class ServerStateMachine(StateMachine):
 			yield 'HTTP2-Settings' in self.message.headers
 			yield self.message.headers.element('HTTP2-Settings')
 		if all(is_http2_upgrade()):
+			if self.HTTP2 is None:
+				return
 			self.response.headers['Upgrade'] = 'h2c'
 			self.response.headers['Connection'] = 'Upgrade'
-			self.__class__ = _H2ServerStateMachine
+			self.__class__ = self.HTTP2
 			raise SWITCHING_PROTOCOLS()
-
-
-class _H2ServerStateMachine(object):
-	pass
 
 
 class ComposedResponse(ComposedMessage):

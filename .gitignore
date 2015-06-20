@@ -10,6 +10,7 @@ dist
 *.sw?
 build
 .cache
+htmlcov
 coverage
 .coverage*
 docs/build

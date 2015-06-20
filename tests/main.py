@@ -21,8 +21,8 @@ def main():
 		cmd.append("--cov=httoop")
 #		cmd.append("--no-cov-on-fail")
 		cmd.append("--cov-report=html")
-	cmd.extend(sys.argv[1:])
-#	cmd.append(dirname(abspath(__file__)))
+
+	cmd.append(dirname(abspath(__file__)))
 
 	raise SystemExit(Popen(cmd, stdout=sys.stdout, stderr=STDOUT).wait())
 

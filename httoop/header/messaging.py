@@ -84,6 +84,10 @@ class ContentDisposition(HeaderElement):
 		return self.value == 'attachment'
 
 	@property
+	def form_data(self):
+		return self.value == 'form-data'
+
+	@property
 	def inline(self):
 		return self.value == 'inline'
 
@@ -105,9 +109,11 @@ class ContentDisposition(HeaderElement):
 		elif self.inline:
 			if b'attachment' in self.params:
 				raise InvalidHeader('Mixed Content-Disposition')
+		elif self.form_data:
+			if b'form-data' in self.params:
+				raise InvalidHeader('Mixed Content-Disposition')
 		else:
 			raise InvalidHeader(u'Unknown Content-Disposition: %r' % (self.value,))
-
 
 
 class ContentEncoding(CodecElement, HeaderElement):

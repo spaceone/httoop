@@ -7,12 +7,13 @@ class Codec(object):
 	@classmethod
 	def decode(cls, data, charset=None, mimetype=None):  # pragma: no cover
 		if isinstance(data, bytes):
-			data = data.decode(charset) if charset is not None else data.decode()
+			data = data.decode(charset or 'ascii')
+		return data
 
 	@classmethod
 	def encode(cls, data, charset=None, mimetype=None):  # pragma: no cover
 		if isinstance(data, Unicode):
-			data = data.encode(charset) if charset is not None else data.encode()
+			data = data.encode(charset or 'ascii')
 		return data
 
 	@classmethod

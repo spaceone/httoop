@@ -11,8 +11,9 @@ __all__ = ['HEADER', 'HeaderElement']
 
 import re
 
-from httoop.util import CaseInsensitiveDict, iteritems
+from httoop.util import CaseInsensitiveDict, iteritems, decode_rfc2231
 from httoop.exceptions import InvalidHeader
+from httoop.codecs import Percent
 
 # a mapping of all headers to HeaderElement classes
 HEADER = CaseInsensitiveDict()
@@ -79,10 +80,65 @@ class HeaderElement(object):
 		# be of the form, "token=token", but we don't split that here.
 		atoms = [x.strip() for x in cls.RE_PARAMS.split(elementstr) if x.strip()] or ['']
 
-		initial_value = atoms.pop(0)
-		params = dict((key.strip(), value.strip().strip('"')) for key, _, value in (atom.partition('=') for atom in atoms))
+		value = atoms.pop(0)
+		_unescape = cls.unescape_param
+		params = ((key.strip().lower(), _unescape(val.strip())) for key, _, val in (atom.partition('=') for atom in atoms))
+		params = cls._rfc2231_and_continuation_params(params)
+		# TODO: prefer foo* parameter when both are provided
 
-		return initial_value, params
+		return value, dict(params)
+
+	@classmethod
+	def unescape_param(cls, value):
+		quoted = value.startswith(b'"') and value.endswith(b'"')
+		if quoted:
+			value = re.sub(r'\\(?!\\)', '', value.strip(b'"'))
+		else:
+			if cls.RE_TSPECIALS.search(value):
+				raise InvalidHeader('Unquoted param containing TSPECIALS')
+		return value, quoted
+
+	@classmethod
+	def _rfc2231_and_continuation_params(cls, params):
+		count = set()
+		continuations = dict()
+		for key, (value, quoted) in params:
+			if key in count:
+				raise InvalidHeader('Parameter given twice: %r' % (key.decode('ISO8859-1'),))
+			count.add(key)
+			if '*' in key:
+				if key.endswith('*') and not quoted:
+					encoding, language, value_ = decode_rfc2231(value.encode('ISO8859-1'))
+					if not encoding:
+						yield key, value
+						continue
+					key, value = key[:-1], Percent.decode(value_, encoding)
+				key_, asterisk, num = key.rpartition('*')
+				if asterisk:
+					try:
+						if num != '0' and num.startswith('0'):
+							raise ValueError
+						num = int(num)
+					except ValueError:
+						yield key, value
+						continue
+					continuations.setdefault(key_, {})[num] = value
+					continue
+			yield key, value
+
+		for key, lines in iteritems(continuations):
+			value = b''
+			for i in xrange(len(lines)):
+				try:
+					value += lines.pop(i)
+				except KeyError:
+					break
+			if not key:
+				raise InvalidHeader('...')
+			if value:
+				yield key, value
+			for k, v in iteritems(lines):
+				yield '%s*%d' % (key, k), v
 
 	@classmethod
 	def parse(cls, elementstr):

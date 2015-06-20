@@ -5,7 +5,7 @@ __all__ = [
 	'PY3', 'Unicode', 'iteritems',
 	'to_unicode', 'to_ascii', 'decode_header',
 	'IFile', 'partial', 'formatdate', 'parsedate',
-	'CaseInsensitiveDict'
+	'CaseInsensitiveDict', 'decode_rfc2231',
 ]
 
 import sys
@@ -19,14 +19,14 @@ except NameError:
 	Unicode = str
 
 try:
-	from email.utils import formatdate, parsedate
+	from email.utils import formatdate, parsedate, decode_rfc2231
 	formatdate = partial(formatdate, usegmt=True)
-except ImportError:
+except ImportError:  # pragma: no cover
 	from rfc822 import formatdate, parsedate
 
 try:
 	from email.Header import decode_header
-except ImportError: # Python 3
+except ImportError: # pragma: no cover
 	from email.header import decode_header
 
 

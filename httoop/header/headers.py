@@ -114,6 +114,7 @@ class Headers(CaseInsensitiveDict):
 				value.append(lines.pop(0)[1:])
 			value = b''.join(value).rstrip()
 			if b'=?' in value:
+				# FIXME: must not parse encoded_words in unquoted ('Content-Type', 'Content-Disposition') header params
 				value = u''.join(atom.decode(charset or 'ISO8859-1') for atom, charset in decode_header(value))
 			else:
 				value = value.decode('ISO8859-1')

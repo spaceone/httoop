@@ -15,19 +15,21 @@ PY3 = sys.version_info[0] == 3
 
 try:
 	Unicode = unicode
-except NameError:
+except NameError:  # pragma: no cover
 	Unicode = str
 
 try:
-	from email.utils import formatdate, parsedate, decode_rfc2231
+	from email.utils import formatdate, parsedate
 	formatdate = partial(formatdate, usegmt=True)
 except ImportError:  # pragma: no cover
 	from rfc822 import formatdate, parsedate
 
 try:
 	from email.Header import decode_header
-except ImportError: # pragma: no cover
+except ImportError:  # pragma: no cover
 	from email.header import decode_header
+
+from email.utils import decode_rfc2231
 
 
 def iteritems(d, **kw):
@@ -161,7 +163,4 @@ class CaseInsensitiveDict(dict):
 
 	@classmethod
 	def fromkeys(cls, seq, value=None):
-		newdict = cls()
-		for k in seq:
-			newdict[k] = cls.formatvalue(value)
-		return newdict
+		return cls(dict((key, value) for key in seq))

@@ -9,7 +9,9 @@ class _DateComparable(object):
 	Date = Date
 
 	def sanitize(self):
+		super(_DateComparable, self).sanitize()
 		self.value = self.Date.parse(self.value)
+
 
 class ETag(HeaderElement):
 

@@ -140,3 +140,14 @@ def test_invalid_status_code(response):
 	for code in (99, 600, 1000):
 		with pytest.raises(TypeError):
 			response.status = code
+
+
+def test_invalid_status_subclasses():
+	from httoop.status import ServerErrorStatus
+	with pytest.raises(RuntimeError):
+		class MyServerError(ServerErrorStatus):
+			code = 600
+
+	with pytest.raises(RuntimeError):
+		class MyInformational(ServerErrorStatus):
+			code = 100

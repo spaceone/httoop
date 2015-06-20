@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from httoop.codecs.common import Codec
-from httoop.exceptions import DecodeError
 from httoop._percent import Percent
 from httoop.util import Unicode
 

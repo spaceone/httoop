@@ -79,6 +79,11 @@ def test_invalid_boundary(headers):
 		with pytest.raises(InvalidHeader):
 			headers.elements('Content-Type')
 
+def test_invalid_form_data_content_disposition(headers):
+	headers.parse('Content-Disposition: form-data; form-data=1')
+	with pytest.raises(InvalidHeader):
+		headers.elements('Content-Disposition')
+
 
 def test_plain_text_utf8(body):
 	body.mimetype = 'text/plain'

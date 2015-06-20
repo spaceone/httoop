@@ -66,7 +66,7 @@ class HeaderElement(object):
 
 	if str is bytes:
 		__str__ = __bytes__
-	else:
+	else:  # pragma: no cover
 		__str__ = __unicode__
 
 	def compose(self):

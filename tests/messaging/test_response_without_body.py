@@ -1,4 +1,4 @@
-def test_head_request():
+def test_head_request_():
 	pass
 
 def test_status_smaller_100():

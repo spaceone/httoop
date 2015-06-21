@@ -1,6 +1,6 @@
-# See also: tests/request/test_request_method.py
+# See also: tests/request_/test_request_method.py
 
-def test_safe_methods(request):
+def test_safe_methods(request_):
 	all_methods = (
 		(u'GET', True, True),
 		(u'HEAD', True, True),
@@ -11,6 +11,6 @@ def test_safe_methods(request):
 		(u'TRACE', False, True),
 	)
 	for method, safe, idempotent in all_methods:
-		request.method = method
-		assert request.method.safe == safe
-		assert request.method.idempotent == idempotent
+		request_.method = method
+		assert request_.method.safe == safe
+		assert request_.method.idempotent == idempotent

@@ -3,7 +3,7 @@ import pytest
 from httoop import Request, Response, Headers, Body, ClientStateMachine, ServerStateMachine
 
 @pytest.fixture
-def request():
+def request_():
 	return Request()
 
 @pytest.fixture

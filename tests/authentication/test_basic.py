@@ -19,9 +19,9 @@ def test_basic_authorization(headers):
 	assert headers.element('Authorization').params['username'] == u'admin'
 	assert headers.element('Authorization').params['password'] == u'12345'
 
-def test_invalid_headers(headers):
-	for invalid in (b'foo', b'Zm9v', u'föo'.encode('latin1')):
-		headers.parse(b'Authorization: Basic %s' % (invalid,))
-		with pytest.raises(InvalidHeader):
-			headers.element('Authorization')
-		headers.clear()
+@pytest.mark.parametrize('invalid', (b'foo', b'Zm9v', u'föo'.encode('latin1')))
+def test_invalid_headers(headers, invalid):
+	headers.parse(b'Authorization: Basic %s' % (invalid,))
+	with pytest.raises(InvalidHeader):
+		headers.element('Authorization')
+	headers.clear()

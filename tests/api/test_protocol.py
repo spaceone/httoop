@@ -1,46 +1,46 @@
-def test_protocol_tuple(request):
-	request.protocol.parse(b'HTTP/1.0')
-	assert request.protocol == (1, 0)
+def test_protocol_tuple(request_):
+	request_.protocol.parse(b'HTTP/1.0')
+	assert request_.protocol == (1, 0)
 
 
-def test_set_protocol_tuple(request):
-	request.protocol = (1, 0)
-	assert bytes(request.protocol) == b'HTTP/1.0'
+def test_set_protocol_tuple(request_):
+	request_.protocol = (1, 0)
+	assert bytes(request_.protocol) == b'HTTP/1.0'
 
 
-def test_protocol_minor_mayor(request):
-	request.protocol = (1, 0)
-	assert request.protocol.major == 1
-	assert request.protocol.minor == 0
+def test_protocol_minor_mayor(request_):
+	request_.protocol = (1, 0)
+	assert request_.protocol.major == 1
+	assert request_.protocol.minor == 0
 
 
-def test_protocol_compare_bytes(request):
-	request.protocol = (1, 0)
-	assert request.protocol == b'HTTP/1.0'
+def test_protocol_compare_bytes(request_):
+	request_.protocol = (1, 0)
+	assert request_.protocol == b'HTTP/1.0'
 
 
-def test_set_protocol_to_protocol(request, response):
-	request.protocol = (1, 0)
-	response.protocol = request.protocol
+def test_set_protocol_to_protocol(request_, response):
+	request_.protocol = (1, 0)
+	response.protocol = request_.protocol
 	assert response.protocol == (1, 0)
 
 
-def test_protocol_comparision(request):
-	request.protocol = (1, 2)
-	assert request.protocol < (2, 0)
-	assert request.protocol < 2
-	assert request.protocol > (0, 9)
-	assert request.protocol > 0
-	assert request.protocol < (1, 3)
-	assert request.protocol > (1, 0)
-	assert request.protocol == (1, 2)
-	assert request.protocol != (2, 0)
-	assert request.protocol == 1
-	assert request.protocol != 0
-	assert request.protocol != 2
-	assert request.protocol != 'foo'
-	assert request.protocol >= (1, 2)
-	assert request.protocol >= (1, 1)
-	assert request.protocol <= (1, 2)
-	assert request.protocol <= (2, 1)
-	assert not (request.protocol != 1)
+def test_protocol_comparision(request_):
+	request_.protocol = (1, 2)
+	assert request_.protocol < (2, 0)
+	assert request_.protocol < 2
+	assert request_.protocol > (0, 9)
+	assert request_.protocol > 0
+	assert request_.protocol < (1, 3)
+	assert request_.protocol > (1, 0)
+	assert request_.protocol == (1, 2)
+	assert request_.protocol != (2, 0)
+	assert request_.protocol == 1
+	assert request_.protocol != 0
+	assert request_.protocol != 2
+	assert request_.protocol != 'foo'
+	assert request_.protocol >= (1, 2)
+	assert request_.protocol >= (1, 1)
+	assert request_.protocol <= (1, 2)
+	assert request_.protocol <= (2, 1)
+	assert not (request_.protocol != 1)

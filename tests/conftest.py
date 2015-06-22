@@ -1,6 +1,6 @@
 import pytest
 
-from httoop import Request, Response, Headers, Body, ClientStateMachine, ServerStateMachine
+from httoop import Request, Response, Headers, Body, ClientStateMachine, ServerStateMachine, URI
 
 @pytest.fixture
 def request_():
@@ -25,3 +25,7 @@ def statemachine():
 @pytest.fixture
 def clientstatemachine():
 	return ClientStateMachine()
+
+@pytest.fixture
+def uri():
+	return URI()

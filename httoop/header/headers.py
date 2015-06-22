@@ -82,8 +82,7 @@ class Headers(CaseInsensitiveDict):
 			self[key] = Element.merge(self.elements(key), other.elements(key))
 
 	def set(self, headers):
-		for key in self.keys():
-			del self[key]
+		self.clear()
 		self.update(headers)
 
 	def parse(self, data):

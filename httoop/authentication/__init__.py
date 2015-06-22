@@ -27,7 +27,7 @@ class AuthElement(HeaderElement):
 		try:
 			authinfo = parser.parse(authinfo)
 		except KeyError as key:
-			raise InvalidHeader(u'Missing paramter %r for authentication scheme %r' % (str(key), scheme))
+			raise InvalidHeader(u'Missing parameter %r for authentication scheme %r' % (str(key), scheme))
 
 		return scheme.title(), authinfo
 
@@ -40,7 +40,7 @@ class AuthElement(HeaderElement):
 		try:
 			authinfo = scheme.compose(self.params)
 		except KeyError as key:
-			raise InvalidHeader(u'Missing paramter %r for authentication scheme %r' % (str(key), self.value))
+			raise InvalidHeader(u'Missing parameter %r for authentication scheme %r' % (str(key), self.value))
 
 		return b'%s %s' % (self.value.title(), authinfo)
 

@@ -71,7 +71,7 @@ class URI(object):
 				if not 0 <= int(port) <= 65535:
 					raise ValueError
 			except ValueError:
-				raise InvalidURI('Invalid port: %r' % (port))  # TODO: TypeError
+				raise InvalidURI('Invalid port: %r' % (port,))  # TODO: TypeError
 		self._port = port
 
 	def __init__(self, uri=None, *args, **kwargs):
@@ -210,8 +210,10 @@ class URI(object):
 		username, _, password = userinfo.partition(b':')
 		if hostport.endswith(b']') and hostport.startswith(b'['):
 			host, port = hostport, b''
-		else:
+		elif ':' in hostport:
 			host, _, port = hostport.rpartition(b':')
+		else:
+			host, port = hostport, b''
 
 		unquote = self.unquote
 		path = u'/'.join([unquote(seq).replace(u'/', u'%2f') for seq in path.split(b'/')])

@@ -35,13 +35,15 @@ HTTP and extensions are defined in the following RFC's:
 
 * RFC 5987 [Character Set and Language Encoding for Hypertext Transfer Protocol (HTTP) Header Field Parameters](https://tools.ietf.org/html/rfc5987)
 
-* RFC 7239 [Forwarded HTTP Extension](http://tools.ietf.org/html/7239)
-
 * Internet Message Format ([RFC 822](http://tools.ietf.org/html/822), [2822](http://tools.ietf.org/html/2822), [5322](http://tools.ietf.org/html/5322))
 
 * HTTP Authentication: Basic and Digest Access Authentication ([RFC 2617](http://tools.ietf.org/html/2617))
 
 * Additional HTTP Status Codes ([RFC 6585](http://tools.ietf.org/html/6585))
+
+* Forwarded HTTP Extension [RFC 7239](https://tools.ietf.org/html/rfc7239)
+
+* Prefer Header for HTTP [RFC 7240](https://tools.ietf.org/html/rfc7240)
 
 * PATCH Method for HTTP ([RFC 5789](http://tools.ietf.org/html/5789))
 

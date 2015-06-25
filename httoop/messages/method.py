@@ -33,6 +33,9 @@ class Method(object):
 	def __init__(self, method=None):
 		self.set(method or u'GET')
 
+	def __hash__(self):
+		return hash(bytes(self))
+
 	def set(self, method):
 		if isinstance(method, Unicode):
 			method = method.encode('ASCII')

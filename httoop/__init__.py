@@ -6,6 +6,9 @@
 
 from __future__ import absolute_import
 
+if __import__('sys').version_info.major > 2:  # pragma: no cover
+	raise RuntimeError('httoop is not yet Python3 ready!')
+
 __all__ = [
 	'Status', 'Body', 'Headers', 'URI', 'Method',
 	'Request', 'Response', 'Protocol', 'Date', 'ServerStateMachine', 'ClientStateMachine',

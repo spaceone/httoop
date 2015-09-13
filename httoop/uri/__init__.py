@@ -47,7 +47,7 @@ class URI(object):
 
 	@property
 	def path_segments(self):
-		return list(map(Unicode.replace, self.path.split(u'/'), u'%2f', u'/'))
+		return [Unicode.replace(p, u'%2f', u'/') for p in self.path.split(u'/')]
 
 	@path_segments.setter
 	def path_segments(self, path):

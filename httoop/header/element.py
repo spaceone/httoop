@@ -81,12 +81,20 @@ class HeaderElement(object):
 		atoms = [x.strip() for x in cls.RE_PARAMS.split(elementstr) if x.strip()] or ['']
 
 		value = atoms.pop(0)
-		_unescape = cls.unescape_param
-		params = ((key.strip().lower(), _unescape(val.strip())) for key, _, val in (atom.partition('=') for atom in atoms))
+		params = (cls.parseparam(atom) for atom in atoms)
 		params = cls._rfc2231_and_continuation_params(params)
 		# TODO: prefer foo* parameter when both are provided
 
 		return value, dict(params)
+
+	@classmethod
+	def parseparam(cls, atom):
+		key, _, val  = atom.partition('=')
+		try:
+			val, quoted = cls.unescape_param(val.strip())
+		except InvalidHeader:
+			raise InvalidHeader('Unquoted parameter %r in %r containing TSPECIALS: %r' % (key, cls.__name__, val))
+		return key.strip().lower(), val, quoted
 
 	@classmethod
 	def unescape_param(cls, value):
@@ -95,14 +103,14 @@ class HeaderElement(object):
 			value = re.sub(r'\\(?!\\)', '', value.strip(b'"'))
 		else:
 			if cls.RE_TSPECIALS.search(value):
-				raise InvalidHeader('Unquoted param containing TSPECIALS')
+				raise InvalidHeader('Unquoted parameter in %r containing TSPECIALS: %r' % (cls.__name__, value))
 		return value, quoted
 
 	@classmethod
 	def _rfc2231_and_continuation_params(cls, params):
 		count = set()
 		continuations = dict()
-		for key, (value, quoted) in params:
+		for key, value, quoted in params:
 			if key in count:
 				raise InvalidHeader('Parameter given twice: %r' % (key.decode('ISO8859-1'),))
 			count.add(key)

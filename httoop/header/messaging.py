@@ -181,6 +181,10 @@ class ContentType(HeaderElement, MimeType, CodecElement):
 		self.params['boundary'] = boundary
 
 
+class Cookie(HeaderElement):
+	pass
+
+
 class Date(HeaderElement):
 	pass
 
@@ -280,6 +284,47 @@ class RetryAfter(HeaderElement):
 
 class Server(HeaderElement):
 	pass
+
+
+class SetCookie(HeaderElement):
+	__name__ = 'Set-Cookie'
+
+	from httoop.date import Date
+	RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"\[\]\?=]')
+
+	def sanitize(self):
+		super(SetCookie, self).sanitize()
+		self.cookie_name, self.cookie_value, _ = self.parseparam(self.value)
+
+	@property
+	def httponly(self):
+		return 'httponly' in self.params
+
+	@property
+	def secure(self):
+		return 'secure' in self.params
+
+	@property
+	def path(self):
+		return self.params.get('path')
+
+	@property
+	def domain(self):
+		return self.params.get('domain')
+
+	@property
+	def persistent(self):
+		return 'max-age' in self.params or 'expires' in self.params
+
+	@property
+	def max_age(self):
+		if 'max-age' in self.params:
+			return int(self.params['max-age'])
+
+	@property
+	def expires(self):
+		if 'expires' in self.params:
+			return self.Date(self.params['expires'])
 
 
 class TE(_AcceptElement):

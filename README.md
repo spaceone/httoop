@@ -35,6 +35,8 @@ HTTP and extensions are defined in the following RFC's:
 
 * RFC 5987 [Character Set and Language Encoding for Hypertext Transfer Protocol (HTTP) Header Field Parameters](https://tools.ietf.org/html/rfc5987)
 
+* Uniform Resource Identifier (URI) ([RFC 3986](https://tools.ietf.org/html/rfc3986))
+
 * Internet Message Format ([RFC 822](http://tools.ietf.org/html/822), [2822](http://tools.ietf.org/html/2822), [5322](http://tools.ietf.org/html/5322))
 
 * HTTP Authentication: Basic and Digest Access Authentication ([RFC 2617](http://tools.ietf.org/html/2617))
@@ -54,6 +56,8 @@ HTTP and extensions are defined in the following RFC's:
 * Transparent Content Negotiation in HTTP ([RFC 2295](http://tools.ietf.org/html/2295))
 
 * HTTP Remote Variant Selection Algorithm -- RVSA/1.0 ([RFC 2296](http://tools.ietf.org/html/2296))
+
+* HTTP State Management Mechanism ([RFC 6265](http://tools.ietf.org/html/6265))
 
 * HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV) ([RFC 4918](http://tools.ietf.org/html/4918))
 

@@ -9,6 +9,7 @@ from __future__ import absolute_import
 __all__ = ['Date']
 
 import time
+import locale
 from datetime import datetime
 
 from httoop.util import formatdate, parsedate, Unicode
@@ -113,24 +114,25 @@ class Date(object):
 		if date is not None:
 			return cls(date[:9])
 
-		# propably invalid here (if email.utils is installed)
-
-		# TODO: export locale=C required?
-		# parse RFC 1036 date format
+		old = locale.getlocale(locale.LC_TIME)
+		locale.setlocale(locale.LC_TIME, (None, None))
 		try:
-			date = time.strptime(timestr, '%A, %d-%b-%y %H:%M:%S GMT')
-		except ValueError:
-			pass
-		else:
-			return cls(date)
+			# parse RFC 1036 date format
+			try:
+				date = time.strptime(timestr, '%A, %d-%b-%y %H:%M:%S GMT')
+			except ValueError:
+				pass
+			else:
+				return cls(date)
 
-		# parse C's asctime format
-		# TODO: export locale=C required?
-		try:
-			date = time.strptime(timestr, '%a %b %d %H:%M:%S %Y')
-		except ValueError:
-			pass
-		else:
-			return cls(date)
+			# parse C's asctime format
+			try:
+				date = time.strptime(timestr, '%a %b %d %H:%M:%S %Y')
+			except ValueError:
+				pass
+			else:
+				return cls(date)
+		finally:
+			locale.setlocale(locale.LC_TIME, old)
 
 		raise InvalidDate(date)

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from os import SEEK_END, SEEK_SET
+
 from httoop.header.element import HeaderElement
+from httoop.exceptions import InvalidHeader
 
 
 class ContentRange(HeaderElement):
@@ -8,46 +11,54 @@ class ContentRange(HeaderElement):
 
 
 class IfRange(HeaderElement):
-	pass
+	__name__ = 'If-Range'
 
 
 class Range(HeaderElement):
 
-	pass
-#	@classmethod
-#	def parse(cls, elementstr):
-#		pass
+	def __init__(self, value, params=None):
+		bytesunit, _, byteranges = value.partition(b'=')
+		ranges = HeaderElement.split(byteranges)
+		self.ranges = set()
+		for brange in ranges:
+			start, _, stop = (x.strip() for x in brange.partition(b'-'))
+			if (not start and not stop) or not _:
+				raise InvalidHeader
+			try:
+				start = int(start) if start else None
+				stop = int(stop) if stop else None
+				if start and start < 0 or stop and stop < 0:
+					raise ValueError
+			except ValueError:
+				raise InvalidHeader
+			if start is not None and stop is not None and stop < start:
+				raise InvalidHeader
+			self.ranges.add((start, stop))
+		self.ranges = list(sorted(self.ranges))
+		super(Range, self).__init__(bytesunit, params)
 
-#	def __get_ranges(self):
-#		bytesunit, _, byteranges = self.value.partition('=')
-#		for brange in byteranges.split(','):
-#			start, _, stop = (x.strip() for x in brange.partition('-'))
-#			if start:
-#				if not stop:
-#					stop = content_length - 1
-#				start, stop = list(map(int, (start, stop)))
-#				if start >= content_length:
-#					# From rfc 2616 sec 14.16:
-#					# "If the server receives a request (other than one
-#					# including an If-Range request-header field) with an
-#					# unsatisfiable Range request-header field (that is,
-#					# all of whose byte-range-spec values have a first-byte-pos
-#					# value greater than the current length of the selected
-#					# resource), it SHOULD return a response code of 416
-#					# (Requested range not satisfiable)."
-#					continue
-#				if stop < start:
-#					# From rfc 2616 sec 14.16:
-#					# "If the server ignores a byte-range-spec because it
-#					# is syntactically invalid, the server SHOULD treat
-#					# the request as if the invalid Range header field
-#					# did not exist. (Normally, this means return a 200
-#					# response containing the full entity)."
-#					return
-#				yield start, stop + 1
-#			else:
-#				if not stop:
-#					# See rfc quote above.
-#					return
-#				# Negative subscript (last N bytes)
-#				yield content_length - int(stop), content_length
+	def sanitize(self):
+		super(Range, self).sanitize()
+		if len([x for x in self.ranges if x[0] is None]) > 1 or len([x for x in self.ranges if x[1] is None]) > 1:
+			raise InvalidHeader
+		byterange = set()
+		for start, stop in ((x, y) for x, y in self.ranges if x is not None and y is not None):
+			range_ = set(range(start, stop))
+			if any(x in byterange for x in range_):
+				raise InvalidHeader
+			byterange.update(range_)
+
+	@property
+	def positions(self):
+		for start, end in self.ranges:
+			if start is None:
+				yield -end, SEEK_END, None
+			elif end is None:
+				yield start, SEEK_SET, None
+			else:
+				yield start, SEEK_SET, end + 1 - start
+
+	def get_range_content(self, fd):
+		for offset, whence, length in self.positions:
+			fd.seek(offset, whence)
+			yield fd.read(length)

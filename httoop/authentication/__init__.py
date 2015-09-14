@@ -66,7 +66,13 @@ class AuthResponseElement(AuthElement):
 		'digest': DigestAuthResponseScheme
 	}
 
-	# TODO: sort by security
+	@classmethod
+	def sorted(cls, elements):
+		return list(sorted(elements, key=lambda e: {'basic': '\xff'}.get(e.value.lower(), e.value)))
+
+	@classmethod
+	def join(cls, values):
+		return b' '.join(values)
 
 	@property
 	def realm(self):

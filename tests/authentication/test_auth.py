@@ -21,6 +21,7 @@ def test_parse_invalid_header(name, invalid, headers):
 	with pytest.raises(InvalidHeader):
 		headers.element(name)
 
+
 @pytest.mark.parametrize('clazz,value', [
 	(WWWAuthenticate, ''),
 	(WWWAuthenticate, 'foo'),
@@ -35,3 +36,9 @@ def test_compose_invalid_header(clazz, value):
 	h = clazz(value)
 	with pytest.raises(InvalidHeader):
 		bytes(h)
+
+
+def test_order(headers):
+	headers.parse(b'WWW-Authenticate: basic realm="foo"')
+	headers.parse(b'WWW-Authenticate: digest realm="bar", nonce=foo, opaque=foo, algorithm=MD5, qop=auth')
+	assert headers.elements('WWW-Authenticate') == ['Digest', 'Basic']

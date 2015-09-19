@@ -59,6 +59,8 @@ class URI(object):
 
 	@property
 	def port(self):
+		if self._port is None:
+			return DEFAULT_PORTS.get(self.scheme)
 		return self._port
 
 	@port.setter

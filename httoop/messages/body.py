@@ -229,7 +229,7 @@ class Body(IFile):
 				if isinstance(data, Unicode):
 					data = data.encode(self.encoding)
 				elif not isinstance(data, bytes):  # pragma: no cover
-					raise TypeError('Iterable contained non-bytes')
+					raise TypeError('Iterable contained non-bytes: %r' % (type(data).__name__,))
 				yield data
 		finally:
 			self.seek(t)

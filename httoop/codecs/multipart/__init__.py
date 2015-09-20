@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from httoop.codecs.multipart.multipart import Multipart
 
-__all__ = ['MultipartMixed', 'MultipartFormData', 'MultipartAlternative', 'MultipartDigest', 'MultipartParallel']
+__all__ = ['MultipartMixed', 'MultipartFormData', 'MultipartAlternative', 'MultipartDigest', 'MultipartParallel', 'MultipartByteranges']
 
 
 class MultipartMixed(Multipart):
@@ -28,3 +28,8 @@ class MultipartDigest(Multipart):
 class MultipartParallel(Multipart):
 
 	mimetype = 'multipart/parallel'
+
+
+class MultipartByteranges(Multipart):
+
+	mimetype = 'multipart/byteranges'

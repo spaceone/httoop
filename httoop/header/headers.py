@@ -43,6 +43,23 @@ class Headers(CaseInsensitiveDict):
 			return Element.parse(self[fieldname])
 		return default
 
+#	# TODO: a really nice alternative method would be:
+#	def element(self, fieldname, which=None, default=None):
+#		for element in self.elements(fieldname):
+#			if which is None or element == which:
+#				return element
+#		return default
+
+	def set_element(self, fieldname, *args, **kwargs):
+		self[fieldname] = bytes(self.create_element(fieldname, *args, **kwargs))
+
+	def append_element(self, fieldname, *args, **kwargs):
+		self.append(fieldname, bytes(self.create_element(fieldname, *args, **kwargs)))
+
+	def create_element(self, fieldname, *args, **kwargs):
+		Element = HEADER.get(fieldname, HeaderElement)
+		return Element(*args, **kwargs)
+
 	def values(self, key=None):  # FIXME: overwrites dict.values()
 		if key is None:
 			return super(Headers, self).values()

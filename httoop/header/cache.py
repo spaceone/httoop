@@ -11,6 +11,10 @@ class CacheControl(HeaderElement):
 	__name__ = 'Cache-Control'
 
 
+class IfRange(HeaderElement):
+	__name__ = 'If-Range'
+
+
 class Vary(HeaderElement):
 	pass
 

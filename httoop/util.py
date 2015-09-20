@@ -30,6 +30,12 @@ except ImportError:  # pragma: no cover
 	from email.header import decode_header
 
 from email.utils import decode_rfc2231
+from email.generator import _make_boundary as make_boundary
+
+try:
+	from itertools import izip
+except ImportError:  # pragma: no cover
+	izip = zip
 
 
 def iteritems(d, **kw):

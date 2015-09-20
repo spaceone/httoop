@@ -108,6 +108,3 @@ class TEMPORARY_REDIRECT(RedirectStatus):
 class PERMANENT_REDIRECT(RedirectStatus):
 
 	code = 308
-
-
-

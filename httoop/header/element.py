@@ -11,7 +11,7 @@ __all__ = ['HEADER', 'HeaderElement']
 
 import re
 
-from httoop.util import CaseInsensitiveDict, iteritems, decode_rfc2231
+from httoop.util import CaseInsensitiveDict, iteritems, decode_rfc2231, Unicode
 from httoop.exceptions import InvalidHeader
 from httoop._percent import Percent
 
@@ -89,12 +89,16 @@ class HeaderElement(object):
 
 	@classmethod
 	def parseparam(cls, atom):
-		key, _, val  = atom.partition('=')
+		key, _, val  = atom.partition(b'=')
 		try:
 			val, quoted = cls.unescape_param(val.strip())
 		except InvalidHeader:
 			raise InvalidHeader('Unquoted parameter %r in %r containing TSPECIALS: %r' % (key, cls.__name__, val))
-		return key.strip().lower(), val, quoted
+		return cls.unescape_key(key), val, quoted
+
+	@classmethod
+	def unescape_key(cls, key):
+		return key.strip().lower()
 
 	@classmethod
 	def unescape_param(cls, value):
@@ -179,10 +183,10 @@ class HeaderElement(object):
 		if value:
 			value = bytes(value)
 			if quote or cls.RE_TSPECIALS.search(value):
-				value = value.replace('\\', '\\\\').replace('"', r'\"')
-				return '%s="%s"' % (param, value)
+				value = value.replace(b'\\', b'\\\\').replace(b'"', br'\"')
+				return b'%s="%s"' % (param, value)
 			else:
-				return '%s=%s' % (param, value)
+				return b'%s=%s' % (param, value)
 		else:
 			return param
 
@@ -305,3 +309,35 @@ class _AcceptElement(HeaderElement):
 			return str(self) < str(other)
 		else:
 			return self.quality < other.quality
+
+
+class _CookieElement(HeaderElement):
+
+	#RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"\[\]\?=]')
+	RE_TSPECIALS = re.compile(r'(?!)')
+
+	def __init__(self, cookie_name, cookie_value, params=None):
+		self.cookie_name = Unicode(cookie_name)
+		self.cookie_value = Unicode(cookie_value)
+		super(_CookieElement, self).__init__(self.value, params)
+
+	@classmethod
+	def parse(cls, elementstr):
+		value, params = cls.parseparams(elementstr)
+		cookie_name, cookie_value, _ = cls.parseparam(value)
+		return cls(cookie_name, cookie_value, params)
+
+	@classmethod
+	def unescape_key(cls, key):
+		key = key.strip()
+		if key.lower() in ('httponly', 'secure', 'path', 'domain', 'max-age', 'expires'):
+			return key.lower()
+		return key
+
+	@property
+	def value(self):
+		return b'%s=%s' % (self.cookie_name.encode('ISO8859-1'), self.cookie_value.encode('ISO8859-1'))
+
+	@value.setter
+	def value(self, value):
+		self.cookie_name, self.cookie_value, _ = self.parseparam(value)

@@ -2,9 +2,9 @@
 # TODO: Via, Server, User-Agent can contain comments → parse them
 import re
 
-from httoop.header.element import HeaderElement, _AcceptElement, MimeType
+from httoop.header.element import HeaderElement, _AcceptElement, _CookieElement, MimeType
 from httoop.util import Unicode
-from httoop.exceptions import InvalidHeader
+from httoop.exceptions import InvalidHeader, InvalidDate
 from httoop.codecs import lookup
 
 
@@ -165,9 +165,10 @@ class ContentType(HeaderElement, MimeType, CodecElement):
 
 	def sanitize(self):
 		super(ContentType, self).sanitize()
-		if 'boundary' not in self.params:
-			return
+		if 'boundary' in self.params:
+			self.sanitize_boundary()
 
+	def sanitize_boundary(self):
 		boundary = self.params['boundary'] = self.params['boundary'].strip('"')
 		if not self.VALID_BOUNDARY.match(boundary):
 			raise InvalidHeader(u'Invalid boundary in multipart form: %r' % (boundary,))
@@ -181,8 +182,13 @@ class ContentType(HeaderElement, MimeType, CodecElement):
 		self.params['boundary'] = boundary
 
 
-class Cookie(HeaderElement):
-	pass
+class Cookie(_CookieElement):
+
+	RE_SPLIT = re.compile(r'; ')
+
+	@classmethod
+	def join(cls, values):
+		return b'; '.join(values)
 
 
 class Date(HeaderElement):
@@ -286,15 +292,16 @@ class Server(HeaderElement):
 	pass
 
 
-class SetCookie(HeaderElement):
+class SetCookie(_CookieElement):
+
 	__name__ = 'Set-Cookie'
 
 	from httoop.date import Date
-	RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"\[\]\?=]')
 
-	def sanitize(self):
-		super(SetCookie, self).sanitize()
-		self.cookie_name, self.cookie_value, _ = self.parseparam(self.value)
+	@classmethod
+	def split(cls, fieldvalue):
+		fieldvalue = re.sub(b'(expires)=([^"][^;]+);', b'\\1="\\2";', fieldvalue, flags=re.I)
+		return super(SetCookie, cls).split(fieldvalue)
 
 	@property
 	def httponly(self):
@@ -318,13 +325,19 @@ class SetCookie(HeaderElement):
 
 	@property
 	def max_age(self):
-		if 'max-age' in self.params:
-			return int(self.params['max-age'])
+		if self.params.get('max-age'):
+			try:
+				return int(self.params['max-age'])
+			except ValueError:
+				raise InvalidHeader('Cookie: max-age is not an integer: %r' % (self.params['max-age'],))
 
 	@property
 	def expires(self):
-		if 'expires' in self.params:
-			return self.Date(self.params['expires'])
+		if self.params.get('expires'):
+			try:
+				return self.Date(self.params['expires'])
+			except InvalidDate:
+				raise InvalidHeader('Cookie: expires is not a valid date: %r' % (self.params['expires'],))
 
 
 class TE(_AcceptElement):

@@ -32,6 +32,8 @@ class HeaderElement(object):
 
 	__metaclass__ = HeaderType
 
+	priority = None
+
 	# Regular expression that matches `special' characters in parameters, the
 	# existance of which force quoting of the parameter value.
 	RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"/\[\]\?=]')
@@ -191,7 +193,8 @@ class HeaderElement(object):
 			return param
 
 	def __repr__(self):
-		return '<%s(%r, %r)>' % (self.__class__.__name__, self.value, self.params)
+		params = ', %r' % (self.params,) if self.params else ''
+		return '<%s(%r%s)>' % (self.__class__.__name__, self.value, params)
 
 
 class MimeType(object):

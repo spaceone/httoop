@@ -66,7 +66,8 @@ class Allow(HeaderElement):
 
 
 class Connection(HeaderElement):
-	pass
+
+	priority = '\xff'
 
 
 class ContentDisposition(HeaderElement):
@@ -192,7 +193,8 @@ class Cookie(_CookieElement):
 
 
 class Date(HeaderElement):
-	pass
+
+	priority = '\x01'
 
 
 class Expect(HeaderElement):
@@ -209,6 +211,8 @@ class From(HeaderElement):
 
 # TODO: add case insensitve HeaderElement
 class Host(HeaderElement):
+
+	priority = '\x03'
 	RE_HOSTNAME = re.compile(r'^([^\x00-\x1F\x7F()^\'"<>@,;:/\[\]={} \t\\\\"]+)$')
 	HOSTPORT = re.compile(r'^(.*?)(?::(\d+))?$')
 
@@ -273,6 +277,7 @@ class Location(HeaderElement):
 
 
 class MaxForwards(HeaderElement):
+
 	__name__ = 'Max-Forwards'
 
 
@@ -285,11 +290,13 @@ class Referer(HeaderElement):
 
 
 class RetryAfter(HeaderElement):
+
 	__name__ = 'Retry-After'
 
 
 class Server(HeaderElement):
-	pass
+
+	priority = '\x02'
 
 
 class SetCookie(_CookieElement):

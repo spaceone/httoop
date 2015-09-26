@@ -143,8 +143,7 @@ class Headers(CaseInsensitiveDict):
 				return v.encode('ISO8859-1')
 			except UnicodeEncodeError:
 				return v.encode('ISO8859-1', 'replace')  # FIXME: if value contains UTF-8 chars encode them in MIME; =?UTF-8?B?…?= (RFC 2047); seealso quopri
-		prio = {b'Server': b'\x01', b'Host': b'\x02', b'Date': b'\x00', b'Connection': b'\xff'}
-		items = sorted(iteritems(self), key=lambda x: prio.get(x[0], x[0]))
+		items = sorted(iteritems(self), key=lambda x: HEADER.get(x[0], HeaderElement).priority or x[0])
 		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, _encode(v)) for k, v in items)
 
 	def __repr__(self):

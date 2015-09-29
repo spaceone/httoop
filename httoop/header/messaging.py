@@ -2,7 +2,7 @@
 # TODO: Via, Server, User-Agent can contain comments → parse them
 import re
 
-from httoop.header.element import HeaderElement, _AcceptElement, _CookieElement, MimeType
+from httoop.header.element import HeaderElement, _AcceptElement, _CookieElement, _HopByHopElement, MimeType
 from httoop.util import Unicode
 from httoop.exceptions import InvalidHeader, InvalidDate
 from httoop.codecs import lookup
@@ -65,7 +65,7 @@ class Allow(HeaderElement):
 	pass
 
 
-class Connection(HeaderElement):
+class Connection(_HopByHopElement, HeaderElement):
 
 	priority = '\xff'
 
@@ -347,11 +347,13 @@ class SetCookie(_CookieElement):
 				raise InvalidHeader('Cookie: expires is not a valid date: %r' % (self.params['expires'],))
 
 
-class TE(_AcceptElement):
+class TE(_HopByHopElement, _AcceptElement):
+
 	pass
 
 
-class Trailer(HeaderElement):
+class Trailer(_HopByHopElement, HeaderElement):
+
 	forbidden_headers = ('Transfer-Encoding', 'Content-Length', 'Trailer')
 
 	def sanitize(self):
@@ -359,7 +361,7 @@ class Trailer(HeaderElement):
 			raise InvalidHeader(u'A Trailer header MUST NOT contain %r field' % self.value.title())
 
 
-class TransferEncoding(CodecElement, HeaderElement):
+class TransferEncoding(_HopByHopElement, CodecElement, HeaderElement):
 	__name__ = 'Transfer-Encoding'
 
 	# IANA assigned HTTP Transfer-Encoding values
@@ -372,7 +374,7 @@ class TransferEncoding(CodecElement, HeaderElement):
 	}
 
 
-class Upgrade(HeaderElement):
+class Upgrade(_HopByHopElement, HeaderElement):
 	pass
 
 

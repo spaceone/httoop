@@ -33,6 +33,7 @@ class HeaderElement(object):
 	__metaclass__ = HeaderType
 
 	priority = None
+	hop_by_hop = False
 
 	# Regular expression that matches `special' characters in parameters, the
 	# existance of which force quoting of the parameter value.
@@ -344,3 +345,7 @@ class _CookieElement(HeaderElement):
 	@value.setter
 	def value(self, value):
 		self.cookie_name, self.cookie_value, _ = self.parseparam(value)
+
+
+class _HopByHopElement(object):
+	hop_by_hop = True

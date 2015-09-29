@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 
 from httoop.authentication import AuthRequestElement, AuthResponseElement, AuthInfoElement
+from httoop.header.element import _HopByHopElement
 
 
 class Authorization(AuthRequestElement):
 	pass
 
 
-class ProxyAuthenticate(AuthResponseElement):
+class ProxyAuthenticate(_HopByHopElement, AuthResponseElement):
 	__name__ = 'Proxy-Authenticate'
 
 
-class ProxyAuthorization(AuthRequestElement):
+class ProxyAuthorization(_HopByHopElement, AuthRequestElement):
 	__name__ = 'Proxy-Authorization'
 
 
@@ -23,7 +24,7 @@ class AuthenticationInfo(AuthInfoElement):
 	__name__ = 'Authentication-Info'
 
 
-class ProxyAuthenticationInfo(AuthInfoElement):
+class ProxyAuthenticationInfo(_HopByHopElement, AuthInfoElement):
 	__name__ = 'Proxy-Authentication-Info'
 
 

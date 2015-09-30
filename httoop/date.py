@@ -12,17 +12,26 @@ import time
 import locale
 from datetime import datetime
 
-from httoop.util import formatdate, parsedate, Unicode
+from httoop.util import parsedate, Unicode
 from httoop.exceptions import InvalidDate
 from httoop.meta import HTTPSemantic
 
 
 class Date(object):
-	u"""HTTP Date
+	u"""A HTTP Date string
 
-		.. seealso:: :rfc:`2616#section-3.3`
+		It provides a API to multiple time representations:
 
-		.. seealso:: :rfc:`2616#section-19.3`
+		* datetime
+		* time struct
+		* UNIX timestamp
+
+		Supported HTTP date string formats:
+
+		:example:
+			Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
+			Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
+			Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
 	"""
 	__metaclass__ = HTTPSemantic
 
@@ -35,63 +44,52 @@ class Date(object):
 				or a timetuple
 		"""
 
-		self.http_string, self.datetime, self.timestamp = None, None, None
+		self.__composed = None
+		self.__timestamp = None
+		self.__datetime = None
+		self.__time_struct = None
 
 		if timeval is None:
-			self.datetime = datetime.now()
-			self.timestamp = time.mktime(self.datetime.timetuple())
+			self.__timestamp = time.time()
 		elif isinstance(timeval, (float, int)):
-			self.timestamp = float(timeval)
-		elif isinstance(timeval, tuple):
-			self.timestamp = time.mktime(timeval)
+			self.__timestamp = float(timeval)
+		elif isinstance(timeval, (tuple, time.struct_time)):
+			self.__timestamp = time.mktime(timeval)
 		elif isinstance(timeval, datetime):
-			self.datetime = timeval
-			self.timestamp = time.mktime(self.datetime.timetuple())
+			self.__datetime = timeval
+			self.__timestamp = time.mktime(self.datetime.utctimetuple())
 		elif isinstance(timeval, (bytes, Unicode)):
 			if isinstance(timeval, Unicode):
-				timeval = timeval.encode('ascii')
-			date = self.parse(timeval)
-			self.datetime = date.datetime
-			self.timestamp = date.timestamp
+				timeval = timeval.encode('ascii', 'ignore')
+			self.__timestamp = float(Date.parse(timeval))
 		else:
 			raise TypeError('Date(): got invalid argument')
 
-	def __eq__(self, other):
-		return self.timestamp == Date(other).timestamp
+	@property
+	def datetime(self):
+		if self.__datetime is None:
+			self.__datetime = datetime.utcfromtimestamp(int(self))
+		return self.__datetime
 
-	def __gt__(self, other):
-		return self.timestamp > Date(other).timestamp
-
-	def __lt__(self, other):
-		return self.timestamp < Date(other).timestamp
-
-	def __int__(self):
-		return int(self.timestamp)
-
-	def __float__(self):
-		return float(self.timestamp)
-
-	def to_timetuple(self):
-		return parsedate(formatdate(self.timestamp))[:7]
-
-	def to_datetime(self):
-		if self.datetime is None:
-			self.datetime = datetime.fromtimestamp(self.timestamp)
-		return self.datetime
-
-	def to_unix_timestamp(self):
-		return self.timestamp
-
-	def to_http_string(self):
-		if self.http_string is None:
-			self.http_string = formatdate(self.to_unix_timestamp())
-		return self.http_string
+	@property
+	def gmtime(self):
+		if self.__time_struct is None:
+			self.__time_struct = time.gmtime(int(self))
+		return self.__time_struct
 
 	def compose(self):
-		return self.to_http_string()
+		if self.__composed is None:
+			self.__composed = self.__compose()
+		return self.__composed
 
-	def __repr__(self):
-		return '<HTTP Date(%d)>' % (self.timestamp,)
+	def __compose(self):
+		d = self.gmtime
+		return b'%s, %02d %s %04d %02d:%02d:%02d GMT' % (
+			(b'Mon', b'Tue', b'Wed', b'Thu', b'Fri', b'Sat', b'Sun')[d.tm_wday],
+			d.tm_mday,
+			(b'Jan', b'Feb', b'Mar', b'Apr', b'May', b'Jun', b'Jul', b'Aug', b'Sep', b'Oct', b'Nov', b'Dec')[d.tm_mon - 1],
+			d.tm_year, d.tm_hour, d.tm_min, d.tm_sec
+		)
 
 	@classmethod
 	def parse(cls, timestr=None):
@@ -103,10 +101,6 @@ class Date(object):
 			:returns: the HTTP Date object
 			:rtype  : :class:`Date`
 
-			:example:
-				Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
-				Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
-				Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
 		"""
 
 		# parse the most common HTTP Date format (RFC 2822)
@@ -136,3 +130,40 @@ class Date(object):
 			locale.setlocale(locale.LC_TIME, old)
 
 		raise InvalidDate(date)
+
+	def __int__(self):
+		return int(float(self))
+
+	def __float__(self):
+		return float(self.__timestamp)
+
+	def __eq__(self, other):
+		try:
+			return int(self) == int(self.__other(other))
+		except NotImplementedError:
+			return NotImplemented
+
+	def __gt__(self, other):
+		try:
+			return int(self) > int(self.__other(other))
+		except NotImplementedError:
+			return NotImplemented
+
+	def __lt__(self, other):
+		try:
+			return int(self) < int(self.__other(other))
+		except NotImplementedError:
+			return NotImplemented
+
+	def __other(self, other):
+		if other is None:
+			raise NotImplementedError
+		if isinstance(other, Date):
+			return other
+		try:
+			return Date(other)
+		except (InvalidDate, TypeError):
+			raise NotImplementedError
+
+	def __repr__(self):
+		return '<HTTP Date(%d)>' % (int(self),)

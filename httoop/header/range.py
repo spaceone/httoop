@@ -26,7 +26,7 @@ class ContentRange(HeaderElement):
 		return b'%s %s/%s' % (self.value, byte_range, length)
 
 	@classmethod
-	def parse(self, elementstr):
+	def parse(cls, elementstr):
 		value, start, end, complete_length = None, None, None, None
 		try:
 			value, content_range = elementstr.split(None, 1)

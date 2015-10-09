@@ -2,7 +2,7 @@
 # TODO: Via, Server, User-Agent can contain comments → parse them
 import re
 
-from httoop.header.element import HeaderElement, _AcceptElement, _CookieElement, _HopByHopElement, MimeType
+from httoop.header.element import HeaderElement, _AcceptElement, _CookieElement, _HopByHopElement, _ListElement, MimeType
 from httoop.util import Unicode
 from httoop.exceptions import InvalidHeader, InvalidDate
 from httoop.codecs import lookup
@@ -299,7 +299,7 @@ class Server(HeaderElement):
 	priority = '\x02'
 
 
-class SetCookie(_CookieElement):
+class SetCookie(_ListElement, _CookieElement):
 
 	__name__ = 'Set-Cookie'
 
@@ -307,7 +307,7 @@ class SetCookie(_CookieElement):
 
 	@classmethod
 	def split(cls, fieldvalue):
-		fieldvalue = re.sub(b'(expires)=([^"][^;]+);', b'\\1="\\2";', fieldvalue, flags=re.I)
+		fieldvalue = re.sub(b'(expires)=([^"][^;]+)', b'\\1="\\2"', fieldvalue, flags=re.I)
 		return super(SetCookie, cls).split(fieldvalue)
 
 	@property
@@ -336,7 +336,7 @@ class SetCookie(_CookieElement):
 			try:
 				return int(self.params['max-age'])
 			except ValueError:
-				raise InvalidHeader('Cookie: max-age is not an integer: %r' % (self.params['max-age'],))
+				raise InvalidHeader('Cookie: max-age is not a number: %r' % (self.params['max-age'],))
 
 	@property
 	def expires(self):

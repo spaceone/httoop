@@ -11,7 +11,7 @@ __all__ = ['HEADER', 'HeaderElement']
 
 import re
 
-from httoop.util import CaseInsensitiveDict, iteritems, decode_rfc2231, Unicode
+from httoop.util import CaseInsensitiveDict, iteritems, decode_rfc2231, Unicode, decode_header
 from httoop.exceptions import InvalidHeader
 from httoop._percent import Percent
 
@@ -34,6 +34,7 @@ class HeaderElement(object):
 
 	priority = None
 	hop_by_hop = False
+	list_element = False
 
 	# Regular expression that matches `special' characters in parameters, the
 	# existance of which force quoting of the parameter value.
@@ -65,7 +66,7 @@ class HeaderElement(object):
 		return self.compose()
 
 	def __unicode__(self):
-		return bytes(self).decode('ISO8859-1')
+		return self.decode(bytes(self))
 
 	if str is bytes:
 		__str__ = __bytes__
@@ -192,6 +193,20 @@ class HeaderElement(object):
 				return b'%s=%s' % (param, value)
 		else:
 			return param
+
+	@classmethod
+	def decode(cls, value):
+		if b'=?' in value:
+			# FIXME: must not parse encoded_words in unquoted ('Content-Type', 'Content-Disposition') header params
+			return u''.join(atom.decode(charset or 'ISO8859-1') for atom, charset in decode_header(value))
+		return value.decode('ISO8859-1')
+
+	@classmethod
+	def encode(cls, value):
+		try:
+			return value.encode('ISO8859-1')
+		except UnicodeEncodeError:
+			return value.encode('ISO8859-1', 'replace')  # FIXME: if value contains UTF-8 chars encode them in MIME; =?UTF-8?B?…?= (RFC 2047); seealso quopri
 
 	def __repr__(self):
 		params = ', %r' % (self.params,) if self.params else ''
@@ -349,3 +364,6 @@ class _CookieElement(HeaderElement):
 
 class _HopByHopElement(object):
 	hop_by_hop = True
+
+class _ListElement(object):
+	list_element = True

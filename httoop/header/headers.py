@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 
-from httoop.util import CaseInsensitiveDict, iteritems, to_unicode, decode_header
+from httoop.util import CaseInsensitiveDict, iteritems, to_unicode
 from httoop.meta import HTTPSemantic
 from httoop.header.element import HEADER, HeaderElement
 from httoop.exceptions import InvalidHeader
@@ -129,22 +129,25 @@ class Headers(CaseInsensitiveDict):
 			while lines and lines[0].startswith((' ', '\t')):
 				value.append(lines.pop(0)[1:])
 			value = b''.join(value).rstrip()
-			if b'=?' in value:
-				# FIXME: must not parse encoded_words in unquoted ('Content-Type', 'Content-Disposition') header params
-				value = u''.join(atom.decode(charset or 'ISO8859-1') for atom, charset in decode_header(value))
-			else:
-				value = value.decode('ISO8859-1')
+			Element = HEADER.get(name, HeaderElement)
+			value = Element.decode(value)
 
 			self.append(name, value)
 
 	def compose(self):
-		def _encode(v):
-			try:
-				return v.encode('ISO8859-1')
-			except UnicodeEncodeError:
-				return v.encode('ISO8859-1', 'replace')  # FIXME: if value contains UTF-8 chars encode them in MIME; =?UTF-8?B?…?= (RFC 2047); seealso quopri
-		items = sorted(iteritems(self), key=lambda x: HEADER.get(x[0], HeaderElement).priority or x[0])
-		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, _encode(v)) for k, v in items)
+		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, v) for k, v in self.__items())
+
+	def __items(self):
+		return sorted(self.__encoded_items(), key=lambda x: HEADER.get(x[0], HeaderElement).priority or x[0])
+
+	def __encoded_items(self):
+		for key, values in iteritems(self):
+			Element = HEADER.get(key, HeaderElement)
+			if Element.list_element:
+				for value in Element.split(values):
+					yield key, Element.encode(value)
+			else:
+				yield key, Element.encode(values)
 
 	def __repr__(self):
 		return "<HTTP Headers(%s)>" % repr(list(self.items()))

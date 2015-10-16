@@ -36,7 +36,7 @@ setup(
 	license='MIT',
 	keywords='HTTP web proxy cache client server library',
 	platforms='POSIX',
-#	packages=find_packages('.'),
+	packages=find_packages('.', exclude=['tests.*', 'tests']),
 #	scripts=glob('bin/*'),
 	install_requires=[],
 	entry_points={},

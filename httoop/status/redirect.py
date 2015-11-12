@@ -90,11 +90,6 @@ class USE_PROXY(RedirectStatus):
 
 	code = 305
 
-# Unused, HTTP1.0
-#SWITCH_PROXY = class (RedirectStatus):
-#
-#	code = 306
-
 
 class TEMPORARY_REDIRECT(RedirectStatus):
 	u"""The request has not processed because the requested

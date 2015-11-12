@@ -44,7 +44,6 @@ class UNAUTHORIZED(ClientErrorStatus):
 class PAYMENT_REQUIRED(ClientErrorStatus):
 
 	code = 402
-	# Reserved for future use
 
 
 class FORBIDDEN(ClientErrorStatus):
@@ -157,7 +156,7 @@ class UNSUPPORTED_MEDIA_TYPE(ClientErrorStatus):
 	code = 415
 
 
-class REQUEST_RANGE_NOT_SATISFIABLE(ClientErrorStatus):
+class RANGE_NOT_SATISFIABLE(ClientErrorStatus):
 
 	code = 416
 
@@ -179,49 +178,43 @@ class I_AM_A_TEAPOT(ClientErrorStatus):
 #	code = 420
 
 
-#class UNPROCESSABLE_ENTITY(ClientErrorStatus):
-#
-#	code = 422
+class MISDIRECTED_REQUEST(ClientErrorStatus):
+
+	code = 421
+
+class UNPROCESSABLE_ENTITY(ClientErrorStatus):
+
+	code = 422
 
 
-#class LOCKED(ClientErrorStatus):
-#
-#	code = 423
+class LOCKED(ClientErrorStatus):
+
+	code = 423
 
 
-#class FAILED_DEPENDENCY(ClientErrorStatus):
-#
-#	code = 424
+class FAILED_DEPENDENCY(ClientErrorStatus):
+
+	code = 424
 
 
-#class METHOD_FAILURE(ClientErrorStatus):
-#
-#	code = 424
+class UPGRADE_REQUIRED(ClientErrorStatus):
+
+	code = 426
 
 
-#class UNORDERED_COLLECTION(ClientErrorStatus):
-#
-#	code = 425
+class PRECONDITION_REQUIRED(ClientErrorStatus):
+
+	code = 428
 
 
-#class UPGRADE_REQUIRED(ClientErrorStatus):
-#
-#	code = 426
+class TOO_MANY_REQUESTS(ClientErrorStatus):
+
+	code = 429
 
 
-#class PRECONDITION_REQUIRED(ClientErrorStatus):
-#
-#	code = 428
+class REQUEST_HEADER_FIELDS_TOO_LARGE(ClientErrorStatus):
 
-
-#class TOO_MANY_REQUESTS(ClientErrorStatus):
-#
-#	code = 429
-
-
-#class REQUEST_HEADER_FIELDS_TOO_LARGE(ClientErrorStatus):
-#
-#	code = 431
+	code = 431
 
 
 #class NO_RESPONSE(ClientErrorStatus):

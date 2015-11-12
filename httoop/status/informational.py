@@ -25,5 +25,6 @@ class SWITCHING_PROTOCOLS(InformationalStatus):
 	code = 101
 	body = None
 
-#class PROCESSING(InformationalStatus):
-#	code = 102
+
+class PROCESSING(InformationalStatus):
+	code = 102

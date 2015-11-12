@@ -56,29 +56,36 @@ class HTTP_VERSION_NOT_SUPPORTED(ServerErrorStatus):
 
 	code = 505
 
-#class VARIANT_ALSO_NEGOTIATES(ServerErrorStatus):
-#
-#	code = 506
 
-#class INSUFFICIENT_STORAGE(ServerErrorStatus):
-#
-#	code = 507
+class VARIANT_ALSO_NEGOTIATES(ServerErrorStatus):
 
-#class LOOP_DETECTED(ServerErrorStatus):
-#
-#	code = 508
+	code = 506
 
-#class BANDWIDTH_LIMIT_EXCEEDET(ServerErrorStatus):
-#
-#	code = 509
+
+class INSUFFICIENT_STORAGE(ServerErrorStatus):
+
+	code = 507
+
+
+class LOOP_DETECTED(ServerErrorStatus):
+
+	code = 508
+
+
+class BANDWIDTH_LIMIT_EXCEEDET(ServerErrorStatus):
+
+	code = 509
+
 
 #class NOT_EXTENDED(ServerErrorStatus):
 #
 #	code = 510
 
-#class NETWORK_AUTHENTICATION_REQUIRED(ServerErrorStatus):
-#
-#	code = 511
+
+class NETWORK_AUTHENTICATION_REQUIRED(ServerErrorStatus):
+
+	code = 511
+
 
 #class NETWORK_READ_TIMEOUT_ERROR(ServerErrorStatus):
 #

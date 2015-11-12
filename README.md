@@ -33,6 +33,10 @@ HTTP and extensions are defined in the following RFC's:
 
 * HTTP/2 RFC 7541 [HPACK: Header Compression for HTTP/2](https://tools.ietf.org/html/rfc7541)
 
+* [IANA HTTP Status Codes](http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml)
+
+* [IANA Message Headers](http://www.iana.org/assignments/message-headers/message-headers.xhtml)
+
 * RFC 5987 [Character Set and Language Encoding for Hypertext Transfer Protocol (HTTP) Header Field Parameters](https://tools.ietf.org/html/rfc5987)
 
 * Uniform Resource Identifier (URI) ([RFC 3986](https://tools.ietf.org/html/rfc3986))
@@ -70,3 +74,5 @@ Extended information about hypermedia, WWW and how HTTP is meant to be used:
 * Representational State Transfer [REST](http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
 
 * [Test Cases for HTTP Content-Disposition header field](http://greenbytes.de/tech/tc2231/)
+
+* [Cross-Origin Resource Sharing](http://www.w3.org/TR/cors/)

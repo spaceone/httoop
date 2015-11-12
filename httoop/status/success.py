@@ -90,22 +90,22 @@ class PARTIAL_CONTENT(SuccessStatus):
 
 	code = 206
 
-#class MULTI_STATUS(SuccessStatus):
-#
-#	code = 207
 
-	#"""This status code indicated that the entity-body contains information
-	#about the states of the batch request.
-	#It is not an official HTTP-Status-Code: WebDAV
-	#It is not realy RESTful to use.
-	#The entity-body is descripted in RFC 2518."""
+class MULTI_STATUS(SuccessStatus):
+	"""This status code indicated that the entity-body contains information
+	about the states of the batch request.
+	It is not an official HTTP-Status-Code: WebDAV
+	It is not realy RESTful to use.
+	The entity-body is descripted in RFC 2518."""
 
-#class ALREADY_REPORTED(SuccessStatus):
-#
-#	code = 208
+	code = 207
 
 
-#class IM_USED(SuccessStatus):
-#
-#	code = 226
+class ALREADY_REPORTED(SuccessStatus):
 
+	code = 208
+
+
+class IM_USED(SuccessStatus):
+
+	code = 226

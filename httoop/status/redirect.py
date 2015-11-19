@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from httoop.uri import URI
 from httoop.status.types import StatusException
 from httoop.util import Unicode
 
@@ -13,7 +14,7 @@ class RedirectStatus(StatusException):
 
 	def __init__(self, location, *args, **kwargs):
 		if location is not None:
-			kwargs.setdefault('headers', {})['Location'] = location
+			kwargs.setdefault('headers', {})['Location'] = URI(location).uri
 		super(RedirectStatus, self).__init__(*args, **kwargs)
 
 	def to_dict(self):
@@ -34,7 +35,7 @@ class MULTIPLE_CHOICES(RedirectStatus):
 	def __init__(self, locations, *args, **kwargs):
 		if isinstance(locations, (bytes, Unicode)):
 			locations = [locations]
-		locations = ', '.join(locations)
+		locations = ', '.join(locations)  # FIXME
 		super(MULTIPLE_CHOICES, self).__init__(locations, *args, **kwargs)
 
 

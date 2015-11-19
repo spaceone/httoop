@@ -65,6 +65,7 @@ class ServerStateMachine(StateMachine):
 
 	def on_headers_complete(self):
 		self.check_host_header_exists()
+		self.set_request_uri_host()
 		super(ServerStateMachine, self).on_headers_complete()
 
 	def on_body_complete(self):
@@ -109,6 +110,13 @@ class ServerStateMachine(StateMachine):
 	def check_host_header_exists(self):
 		if self.message.protocol >= (1, 1) and 'Host' not in self.message.headers:
 			raise BAD_REQUEST('Missing Host header')
+
+	def set_request_uri_host(self):
+		if 'Host' not in self.message.headers:
+			return
+		host = self.message.headers.element('Host')
+		self.message.uri.host = host.host
+		self.message.uri.port = host.port
 
 	def check_message_without_body_containing_data(self):
 		if self.buffer and 'Content-Length' not in self.message.headers and not self.chunked:

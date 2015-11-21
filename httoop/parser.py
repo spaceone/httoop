@@ -79,7 +79,10 @@ class StateMachine(object):
 			:type  data: bytes
 		"""
 		self.buffer.extend(data)
-		return tuple(x for x in self._parse() if x is not None)
+		try:
+			return tuple(x for x in self._parse() if x is not None)
+		except (InvalidHeader, InvalidLine, InvalidURI) as exc:
+			raise BAD_REQUEST(Unicode(exc))
 
 	def _parse(self):
 		while self.buffer:

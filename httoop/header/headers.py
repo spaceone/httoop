@@ -118,7 +118,6 @@ class Headers(CaseInsensitiveDict):
 			name, _, value = curr.partition(b':')
 			if _ != b':':
 				raise InvalidHeader(u"Invalid header line: %r" % curr.decode('ISO8859-1'))
-			name = name.rstrip(' \t')
 
 			if self.HEADER_RE.search(name):
 				raise InvalidHeader(u"Invalid header name: %r" % name.decode('ISO8859-1'))

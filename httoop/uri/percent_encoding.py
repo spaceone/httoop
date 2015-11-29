@@ -14,6 +14,7 @@ class Percent(object):
 	SUB_DELIMS = b"!$&'()*+,;="
 
 	RESERVED_CHARS = GEN_DELIMS + SUB_DELIMS + b'%'
+	UNRESERVED_CHARS = b'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~'
 
 	HEX_MAP = dict((a + b, chr(int(a + b, 16))) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef')
 
@@ -23,6 +24,7 @@ class Percent(object):
 
 	@classmethod
 	def _decode_iter(cls, data):
+		data = data.replace(b'+', b' ')
 		if b'%' not in data:
 			yield data
 			return

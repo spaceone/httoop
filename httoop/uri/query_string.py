@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from httoop.codecs.application.x_www_form_urlencoded import FormURLEncoded
 from httoop.exceptions import DecodeError
-from httoop._percent import Percent
+from httoop.uri.percent_encoding import Percent
 
 
 class QueryString(FormURLEncoded):
@@ -16,7 +16,7 @@ class QueryString(FormURLEncoded):
 	@classmethod
 	def unquote(cls, data, charset):
 		data = data.decode(charset or 'ISO8859-1')
-		return super(QueryString, cls).unquote(data.replace(b'+', b' '), charset)
+		return super(QueryString, cls).unquote(data, charset)
 
 	@classmethod
 	def decode(cls, data, charset=None):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from httoop.codecs.codec import Codec
-from httoop._percent import Percent
+from httoop.uri.percent_encoding import Percent
 from httoop.util import Unicode
 
 

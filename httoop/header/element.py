@@ -13,7 +13,7 @@ import re
 
 from httoop.util import CaseInsensitiveDict, iteritems, decode_rfc2231, Unicode, decode_header
 from httoop.exceptions import InvalidHeader
-from httoop._percent import Percent
+from httoop.uri.percent_encoding import Percent
 
 # a mapping of all headers to HeaderElement classes
 HEADER = CaseInsensitiveDict()

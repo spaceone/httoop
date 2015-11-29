@@ -8,7 +8,7 @@ __all__ = ('Request',)
 
 from httoop.messages.method import Method
 from httoop.messages.message import Message
-from httoop.uri import URI
+from httoop.uri import HTTP as URI
 from httoop.exceptions import InvalidLine, InvalidURI
 
 
@@ -70,8 +70,15 @@ class Request(Message):
 		# URI
 		if uri.startswith(b'//'):
 			raise InvalidURI(u'Invalid URI: must be an absolute path or contain a scheme')
-		self.uri.parse(uri)
-		self.uri.validate_http_request_uri()  # TODO: move the method into here
+		if uri.startswith(b'/'):
+			self.uri.parse_relative(uri)
+		elif uri == b'*':
+			self.uri.path = uri
+		else:
+			self.uri.parse(uri)
+		if not isinstance(self.uri, (self.uri.SCHEMES['http'], self.uri.SCHEMES['https'])):
+			raise InvalidURI()
+		self.uri.validate()
 
 	def compose(self):
 		u"""composes the request line"""

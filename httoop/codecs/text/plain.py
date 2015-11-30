@@ -3,6 +3,7 @@ from httoop.codecs.codec import Codec
 
 
 class PlainText(Codec):
+
 	mimetype = 'text/plain'
 
 	@classmethod

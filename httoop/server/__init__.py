@@ -124,7 +124,7 @@ class ServerStateMachine(StateMachine):
 			raise LENGTH_REQUIRED(u'Missing Content-Length header.')
 
 	def check_methods_without_body(self):
-		if self.message.method.safe and self.message.body:
+		if self.message.method in (u'HEAD', u'GET', u'TRACE') and self.message.body:
 			raise BAD_REQUEST('A %s request is considered as safe and MUST NOT contain a request body.' % self.message.method)
 
 	def check_http2_upgrade(self):

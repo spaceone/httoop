@@ -101,6 +101,10 @@ class REQUEST_TIMEOUT(ClientErrorStatus):
 
 	code = 408
 
+	def __init__(self, *args, **kwargs):
+		kwargs.setdefault('headers', {})['Connection'] = 'close'
+		super(REQUEST_TIMEOUT, self).__init__(*args, **kwargs)
+
 
 class CONFLICT(ClientErrorStatus):
 	u"""If the request would cause to leave the resource in an inconsequent
@@ -200,6 +204,11 @@ class FAILED_DEPENDENCY(ClientErrorStatus):
 class UPGRADE_REQUIRED(ClientErrorStatus):
 
 	code = 426
+
+	def __init__(self, upgrade, *args, **kwargs):
+		kwargs.setdefault('headers', {})['Upgrade'] = upgrade
+		kwargs['headers']['Connection'] = 'Upgrade'
+		super(UPGRADE_REQUIRED, self).__init__(*args, **kwargs)
 
 
 class PRECONDITION_REQUIRED(ClientErrorStatus):

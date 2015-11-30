@@ -121,4 +121,5 @@ class ComposedResponse(ComposedMessage):
 			if response.protocol < (1, 1):
 				response.headers['Connection'] = 'keep-alive'
 				return
-		response.headers.pop('Connection', None)
+		if response.headers.get('Connection') == 'close':
+			response.headers.pop('Connection', None)

@@ -35,7 +35,15 @@ HTTP and extensions are defined in the following RFC's:
 
 * [IANA HTTP Status Codes](http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml)
 
+* [IANA HTTP Methods](http://www.iana.org/assignments/http-methods/http-methods.xhtml)
+
 * [IANA Message Headers](http://www.iana.org/assignments/message-headers/message-headers.xhtml)
+
+* [IANA URI Schemes](http://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml)
+
+* [IANA HTTP Authentication Schemes](http://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml)
+
+* [IANA HTTP Cache Directives](http://www.iana.org/assignments/http-cache-directives/http-cache-directives.xhtml)
 
 * RFC 5987 [Character Set and Language Encoding for Hypertext Transfer Protocol (HTTP) Header Field Parameters](https://tools.ietf.org/html/rfc5987)
 

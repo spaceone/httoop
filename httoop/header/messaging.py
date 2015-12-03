@@ -201,10 +201,6 @@ class Expect(HeaderElement):
 	pass
 
 
-class Expires(HeaderElement):
-	pass
-
-
 class From(HeaderElement):
 	pass
 
@@ -279,10 +275,6 @@ class Location(HeaderElement):
 class MaxForwards(HeaderElement):
 
 	__name__ = 'Max-Forwards'
-
-
-class Pragma(HeaderElement):
-	pass
 
 
 class Referer(HeaderElement):

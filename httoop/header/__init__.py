@@ -25,8 +25,9 @@ from httoop.header import conditional
 from httoop.header import range  # pylint: disable=W0622
 from httoop.header import cache
 from httoop.header import auth
+from httoop.header import security
 
-types = (semantics, messaging, conditional, range, cache, auth)
+types = (semantics, messaging, conditional, range, cache, auth, security)
 
 for _, member in (member for type_ in types for member in inspect.getmembers(type_, inspect.isclass)):
 	if isinstance(member, HeaderType) and member is not HeaderElement and not _.startswith('_'):

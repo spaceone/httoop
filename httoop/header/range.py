@@ -51,6 +51,10 @@ class ContentRange(HeaderElement):
 		return cls(value, (start, end), complete_length)
 
 
+class IfRange(HeaderElement):
+	__name__ = 'If-Range'
+
+
 class Range(HeaderElement):
 
 	def __init__(self, value, ranges, params=None):

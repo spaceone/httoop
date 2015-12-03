@@ -142,6 +142,8 @@ class Headers(CaseInsensitiveDict):
 	def __encoded_items(self):
 		for key, values in iteritems(self):
 			Element = HEADER.get(key, HeaderElement)
+			if Element is not HeaderElement:
+				key = Element.__name__
 			if Element.list_element:
 				for value in Element.split(values):
 					yield key, Element.encode(value)

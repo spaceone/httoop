@@ -297,7 +297,6 @@ class URI(object):
 			if value is None:
 				pass
 			elif not isinstance(value, Unicode):
-				print self.SCHEMES
 				raise TypeError('%r must be string, not %s' % (name, type(value).__name__))
 
 		super(URI, self).__setattr__(name, value)

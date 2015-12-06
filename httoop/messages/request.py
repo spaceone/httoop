@@ -10,6 +10,7 @@ from httoop.messages.method import Method
 from httoop.messages.message import Message
 from httoop.uri import HTTP as URI
 from httoop.exceptions import InvalidLine, InvalidURI
+from httoop.util import _
 
 
 class Request(Message):
@@ -59,7 +60,7 @@ class Request(Message):
 		try:
 			method, uri, version = bits
 		except ValueError:
-			raise InvalidLine(line.decode('ISO8859-1'))
+			raise InvalidLine(_(u'Invalid request line: %r'), line.decode('ISO8859-1'))
 
 		# protocol version
 		super(Request, self).parse(version)
@@ -69,7 +70,7 @@ class Request(Message):
 
 		# URI
 		if uri.startswith(b'//'):
-			raise InvalidURI(u'Invalid URI: must be an absolute path or contain a scheme')
+			raise InvalidURI(_(u'Invalid URI: must be an absolute path or contain a scheme'))
 		if uri.startswith(b'/'):
 			self.uri.parse_relative(uri)
 		elif uri == b'*':
@@ -77,7 +78,7 @@ class Request(Message):
 		else:
 			self.uri.parse(uri)
 		if not isinstance(self.uri, (self.uri.SCHEMES['http'], self.uri.SCHEMES['https'])):
-			raise InvalidURI()
+			raise InvalidURI(_(u'URI must be HTTP based.'))
 		self.uri.validate()
 
 	def compose(self):

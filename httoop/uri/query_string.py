@@ -2,6 +2,7 @@
 from httoop.codecs.application.x_www_form_urlencoded import FormURLEncoded
 from httoop.exceptions import DecodeError
 from httoop.uri.percent_encoding import Percent
+from httoop.util import _
 
 
 class QueryString(FormURLEncoded):
@@ -21,7 +22,7 @@ class QueryString(FormURLEncoded):
 	@classmethod
 	def decode(cls, data, charset=None):
 		if set(Percent.decode(data)) & cls.INVALID:
-			raise DecodeError('Invalid query string: contains invalid token')
+			raise DecodeError(_(u'Invalid query string: contains invalid token'))
 
 		return super(QueryString, cls).decode(data, charset)
 
@@ -32,7 +33,7 @@ class QueryString(FormURLEncoded):
 # TODO: decide to remove invalid chars or strip them out
 # FIXME: broken?
 #		if set(Percent.encode(data)) & cls.INVALID:
-#			raise DecodeError('Invalid query string: contains invalid token')
+#			raise DecodeError(_(u'Invalid query string: contains invalid token'))
 
 		# strip out illegal chars
 		for invalid in cls.INVALID:

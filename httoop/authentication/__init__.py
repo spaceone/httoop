@@ -3,6 +3,7 @@ import re
 
 from httoop.header.element import HeaderElement
 from httoop.exceptions import InvalidHeader
+from httoop.util import _
 
 from httoop.authentication.basic import BasicAuthRequestScheme, BasicAuthResponseScheme
 from httoop.authentication.digest import DigestAuthResponseScheme, DigestAuthRequestScheme
@@ -18,16 +19,16 @@ class AuthElement(HeaderElement):
 		try:
 			scheme, authinfo = elementstr.split(b' ', 1)
 		except ValueError:
-			raise InvalidHeader(u'Authorization headers must contain authentication scheme')
+			raise InvalidHeader(_(u'Authorization headers must contain authentication scheme'))
 		try:
 			parser = cls.schemes[scheme.lower()]
 		except KeyError:
-			raise InvalidHeader(u'Unsupported authentication scheme: %r' % (scheme,))
+			raise InvalidHeader(_(u'Unsupported authentication scheme: %r'), scheme)
 
 		try:
 			authinfo = parser.parse(authinfo)
 		except KeyError as key:
-			raise InvalidHeader(u'Missing parameter %r for authentication scheme %r' % (str(key), scheme))
+			raise InvalidHeader(_(u'Missing parameter %r for authentication scheme %r'), str(key), scheme)
 
 		return scheme.title(), authinfo
 
@@ -35,12 +36,12 @@ class AuthElement(HeaderElement):
 		try:
 			scheme = self.schemes[self.value.lower()]
 		except KeyError:
-			raise InvalidHeader(u'Unsupported authentication scheme: %r' % (self.value,))
+			raise InvalidHeader(_(u'Unsupported authentication scheme: %r'), self.value)
 
 		try:
 			authinfo = scheme.compose(self.params)
 		except KeyError as key:
-			raise InvalidHeader(u'Missing parameter %r for authentication scheme %r' % (str(key), self.value))
+			raise InvalidHeader(_(u'Missing parameter %r for authentication scheme %r'), str(key), self.value)
 
 		return b'%s %s' % (self.value.title(), authinfo)
 

@@ -15,6 +15,7 @@ from datetime import datetime
 from httoop.util import parsedate, Unicode
 from httoop.exceptions import InvalidDate
 from httoop.meta import HTTPSemantic
+from httoop.util import _
 
 
 class Date(object):
@@ -129,7 +130,7 @@ class Date(object):
 		finally:
 			locale.setlocale(locale.LC_TIME, old)
 
-		raise InvalidDate(date)
+		raise InvalidDate(_(u'Invalid date: %r'), date)
 
 	def __int__(self):
 		return int(float(self))

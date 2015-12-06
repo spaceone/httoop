@@ -4,7 +4,7 @@
 .. seealso:: :rfc:`3986`
 """
 
-__all__ = ('URI', 'HTTP')
+__all__ = ('URI', 'HTTP', 'HTTPS')
 
 from httoop.uri.uri import URI
 from httoop.uri.http import HTTP, HTTPS

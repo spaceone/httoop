@@ -5,7 +5,7 @@
 .. seealso:: :rfc:`2616#section-10`
 """
 
-from httoop.util import Unicode
+from httoop.util import Unicode, _
 from httoop.exceptions import InvalidLine
 from httoop.meta import HTTPSemantic
 
@@ -76,7 +76,7 @@ class Status(object):
 		"""
 		match = self.STATUS_RE.match(status)
 		if match is None:
-			raise InvalidLine(u"Invalid status %r" % status.decode('ISO8859-1'))
+			raise InvalidLine(_(u"Invalid status %r"), status.decode('ISO8859-1'))
 
 		self.set((int(match.group(1)), match.group(2).decode('ascii'),))
 

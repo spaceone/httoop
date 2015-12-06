@@ -6,6 +6,9 @@
 """
 
 from httoop.uri.uri import URI
+from httoop.util import Unicode, _
+from httoop.exceptions import InvalidURI
+
 
 class HTTP(URI):
 	SCHEME = b'http'
@@ -27,7 +30,7 @@ class HTTP(URI):
 			pass
 		else:
 			return
-		raise InvalidURI(Unicode(self))
+		raise InvalidURI(_(u'Invalid URI: %s'), Unicode(self))
 
 
 class HTTPS(HTTP):

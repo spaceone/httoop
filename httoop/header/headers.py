@@ -5,6 +5,7 @@ from httoop.util import CaseInsensitiveDict, iteritems, to_unicode
 from httoop.meta import HTTPSemantic
 from httoop.header.element import HEADER, HeaderElement
 from httoop.exceptions import InvalidHeader
+from httoop.util import _
 
 
 class Headers(CaseInsensitiveDict):
@@ -22,7 +23,7 @@ class Headers(CaseInsensitiveDict):
 	def formatkey(cls, key):
 		key = CaseInsensitiveDict.formatkey(key)
 		if cls.HEADER_RE.search(key):
-			raise InvalidHeader(u"Invalid header name: %r" % key.decode('ISO8859-1'))
+			raise InvalidHeader(_(u"Invalid header name: %r"), key.decode('ISO8859-1'))
 		return key  # TODO: do we want bytes here?
 
 	def elements(self, fieldname):
@@ -115,12 +116,12 @@ class Headers(CaseInsensitiveDict):
 
 		while lines:
 			curr = lines.pop(0)
-			name, _, value = curr.partition(b':')
-			if _ != b':':
-				raise InvalidHeader(u"Invalid header line: %r" % curr.decode('ISO8859-1'))
+			name, __, value = curr.partition(b':')
+			if __ != b':':
+				raise InvalidHeader(_(u"Invalid header line: %r"), curr.decode('ISO8859-1'))
 
 			if self.HEADER_RE.search(name):
-				raise InvalidHeader(u"Invalid header name: %r" % name.decode('ISO8859-1'))
+				raise InvalidHeader(_(u"Invalid header name: %r"), name.decode('ISO8859-1'))
 
 			name, value = name.strip(), [value.lstrip()]
 

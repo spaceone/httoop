@@ -3,8 +3,10 @@
 
 """
 
+from httoop.util import _Translateable
 
-class Invalid(ValueError):
+
+class Invalid(_Translateable, ValueError):
 	u"""base class for invalid values"""
 
 
@@ -28,9 +30,9 @@ class InvalidBody(Invalid):
 	u"""error raised when Body is invalid"""
 
 
-class EncodeError(ValueError):
+class EncodeError(_Translateable, ValueError):
 	u"""error raised when encoding failed"""
 
 
-class DecodeError(ValueError):
+class DecodeError(_Translateable, ValueError):
 	u"""error raised when decoding failed"""

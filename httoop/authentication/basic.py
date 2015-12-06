@@ -5,6 +5,7 @@ from base64 import decodestring as decode_base64, encodestring as encode_base64
 
 from httoop.header.element import HeaderElement
 from httoop.exceptions import InvalidHeader
+from httoop.util import _
 
 
 class BasicAuthRequestScheme(object):
@@ -14,14 +15,14 @@ class BasicAuthRequestScheme(object):
 		try:
 			authinfo = authinfo.encode('ascii')
 		except ValueError:
-			raise InvalidHeader(u'Invalid base64 in basic authentication')
+			raise InvalidHeader(_(u'Invalid base64 in basic authentication'))
 
 		try:
 			username, password = decode_base64(authinfo.strip()).split(':')
 		except Base64Error:
-			raise InvalidHeader(u'Basic authentication contains invalid base64')
+			raise InvalidHeader(_(u'Basic authentication contains invalid base64'))
 		except ValueError:
-			raise InvalidHeader(u'No username:password provided')
+			raise InvalidHeader(_(u'No username:password provided'))
 
 		authinfo = {
 			'username': username.decode('ISO8859-1'),

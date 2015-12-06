@@ -9,7 +9,7 @@ __all__ = ('Method',)
 import re
 
 from httoop.exceptions import InvalidLine
-from httoop.util import Unicode
+from httoop.util import Unicode, _
 from httoop.meta import HTTPSemantic
 
 
@@ -43,7 +43,7 @@ class Method(object):
 
 	def parse(self, method):
 		if not self.METHOD_RE.match(method):
-			raise InvalidLine(u"Invalid method: %r" % method.decode('ISO8859-1'))
+			raise InvalidLine(_(u"Invalid method: %r"), method.decode('ISO8859-1'))
 		self.__method = method
 
 	def compose(self):

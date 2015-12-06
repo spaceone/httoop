@@ -6,6 +6,8 @@ from httoop.status import (
 )
 from httoop.messages import Request, Response
 from httoop.version import ServerProtocol, ServerHeader
+from httoop.util import Unicode, _
+from httoop.exceptions import InvalidURI
 
 
 class ServerStateMachine(StateMachine):
@@ -98,7 +100,8 @@ class ServerStateMachine(StateMachine):
 	def validate_request_uri_scheme(self):
 		if self.message.uri.scheme:
 			if self.message.uri.scheme not in ('http', 'https'):
-				raise BAD_REQUEST('Invalid URL: wrong scheme')
+				exc = InvalidURI(_(u'Invalid URL: wrong scheme'))
+				raise BAD_REQUEST(Unicode(exc))
 		else:
 			self.message.uri.scheme = self._default_scheme
 			self.message.uri.host = self._default_host

@@ -4,6 +4,7 @@ from hashlib import md5
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
+from httoop.util import _
 
 
 class DigestAuthScheme(object):
@@ -19,7 +20,7 @@ class DigestAuthScheme(object):
 		try:
 			return cls.algorithms[algorithm]
 		except KeyError:
-			raise InvalidHeader(u'Unknown digest authentication algorithm: %r' % (algorithm,))
+			raise InvalidHeader(_(u'Unknown digest authentication algorithm: %r'), algorithm)
 
 	@classmethod
 	def compose(cls, authinfo):
@@ -73,7 +74,7 @@ class DigestAuthResponseScheme(DigestAuthScheme):
 	def parse(cls, authinfo):
 		params = super(cls, cls).parse(authinfo)
 		if '"' in params['nonce']:
-			raise InvalidHeader('Nonce must not contain double quote')
+			raise InvalidHeader(_(u'Nonce must not contain double quote'))
 		stale = params.get('stale')
 		if stale:
 			stale = {'false': False, 'true': True}.get(stale.lower())

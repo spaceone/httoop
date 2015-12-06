@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 u"""Implements a state machine for the parsing process.
 """
+# TODO: translation API
 
 from __future__ import absolute_import
 
 from httoop.messages import Message
 from httoop.header import Headers
 from httoop.exceptions import InvalidLine, InvalidHeader, InvalidBody, InvalidURI, Invalid
-from httoop.util import Unicode
+from httoop.util import Unicode, _
 from httoop.status import BAD_REQUEST, NOT_IMPLEMENTED
 
 CR = b'\r'
@@ -175,7 +176,7 @@ class StateMachine(object):
 					self.message_length = None
 					raise ValueError
 			except ValueError:
-				raise BAD_REQUEST(u'Invalid Content-Length header.')
+				raise BAD_REQUEST(_(u'Invalid Content-Length header.'))
 
 	def parse_body_with_message_length(self):
 		body, self.buffer = self.buffer[:self.message_length], self.buffer[self.message_length:]
@@ -208,7 +209,7 @@ class StateMachine(object):
 			return self.parse_trailers()
 
 		if not rest_chunk.startswith(self.line_end):
-			raise InvalidBody(u'Invalid chunk terminator: %r' % repr(rest_chunk[:2]))
+			raise InvalidBody(_(u'Invalid chunk terminator: %r'), repr(rest_chunk[:2]))
 		self.buffer = self.buffer[len(self.line_end):]
 
 		# next chunk
@@ -222,7 +223,8 @@ class StateMachine(object):
 			if chunk_size < 0:
 				raise ValueError
 		except (ValueError, OverflowError):
-			raise BAD_REQUEST(u'Invalid chunk size: %r' % chunk_size.decode('ISO8859-1'))
+			exc = InvalidHeader(_(u'Invalid chunk size: %r'), chunk_size.decode('ISO8859-1'))
+			raise BAD_REQUEST(Unicode(exc))
 		else:
 			return chunk_size, rest_chunk
 
@@ -243,7 +245,8 @@ class StateMachine(object):
 		try:
 			self.trailers.parse(bytes(trailers))
 		except InvalidHeader as exc:
-			raise BAD_REQUEST(u'Invalid trailers: %r' % Unicode(exc))
+			exc = InvalidHeader(_(u'Invalid trailers: %r'), Unicode(exc))
+			raise BAD_REQUEST(Unicode(exc))
 
 		self.merge_trailer_into_header()
 		return False
@@ -268,7 +271,7 @@ class StateMachine(object):
 				self.message.body.content_encoding = self.message.headers.element('Content-Encoding')
 				self.message.body.content_encoding.codec
 			except Invalid as exc:
-				raise NOT_IMPLEMENTED('%s' % (exc,))
+				raise NOT_IMPLEMENTED(Unicode(exc))
 
 	def set_body_content_type(self):
 		if 'Content-Type' in self.message.headers:

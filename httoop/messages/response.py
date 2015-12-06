@@ -10,6 +10,7 @@ from httoop.messages.message import Message
 
 from httoop.status import Status
 from httoop.exceptions import InvalidLine
+from httoop.util import _
 
 
 class Response(Message):
@@ -47,7 +48,7 @@ class Response(Message):
 		try:
 			version, status = bits
 		except ValueError:
-			raise InvalidLine(line.decode('ISO8859-1'))
+			raise InvalidLine(_(u'Invalid response line: %r'), line.decode('ISO8859-1'))
 
 		# version
 		super(Response, self).parse(version)

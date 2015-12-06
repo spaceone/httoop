@@ -8,7 +8,7 @@ import re
 from os.path import join
 
 from httoop.exceptions import InvalidURI
-from httoop.util import Unicode
+from httoop.util import Unicode, _
 from httoop.uri.percent_encoding import Percent
 from httoop.uri.query_string import QueryString
 from httoop.uri.type import URIType
@@ -65,7 +65,7 @@ class URI(object):
 				if not 0 <= int(port) <= 65535:
 					raise ValueError
 			except ValueError:
-				raise InvalidURI('Invalid port: %r' % (port,))  # TODO: TypeError
+				raise InvalidURI(_(u'Invalid port: %r'), port)  # TODO: TypeError
 		self._port = port
 
 	def __init__(self, uri=None, *args, **kwargs):
@@ -173,7 +173,7 @@ class URI(object):
 		"""
 
 		if not uri:
-			raise InvalidURI(u'empty URI')
+			raise InvalidURI(_(u'empty URI'))
 
 		if type(self) is URI:
 			self.scheme = uri.split(b':', 1)[0].lower()
@@ -200,12 +200,12 @@ class URI(object):
 		path = u'/'.join([unquote(seq).replace(u'/', u'%2f') for seq in path.split(b'/')])
 
 		if path.startswith(u'//'):
-			raise InvalidURI(u'Invalid path: must not start with "//"')
+			raise InvalidURI(_(u'Invalid path: must not start with "//"'))
 
 		try:
 			scheme = scheme.decode('ascii')
 		except UnicodeDecodeError:
-			raise InvalidURI(u'Invalid scheme: must be ascii')
+			raise InvalidURI(_(u'Invalid scheme: must be ascii'))
 
 		self.tuple = (
 			scheme,

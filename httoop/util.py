@@ -1,17 +1,21 @@
 # -*- coding: utf-8 -*-
 u"""Utilities for python2/3 compatibility"""
 
+from __future__ import absolute_import
+
 __all__ = [
 	'PY3', 'Unicode', 'iteritems',
 	'to_unicode', 'to_ascii', 'decode_header',
 	'IFile', 'partial', 'parsedate',
 	'CaseInsensitiveDict', 'decode_rfc2231',
-	'sanitize_encoding',
+	'sanitize_encoding', 'make_boundary', '_',
 ]
 
 import sys
 import codecs
 from functools import partial
+
+_ = lambda x: x
 
 PY3 = sys.version_info[0] == 3
 
@@ -181,3 +185,23 @@ class CaseInsensitiveDict(dict):
 	@classmethod
 	def fromkeys(cls, seq, value=None):
 		return cls(dict((key, value) for key in seq))
+
+
+class _Translateable(object):
+
+	def __init__(self, message, *args, **kwargs):
+		self.message = message
+		self._args = args
+		self._kwargs = kwargs
+		super(_Translateable, self).__init__(message, args, kwargs)
+
+	def translate(self):
+		return self.message % (self._kwargs or self._args)
+
+	def __unicode__(self):
+		return self.translate()
+
+	def __bytes__(self):
+		return Unicode(self).encode('unicode_escape')
+
+	__str__ = __unicode__ if PY3 else __bytes__

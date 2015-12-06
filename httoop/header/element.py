@@ -11,7 +11,7 @@ __all__ = ['HEADER', 'HeaderElement']
 
 import re
 
-from httoop.util import CaseInsensitiveDict, iteritems, decode_rfc2231, Unicode, decode_header, sanitize_encoding
+from httoop.util import CaseInsensitiveDict, iteritems, decode_rfc2231, Unicode, decode_header, sanitize_encoding, _
 from httoop.exceptions import InvalidHeader
 from httoop.uri.percent_encoding import Percent
 
@@ -93,11 +93,11 @@ class HeaderElement(object):
 
 	@classmethod
 	def parseparam(cls, atom):
-		key, _, val  = atom.partition(b'=')
+		key, __, val  = atom.partition(b'=')
 		try:
 			val, quoted = cls.unescape_param(val.strip())
 		except InvalidHeader:
-			raise InvalidHeader('Unquoted parameter %r in %r containing TSPECIALS: %r' % (key, cls.__name__, val))
+			raise InvalidHeader(_(u'Unquoted parameter %r in %r containing TSPECIALS: %r'), key, cls.__name__, val)
 		return cls.unescape_key(key), val, quoted
 
 	@classmethod
@@ -111,16 +111,16 @@ class HeaderElement(object):
 			value = re.sub(r'\\(?!\\)', '', value.strip(b'"'))
 		else:
 			if cls.RE_TSPECIALS.search(value):
-				raise InvalidHeader('Unquoted parameter in %r containing TSPECIALS: %r' % (cls.__name__, value))
+				raise InvalidHeader(_(u'Unquoted parameter in %r containing TSPECIALS: %r'), cls.__name__, value)
 		return value, quoted
 
 	@classmethod
-	def _rfc2231_and_continuation_params(cls, params):
+	def _rfc2231_and_continuation_params(cls, params):  # TODO: complexity
 		count = set()
 		continuations = dict()
 		for key, value, quoted in params:
 			if key in count:
-				raise InvalidHeader('Parameter given twice: %r' % (key.decode('ISO8859-1'),))
+				raise InvalidHeader(_(u'Parameter given twice: %r'), key.decode('ISO8859-1'))
 			count.add(key)
 			if '*' in key:
 				if key.endswith('*') and not quoted:
@@ -153,7 +153,7 @@ class HeaderElement(object):
 				except KeyError:
 					break
 			if not key:
-				raise InvalidHeader('...')
+				raise InvalidHeader(_(u'...'))
 			if value:
 				yield key, value
 			for k, v in iteritems(lines):
@@ -295,7 +295,7 @@ class _AcceptElement(HeaderElement):
 		try:
 			self.quality
 		except ValueError:
-			raise InvalidHeader(u'Quality value must be float.')
+			raise InvalidHeader(_(u'Quality value must be float.'))
 
 	@classmethod
 	def parse(cls, elementstr):
@@ -346,7 +346,7 @@ class _CookieElement(HeaderElement):
 	@classmethod
 	def parse(cls, elementstr):
 		value, params = cls.parseparams(elementstr)
-		cookie_name, cookie_value, _ = cls.parseparam(value)
+		cookie_name, cookie_value, __ = cls.parseparam(value)
 		return cls(cookie_name, cookie_value, params)
 
 	@classmethod
@@ -362,7 +362,7 @@ class _CookieElement(HeaderElement):
 
 	@value.setter
 	def value(self, value):
-		self.cookie_name, self.cookie_value, _ = self.parseparam(value)
+		self.cookie_name, self.cookie_value, __ = self.parseparam(value)
 
 
 class _HopByHopElement(object):

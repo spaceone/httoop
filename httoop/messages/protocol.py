@@ -9,7 +9,7 @@ __all__ = ('Protocol',)
 import re
 
 from httoop.exceptions import InvalidLine
-from httoop.util import Unicode
+from httoop.util import Unicode, _
 from httoop.meta import HTTPSemantic
 
 
@@ -46,7 +46,7 @@ class Protocol(object):
 	def parse(self, protocol):
 		match = self.PROTOCOL_RE.match(protocol)
 		if match is None:
-			raise InvalidLine(u"Invalid HTTP protocol: %r" % protocol.decode('ISO8859-1'))
+			raise InvalidLine(_(u"Invalid HTTP protocol: %r"), protocol.decode('ISO8859-1'))
 		self.__protocol = (int(match.group(2)), int(match.group(3)))
 		self.name = match.group(1)
 

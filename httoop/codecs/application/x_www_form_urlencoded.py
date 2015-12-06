@@ -23,4 +23,5 @@ class FormURLEncoded(Codec):
 			data = cls.decode(data, charset)
 		elif isinstance(data, dict):
 			data = data.items()
-		return b'&'.join(b'%s=%s' % (cls.quote(name, charset), cls.quote(value, charset)) for name, value in tuple(data) if name and value)
+		data = ((cls.quote(name, charset), cls.quote(value, charset)) for name, value in tuple(data))
+		return b'&'.join(b'%s=%s' % (name, value) if (name and value) else b'%s%s' % (name, value) for name, value in data)

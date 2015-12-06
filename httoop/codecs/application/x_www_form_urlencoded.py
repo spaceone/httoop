@@ -14,7 +14,7 @@ class FormURLEncoded(Codec):
 	def decode(cls, data, charset=None, mimetype=None):
 		if not data:
 			return ()
-		fields = (field.partition(b'=')[::2] for field in data.split(b'&'))
+		fields = (field.partition(b'=')[::2] for field in data.replace(b'+', b' ').strip(b'&').split(b'&') if field)
 		return tuple((cls.unquote(name, charset), cls.unquote(value, charset)) for name, value in fields)
 
 	@classmethod

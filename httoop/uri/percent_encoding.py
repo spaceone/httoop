@@ -6,7 +6,7 @@ class Percent(object):
 
 		>>> Percent.encode(u"!#$&'()*+,/:;=?@[]")
 		'%21%23%24%26%27%28%29%2A%2B%2C%2F%3A%3B%3D%3F%40%5B%5D'
-		>>> Percent.decode('%21%23%24%26%27%28%29%2a%2b%2c%2f%3a%3b%3d%3f%40%5b%5d')
+		>>> Percent.decode(b'%21%23%24%26%27%28%29%2a%2b%2c%2f%3a%3b%3d%3f%40%5b%5d')
 		u"!#$&'()*+,/:;=?@[]"
 	"""
 
@@ -24,10 +24,6 @@ class Percent(object):
 
 	@classmethod
 	def _decode_iter(cls, data):
-		data = data.replace(b'+', b' ')
-		if b'%' not in data:
-			yield data
-			return
 		data = data.split(b'%')
 		yield data.pop(0)
 		for item in data:

@@ -6,9 +6,11 @@ __all__ = [
 	'to_unicode', 'to_ascii', 'decode_header',
 	'IFile', 'partial', 'parsedate',
 	'CaseInsensitiveDict', 'decode_rfc2231',
+	'sanitize_encoding',
 ]
 
 import sys
+import codecs
 from functools import partial
 
 PY3 = sys.version_info[0] == 3
@@ -35,6 +37,16 @@ try:
 	from itertools import izip
 except ImportError:  # pragma: no cover
 	izip = zip
+
+KNOWN_ENCODINGS = {'cp1254', 'cp949', 'cp865', 'cp1257', 'euc_jp', 'cp1250', 'mac-cyrillic', 'mac-latin2', 'cp866', 'cp857', 'tis-620', 'hp-roman8', 'iso8859-15', 'iso8859-1', 'mac-turkish', 'utf-32', 'cp1252', 'cp861', 'euc_jis_2004', 'iso8859-6', 'utf-7', 'gb18030', 'iso2022_kr', 'shift_jisx0213', 'shift_jis_2004', 'utf-32-be', 'cp855', 'utf-8', 'iso8859-2', 'koi8-r', 'iso8859-14', 'cp1251', 'iso8859-11', 'cp424', 'ascii', 'euc_jisx0213', 'cp863', 'iso2022_jp_ext', 'euc_kr', 'iso2022_jp_2004', 'cp869', 'gb2312', 'utf-16', 'utf-32-le', 'mac-roman', 'iso8859-10', 'uu', 'iso2022_jp', 'johab', 'cp950', 'cp852', 'iso2022_jp_2', 'iso8859-8', 'cp775', 'shift_jis', 'utf-16-be', 'cp1255', 'cp1253', 'mac-iceland', 'utf-16-le', 'cp437', 'cp864', 'cp1258', 'cp862', 'cp860', 'cp850', 'gbk', 'cp858', 'iso8859-3', 'iso8859-4', 'mac-greek', 'iso2022_jp_1', 'ptcp154', 'iso8859-7', 'iso8859-5', 'cp500', 'iso8859-13', 'iso8859-9', 'cp1256', 'iso8859-16', 'cp932', 'iso2022_jp_3'}
+def sanitize_encoding(encoding):
+	try:
+		name = codecs.lookup(encoding).name
+		if name not in KNOWN_ENCODINGS:
+			raise LookupError
+	except LookupError:
+		return
+	return name
 
 
 def iteritems(d, **kw):

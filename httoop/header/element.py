@@ -11,7 +11,7 @@ __all__ = ['HEADER', 'HeaderElement']
 
 import re
 
-from httoop.util import CaseInsensitiveDict, iteritems, decode_rfc2231, Unicode, decode_header
+from httoop.util import CaseInsensitiveDict, iteritems, decode_rfc2231, Unicode, decode_header, sanitize_encoding
 from httoop.exceptions import InvalidHeader
 from httoop.uri.percent_encoding import Percent
 
@@ -124,10 +124,13 @@ class HeaderElement(object):
 			count.add(key)
 			if '*' in key:
 				if key.endswith('*') and not quoted:
-					encoding, language, value_ = decode_rfc2231(value.encode('ISO8859-1'))
-					if not encoding:
+					charset, language, value_ = decode_rfc2231(value.encode('ISO8859-1'))
+					if not charset:
 						yield key, value
 						continue
+					encoding = sanitize_encoding(charset)
+					if encoding is None:
+						raise InvalidHeader(_(u'Unknown encoding: %r'), charset)
 					key, value = key[:-1], Percent.decode(value_, encoding)
 				key_, asterisk, num = key.rpartition('*')
 				if asterisk:

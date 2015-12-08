@@ -8,3 +8,4 @@ __all__ = ('URI', 'HTTP', 'HTTPS')
 
 from httoop.uri.uri import URI
 from httoop.uri.http import HTTP, HTTPS
+import httoop.uri.schemes

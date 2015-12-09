@@ -50,6 +50,12 @@ absolute_uris = [
 
 	pytest.mark.skip((b'int:80', (u'', u'', u'', u'', None, u'int:80', u'', u''))),
 	(b'int:80', (u'int', u'', u'', u'', None, u'80', u'', u'')),
+
+	(b'http://good.com@evil.com:8090/foo?bar=baz', (u'http', u'good.com', u'', u'evil.com', 8090, u'/foo', u'bar=baz', u'')),
+	(b'http://good.com/@evil.com:8090/foo?bar=baz', (u'http', u'', u'', u'good.com', 80, u'/@evil.com:8090/foo', u'bar=baz', u'')),
+
+	((b'http://example.com:443'), (u'http', u'', u'', u'example.com', 443, u'', u'', u'')),
+	((b'https://example.com:80'), (u'http', u'', u'', u'example.com', 80, u'', u'', u'')),
 ]
 
 

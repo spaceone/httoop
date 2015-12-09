@@ -98,10 +98,9 @@ class URI(object):
 		if not self.port:
 			self.port = self.PORT
 
-		if not self.path:
-			self.path = u'/'
-
 		self.abspath()
+		if not self.path.startswith(u'/') and self.host and self.scheme and self.path:
+			self.path = u'/%s' % (self.path,)
 
 	def abspath(self):
 		"""Clear out any '..' and excessive slashes from the path
@@ -168,44 +167,66 @@ class URI(object):
 			self.port, self.path, self.query_string, self.fragment) = tuple_
 
 	def parse(self, uri):
-		u"""parses a URI in the form of
+		r"""Parses a well formed absolute or relative URI.
+
+			  foo://example.com:8042/over/there?name=ferret#nose
+			  \_/   \______________/\_________/ \_________/ \__/
+			   |           |            |            |        |
+			scheme     authority       path        query   fragment
+			   |   _____________________|__
+			  / \ /                        \
+			  urn:example:animal:ferret:nose
+
+			https://username:password@[::1]:8090/some/path?query#fragment
 			<scheme>://<username>:<password>@<host>:<port>/<path>?<query>#<fragment>
+			[<scheme>:][//[<username>[:<password>]@][<host>][:<port>]/]<path>[?<query>][#<fragment>]
 		"""
 
-		if not uri:
-			raise InvalidURI(_(u'empty URI'))
+		if isinstance(uri, Unicode):
+			try:
+				uri = uri.encode('ascii')
+			except UnicodeEncodeError:
+				raise TypeError('URI must be ASCII bytes.')
 
-		if type(self) is URI:
+		if type(self) is URI and b':' in uri:
 			self.scheme = uri.split(b':', 1)[0].lower()
 			if type(self) is not URI:
 				return self.parse(uri)
 
-		uri, _, fragment = uri.partition(b'#')
-		uri, _, query_string = uri.partition(b'?')
-		scheme, scheme_exists, uri = uri.rpartition(b'://')
-		if not scheme_exists and uri.startswith(b'//'):
+		if uri and uri.strip(b'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'):
+			raise InvalidURI(_(u'Invalid URI: must consist of printable ASCII characters without whitespace.'))
+
+		uri, __, fragment = uri.partition(b'#')
+		uri, __, query_string = uri.partition(b'?')
+		scheme, authority_exists, uri = uri.rpartition(b'://')
+		if not authority_exists and uri.startswith(b'//'):
 			uri = uri[2:]
-		authority, _, path = uri.partition(b'/')
-		path = b'/%s' % path
-		userinfo, _, hostport = authority.rpartition(b'@')
-		username, _, password = userinfo.partition(b':')
+			authority_exists = True
+		if not authority_exists and b':' in uri:
+			scheme, __, uri = uri.partition(b':')
+		authority, path = b'', uri
+		if authority_exists:
+			authority, __, path = uri.partition(b'/')
+			path = b'%s%s' % (__, path)
+		userinfo, __, hostport = authority.rpartition(b'@')
+		username, __, password = userinfo.partition(b':')
 		if hostport.endswith(b']') and hostport.startswith(b'['):
 			host, port = hostport, b''
 		elif ':' in hostport:
-			host, _, port = hostport.rpartition(b':')
+			host, __, port = hostport.rpartition(b':')
 		else:
 			host, port = hostport, b''
 
 		unquote = self.unquote
 		path = u'/'.join([unquote(seq).replace(u'/', u'%2f') for seq in path.split(b'/')])
 
-		if path.startswith(u'//'):
-			raise InvalidURI(_(u'Invalid path: must not start with "//"'))
-
 		try:
-			scheme = scheme.decode('ascii')
+			scheme = scheme.decode('ascii').lower()
 		except UnicodeDecodeError:
-			raise InvalidURI(_(u'Invalid scheme: must be ascii'))
+			raise InvalidURI(_(u'Invalid scheme: must be ASCII.'))
+
+		if scheme and scheme.strip(u'abcdefghijklmnopqrstuvwxyz0123456789.-+'):
+			raise InvalidURI(_(u'Invalid scheme: must only contain alphanumeric letters or plus, dash, dot.'))
 
 		self.tuple = (
 			scheme,
@@ -218,49 +239,45 @@ class URI(object):
 			unquote(fragment)
 		)
 
-	def _compose_uri_iter(self):
-		u"""composes the whole URI"""
-		quote = self.quote
-		scheme, username, password, host, port, path, _, fragment = self.tuple
-		if path == u'*':
-			yield b'*'
-			return
-		if scheme:
-			yield quote(scheme)
-			yield b'://'
-		elif host:
-			yield b'//'
-		if host:
-			if username:
-				yield quote(username)
-				if password:
-					yield b':'
-					yield quote(password)
-				yield b'@'
-			yield quote(host)
-			if port and int(port) != self.PORT:
-				yield b':%d' % int(port)
-		yield b''.join(self._compose_iter())
-		if fragment:
-			yield b'#'
-			yield quote(fragment)
-
 	def compose(self):
-		return b''.join(self._compose_iter())
+		return b''.join(self._compose_absolute_iter())
 
-	def _compose_iter(self):
-		u"""Composes the path and query string of the URI"""
-		path, query_string, quote = self.path, self.query_string, self.quote
-		if path == u'*':
-			yield b'*'
+	def _compose_absolute_iter(self):
+		u"""composes the whole URI"""
+		scheme, username, password, host, port, path, _, fragment = self.tuple
+		if scheme:
+			yield self.quote(scheme)
+			yield b':'
+		authority = b''.join(self._compose_authority_iter())
+		if authority:
+			yield b'//'
+		yield authority
+		yield b''.join(self._compose_relative_iter())
+
+	def _compose_authority_iter(self):
+		if not self.host:
 			return
-		if path:
-			yield b'/'.join(map(quote, path.split(u'/')))
-		else:
-			yield b'/'
+		username, password, host, port, quote = self.username, self.password, self.host, self.port, self.quote
+		if username:
+			yield quote(username)
+			if password:
+				yield b':'
+				yield quote(password)
+			yield b'@'
+		yield quote(host)
+		if port and int(port) != self.PORT:
+			yield b':%d' % int(port)
+
+	def _compose_relative_iter(self):
+		u"""Composes the relative URI beginning with the path"""
+		path, query_string, quote, fragment = self.path, self.query_string, self.quote, self.fragment
+		yield b'/'.join(map(quote, path.split(u'/')))
 		if query_string:
 			yield b'?'
 			yield query_string
+		if fragment:
+			yield b'#'
+			yield quote(fragment)
 
 	def __eq__(self, other):
 		u"""Compares the URI with another string or URI

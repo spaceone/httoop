@@ -70,19 +70,28 @@ class Request(Message):
 
 		# URI
 		if uri.startswith(b'//'):
-			raise InvalidURI(_(u'Invalid URI: must be an absolute path or contain a scheme'))
-		if uri.startswith(b'/'):
-			self.uri.parse_relative(uri)
-		elif uri == b'*':
-			self.uri.path = uri
-		else:
-			self.uri.parse(uri)
-		if not isinstance(self.uri, (self.uri.SCHEMES['http'], self.uri.SCHEMES['https'])):
-			raise InvalidURI(_(u'URI must be HTTP based.'))
-		self.uri.validate()
+			raise InvalidURI(_(u'The request URI must be an absolute path or contain a scheme.'))
+		if self.method == u'CONNECT':
+			uri = b'//%s' % (uri,)
+		self.uri.parse(uri)
+		self.validate_request_uri()
+
+	def validate_request_uri(self):
+		uri = self.uri
+		if not isinstance(uri, (uri.SCHEMES['http'], uri.SCHEMES['https'])):
+			raise InvalidURI(_(u'The request URI scheme must be HTTP based.'))
+		if uri.fragment or uri.username or uri.password:
+			raise InvalidURI(_(u'The request URI must not contain fragments or user information.'))
+		if uri.path.startswith(b'//'):
+			raise InvalidURI(_(u'The request URI path must not start with //.'))
+		if uri.path and uri.path != u'*' and uri.path[0] != u'/':
+			raise InvalidURI(_(u'The request URI path must start with /.'))
+		if self.method == u'CONNECT' and (uri.scheme or uri.path or uri.query_string or not uri.host):
+			raise InvalidURI(_(u'The request URI of an CONNECT request must be a authority.'))
 
 	def compose(self):
 		u"""composes the request line"""
+		self.validate_request_uri()
 		return b"%s %s %s\r\n" % (bytes(self.__method), bytes(self.__uri), bytes(self.protocol))
 
 	def __repr__(self):

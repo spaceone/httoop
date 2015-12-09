@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from contextlib import contextmanager
+
 
 class ComposedMessage(object):
 
@@ -41,10 +43,15 @@ class ComposedMessage(object):
 			te.remove('chunked')
 			self.message.headers['Transfer-Encoding'] = b''.join(map(bytes, te))
 
+	@contextmanager
+	def _composing(self):
+		yield
+
 	def __iter__(self):
-		start_line = bytes(self.message)
-		headers = bytes(self.message.headers)
-		yield start_line + headers
-		for data in self.message.body:
-			yield data
+		with self._composing():
+			start_line = bytes(self.message)
+			headers = bytes(self.message.headers)
+			yield start_line + headers
+			for data in self.message.body:
+				yield data
 

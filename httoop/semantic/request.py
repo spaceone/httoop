@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+from contextlib import contextmanager
+
 from httoop.version import UserAgentHeader
 from httoop.date import Date
 from httoop.semantic.message import ComposedMessage
+from httoop.uri import URI
 
 
 class ComposedRequest(ComposedMessage):
@@ -46,3 +49,28 @@ class ComposedRequest(ComposedMessage):
 			self.message.headers['Connection'] = 'close'
 		else:
 			self.message.headers.pop('Connection', None)
+
+	@contextmanager
+	def _composing(self):
+		with self.relative_uri(), super(ComposedRequest, self)._composing():
+			yield
+
+	@contextmanager
+	def relative_uri(self):
+		with self.absolute_uri():
+			self.message.uri.scheme = None
+			self.message.uri.host = None
+			self.message.uri.port = None
+			yield
+
+	@contextmanager
+	def absolute_uri(self):
+		try:
+			uri = URI(self.message.uri)
+			self.message.uri = URI(uri)
+			self.message.uri.fragment = None
+			self.message.uri.username = None
+			self.message.uri.password = None
+			yield
+		finally:
+			self.message.uri = uri

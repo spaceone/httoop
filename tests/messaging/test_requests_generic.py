@@ -12,3 +12,8 @@ def test_request_date():
 
 def test_invalid_request_date():
 	pass
+
+
+def test_compose_empty_uri(request_):
+	request_.uri.parse(b'')
+	request_.parse(bytes(request_))

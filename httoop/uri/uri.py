@@ -5,7 +5,7 @@
 """
 
 import re
-from os.path import join
+from socket import inet_pton, AF_INET, AF_INET6, error as SocketError
 
 from httoop.exceptions import InvalidURI
 from httoop.util import Unicode, _
@@ -13,8 +13,7 @@ from httoop.uri.percent_encoding import Percent
 from httoop.uri.query_string import QueryString
 from httoop.uri.type import URIType
 
-# TODO: allow HTTP/1.0-';'-params?
-# TODO: not able to have absolute paths
+# TODO: parse HTTP/1.0-';'-params?
 
 
 class URI(object):
@@ -49,8 +48,8 @@ class URI(object):
 		self.path = u'/'.join(seq.replace(u'/', u'%2f') for seq in path)
 
 	@property
-	def uri(self):
-		return b''.join(self._compose_uri_iter())
+	def hostname(self):
+		return self.host.rstrip(u']').lstrip(u'[').lower()
 
 	@property
 	def port(self):
@@ -62,7 +61,7 @@ class URI(object):
 		if port:
 			try:
 				port = int(port)
-				if not 0 <= int(port) <= 65535:
+				if not 0 < int(port) <= 65535:
 					raise ValueError
 			except ValueError:
 				raise InvalidURI(_(u'Invalid port: %r'), port)  # TODO: TypeError
@@ -232,12 +231,32 @@ class URI(object):
 			scheme,
 			unquote(username),
 			unquote(password),
-			unquote(host),
+			self._unquote_host(host),
 			port,
 			path,
 			QueryString.encode(QueryString.decode(query_string)),
 			unquote(fragment)
 		)
+
+	def _unquote_host(self, host):
+		if b':' in host or b'[' in host or b']' in host:
+			try:
+				if not host.startswith('[') or not host.endswith(']'):
+					raise SocketError
+				inet_pton(AF_INET6, host[1:-1])
+			except SocketError:
+				raise InvalidURI(_('Invalid IPv6 Address in URI.'))
+			return host.decode('ascii')
+		if all(x.isdigit() for x in host.split(b'.')):
+			try:
+				inet_pton(AF_INET, host)
+			except SocketError:
+				raise InvalidURI(_('Invalid IPv4 Address in URI.'))
+			return host.decode('ascii')
+		try:
+			return host.decode('idna')
+		except UnicodeDecodeError:
+			raise InvalidURI('Invalid host.')
 
 	def compose(self):
 		return b''.join(self._compose_absolute_iter())
@@ -264,7 +283,7 @@ class URI(object):
 				yield b':'
 				yield quote(password)
 			yield b'@'
-		yield quote(host)
+		yield host.encode('idna')
 		if port and int(port) != self.PORT:
 			yield b':%d' % int(port)
 

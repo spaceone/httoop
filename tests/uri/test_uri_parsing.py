@@ -48,16 +48,34 @@ absolute_uris = [
 	(b'ftp://', (u'ftp',  u'', u'', u'', 21, u'', u'', u'')),
 	(b'https://', (u'https',  u'', u'', u'', 443, u'', u'', u'')),
 
-	pytest.mark.skip((b'int:80', (u'', u'', u'', u'', None, u'int:80', u'', u''))),
+#	python's urlparse makes the following invalid parsing. should we do the same? better not...
+#	pytest.mark.xfail((b'int:80', (u'', u'', u'', u'', None, u'int:80', u'', u''))),
 	(b'int:80', (u'int', u'', u'', u'', None, u'80', u'', u'')),
 
 	(b'http://good.com@evil.com:8090/foo?bar=baz', (u'http', u'good.com', u'', u'evil.com', 8090, u'/foo', u'bar=baz', u'')),
 	(b'http://good.com/@evil.com:8090/foo?bar=baz', (u'http', u'', u'', u'good.com', 80, u'/@evil.com:8090/foo', u'bar=baz', u'')),
 
-	((b'http://example.com:443'), (u'http', u'', u'', u'example.com', 443, u'', u'', u'')),
-	((b'https://example.com:80'), (u'http', u'', u'', u'example.com', 80, u'', u'', u'')),
-]
+	(b'http://example.com:443', (u'http', u'', u'', u'example.com', 443, u'', u'', u'')),
+	(b'https://example.com:80', (u'https', u'', u'', u'example.com', 80, u'', u'', u'')),
+	(b'http://www.example.com:65535', (u'http', u'', u'', u'www.example.com', 65535, u'', u'', u'')),
+	(b'http://www.example.com:1', (u'http', u'', u'', u'www.example.com', 1, u'', u'', u'')),
 
+	(b'http:#foo', (u'http', u'', u'', u'', 80, u'', u'', u'foo')),
+	(b'http://#foo', (u'http', u'', u'', u'', 80, u'', u'', u'foo')),
+	(b'http://#a?b', (u'http', u'', u'', u'', 80, u'', u'', u'a?b')),
+	(b'http:///foo:bar@baz:80/test', (u'http', u'', u'', u'', 80, u'/foo:bar@baz:80/test', u'', u'')),
+	(b'http://..', (u'http', u'', u'', u'..', 80, u'', u'', u'')),
+	(b'http:///..', (u'http', u'', u'', u'', 80, u'/..', u'', u'')),
+	(b'http://.', (u'http', u'', u'', u'.', 80, u'', u'', u'')),
+	(b'http:///.', (u'http', u'', u'', u'', 80, u'/.', u'', u'')),
+	(b'http:.', (u'http', u'', u'', u'', 80, u'.', u'', u'')),
+	(b'http:..', (u'http', u'', u'', u'', 80, u'..', u'', u'')),
+	(b'http:/', (u'http', u'', u'', u'', 80, u'/', u'', u'')),
+	(b'http://foo/bar.', (u'http', u'', u'', u'foo', 80, u'/bar.', u'', u'')),
+]
+#absolute_uris.extend(
+#	(b'http://www.example.com:%d' % (port,), (u'http', u'', u'', u'www.example.com', port, u'', u'', u'')) for port in range(1, 65535)
+#)
 
 @pytest.mark.parametrize('url,expected', absolute_uris)
 def test_parse_absolute_uri(url, expected):
@@ -73,14 +91,23 @@ def test_parse_absolute_uri(url, expected):
 	b'ftp://[::1/foo/bad]/bad',
 	b'http://[::1/foo/bad]/bad',
 	b'http://[::ffff:12.34.56.78',
+	b'http://]dead:beef::1[:5432/foo/',
+	b'http://][dead:beef::1][:5432/foo/',
+	b'http://[[dead:beef::1]]:5432/foo/',
+	b'http://dead:beef::1]:5432/foo/',
+	b'http://dead:beef::1]/foo/',
+	b'http://[dead:beef::1:5432/foo/',
+	b'http://[dead:beef::1/foo/',
+	# invalid IPv4 Addresses
+	b'http://1.2.3.256/',
+	b'http://1.2.-3.4/',
 	# invalid Ports
 	b'http://www.example.net:foo',
 	b'http://www.example.net:-123',
-	b'http://www.example.net:65535',
 	b'http://www.example.net:65536',
 	b'http://www.example.net:0',
 ])
-def test_parse_invalid_port(url):
+def test_parse_invalid_netloc(url):
 	with pytest.raises(InvalidURI):
 		URI(url)
 

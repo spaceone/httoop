@@ -47,7 +47,7 @@ class Message(object):
 
 	@property
 	def trailer(self):
-		return Headers((key, self.headers[key]) for key in self.headers.values('Trailer') if key in self.message.headers)
+		return Headers((key, self.headers[key]) for key in self.headers.values('Trailer') if key in self.headers)
 
 #	@trailer.setter
 #	def trailer(self, trailer):

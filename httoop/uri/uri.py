@@ -68,26 +68,40 @@ class URI(object):
 		self._port = port
 
 	def __init__(self, uri=None, *args, **kwargs):
-		self.set(kwargs or args or uri or b'/')
+		self.set(kwargs or args or uri or b'')
 
-	def join(self, relative):
-		u"""Join a URI with another relative path
-
-			.. todo:: test if os.path.join works with Windows
-
-			.. todo:: implement safejoin, which normalizes
-				the relative URI before joining
-		"""
-		relative = URI(relative)
-		joined = URI(self)
-		joined.path = join(joined.path, relative.path)
+	def join(self, other=None, *args, **kwargs):
+		u"""Join a URI with another absolute or relative URI"""
+		relative = URI(other or args or kwargs)
+		joined = URI()
+		current = URI(self)
+		if relative.scheme:
+			current = relative
+			current.normalize()
+			return current
+		joined.scheme = current.scheme
+		if relative.host:
+			current = relative
+		joined.username = current.username
+		joined.password = current.password
+		joined.host = current.host
+		joined.port = current.port
+		if relative.path:
+			current = relative
+		joined.path = current.path
+		if relative.path and not relative.path.startswith(b'/'):
+			joined.path = b'%s%s%s' % (self.path, b'' if self.path.endswith(b'/') else '/../', relative.path)
+		if relative.query_string:
+			current = relative
+		joined.query_string = current.query_string
+		if relative.fragment:
+			current = relative
+		joined.fragment = current.fragment
 		joined.normalize()
 		return joined
 
 	def normalize(self):
-		u"""normalize the URI
-
-			makes it compareable
+		u"""Normalize the URI to make it compareable.
 
 			.. seealso:: :rfc:`3986#section-6`
 		"""
@@ -112,25 +126,21 @@ class URI(object):
 			>>> u = URI(b'/foo/../bar/.'); u.abspath(); u.path == u'/bar/'
 			True
 		"""
-		# Remove double forward-slashes from the path
-		path = re.sub(br'\/{2,}', b'/', self.path)
-		# With that done, go through and remove all the relative references
+		path = re.sub(br'\/{2,}', b'/', self.path)  # remove //
 		unsplit = []
+		directory = False
 		for part in path.split(b'/'):
-			# If we encounter the parent directory, and there's
-			# a segment to pop off, then we should pop it off.
 			if part == b'..' and (not unsplit or unsplit.pop() is not None):
-				pass
+				directory = True
 			elif part != b'.':
 				unsplit.append(part)
+				directory = False
+			else:
+				directory = True
 
-		# With all these pieces, assemble!
-		if self.path.endswith(b'.'):
-			# If the path ends with a period, then it refers to a directory,
-			# not a file path
-			self.path = b'/'.join(unsplit) + b'/'
-		else:
-			self.path = b'/'.join(unsplit)
+		if directory:
+			unsplit.append(b'')
+		self.path = b'/'.join(unsplit)
 
 	def set(self, uri):
 		if isinstance(uri, Unicode):

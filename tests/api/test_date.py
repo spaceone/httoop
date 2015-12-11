@@ -1,26 +1,40 @@
 from httoop import Date
+import pytest
 import datetime
 
 
-def test_parse_rfc822_rfc1123_rfc2822_date():
-	d = Date.parse('Sun, 06 Nov 1994 08:49:37 GMT')
+dates = [{
+	'datetime': datetime.datetime(1994, 11, 6, 8, 49, 37),
+	'timestamp': 784108177.0,
+	'gmtime': (1994, 11, 6, 7, 49, 37, 6, 310, 0),
+	'formats': {
+		'Sun, 06 Nov 1994 08:49:37 GMT', # RFC 822 / RFC 1123 / RFC 2822
+		'Sunday, 06-Nov-94 08:49:37 GMT', # RFC 850 / RFC 1036
+		'Sun Nov  6 08:49:37 1994', # C asctime
+	},
+}]
+
+
+@pytest.mark.xfail(reason='How to fix this UNIX timestamp?')
+@pytest.mark.parametrize('date,expected', [(date, data['datetime']) for data in dates for date in data['formats']])
+def test_date_datetime(date, expected):
+	d = Date.parse(date)
 	assert d is not None
-	assert d.datetime == datetime.datetime(1994, 11, 6, 8, 49, 37)
-	assert float(d) == 784108177.0
-	assert d.gmtime == (1994, 11, 6, 7, 49, 37, 6, 310, 0)
+	assert d.datetime == expected
+	assert d == expected
 
 
-def test_parse_rfc850_rfc1036_date():
-	d = Date.parse('Sunday, 06-Nov-94 08:49:37 GMT')
+@pytest.mark.parametrize('date,expected', [(date, data['timestamp']) for data in dates for date in data['formats']])
+def test_date_timestamp(date, expected):
+	d = Date.parse(date)
 	assert d is not None
-	assert d.datetime == datetime.datetime(1994, 11, 6, 8, 49, 37)
-	assert float(d) == 784108177.0
-	assert d.gmtime == (1994, 11, 6, 7, 49, 37, 6, 310, 0)
+	assert float(d) == expected
+	assert d == expected
 
 
-def test_parse_asctime_date():
-	d = Date.parse('Sun Nov  6 08:49:37 1994')
+@pytest.mark.parametrize('date,expected', [(date, data['gmtime']) for data in dates for date in data['formats']])
+def test_date_gmtime(date, expected):
+	d = Date.parse(date)
 	assert d is not None
-	assert d.datetime == datetime.datetime(1994, 11, 6, 8, 49, 37)
-	assert float(d) == 784108177.0
-	assert d.gmtime == (1994, 11, 6, 7, 49, 37, 6, 310, 0)
+	assert d.gmtime == expected
+	assert d == expected

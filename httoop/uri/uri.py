@@ -3,17 +3,16 @@
 
 .. seealso:: :rfc:`3986`
 """
+# TODO: parse HTTP/1.0-';'-params?
 
 import re
-from socket import inet_pton, AF_INET, AF_INET6, error as SocketError
+from socket import inet_pton, inet_ntop, AF_INET, AF_INET6, error as SocketError
 
 from httoop.exceptions import InvalidURI
 from httoop.util import Unicode, _
 from httoop.uri.percent_encoding import Percent
 from httoop.uri.query_string import QueryString
 from httoop.uri.type import URIType
-
-# TODO: parse HTTP/1.0-';'-params?
 
 
 class URI(object):
@@ -25,11 +24,11 @@ class URI(object):
 	SCHEMES = {}
 	SCHEME = None
 	PORT = None
+	encoding = 'UTF-8'
 
-	class _PercentAll(Percent):
-		RESERVED_CHARS = b'%s %s' % (Percent.RESERVED_CHARS, ''.join(chr(x) for x in list(range(32)) + [127]))
-	quote = _PercentAll.encode
-	unquote = _PercentAll.decode
+	unquote = Percent.decode
+	def quote(self, data, charset):
+		return Percent.quote(data, charset).encode(self.encoding)
 
 	@property
 	def query(self):
@@ -49,7 +48,10 @@ class URI(object):
 
 	@property
 	def hostname(self):
-		return self.host.rstrip(u']').lstrip(u'[').lower()
+		host = self.host
+		if host.startswith(u'[v') and host.endswith(u']') and u'.' in host and host[2:-1].split(u'.', 1)[0].isdigit():
+			return host[2:-1].split(u'.', 1)[1]
+		return host.rstrip(u']').lstrip(u'[').lower()
 
 	@property
 	def port(self):
@@ -126,11 +128,13 @@ class URI(object):
 			>>> u = URI(b'/foo/../bar/.'); u.abspath(); u.path == u'/bar/'
 			True
 		"""
-		path = re.sub(br'\/{2,}', b'/', self.path)  # remove //
+		path = re.sub(ur'\/{2,}', u'/', self.path)  # remove //
+		if not path:
+			return
 		unsplit = []
 		directory = False
-		for part in path.split(b'/'):
-			if part == b'..' and (not unsplit or unsplit.pop() is not None):
+		for part in path.split(u'/'):
+			if part == u'..' and (not unsplit or unsplit.pop() is not None):
 				directory = True
 			elif part != b'.':
 				unsplit.append(part)
@@ -139,8 +143,8 @@ class URI(object):
 				directory = True
 
 		if directory:
-			unsplit.append(b'')
-		self.path = b'/'.join(unsplit)
+			unsplit.append(u'')
+		self.path = u'/'.join(unsplit) or u'/'
 
 	def set(self, uri):
 		if isinstance(uri, Unicode):
@@ -219,9 +223,7 @@ class URI(object):
 			path = b'%s%s' % (__, path)
 		userinfo, __, hostport = authority.rpartition(b'@')
 		username, __, password = userinfo.partition(b':')
-		if hostport.endswith(b']') and hostport.startswith(b'['):
-			host, port = hostport, b''
-		elif ':' in hostport:
+		if ':' in hostport and not hostport.endswith(b']'):
 			host, __, port = hostport.rpartition(b':')
 		else:
 			host, port = hostport, b''
@@ -249,24 +251,35 @@ class URI(object):
 		)
 
 	def _unquote_host(self, host):
-		if b':' in host or b'[' in host or b']' in host:
+		# IPv6 / IPvFuture
+		if host.startswith(b'[') and host.endswith(b']'):
+			host = host[1:-1]
 			try:
-				if not host.startswith('[') or not host.endswith(']'):
-					raise SocketError
-				inet_pton(AF_INET6, host[1:-1])
+				return u'[%s]' % inet_ntop(AF_INET6, inet_pton(AF_INET6, host)).decode('ascii')
 			except SocketError:
-				raise InvalidURI(_('Invalid IPv6 Address in URI.'))
-			return host.decode('ascii')
+				# IPvFuture
+				if host.startswith(b'v') and b'.' in host and host[1:].split('.', 1)[0].isdigit():
+					try:
+						return u'[%s]' % host.decode('ascii')
+					except UnicodeDecodeError:
+						raise InvalidURI(_('Invalid IPvFuture address: must be ASCII.'))
+				raise InvalidURI(_('Invalid IP address in URI.'))
+		# IPv4
 		if all(x.isdigit() for x in host.split(b'.')):
 			try:
-				inet_pton(AF_INET, host)
+				return inet_ntop(AF_INET, inet_pton(AF_INET, host)).decode('ascii')
 			except SocketError:
-				raise InvalidURI(_('Invalid IPv4 Address in URI.'))
-			return host.decode('ascii')
+				raise InvalidURI(_('Invalid IPv4 address in URI.'))
+
+		if host.strip(Percent.UNRESERVED + Percent.SUB_DELIMS + b'%'):
+			raise InvalidURI(_('Invalid URI host.'))
+
+		# DNS hostname
+		host = self.unquote(host)
 		try:
-			return host.decode('idna')
-		except UnicodeDecodeError:
-			raise InvalidURI('Invalid host.')
+			return host.encode('ascii').decode('idna').lower()
+		except UnicodeError:
+			raise InvalidURI(_('Invalid host.'))
 
 	def compose(self):
 		return b''.join(self._compose_absolute_iter())
@@ -275,7 +288,7 @@ class URI(object):
 		u"""composes the whole URI"""
 		scheme, username, password, host, port, path, _, fragment = self.tuple
 		if scheme:
-			yield self.quote(scheme)
+			yield self.quote(scheme, Percent.SCHEME)
 			yield b':'
 		authority = b''.join(self._compose_authority_iter())
 		if authority:
@@ -288,10 +301,10 @@ class URI(object):
 			return
 		username, password, host, port, quote = self.username, self.password, self.host, self.port, self.quote
 		if username:
-			yield quote(username)
+			yield quote(username, Percent.USERINFO)
 			if password:
 				yield b':'
-				yield quote(password)
+				yield quote(password, Percent.USERINFO)
 			yield b'@'
 		yield host.encode('idna')
 		if port and int(port) != self.PORT:
@@ -300,13 +313,13 @@ class URI(object):
 	def _compose_relative_iter(self):
 		u"""Composes the relative URI beginning with the path"""
 		path, query_string, quote, fragment = self.path, self.query_string, self.quote, self.fragment
-		yield b'/'.join(map(quote, path.split(u'/')))
+		yield b'/'.join(quote(x, Percent.PATH) for x in path.split(u'/'))
 		if query_string:
 			yield b'?'
 			yield query_string
 		if fragment:
 			yield b'#'
-			yield quote(fragment)
+			yield quote(fragment, Percent.FRAGMENT)
 
 	def __eq__(self, other):
 		u"""Compares the URI with another string or URI
@@ -321,7 +334,8 @@ class URI(object):
 			>>> u1 == u2 == u3
 			True
 		"""
-		self_, other = URI(self), URI(other)
+		cls = type(self)
+		self_, other = cls(self), cls(other)
 		self_.normalize()
 		other.normalize()
 

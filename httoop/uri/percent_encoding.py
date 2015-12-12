@@ -10,17 +10,31 @@ class Percent(object):
 		u"!#$&'()*+,/:;=?@[]"
 	"""
 
+	HEX_MAP = dict((a + b, chr(int(a + b, 16))) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef')
+
+	# ABNF
 	GEN_DELIMS = b":/?#[]@"
 	SUB_DELIMS = b"!$&'()*+,;="
 
-	RESERVED_CHARS = GEN_DELIMS + SUB_DELIMS + b'%'
-	UNRESERVED_CHARS = b'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~'
+	RESERVED = GEN_DELIMS + SUB_DELIMS + b'%'
+	ALPHA = b'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+	DIGIT = b'0123456789'
+	UNRESERVED = ALPHA + DIGIT + '-._~'
 
-	HEX_MAP = dict((a + b, chr(int(a + b, 16))) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef')
+	SCHEME = ALPHA + DIGIT + b'+-.'
+	PCHAR = UNRESERVED + SUB_DELIMS + b':@'
+	USERINFO = UNRESERVED + SUB_DELIMS + ':'
+	PATH = PCHAR + '/'
+	QUERY = PCHAR + '/?'
+	FRAGMENT = PCHAR + '/?'
 
 	@classmethod
 	def decode(cls, data, charset=None):
-		return b''.join(cls._decode_iter(data)).decode(charset or 'ISO8859-1')
+		return cls.unquote(data).decode(charset or 'ISO8859-1')
+
+	@classmethod
+	def unquote(cls, data):
+		return b''.join(cls._decode_iter(data))
 
 	@classmethod
 	def _decode_iter(cls, data):
@@ -35,8 +49,11 @@ class Percent(object):
 				yield item
 
 	@classmethod
-	def encode(cls, data, charset=None):
+	def encode(cls, data, charset=None):  # TODO: allow to specifcy charset=which chars are mapped, remove encoding
 		data = data.encode(charset or 'ISO8859-1')
-		if not any(d in data for d in cls.RESERVED_CHARS):
-			return data
-		return b''.join(b'%%%s' % (d.encode('hex').upper()) if d in cls.RESERVED_CHARS else d for d in data)
+		return cls.quote(data, cls.UNRESERVED)
+
+	@classmethod
+	def quote(cls, data, charset):
+		charset = set(charset) - {'%'}
+		return b''.join(b'%%%X' % (ord(d),) if d not in charset else d for d in data)

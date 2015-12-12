@@ -12,7 +12,7 @@ class QueryString(FormURLEncoded):
 
 	@classmethod
 	def quote(cls, data, charset):
-		return super(QueryString, cls).quote(data, charset).replace(b' ', b'+')
+		return Percent.quote(data.encode(charset or 'ISO8859-1'), Percent.QUERY).replace(b'%20', b'+')
 
 	@classmethod
 	def unquote(cls, data, charset):

@@ -100,7 +100,8 @@ def test_parse_absolute_uri(url, expected):
 	b'http://[dead:beef::1/foo/',
 	# invalid IPv4 Addresses
 	b'http://1.2.3.256/',
-	b'http://1.2.-3.4/',
+	pytest.mark.xfail(b'http://1.2.-3.4/'),
+	b'http://1.2.03.4/',
 	# invalid Ports
 	b'http://www.example.net:foo',
 	b'http://www.example.net:-123',
@@ -147,3 +148,19 @@ def test_rfc2732(url, hostname, port):
 	url = URI(url)
 	assert url.hostname == hostname
 	assert url.port == port
+
+
+@pytest.mark.parametrize('url,hostname,port', [
+	(b'http://[v123.:]/', u':', 80),
+	(b'http://[v123.dead:beef]/', u'dead:beef', 80),
+	(b'http://[v0.dead:beef]/', u'dead:beef', 80),
+	(b'http://[v0.foo:123]/', u'foo:123', 80),
+	(b'http://[v123.:]:1/', u':', 1),
+	(b'http://[v123.dead:beef]:2/', u'dead:beef', 2),
+	(b'http://[v0.dead:beef]:3/', u'dead:beef', 3),
+	(b'http://[v0.foo:123]:4/', u'foo:123', 4),
+	(b'http://[v0.fo[]o:123]:4/', u'fo[]o:123', 4),
+])
+def test_ipvfuture(url, hostname, port):
+	url = URI(url)
+	assert url.hostname == hostname

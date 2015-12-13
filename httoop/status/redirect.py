@@ -14,7 +14,7 @@ class RedirectStatus(StatusException):
 
 	def __init__(self, location, *args, **kwargs):
 		if location is not None:
-			kwargs.setdefault('headers', {})['Location'] = URI(location).uri
+			kwargs.setdefault('headers', {})['Location'] = bytes(URI(location))
 		super(RedirectStatus, self).__init__(*args, **kwargs)
 
 	def to_dict(self):

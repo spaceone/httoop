@@ -26,17 +26,13 @@ class URI(object):
 	PORT = None
 	encoding = 'UTF-8'
 
-	unquote = Percent.decode
-	def quote(self, data, charset):
-		return Percent.quote(data, charset).encode(self.encoding)
-
 	@property
 	def query(self):
-		return tuple(QueryString.decode(self.query_string))
+		return tuple(QueryString.decode(self.query_string, self.encoding))
 
 	@query.setter
 	def query(self, query):
-		self.query_string = QueryString.encode(query)
+		self.query_string = QueryString.encode(query, self.encoding)
 
 	@property
 	def path_segments(self):
@@ -163,11 +159,13 @@ class URI(object):
 
 	@property
 	def dict(self):
-		return dict((key, getattr(self, key)) for key in self.__slots__)
+		slots = (key.lstrip('_') for key in self.__slots__)
+		return dict((key, getattr(self, key)) for key in slots)
 
 	@dict.setter
 	def dict(self, uri):
 		for key in self.__slots__:
+			key = key.lstrip('_')
 			setattr(self, key, uri.get(key, u''))
 
 	@property
@@ -239,6 +237,9 @@ class URI(object):
 		if scheme and scheme.strip(u'abcdefghijklmnopqrstuvwxyz0123456789.-+'):
 			raise InvalidURI(_(u'Invalid scheme: must only contain alphanumeric letters or plus, dash, dot.'))
 
+		if query_string:
+			query_string = QueryString.encode(QueryString.decode(query_string, self.encoding), self.encoding)
+
 		self.tuple = (
 			scheme,
 			unquote(username),
@@ -246,7 +247,7 @@ class URI(object):
 			self._unquote_host(host),
 			port,
 			path,
-			QueryString.encode(QueryString.decode(query_string)),
+			query_string.decode(self.encoding),
 			unquote(fragment)
 		)
 
@@ -320,6 +321,12 @@ class URI(object):
 		if fragment:
 			yield b'#'
 			yield quote(fragment, Percent.FRAGMENT)
+
+	def unquote(self, data):
+		return Percent.unquote(bytes(data)).decode(self.encoding)
+
+	def quote(self, data, charset):
+		return Percent.quote(unicode(data).encode(self.encoding), charset)
 
 	def __eq__(self, other):
 		u"""Compares the URI with another string or URI

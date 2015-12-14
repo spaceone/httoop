@@ -4,10 +4,10 @@
 class Percent(object):
 	u"""Percentage encoding
 
-		>>> Percent.encode(u"!#$&'()*+,/:;=?@[]")
-		'%21%23%24%26%27%28%29%2A%2B%2C%2F%3A%3B%3D%3F%40%5B%5D'
-		>>> Percent.decode(b'%21%23%24%26%27%28%29%2a%2b%2c%2f%3a%3b%3d%3f%40%5b%5d')
-		u"!#$&'()*+,/:;=?@[]"
+		>>> Percent.quote(b"!#$&'()*+,/:;=?@[]")
+		b'%21%23%24%26%27%28%29%2A%2B%2C%2F%3A%3B%3D%3F%40%5B%5D'
+		>>> Percent.unquote(b'%21%23%24%26%27%28%29%2a%2b%2c%2f%3a%3b%3d%3f%40%5b%5d')
+		b"!#$&'()*+,/:;=?@[]"
 	"""
 
 	HEX_MAP = dict((a + b, chr(int(a + b, 16))) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef')
@@ -29,10 +29,6 @@ class Percent(object):
 	FRAGMENT = PCHAR + '/?'
 
 	@classmethod
-	def decode(cls, data, charset=None):
-		return cls.unquote(data).decode(charset or 'ISO8859-1')
-
-	@classmethod
 	def unquote(cls, data):
 		return b''.join(cls._decode_iter(data))
 
@@ -49,11 +45,6 @@ class Percent(object):
 				yield item
 
 	@classmethod
-	def encode(cls, data, charset=None):  # TODO: allow to specifcy charset=which chars are mapped, remove encoding
-		data = data.encode(charset or 'ISO8859-1')
-		return cls.quote(data, cls.UNRESERVED)
-
-	@classmethod
-	def quote(cls, data, charset):
+	def quote(cls, data, charset=UNRESERVED):
 		charset = set(charset) - {'%'}
 		return b''.join(b'%%%X' % (ord(d),) if d not in charset else d for d in data)

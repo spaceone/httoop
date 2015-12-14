@@ -404,7 +404,7 @@ def test_attwithfn2231utf8_bad(content_disposition):
 
 
 def test_attwithfn2231iso_bad(content_disposition):
-	with pytest.raises(UnicodeDecodeError):
+	with pytest.raises(InvalidHeader):
 		h = content_disposition("Content-Disposition: attachment; filename*=utf-8''foo-%E4.html")
 
 

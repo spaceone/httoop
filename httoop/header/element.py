@@ -131,7 +131,10 @@ class HeaderElement(object):
 					encoding = sanitize_encoding(charset)
 					if encoding is None:
 						raise InvalidHeader(_(u'Unknown encoding: %r'), charset)
-					key, value = key[:-1], Percent.decode(value_, encoding)
+					try:
+						key, value = key[:-1], Percent.unquote(value_).decode(encoding)
+					except UnicodeDecodeError as exc:
+						raise InvalidHeader(_(u'%s') % (exc,))
 				key_, asterisk, num = key.rpartition('*')
 				if asterisk:
 					try:

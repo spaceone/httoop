@@ -10,6 +10,7 @@ __all__ = ['Date']
 
 import time
 import locale
+#import calendar
 from datetime import datetime
 
 from httoop.util import parsedate, Unicode
@@ -55,10 +56,12 @@ class Date(object):
 		elif isinstance(timeval, (float, int)):
 			self.__timestamp = float(timeval)
 		elif isinstance(timeval, (tuple, time.struct_time)):
-			self.__timestamp = time.mktime(timeval)
+#			self.__timestamp = calendar.timegm(timeval)
+			self.__timestamp = time.mktime(timeval) - time.timezone
 		elif isinstance(timeval, datetime):
 			self.__datetime = timeval
-			self.__timestamp = time.mktime(self.datetime.utctimetuple())
+#			self.__timestamp = calendar.timegm(self.datetime.utctimetuple())
+			self.__timestamp = time.mktime(self.datetime.utctimetuple()) - time.timezone
 		elif isinstance(timeval, (bytes, Unicode)):
 			if isinstance(timeval, Unicode):
 				timeval = timeval.encode('ascii', 'ignore')

@@ -155,7 +155,7 @@ class URI(object):
 		elif isinstance(uri, dict):
 			self.dict = uri
 		else:
-			raise TypeError
+			raise TypeError('URI must be bytes/unicode/tuple/dict not %r' % (type(uri).__name__,))
 
 	@property
 	def dict(self):
@@ -307,14 +307,20 @@ class URI(object):
 				yield b':'
 				yield quote(password, Percent.USERINFO)
 			yield b'@'
-		yield host.encode('idna')
+		try:
+			yield host.encode('idna')
+		except UnicodeError:  # u'..'.encode('idna')
+			raise InvalidURI(_(u'Invalid URI: cannot encode host as IDNA.'))
 		if port and int(port) != self.PORT:
 			yield b':%d' % int(port)
 
 	def _compose_relative_iter(self):
 		u"""Composes the relative URI beginning with the path"""
-		path, query_string, quote, fragment = self.path, self.query_string, self.quote, self.fragment
-		yield b'/'.join(quote(x, Percent.PATH) for x in path.split(u'/'))
+		scheme, path, query_string, quote, fragment = self.scheme, self.path, self.query_string, self.quote, self.fragment
+		PATH = Percent.PATH
+		if not scheme and not path.startswith(u'/'):
+			PATH = set(PATH) - {b':', b'@'}
+		yield b'/'.join(quote(x, PATH) for x in path.split(u'/'))
 		if query_string:
 			yield b'?'
 			yield query_string

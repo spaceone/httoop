@@ -72,6 +72,11 @@ absolute_uris = [
 	(b'http:..', (u'http', u'', u'', u'', 80, u'..', u'', u'')),
 	(b'http:/', (u'http', u'', u'', u'', 80, u'/', u'', u'')),
 	(b'http://foo/bar.', (u'http', u'', u'', u'foo', 80, u'/bar.', u'', u'')),
+
+	(b'foo:bar', (u'foo', u'', u'', u'', None, u'bar', u'', u'')),
+	(b'foo%3Abar', (u'', u'', u'', u'', None, u'foo:bar', u'', u'')),
+	(b'md5:61529519452809720693702583126814', (u'md5', u'', u'', u'', None, u'61529519452809720693702583126814', u'', u'')),
+	(b'md5:acbd18db4cc2f85cedef654fccc4a4d8', (u'md5', u'', u'', u'', None, u'acbd18db4cc2f85cedef654fccc4a4d8', u'', u'')),
 ]
 #absolute_uris.extend(
 #	(b'http://www.example.com:%d' % (port,), (u'http', u'', u'', u'www.example.com', port, u'', u'', u'')) for port in range(1, 65535)

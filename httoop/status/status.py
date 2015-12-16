@@ -19,36 +19,54 @@ class Status(object):
 	"""
 	__metaclass__ = HTTPSemantic
 
+#	__slots__ = ('__code', '__reason')
+
 	@property
 	def informational(self):
-		return 99 < self.code < 200
+		return 99 < self.__code < 200
 
 	@property
 	def successful(self):
-		return 199 < self.code < 300
+		return 199 < self.__code < 300
 
 	@property
 	def redirection(self):
-		return 299 < self.code < 400
+		return 299 < self.__code < 400
 
 	@property
 	def client_error(self):
-		return 399 < self.code < 500
+		return 399 < self.__code < 500
 
 	@property
 	def server_error(self):
-		return 499 < self.code < 600
+		return 499 < self.__code < 600
 
 	# aliases
 	@property
 	def status(self):
-		return self.code
+		return self.__code
 
 	@property
 	def reason_phrase(self):
-		return self.reason
+		return self.__reason
 
 	reason = None
+
+	@property
+	def code(self):
+		return self.__code
+
+	@code.setter
+	def code(self, code):
+		self.set((code, self.__reason))
+
+	@property
+	def reason(self):
+		return self.__reason
+
+	@reason.setter
+	def reason(self, reason):
+		self.set((self.__code, reason))
 
 	STATUS_RE = re.compile(br"^([1-5]\d{2})(?:\s+([\s\w]*))\Z")
 
@@ -62,9 +80,9 @@ class Status(object):
 				the HTTP Reason-Phrase
 			:type  reason: unicode
 		"""
-		self.code = 0
-		self.reason = self.reason or u''
-		reason = reason or self.reason or REASONS.get(code, ('', ''))[0]
+		self.__code = 0
+		reason = reason or u''
+		reason = reason or reason or REASONS.get(code, ('', ''))[0]
 		if code:
 			self.set((code, reason,))
 
@@ -81,28 +99,28 @@ class Status(object):
 		self.set((int(match.group(1)), match.group(2).decode('ascii'),))
 
 	def compose(self):
-		return b'%d %s' % (self.code, self.reason.encode('ascii'))
+		return b'%d %s' % (self.__code, self.__reason.encode('ascii'))
 
 	def __unicode__(self):
 		return self.compose().decode('ascii')
 
 	def __int__(self):
 		u"""Returns this status as number"""
-		return self.code
+		return self.__code
 
 	def __eq__(self, other):
 		u"""Compares a status with another :class:`Status` or :class:`int`"""
 		if isinstance(other, int):
-			return self.code == other
+			return self.__code == other
 		if isinstance(other, Status):
-			return self.code == other.code
+			return self.__code == other.code
 		return super(Status, self).__eq__(other)
 
 	def __lt__(self, other):
-		return self.code < other
+		return self.__code < other
 
 	def __gt__(self, other):
-		return self.code > other
+		return self.__code > other
 
 	def set(self, status):
 		u"""sets reason and status
@@ -113,22 +131,22 @@ class Status(object):
 				int or tuple or bytes or Status
 		"""
 		if isinstance(status, int) and 99 < status < 600:
-			self.code, self.reason = status, REASONS.get(status, (u'', u''))[0]
+			self.__code, self.__reason = status, REASONS.get(status, (u'', u''))[0]
 		elif isinstance(status, tuple):
-			code, self.reason = status
-			self.code = int(code)
+			code, self.__reason = status
+			self.__code = int(code)
 		elif isinstance(status, (bytes, Unicode)):
 			code, reason = status.split(None, 1)
 			if isinstance(reason, bytes):
 				reason = reason.decode('ascii')
-			self.code, self.reason = int(code), reason
+			self.__code, self.__reason = int(code), reason
 		elif isinstance(status, Status):
-			self.code, self.reason = status.code, status.reason
+			self.__code, self.__reason = status.code, status.reason
 		else:
 			raise TypeError('invalid status')
 
 	def __repr__(self):
-		return '<HTTP Status (code=%d, reason=%r)>' % (self.code, self.reason)
+		return '<HTTP Status (code=%d, reason=%r)>' % (self.__code, self.__reason)
 
 
 REASONS = {

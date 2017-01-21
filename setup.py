@@ -38,7 +38,7 @@ setup(
 	platforms='POSIX',
 	packages=find_packages('.', exclude=['tests.*', 'tests']),
 #	scripts=glob('bin/*'),
-	install_requires=[],
+	install_requires=['six'],
 	entry_points={},
 	test_suite='tests.main.main',
 	zip_safe=True

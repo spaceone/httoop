@@ -4,6 +4,7 @@ python:
 before_install:
   pip install codecov
 install:
+  - pip install six
   - pip install pytest
   - pip install coveralls
   - pip install pytest-cov

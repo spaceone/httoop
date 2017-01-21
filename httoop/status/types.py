@@ -3,6 +3,8 @@
 
 .. seealso:: :rfc:`2616#section-10`"""
 
+from httoop.six import with_metaclass
+
 from httoop.status.status import Status, REASONS
 from httoop.meta import HTTPSemantic
 
@@ -33,11 +35,9 @@ class StatusType(HTTPSemantic):
 		return super(StatusType, mcs).__new__(mcs, name, bases, dict_)
 
 
-class StatusException(Status, Exception):
+class StatusException(with_metaclass(StatusType, Status, Exception)):
 	u"""This class represents a small HTTP Response message
 		for error handling purposes"""
-
-	__metaclass__ = StatusType
 
 	@property
 	def headers(self):

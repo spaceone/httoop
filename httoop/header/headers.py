@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import re
 
+from httoop.six import with_metaclass
+
 from httoop.util import CaseInsensitiveDict, iteritems, to_unicode
 from httoop.meta import HTTPSemantic
 from httoop.header.element import HEADER, HeaderElement
@@ -8,9 +10,7 @@ from httoop.exceptions import InvalidHeader
 from httoop.util import _
 
 
-class Headers(CaseInsensitiveDict):
-
-	__metaclass__ = HTTPSemantic
+class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 
 	# disallowed bytes for HTTP header field names
 	HEADER_RE = re.compile(br"[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]")

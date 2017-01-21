@@ -8,12 +8,14 @@ from os import fstat
 from io import BytesIO
 from types import GeneratorType
 
+from httoop.six import with_metaclass
+
 from httoop.header import Headers
 from httoop.util import IFile, Unicode
 from httoop.meta import HTTPSemantic
 
 
-class Body(IFile):
+class Body(with_metaclass(HTTPSemantic, IFile)):
 	u"""A HTTP message body
 
 		This class is capable of handling HTTP Transfer-Encoding
@@ -27,7 +29,6 @@ class Body(IFile):
 		The encode and decode methods can also control the automatic en/decoding of
 		the content using the codec specified in the MIME media type.
 	"""
-	__metaclass__ = HTTPSemantic
 	__slots__ = (
 		'fd', 'data', '__iter', 'headers', 'trailer',
 		'content_codec', 'transfer_codec'

@@ -8,14 +8,15 @@ __all__ = ('Protocol',)
 
 import re
 
+from httoop.six import with_metaclass
+
 from httoop.exceptions import InvalidLine
 from httoop.util import Unicode, _
 from httoop.meta import HTTPSemantic
 
 
-class Protocol(object):
+class Protocol(with_metaclass(HTTPSemantic)):
 	u"""The HTTP protocol version"""
-	__metaclass__ = HTTPSemantic
 	__slots__ = ('name', '__protocol')
 
 	@property

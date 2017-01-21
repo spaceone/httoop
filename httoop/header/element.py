@@ -11,6 +11,8 @@ __all__ = ['HEADER', 'HeaderElement']
 
 import re
 
+from httoop.six import with_metaclass
+
 from httoop.util import CaseInsensitiveDict, iteritems, decode_rfc2231, Unicode, decode_header, sanitize_encoding, _
 from httoop.exceptions import InvalidHeader
 from httoop.uri.percent_encoding import Percent
@@ -27,10 +29,8 @@ class HeaderType(type):
 		return super(HeaderType, mcs).__new__(mcs, name, bases, dict_)
 
 
-class HeaderElement(object):
+class HeaderElement(with_metaclass(HeaderType)):
 	u"""An element (with parameters) from an HTTP header's element list."""
-
-	__metaclass__ = HeaderType
 
 	priority = None
 	hop_by_hop = False

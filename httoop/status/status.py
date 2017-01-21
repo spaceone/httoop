@@ -5,19 +5,20 @@
 .. seealso:: :rfc:`2616#section-10`
 """
 
+import re
+
+from httoop.six import with_metaclass
+
 from httoop.util import Unicode, _
 from httoop.exceptions import InvalidLine
 from httoop.meta import HTTPSemantic
 
-import re
 
-
-class Status(object):
+class Status(with_metaclass(HTTPSemantic)):
 	u"""A HTTP Status
 
 		:rfc:`2616#section-6.2`
 	"""
-	__metaclass__ = HTTPSemantic
 
 #	__slots__ = ('__code', '__reason')
 

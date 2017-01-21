@@ -6,6 +6,8 @@
 
 __all__ = ('Message')
 
+from httoop.six import with_metaclass
+
 from httoop.messages.body import Body
 from httoop.messages.protocol import Protocol
 
@@ -13,12 +15,11 @@ from httoop.header import Headers
 from httoop.meta import HTTPSemantic
 
 
-class Message(object):
+class Message(with_metaclass(HTTPSemantic)):
 	u"""A HTTP message
 
 		.. seealso:: :rfc:`2616#section-4`
 	"""
-	__metaclass__ = HTTPSemantic
 	__slots__ = ('__protocol', '__headers', '__body')
 
 	@property

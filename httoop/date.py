@@ -13,13 +13,15 @@ import locale
 #import calendar
 from datetime import datetime
 
+from httoop.six import with_metaclass
+
 from httoop.util import parsedate, Unicode
 from httoop.exceptions import InvalidDate
 from httoop.meta import HTTPSemantic
 from httoop.util import _
 
 
-class Date(object):
+class Date(with_metaclass(HTTPSemantic)):
 	u"""A HTTP Date string
 
 		It provides a API to multiple time representations:
@@ -35,7 +37,6 @@ class Date(object):
 			Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
 			Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
 	"""
-	__metaclass__ = HTTPSemantic
 
 	def __init__(self, timeval=None):
 		u"""

@@ -8,14 +8,15 @@ __all__ = ('Method',)
 
 import re
 
+from httoop.six import with_metaclass
+
 from httoop.exceptions import InvalidLine
 from httoop.util import Unicode, _
 from httoop.meta import HTTPSemantic
 
 
-class Method(object):
+class Method(with_metaclass(HTTPSemantic)):
 	u"""A HTTP request method"""
-	__metaclass__ = HTTPSemantic
 	__slots__ = ('__method')
 
 	@property

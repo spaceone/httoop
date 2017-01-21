@@ -8,6 +8,8 @@
 import re
 from socket import inet_pton, inet_ntop, AF_INET, AF_INET6, error as SocketError
 
+from httoop.six import with_metaclass
+
 from httoop.exceptions import InvalidURI
 from httoop.util import Unicode, _
 from httoop.uri.percent_encoding import Percent
@@ -15,10 +17,9 @@ from httoop.uri.query_string import QueryString
 from httoop.uri.type import URIType
 
 
-class URI(object):
+class URI(with_metaclass(URIType)):
 	u"""Uniform Resource Identifier"""
 
-	__metaclass__ = URIType
 	__slots__ = ('scheme', 'username', 'password', 'host', '_port', 'path', 'query_string', 'fragment')
 
 	SCHEMES = {}

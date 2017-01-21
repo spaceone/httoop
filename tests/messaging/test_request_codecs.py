@@ -11,9 +11,9 @@ except NameError:
 
 def test_json(body):
 	body.mimetype = 'application/json'
-	assert body.decode('{"foo": "bar"}') == {u"foo": u"bar"}
+	assert body.decode(b'{"foo": "bar"}') == {u"foo": u"bar"}
 	body.encode({u"bar": u"foo"})
-	assert bytes(body) == '{"bar": "foo"}'
+	assert bytes(body) == u'{"bar": "foo"}'
 	# TODO: non-utf8
 
 
@@ -35,9 +35,9 @@ def test_percent_encoding(body):
 
 
 multipart_string = (
-	'''--------------------------409e1d7f8fe3763a\r\nContent-Disposition: form-data; name="foo"\r\n\r\nfoocontent\r\n'''
-	'''--------------------------409e1d7f8fe3763a\r\nContent-Disposition: form-data; name="bar"; filename="test.txt"\r\n'''
-	'''Content-Type: text/plain\r\n\r\nbarcontent\r\n--------------------------409e1d7f8fe3763a--\r\n'''
+	b'''--------------------------409e1d7f8fe3763a\r\nContent-Disposition: form-data; name="foo"\r\n\r\nfoocontent\r\n'''
+	b'''--------------------------409e1d7f8fe3763a\r\nContent-Disposition: form-data; name="bar"; filename="test.txt"\r\n'''
+	b'''Content-Type: text/plain\r\n\r\nbarcontent\r\n--------------------------409e1d7f8fe3763a--\r\n'''
 )
 def test_parse_multipart_form_data(body):
 	body.mimetype = 'multipart/form-data'
@@ -49,14 +49,14 @@ def test_parse_multipart_form_data(body):
 	parts = body.decode()
 	assert len(parts) == 2
 	foo, bar = parts
-	assert bytes(foo) == 'foocontent'
-	assert bytes(bar) == 'barcontent'
-	assert foo.headers.element('Content-Disposition') == 'form-data'
-	assert bar.headers.element('Content-Disposition') == 'form-data'
-	assert foo.headers.element('Content-Disposition').params['name'] == 'foo'
-	assert bar.headers.element('Content-Disposition').params['name'] == 'bar'
-	assert 'filename' not in foo.headers.element('Content-Disposition').params
-	assert bar.headers.element('Content-Disposition').params['filename'] == 'test.txt'
+	assert bytes(foo) == b'foocontent'
+	assert bytes(bar) == b'barcontent'
+	assert foo.headers.element('Content-Disposition') == u'form-data'
+	assert bar.headers.element('Content-Disposition') == u'form-data'
+	assert foo.headers.element('Content-Disposition').params[u'name'] == u'foo'
+	assert bar.headers.element('Content-Disposition').params[u'name'] == u'bar'
+	assert u'filename' not in foo.headers.element('Content-Disposition').params
+	assert bar.headers.element(u'Content-Disposition').params[u'filename'] == u'test.txt'
 
 
 def test_compose_multipart_form_data(body):

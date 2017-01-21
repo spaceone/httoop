@@ -62,21 +62,21 @@ def test_unknown_algorithm(headers):
 
 
 required = ('algorithm', 'username', 'realm', 'uri')
-@pytest.mark.parametrize('params', set(tuple(tuple(set(x)) for x in chain(*list(set(product(required, repeat=i)) for i in xrange(1, len(required)+1))))))
+@pytest.mark.parametrize('params', set(tuple(tuple(set(x)) for x in chain(*list(set(product(required, repeat=i)) for i in range(1, len(required)+1))))))
 def test_required_parameter(params, headers):
 	pvars = {
-		'algorithm': 'MD5',
-		'username': 'foo',
-		'realm': 'foo',
-		'uri': '/'
+		'algorithm': b'MD5',
+		'username': b'foo',
+		'realm': b'foo',
+		'uri': b'/'
 	}
 	header = b', '.join(b'%s="%s"' % (p, pvars[p]) for p in params)
-	headers.parse('Authorization: digest %s' % header)
+	headers.parse(b'Authorization: digest %s' % header)
 	with pytest.raises(InvalidHeader) as excinfo:
 		headers.elements('Authorization')
 	assert 'Missing parameter' in str(excinfo)
 
-	element = Authorization('Digest', dict((p, pvars[p]) for p in params))
+	element = Authorization(u'Digest', dict((p, pvars[p].decode('ascii')) for p in params))
 	with pytest.raises(InvalidHeader) as excinfo:
 		bytes(element)
 	assert 'Missing parameter' in str(excinfo)

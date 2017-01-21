@@ -1,6 +1,11 @@
 import pytest
 from httoop import Status
 
+try:
+    unicode
+except NameError:
+    unicode = str
+
 
 def test_staus_comparision(response):
 	response.status = 204
@@ -66,7 +71,7 @@ def test_status_string(response):
 	assert bytes(response.status) == b'299 Yes'
 	response.status = b'298 Yep'
 	assert response.status == 298
-	assert response.status.reason == b'Yep'
+	assert response.status.reason == u'Yep'
 	assert bytes(response.status) == b'298 Yep'
 	assert unicode(response.status) == u'298 Yep'
 
@@ -75,7 +80,7 @@ def test_set_status_status(response):
 	status = Status(203, b'Foobar')
 	response.status = status
 	assert response.status.code == 203
-	assert response.status.reason == b'Foobar'
+	assert response.status.reason == u'Foobar'
 	assert response.status == b'203 Foobar'
 
 
@@ -88,7 +93,7 @@ def test_status_aliases(response):
 def test_status_parse(response):
 	response.status.parse('400 bad request')
 	assert response.status == 400
-	assert response.status.reason == 'bad request'
+	assert response.status.reason == u'bad request'
 
 	response.status.parse('401 ')
 	assert response.status == 401

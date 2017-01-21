@@ -167,7 +167,7 @@ further = [
 #	pytest.mark.xfail((b'', b'http://a/./g', b'http://a/./g'), reason='The dot is stripped due to normalization'),
 	(b'svn://pathtorepo/dir1', b'dir2', b'svn://pathtorepo/dir2'),
 	(b'svn+ssh://pathtorepo/dir1', b'dir2', b'svn+ssh://pathtorepo/dir2'),
-	(SIMPLE_BASE + '/', b'foo', SIMPLE_BASE + '/foo'),
+	(SIMPLE_BASE + b'/', b'foo', SIMPLE_BASE + b'/foo'),
 	(b'http://a/b/c/d/e/', b'../../f/g/', b'http://a/b/c/f/g/'),
 	(b'http://a/b/c/d/e', b'../../f/g/', b'http://a/b/f/g/'),
 	(b'http://a/b/c/d/e/', b'/../../f/g/', b'http://a/f/g/'),

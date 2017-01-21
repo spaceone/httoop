@@ -126,7 +126,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 			name, value = name.strip(), [value.lstrip()]
 
 			# continuation lines
-			while lines and lines[0].startswith((' ', '\t')):
+			while lines and lines[0].startswith((b' ', b'\t')):
 				value.append(lines.pop(0)[1:])
 			value = b''.join(value).rstrip()
 			Element = HEADER.get(name, HeaderElement)

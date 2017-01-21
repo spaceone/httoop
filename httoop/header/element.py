@@ -38,9 +38,9 @@ class HeaderElement(with_metaclass(HeaderType)):
 
 	# Regular expression that matches `special' characters in parameters, the
 	# existance of which force quoting of the parameter value.
-	RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"/\[\]\?=]')
-	RE_SPLIT = re.compile(',(?=(?:[^"]*"[^"]*")*[^"]*$)')
-	RE_PARAMS = re.compile(';(?=(?:[^"]*"[^"]*")*[^"]*$)')
+	RE_TSPECIALS = re.compile(b'[ \(\)<>@,;:\\\\"/\[\]\?=]')
+	RE_SPLIT = re.compile(b',(?=(?:[^"]*"[^"]*")*[^"]*$)')
+	RE_PARAMS = re.compile(b';(?=(?:[^"]*"[^"]*")*[^"]*$)')
 
 	def __init__(self, value, params=None):
 		self.value = bytes(value)
@@ -82,7 +82,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 		"""Transform 'token;key=val' to ('token', {'key': 'val'})."""
 		# Split the element into a value and parameters. The 'value' may
 		# be of the form, "token=token", but we don't split that here.
-		atoms = [x.strip() for x in cls.RE_PARAMS.split(elementstr) if x.strip()] or ['']
+		atoms = [x.strip() for x in cls.RE_PARAMS.split(elementstr) if x.strip()] or [b'']
 
 		value = atoms.pop(0)
 		params = (cls.parseparam(atom) for atom in atoms)
@@ -282,7 +282,7 @@ class _AcceptElement(HeaderElement):
 	"""
 
 	# RFC 2616 Section 3.9
-	RE_Q_SEPARATOR = re.compile(r';\s*q\s*=\s*')
+	RE_Q_SEPARATOR = re.compile(br';\s*q\s*=\s*')
 
 	@property
 	def quality(self):
@@ -338,8 +338,8 @@ class _AcceptElement(HeaderElement):
 
 class _CookieElement(HeaderElement):
 
-	#RE_TSPECIALS = re.compile(r'[ \(\)<>@,;:\\"\[\]\?=]')
-	RE_TSPECIALS = re.compile(r'(?!)')
+	#RE_TSPECIALS = re.compile(br'[ \(\)<>@,;:\\"\[\]\?=]')
+	RE_TSPECIALS = re.compile(br'(?!)')
 
 	def __init__(self, cookie_name, cookie_value, params=None):
 		self.cookie_name = Unicode(cookie_name)

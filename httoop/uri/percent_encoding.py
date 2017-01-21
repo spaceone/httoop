@@ -19,14 +19,14 @@ class Percent(object):
 	RESERVED = GEN_DELIMS + SUB_DELIMS + b'%'
 	ALPHA = b'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 	DIGIT = b'0123456789'
-	UNRESERVED = ALPHA + DIGIT + '-._~'
+	UNRESERVED = ALPHA + DIGIT + b'-._~'
 
 	SCHEME = ALPHA + DIGIT + b'+-.'
 	PCHAR = UNRESERVED + SUB_DELIMS + b':@'
-	USERINFO = UNRESERVED + SUB_DELIMS + ':'
-	PATH = PCHAR + '/'
-	QUERY = PCHAR + '/?'
-	FRAGMENT = PCHAR + '/?'
+	USERINFO = UNRESERVED + SUB_DELIMS + b':'
+	PATH = PCHAR + b'/'
+	QUERY = PCHAR + b'/?'
+	FRAGMENT = PCHAR + b'/?'
 
 	@classmethod
 	def unquote(cls, data):
@@ -46,5 +46,5 @@ class Percent(object):
 
 	@classmethod
 	def quote(cls, data, charset=UNRESERVED):
-		charset = set(charset) - {'%'}
+		charset = set(charset) - {b'%'}
 		return b''.join(b'%%%X' % (ord(d),) if d not in charset else d for d in data)

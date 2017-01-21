@@ -162,7 +162,7 @@ class ContentType(HeaderElement, MimeType, CodecElement):
 	def charset(self, charset):
 		self.params['charset'] = charset
 
-	VALID_BOUNDARY = re.compile('^[ -~]{0,200}[!-~]$')
+	VALID_BOUNDARY = re.compile(b'^[ -~]{0,200}[!-~]$')
 
 	def sanitize(self):
 		super(ContentType, self).sanitize()
@@ -185,7 +185,7 @@ class ContentType(HeaderElement, MimeType, CodecElement):
 
 class Cookie(_CookieElement):
 
-	RE_SPLIT = re.compile(r'; ')
+	RE_SPLIT = re.compile(b'; ')
 
 	@classmethod
 	def join(cls, values):

@@ -134,8 +134,10 @@ class Status(with_metaclass(HTTPSemantic)):
 		if isinstance(status, int) and 99 < status < 600:
 			self.__code, self.__reason = status, REASONS.get(status, (u'', u''))[0]
 		elif isinstance(status, tuple):
-			code, self.__reason = status
-			self.__code = int(code)
+			code, reason = status
+			if isinstance(reason, bytes):
+				reason = reason.decode('ascii')
+			self.__code, self.__reason = int(code), reason
 		elif isinstance(status, (bytes, Unicode)):
 			code, reason = status.split(None, 1)
 			if isinstance(reason, bytes):

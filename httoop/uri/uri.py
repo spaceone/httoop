@@ -125,7 +125,7 @@ class URI(with_metaclass(URIType)):
 			>>> u = URI(b'/foo/../bar/.'); u.abspath(); u.path == u'/bar/'
 			True
 		"""
-		path = re.sub(ur'\/{2,}', u'/', self.path)  # remove //
+		path = re.sub(u'\/{2,}', u'/', self.path)  # remove //
 		if not path:
 			return
 		unsplit = []
@@ -222,7 +222,7 @@ class URI(with_metaclass(URIType)):
 			path = b'%s%s' % (__, path)
 		userinfo, __, hostport = authority.rpartition(b'@')
 		username, __, password = userinfo.partition(b':')
-		if ':' in hostport and not hostport.endswith(b']'):
+		if b':' in hostport and not hostport.endswith(b']'):
 			host, __, port = hostport.rpartition(b':')
 		else:
 			host, port = hostport, b''
@@ -260,7 +260,7 @@ class URI(with_metaclass(URIType)):
 				return u'[%s]' % inet_ntop(AF_INET6, inet_pton(AF_INET6, host)).decode('ascii')
 			except SocketError:
 				# IPvFuture
-				if host.startswith(b'v') and b'.' in host and host[1:].split('.', 1)[0].isdigit():
+				if host.startswith(b'v') and b'.' in host and host[1:].split(b'.', 1)[0].isdigit():
 					try:
 						return u'[%s]' % host.decode('ascii')
 					except UnicodeDecodeError:
@@ -333,7 +333,7 @@ class URI(with_metaclass(URIType)):
 		return Percent.unquote(bytes(data)).decode(self.encoding)
 
 	def quote(self, data, charset):
-		return Percent.quote(unicode(data).encode(self.encoding), charset)
+		return Percent.quote(Unicode(data).encode(self.encoding), charset)
 
 	def __eq__(self, other):
 		u"""Compares the URI with another string or URI

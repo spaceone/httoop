@@ -29,7 +29,7 @@ class Method(with_metaclass(HTTPSemantic)):
 
 	safe_methods = (u'GET', u'HEAD', u'SEARCH')
 	idempotent_methods = (u'GET', u'HEAD', u'PUT', u'DELETE', u'OPTIONS', u'TRACE', u'SEARCH')
-	METHOD_RE = re.compile(r"^[A-Z0-9$-_.]{1,20}\Z", re.IGNORECASE)
+	METHOD_RE = re.compile(br"^[A-Z0-9$-_.]{1,20}\Z", re.IGNORECASE)
 
 	def __init__(self, method=None):
 		self.set(method or u'GET')

@@ -81,6 +81,8 @@ Extended information about hypermedia, WWW and how HTTP is meant to be used:
 
 * Representational State Transfer [REST](http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
 
+* [Richardson Maturity Model](https://martinfowler.com/articles/richardsonMaturityModel.html)
+
 * [Test Cases for HTTP Content-Disposition header field](http://greenbytes.de/tech/tc2231/)
 
 * [Cross-Origin Resource Sharing](http://www.w3.org/TR/cors/)

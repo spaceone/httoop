@@ -69,6 +69,14 @@ class Connection(_HopByHopElement, HeaderElement):
 
 	priority = '\xff'
 
+	@property
+	def close(self):
+		return self.value.lower() == u'close'
+
+	@property
+	def upgrade(self):
+		return self.value.lower() == u'upgrade'
+
 
 class ContentDisposition(HeaderElement):
 
@@ -198,7 +206,10 @@ class Date(HeaderElement):
 
 
 class Expect(HeaderElement):
-	pass
+
+	@property
+	def is_100_continue(self):
+		return self.value.lower() == u'100-continue'
 
 
 class From(HeaderElement):
@@ -367,7 +378,9 @@ class TransferEncoding(_HopByHopElement, CodecElement, HeaderElement):
 
 
 class Upgrade(_HopByHopElement, HeaderElement):
-	pass
+	@property
+	def websocket(self):
+		return self.value.lower() == u'websocket'
 
 
 class UserAgent(HeaderElement):

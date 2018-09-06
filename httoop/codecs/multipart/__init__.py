@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 from httoop.codecs.multipart.multipart import Multipart
 
-__all__ = ['MultipartMixed', 'MultipartFormData', 'MultipartAlternative', 'MultipartDigest', 'MultipartParallel', 'MultipartByteranges']
+__all__ = ['MultipartMixed', 'MultipartMixedReplace', 'MultipartFormData', 'MultipartAlternative', 'MultipartDigest', 'MultipartParallel', 'MultipartByteranges']
 
 
 class MultipartMixed(Multipart):
 
 	mimetype = 'multipart/mixed'
+
+
+class MultipartMixedReplace(Multipart):
+
+	mimetype = 'multipart/x-mixed-replace'
 
 
 class MultipartFormData(Multipart):

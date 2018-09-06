@@ -43,7 +43,7 @@ class Multipart(Codec):
 			if not separator:
 				raise DecodeError(_(u'Multipart does not contain CRLF header separator'))
 			if not content.endswith('\r\n'):
-				raise DecodeError(_(u'Multipart does not end with CRLF: %r'),  content[-2].decode('ISO8859-1'))
+				raise DecodeError(_(u'Multipart does not end with CRLF: %r'), content[-2].decode('ISO8859-1'))
 			content = content[:-2]
 			body = Body()
 			body.headers.clear()

@@ -50,7 +50,7 @@ def test_body_set_tempfile(request_):
 
 
 def test_body_set_bytearray(request_):
-	a = bytearray(''.join([b'We', b'', b'are ', b'just', b' ', b'testing\t', b'ByteArrays!']))
+	a = bytearray(b''.join([b'We', b'', b'are ', b'just', b' ', b'testing\t', b'ByteArrays!']))
 	request_.body = a
 	assert bytes(request_.body) == b'Weare just testing\tByteArrays!'
 

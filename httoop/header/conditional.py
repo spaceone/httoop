@@ -2,6 +2,7 @@
 
 from httoop.header.element import HeaderElement
 from httoop.date import Date
+from httoop.exceptions import InvalidDate
 
 
 class _DateComparable(object):
@@ -11,6 +12,15 @@ class _DateComparable(object):
 	def sanitize(self):
 		super(_DateComparable, self).sanitize()
 		self.value = self.Date.parse(self.value)
+
+	def __eq__(self, other):
+		#super(_DateComparable, self).__eq__(other)
+		if not isinstance(other, Date):
+			try:
+				other = Date(other)
+			except InvalidDate:
+				return False
+		return self.value == other
 
 
 class ETag(HeaderElement):

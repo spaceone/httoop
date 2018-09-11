@@ -13,8 +13,10 @@ class RedirectStatus(StatusException):
 	location = None
 
 	def __init__(self, location, *args, **kwargs):
+		if not isinstance(location, (type(None), list, tuple)):
+			location = [location]
 		if location is not None:
-			kwargs.setdefault('headers', {})['Location'] = bytes(URI(location))
+			kwargs.setdefault('headers', {})['Location'] = ', '.join(bytes(URI(uri)) for uri in location)
 		super(RedirectStatus, self).__init__(*args, **kwargs)
 
 	def to_dict(self):
@@ -31,12 +33,6 @@ class MULTIPLE_CHOICES(RedirectStatus):
 	"""
 
 	code = 300
-
-	def __init__(self, locations, *args, **kwargs):
-		if isinstance(locations, (bytes, Unicode)):
-			locations = [locations]
-		locations = ', '.join(locations)  # FIXME
-		super(MULTIPLE_CHOICES, self).__init__(locations, *args, **kwargs)
 
 
 class MOVED_PERMANENTLY(RedirectStatus):

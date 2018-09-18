@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/spaceone/httoop.svg)](https://travis-ci.org/spaceone/httoop)
+[![codecov](https://codecov.io/gh/spaceone/httoop/branch/master/graph/badge.svg)](https://codecov.io/gh/spaceone/httoop)
+[![Quality](https://landscape.io/github/spaceone/httoop/master/landscape.png)](https://landscape.io/github/spaceone/httoop/master)
+
 httoop
 ======
 

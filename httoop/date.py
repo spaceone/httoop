@@ -6,8 +6,6 @@
 
 from __future__ import absolute_import
 
-__all__ = ['Date']
-
 import time
 import locale
 #import calendar
@@ -19,6 +17,8 @@ from httoop.util import parsedate, Unicode
 from httoop.exceptions import InvalidDate
 from httoop.meta import HTTPSemantic
 from httoop.util import _
+
+__all__ = ['Date']
 
 
 class Date(with_metaclass(HTTPSemantic)):
@@ -57,11 +57,11 @@ class Date(with_metaclass(HTTPSemantic)):
 		elif isinstance(timeval, (float, int)):
 			self.__timestamp = float(timeval)
 		elif isinstance(timeval, (tuple, time.struct_time)):
-#			self.__timestamp = calendar.timegm(timeval)
+			# self.__timestamp = calendar.timegm(timeval)
 			self.__timestamp = time.mktime(timeval) - time.timezone
 		elif isinstance(timeval, datetime):
 			self.__datetime = timeval
-#			self.__timestamp = calendar.timegm(self.datetime.utctimetuple())
+			# self.__timestamp = calendar.timegm(self.datetime.utctimetuple())
 			self.__timestamp = time.mktime(self.datetime.utctimetuple()) - time.timezone
 		elif isinstance(timeval, (bytes, Unicode)):
 			if isinstance(timeval, Unicode):

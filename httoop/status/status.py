@@ -51,8 +51,6 @@ class Status(with_metaclass(HTTPSemantic)):
 	def reason_phrase(self):
 		return self.__reason
 
-	reason = None
-
 	@property
 	def code(self):
 		return self.__code

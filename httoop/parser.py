@@ -233,7 +233,7 @@ class StateMachine(object):
 		# we have to make sure no invalid header fields are send (only values told in Trailer header allowed)
 		if self.buffer.startswith(self.line_end):
 			self.buffer = self.buffer[len(self.line_end):]
-			return False # no trailers
+			return False  # no trailers
 
 		trailer_end = self.line_end + self.line_end
 		if trailer_end not in self.buffer:
@@ -269,7 +269,7 @@ class StateMachine(object):
 		if 'Content-Encoding' in self.message.headers:
 			try:
 				self.message.body.content_encoding = self.message.headers.element('Content-Encoding')
-				self.message.body.content_encoding.codec
+				self.message.body.content_encoding.codec  # pylint: disable=W0104
 			except Invalid as exc:
 				raise NOT_IMPLEMENTED(Unicode(exc))
 

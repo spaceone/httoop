@@ -53,7 +53,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 
 	@body.setter
 	def body(self, value):
-		self.body
+		self.body  # pylint: disable=W0104
 		self._body.set(value)
 
 	header_to_remove = ()
@@ -91,7 +91,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 			:type traceback: str
 		"""
 
-		Status.__init__(self, self.__class__.code, reason=reason)
+		Status.__init__(self, self.__class__.code, reason=reason)  # pylint: disable=W0233
 
 		self._headers = dict()
 		self._traceback = None

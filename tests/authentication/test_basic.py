@@ -19,6 +19,7 @@ def test_basic_authorization(headers):
 	assert headers.element('Authorization').params['username'] == u'admin'
 	assert headers.element('Authorization').params['password'] == u'12345'
 
+
 @pytest.mark.parametrize('invalid', (b'foo', b'Zm9v', u'föo'.encode('latin1')))
 def test_invalid_headers(headers, invalid):
 	headers.parse(b'Authorization: Basic %s' % (invalid,))

@@ -30,9 +30,9 @@ def test_digest_authorization(headers):
 		'realm': 'testrealm@host.com',
 		'nonce': 'dcd98b7102dd2f0e8b11d0f600bfb0c093',
 		'uri': '/dir/index.html',
-		'password':'Circle Of Life',
+		'password': 'Circle Of Life',
 		'method': 'GET',
-		'qop':'auth',
+		'qop': 'auth',
 		'nc': '00000001',
 		'cnonce': '0a4f113b',
 		'opaque': '5ccc069c403ebaf9f0171e9517f40e41'}
@@ -62,7 +62,9 @@ def test_unknown_algorithm(headers):
 
 
 required = ('algorithm', 'username', 'realm', 'uri')
-@pytest.mark.parametrize('params', set(tuple(tuple(set(x)) for x in chain(*list(set(product(required, repeat=i)) for i in range(1, len(required)+1))))))
+
+
+@pytest.mark.parametrize('params', set(tuple(tuple(set(x)) for x in chain(*list(set(product(required, repeat=i)) for i in range(1, len(required) + 1))))))
 def test_required_parameter(params, headers):
 	pvars = {
 		'algorithm': b'MD5',

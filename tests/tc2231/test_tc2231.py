@@ -132,14 +132,17 @@ def test_attwithasciifilenameucase(content_disposition):
 	assert h.attachment
 	assert h.filename == u'foo.html'
 
+
 def test_attwithasciifilenamenq(content_disposition):
 	h = content_disposition(b'Content-Disposition: attachment; filename=foo.html')
 	assert h.attachment
 	assert h.filename == u'foo.html'
 
+
 def test_attwithtokfncommanq(content_disposition):
 	with pytest.raises(InvalidHeader):
 		h = content_disposition(b'Content-Disposition: attachment; filename=foo,bar.html')
+
 
 @pytest.mark.xfail(reason='Do we want to be that fussy?')
 def test_attwithasciifilenamenqs(content_disposition):
@@ -182,6 +185,7 @@ def test_attwithfnrawpctenca(content_disposition):
 	h = content_disposition(b'Content-Disposition: attachment; filename="foo-%41.html"')
 	assert h.attachment
 	assert h.filename == u'foo-%41.html'
+
 
 def test_attwithfnusingpct(content_disposition):
 	h = content_disposition(b'Content-Disposition: attachment; filename="50%.html"')
@@ -245,6 +249,7 @@ def test_attfnbrokentokenutf(content_disposition):
 def test_attmissingdisposition(content_disposition):
 	with pytest.raises(InvalidHeader):
 		h = content_disposition(b'Content-Disposition: filename=foo.html')
+
 
 def test_attmissingdisposition2(content_disposition):
 	with pytest.raises(InvalidHeader):

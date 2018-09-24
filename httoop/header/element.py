@@ -7,7 +7,6 @@
 
 .. seealso:: :rfc:`2616#section-14`
 """
-__all__ = ['HEADER', 'HeaderElement']
 
 import re
 
@@ -17,6 +16,7 @@ from httoop.util import CaseInsensitiveDict, iteritems, decode_rfc2231, Unicode,
 from httoop.exceptions import InvalidHeader
 from httoop.uri.percent_encoding import Percent
 
+__all__ = ['HEADER', 'HeaderElement']
 # a mapping of all headers to HeaderElement classes
 HEADER = CaseInsensitiveDict()
 
@@ -93,7 +93,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 
 	@classmethod
 	def parseparam(cls, atom):
-		key, __, val  = atom.partition(b'=')
+		key, __, val = atom.partition(b'=')
 		try:
 			val, quoted = cls.unescape_param(val.strip())
 		except InvalidHeader:
@@ -370,6 +370,7 @@ class _CookieElement(HeaderElement):
 
 class _HopByHopElement(object):
 	hop_by_hop = True
+
 
 class _ListElement(object):
 	list_element = True

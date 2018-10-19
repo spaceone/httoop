@@ -58,6 +58,9 @@ class ComposedResponse(ComposedMessage):
 		if response.status == 416:
 			response.headers.set_element('Content-Range', 'bytes', None, response.headers.get('Content-Length'))
 
+		if request.method == u'TRACE':
+			response.headers.pop('Set-Cookie', None)
+
 		if request.method == u'HEAD':
 			response.body = None  # RFC 2616 Section 9.4
 

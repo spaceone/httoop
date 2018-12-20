@@ -1,17 +1,37 @@
 language: python
+
 python:
     - "2.7"
     - "3.5"
     - "3.6"
+    - "pypy"
+
 before_install:
   pip install codecov
+
+matrix:
+  include:
+    - python: 2.7
+      install: pip install -U flake8
+      script: flake8 --ignore E501,W191,C901,E265,E402
+      after_success:
+    - python: 2.7
+      install: pip install -U isort
+      script: isort -c --diff
+      after_success:
+
 install:
   - pip install six
   - pip install pytest
   - pip install coveralls
   - pip install pytest-cov
   - python setup.py install
+
 script: python setup.py test
+
 after_success:
   - codecov
   - coveralls
+
+notifications:
+  irc: "chat.freenode.net#httoop"

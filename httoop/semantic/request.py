@@ -36,7 +36,7 @@ class ComposedRequest(ComposedMessage):
 			if 'Date' not in self.message.headers:
 				self.message.headers['Date'] = bytes(Date())  # RFC 2616 Section 14.18
 
-		if self.request.method == u'TRACE':
+		if self.message.method == u'TRACE':
 			self.message.headers.pop('Cookie', None)
 			self.message.headers.pop('WWW-Authenticate', None)
 

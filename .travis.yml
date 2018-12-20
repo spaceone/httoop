@@ -10,6 +10,11 @@ before_install:
   pip install codecov
 
 matrix:
+  allow_failures:
+    - python:
+      - "3.5"
+      - "3.6"
+      - "pypy"
   include:
     - python: 2.7
       install: pip install -U flake8

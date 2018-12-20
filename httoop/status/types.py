@@ -106,7 +106,10 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 			self.traceback = traceback
 
 	def __repr__(self):
-		return '<HTTP Status %d %r>' % (int(self), self.reason)
+		description = ''
+		if self.description:
+			description = '(%s)' % (self.description,)
+		return '<HTTP Status %d %r %s>' % (int(self), self.reason, description)
 
 	__str__ = __repr__
 

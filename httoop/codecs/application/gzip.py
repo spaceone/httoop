@@ -12,10 +12,12 @@ import zlib
 class GZip(Codec):
 	mimetype = 'application/gzip'
 
+	compression_level = 6
+
 	@classmethod
 	def encode(cls, data, charset=None, mimetype=None):
 		try:
-			return zlib.compress(Codec.encode(data, charset), 16 + zlib.MAX_WBITS)
+			return zlib.compress(Codec.encode(data, charset), cls.compression_level)
 		except zlib.error:
 			raise EncodeError(_(u'Invalid gzip data.'))
 

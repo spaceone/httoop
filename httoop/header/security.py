@@ -17,7 +17,7 @@ class ContentSecurityPolicy(HeaderElement):
 	__name__ = 'Content-Security-Policy'
 
 	RE_SPLIT = re.compile(b';')
-	RE_PARAMS = re.compile(b'\s+')
+	RE_PARAMS = re.compile(b'\\s+')
 
 	def compose(self):
 		return b'%s %s; ' % (self.value, ' '.join(self.params.keys()))
@@ -66,7 +66,7 @@ class FrameOptions(HeaderElement):
 
 	__name__ = 'X-Frame-Options'
 
-	RE_PARAMS = re.compile(b'\s+')
+	RE_PARAMS = re.compile(b'\\s+')
 
 	@property
 	def deny(self):

@@ -1,1 +1,1 @@
-import httoop.gateway.wsgi
+# -*- coding: utf-8 -*-

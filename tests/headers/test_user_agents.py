@@ -10802,7 +10802,7 @@ all_user_agents = [
 	(b'Seekbot/1.0 (http://www.seekbot.net/bot.html) HTTPFetcher/2.1'),
 	(b'Seekbot/1.0 (http://www.seekbot.net/bot.html) RobotsTxtFetcher/1.2'),
 	(b'semanticdiscovery/0.1'),
-	(b'Sensis Web Crawler (search_comments\at\sensis\dot\com\dot\au)'),
+	(b'Sensis Web Crawler (search_comments\\at\\sensis\\dot\\com\\dot\\au)'),
 	(b'SeznamBot/2.0 (+http://fulltext.sblog.cz/robot/)'),
 	(b'SeznamBot/2.0 (+http://fulltext.seznam.cz/)'),
 	(b'Shim-Crawler'),

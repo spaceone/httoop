@@ -1,6 +1,7 @@
 # See also: tests/request_/test_request_method.py
 import pytest
 
+
 def test_safe_methods(request_):
 	all_methods = (
 		(u'GET', True, True),

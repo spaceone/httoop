@@ -67,8 +67,10 @@ def test_urlencode_object():
 	class Trivial(object):
 		def __str__(self):
 			return 'trivial'
+
 		def __unicode__(self):
 			return u'trivial'
+
 		def __bytes__(self):
 			return b'trivial'
 

@@ -13,4 +13,3 @@ def test_repr(request_, response):
 
 	assert repr(request_.uri).startswith('<URI')
 	assert repr(request_.uri).endswith('>')
-

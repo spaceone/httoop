@@ -25,7 +25,6 @@ def test_replace_headers(request_):
 	assert request_.headers['E'] == 'e'
 
 
-
 def test_trailer(request_):
 	request_.headers['A'] = 'a'
 	request_.headers['B'] = 'B'

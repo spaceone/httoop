@@ -14,7 +14,7 @@ setup(
 	author='SpaceOne',
 	author_email='space@wechall.net',
 	url='https://github.com/spaceone/httoop',
-#	download_url='',
+	#download_url='',
 	classifiers=[
 		'Environment :: Web Environment',
 		'Intended Audience :: Developers',
@@ -37,7 +37,7 @@ setup(
 	keywords='HTTP web proxy cache client server library',
 	platforms='POSIX',
 	packages=find_packages('.', exclude=['tests.*', 'tests']),
-#	scripts=glob('bin/*'),
+	#scripts=glob('bin/*'),
 	install_requires=['six'],
 	entry_points={},
 	test_suite='tests.main.main',

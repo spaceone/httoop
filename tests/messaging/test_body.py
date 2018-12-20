@@ -1,4 +1,3 @@
-import pytest
 from httoop.semantic.request import ComposedRequest
 
 
@@ -30,7 +29,7 @@ def test_parse_chunked_body_without_trailer_2(request_):
 		'This is a chunked body with some lines',
 		'foo', 'bar', 'Baz', '\n', '', 'blah!', 'blub'
 	]
-	request_body = ''.join(request_.body)
+	''.join(request_.body)
 	request_.method = 'POST'
 	request_.headers['Transfer-Encoding'] = 'chunked'
 	request_.headers['Host'] = 'localhost'

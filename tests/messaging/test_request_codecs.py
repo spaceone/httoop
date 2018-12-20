@@ -39,6 +39,8 @@ multipart_string = (
 	b'''--------------------------409e1d7f8fe3763a\r\nContent-Disposition: form-data; name="bar"; filename="test.txt"\r\n'''
 	b'''Content-Type: text/plain\r\n\r\nbarcontent\r\n--------------------------409e1d7f8fe3763a--\r\n'''
 )
+
+
 def test_parse_multipart_form_data(body):
 	body.mimetype = 'multipart/form-data'
 	content_type = body.mimetype
@@ -73,11 +75,12 @@ def test_compose_multipart_form_data(body):
 	assert sorted(multipart_string.split('\r\n')) == sorted(bytes(body).split('\r\n'))
 
 
-@pytest.mark.parametrize('invalid', (b'', b'foo ', b'foo\tbar', b'a'*202))
+@pytest.mark.parametrize('invalid', (b'', b'foo ', b'foo\tbar', b'a' * 202))
 def test_invalid_boundary(invalid, headers):
 	headers.parse('Content-Type: multipart/mixed; boundary="%s"' % (invalid,))
 	with pytest.raises(InvalidHeader):
 		headers.elements('Content-Type')
+
 
 def test_invalid_form_data_content_disposition(headers):
 	headers.parse('Content-Disposition: form-data; form-data=1')

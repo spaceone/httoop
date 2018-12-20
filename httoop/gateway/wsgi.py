@@ -4,13 +4,13 @@
 .. seealso:: `PEP 333 <http://www.python.org/dev/peps/pep-0333/>`_
 """
 
-__all__ = ['WSGI']
-
 import sys
 import os
 
 from httoop.messages import Body
 from httoop.util import iteritems
+
+__all__ = ('WSGI',)
 
 
 class WSGIBody(Body):  # pragma: no cover
@@ -57,8 +57,10 @@ class WSGI(object):  # pragma: no cover
 	def _get_environ(self):
 		environ = {}
 		environ.update(dict(self.environ.items()))
-		environ.update(dict([('HTTP_%s' % name.upper().replace('-', '_'), value)
-			for name, value in iteritems(self.request.headers)]))
+		environ.update(dict([
+			('HTTP_%s' % name.upper().replace('-', '_'), value)
+			for name, value in iteritems(self.request.headers)
+		]))
 		environ.update({
 			'REQUEST_METHOD': bytes(self.request.method),
 			'SCRIPT_NAME': b'',

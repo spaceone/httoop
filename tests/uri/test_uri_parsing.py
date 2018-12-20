@@ -41,15 +41,15 @@ absolute_uris = [
 
 	(b'tel:+31-641044153', (u'tel', u'', u'', u'', None, u'+31-641044153', u'', u'')),
 
-	(b'http:', (u'http',  u'', u'', u'', 80, u'', u'', u'')),
-	(b'ftp:', (u'ftp',  u'', u'', u'', 21, u'', u'', u'')),
-	(b'https:', (u'https',  u'', u'', u'', 443, u'', u'', u'')),
-	(b'http://', (u'http',  u'', u'', u'', 80, u'', u'', u'')),
-	(b'ftp://', (u'ftp',  u'', u'', u'', 21, u'', u'', u'')),
-	(b'https://', (u'https',  u'', u'', u'', 443, u'', u'', u'')),
+	(b'http:', (u'http', u'', u'', u'', 80, u'', u'', u'')),
+	(b'ftp:', (u'ftp', u'', u'', u'', 21, u'', u'', u'')),
+	(b'https:', (u'https', u'', u'', u'', 443, u'', u'', u'')),
+	(b'http://', (u'http', u'', u'', u'', 80, u'', u'', u'')),
+	(b'ftp://', (u'ftp', u'', u'', u'', 21, u'', u'', u'')),
+	(b'https://', (u'https', u'', u'', u'', 443, u'', u'', u'')),
 
-#	python's urlparse makes the following invalid parsing. should we do the same? better not...
-#	pytest.mark.xfail((b'int:80', (u'', u'', u'', u'', None, u'int:80', u'', u''))),
+	# python's urlparse makes the following invalid parsing. should we do the same? better not...
+	# pytest.mark.xfail((b'int:80', (u'', u'', u'', u'', None, u'int:80', u'', u''))),
 	(b'int:80', (u'int', u'', u'', u'', None, u'80', u'', u'')),
 
 	(b'http://good.com@evil.com:8090/foo?bar=baz', (u'http', u'good.com', u'', u'evil.com', 8090, u'/foo', u'bar=baz', u'')),
@@ -81,6 +81,7 @@ absolute_uris = [
 #absolute_uris.extend(
 #	(b'http://www.example.com:%d' % (port,), (u'http', u'', u'', u'www.example.com', port, u'', u'', u'')) for port in range(1, 65535)
 #)
+
 
 @pytest.mark.parametrize('url,expected', absolute_uris)
 def test_parse_absolute_uri(url, expected):
@@ -118,7 +119,7 @@ def test_parse_invalid_netloc(url):
 		URI(url)
 
 
-@pytest.mark.parametrize('u', [b'Python', b'./Python', b'x-newscheme://foo.com/stuff', b'x://y', b'x:/y', b'x:/', b'/',])
+@pytest.mark.parametrize('u', [b'Python', b'./Python', b'x-newscheme://foo.com/stuff', b'x://y', b'x:/y', b'x:/', b'/', ])
 def test_unparse_parse(u):
 	assert bytes(URI(u)) == u
 

@@ -25,7 +25,7 @@ def test_request_without_headers():
 	pass
 
 
-@pytest.mark.parametrize('char', b"%s\x7F()<>@,;\\\\\"/\[\]?={} \t%s" % (bytes(bytearray(range(0x00, 0x1F))), bytes(bytearray(range(0x80, 0xFF)))))
+@pytest.mark.parametrize('char', b"%s\x7F()<>@,;\\\\\"/\\[\\]?={} \t%s" % (bytes(bytearray(range(0x00, 0x1F))), bytes(bytearray(range(0x80, 0xFF)))))
 def test_invalid_header_syntax(char, headers):
 	with pytest.raises(InvalidHeader):
 		headers.parse(b'Fo%co: bar' % (char,))

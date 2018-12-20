@@ -186,6 +186,7 @@ class MISDIRECTED_REQUEST(ClientErrorStatus):
 
 	code = 421
 
+
 class UNPROCESSABLE_ENTITY(ClientErrorStatus):
 
 	code = 422

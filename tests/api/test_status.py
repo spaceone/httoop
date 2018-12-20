@@ -2,9 +2,9 @@ import pytest
 from httoop import Status
 
 try:
-    unicode
+	unicode
 except NameError:
-    unicode = str
+	unicode = str
 
 
 def test_staus_comparision(response):

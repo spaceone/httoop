@@ -4,7 +4,7 @@ from httoop import URI
 RFC1808_BASE = b'http://a/b/c/d;p?q#f'
 RFC2396_BASE = b'http://a/b/c/d;p?q'
 RFC3986_BASE = b'http://a/b/c/d;p?q'
-SIMPLE_BASE  = b'http://a/b/c/d'
+SIMPLE_BASE = b'http://a/b/c/d'
 
 uri_join = {
 	RFC3986_BASE: [
@@ -58,8 +58,8 @@ uri_join = {
 	],
 	SIMPLE_BASE: [
 		(b'g:h', b'g:h'),
-#		(b'http:g', b'http://a/b/c/g'),
-#		(b'http:', b'http://a/b/c/d'),
+		#(b'http:g', b'http://a/b/c/g'),
+		#(b'http:', b'http://a/b/c/d'),
 		(b'g', b'http://a/b/c/g'),
 		(b'./g', b'http://a/b/c/g'),
 		(b'g/', b'http://a/b/c/g/'),
@@ -79,11 +79,11 @@ uri_join = {
 		(b'./g/.', b'http://a/b/c/g/'),
 		(b'g/./h', b'http://a/b/c/g/h'),
 		(b'g/../h', b'http://a/b/c/h'),
-#		(b'http:g', b'http://a/b/c/g'),
-#		(b'http:', b'http://a/b/c/d'),
-#		(b'http:?y', b'http://a/b/c/d?y'),
-#		(b'http:g?y', b'http://a/b/c/g?y'),
-#		(b'http:g?y/./x', b'http://a/b/c/g?y/./x'),
+		#(b'http:g', b'http://a/b/c/g'),
+		#(b'http:', b'http://a/b/c/d'),
+		#(b'http:?y', b'http://a/b/c/d?y'),
+		#(b'http:g?y', b'http://a/b/c/g?y'),
+		#(b'http:g?y/./x', b'http://a/b/c/g?y/./x'),
 	],
 	RFC2396_BASE: [
 		(b'g:h', b'g:h'),
@@ -161,10 +161,10 @@ uri_join = {
 
 further = [
 	(b'http://a/b/c/de', b';x', b'http://a/b/c/;x'),
-	(b'a', b'b', b'b'), # don't duplicate filename
-#	pytest.mark.xfail((b'http:///', b'..','http:///'), reason='The // is stripped due to normalization.'),
-	(b'', b'http://a/b/c/g?y/./x','http://a/b/c/g?y/./x'),
-#	pytest.mark.xfail((b'', b'http://a/./g', b'http://a/./g'), reason='The dot is stripped due to normalization'),
+	(b'a', b'b', b'b'),  # don't duplicate filename
+	#pytest.mark.xfail((b'http:///', b'..','http:///'), reason='The // is stripped due to normalization.'),
+	(b'', b'http://a/b/c/g?y/./x', 'http://a/b/c/g?y/./x'),
+	#pytest.mark.xfail((b'', b'http://a/./g', b'http://a/./g'), reason='The dot is stripped due to normalization'),
 	(b'svn://pathtorepo/dir1', b'dir2', b'svn://pathtorepo/dir2'),
 	(b'svn+ssh://pathtorepo/dir1', b'dir2', b'svn+ssh://pathtorepo/dir2'),
 	(SIMPLE_BASE + b'/', b'foo', SIMPLE_BASE + b'/foo'),
@@ -178,10 +178,12 @@ further = [
 for base, rel, abs_ in further:
 	uri_join.setdefault(base, []).append((rel, abs_))
 
+
 @pytest.mark.parametrize('base,relative,expected', [(base, relative, expected) for base, relative_expected in uri_join.items() for (relative, expected) in relative_expected])
 def test_uri_join(base, relative, expected):
 	uri = URI(base).join(relative)
 	assert uri == expected
+
 
 @pytest.mark.parametrize('base,relative,expected', [(base, relative, expected) for base, relative_expected in uri_join.items() for (relative, expected) in relative_expected])
 def test_uri_join_very_strict(base, relative, expected):
@@ -190,4 +192,3 @@ def test_uri_join_very_strict(base, relative, expected):
 #@pytest.mark.parametrize('expected,got,relative', [(expected, bytes(URI(base).join(relative)), relative) for base, relative_expected in uri_join.items() for (relative, expected) in relative_expected])
 #def test_uri_join_very_strict(expected, got, relative):
 #	assert expected == got
-

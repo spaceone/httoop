@@ -2,7 +2,6 @@
 
 from httoop.uri import URI
 from httoop.status.types import StatusException
-from httoop.util import Unicode
 
 
 class RedirectStatus(StatusException):
@@ -78,9 +77,11 @@ class NOT_MODIFIED(RedirectStatus):
 		# don't set location
 		super(NOT_MODIFIED, self).__init__(self, None, *args, **kwargs)
 
-	header_to_remove = ("Allow", "Content-Encoding", "Content-Language",
-						"Content-Length", "Content-MD5", "Content-Range",
-						"Content-Type", "Expires", "Location")
+	header_to_remove = (
+		"Allow", "Content-Encoding", "Content-Language",
+		"Content-Length", "Content-MD5", "Content-Range",
+		"Content-Type", "Expires", "Location"
+	)
 
 
 class USE_PROXY(RedirectStatus):
@@ -96,6 +97,7 @@ class TEMPORARY_REDIRECT(RedirectStatus):
 		important that the request was not processed."""
 
 	code = 307
+
 
 class PERMANENT_REDIRECT(RedirectStatus):
 

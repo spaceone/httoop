@@ -4,8 +4,8 @@
 .. seealso:: :rfc:`3986`
 """
 
-__all__ = ('URI', 'HTTP', 'HTTPS')
-
 from httoop.uri.uri import URI
 from httoop.uri.http import HTTP, HTTPS
-import httoop.uri.schemes
+from httoop.uri.schemes import GitSSH
+
+__all__ = ('URI', 'HTTP', 'HTTPS', 'GitSSH')

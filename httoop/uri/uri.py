@@ -125,7 +125,7 @@ class URI(with_metaclass(URIType)):
 			>>> u = URI(b'/foo/../bar/.'); u.abspath(); u.path == u'/bar/'
 			True
 		"""
-		path = re.sub(u'\/{2,}', u'/', self.path)  # remove //
+		path = re.sub(u'\\/{2,}', u'/', self.path)  # remove //
 		if not path:
 			return
 		unsplit = []
@@ -181,13 +181,13 @@ class URI(with_metaclass(URIType)):
 	def parse(self, uri):
 		r"""Parses a well formed absolute or relative URI.
 
-			  foo://example.com:8042/over/there?name=ferret#nose
-			  \_/   \______________/\_________/ \_________/ \__/
-			   |           |            |            |        |
+				foo://example.com:8042/over/there?name=ferret#nose
+				\_/   \______________/\_________/ \_________/ \__/
+				|            |            |            |        |
 			scheme     authority       path        query   fragment
-			   |   _____________________|__
-			  / \ /                        \
-			  urn:example:animal:ferret:nose
+				|    _____________________|__
+				/ \ /                        \
+				urn:example:animal:ferret:nose
 
 			https://username:password@[::1]:8090/some/path?query#fragment
 			<scheme>://<username>:<password>@<host>:<port>/<path>?<query>#<fragment>

@@ -56,8 +56,8 @@ def test_body_set_bytearray(request_):
 
 
 def test_body_set_list(request_):
-	l = [u'This ', 'is', b'\nsome', None, u'list\t', 'content', '']
-	request_.body = l
+	ls = [u'This ', 'is', b'\nsome', None, u'list\t', 'content', '']
+	request_.body = ls
 	assert bytes(request_.body) == b'This is\nsomelist\tcontent'
 
 

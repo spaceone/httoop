@@ -24,7 +24,7 @@ def test_inlonly(content_disposition):
 
 def test_inlonlyquoted(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: "inline"')
+		content_disposition(b'Content-Disposition: "inline"')
 
 
 def test_inlwithasciifilename(content_disposition):
@@ -57,13 +57,14 @@ def test_attonly(content_disposition):
 
 def test_attonlyquoted(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: "attachment"')
+		content_disposition(b'Content-Disposition: "attachment"')
 
 
 @pytest.mark.xfail(reason=AssertionError('Cannot test here'))
 def test_attonly403(content_disposition):
 	h = content_disposition(b'Content-Disposition: attachment')
 	assert False, 'Cannot test here'
+	assert h
 
 
 def test_attonlyucase(content_disposition):
@@ -112,6 +113,7 @@ def test_attwithasciifnescapedquote(content_disposition):
 	assert h.attachment
 	assert h.filename == u'"quoting" tested.html'
 
+
 def test_attwithfilenameandextparam(content_disposition):
 	h = content_disposition(b'Content-Disposition: attachment; foo="bar"; filename="foo.html"')
 	assert h.attachment
@@ -141,7 +143,7 @@ def test_attwithasciifilenamenq(content_disposition):
 
 def test_attwithtokfncommanq(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: attachment; filename=foo,bar.html')
+		content_disposition(b'Content-Disposition: attachment; filename=foo,bar.html')
 
 
 @pytest.mark.xfail(reason='Do we want to be that fussy?')
@@ -155,12 +157,12 @@ def test_attwithasciifilenamenqs(content_disposition):
 @pytest.mark.xfail(reason='Do we want to be that fussy?')
 def test_attemptyparam(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: attachment; ;filename=foo')
+		content_disposition(b'Content-Disposition: attachment; ;filename=foo')
 
 
 def test_attwithasciifilenamenqws(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: attachment; filename=foo bar.html')
+		content_disposition(b'Content-Disposition: attachment; filename=foo bar.html')
 
 
 def test_attwithfntokensq(content_disposition):
@@ -226,105 +228,105 @@ def test_attwithasciifilenamews1(content_disposition):
 
 def test_attwith2filenames(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: attachment; filename="foo.html"; filename="bar.html"')
+		content_disposition(b'Content-Disposition: attachment; filename="foo.html"; filename="bar.html"')
 
 
 def test_attfnbrokentoken(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: attachment; filename=foo[1](2).html')
+		content_disposition(b'Content-Disposition: attachment; filename=foo[1](2).html')
 
 
 @pytest.mark.xfail(reason='non-ascii currently allowed in header field params')
 def test_attfnbrokentokeniso(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: attachment; filename=foo-\xe4.html')
+		content_disposition(b'Content-Disposition: attachment; filename=foo-\xe4.html')
 
 
 @pytest.mark.xfail(reason='non-ascii currently allowed in header field params')
 def test_attfnbrokentokenutf(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: attachment; filename=foo-\xc3\xa4.html')
+		content_disposition(b'Content-Disposition: attachment; filename=foo-\xc3\xa4.html')
 
 
 def test_attmissingdisposition(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: filename=foo.html')
+		content_disposition(b'Content-Disposition: filename=foo.html')
 
 
 def test_attmissingdisposition2(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: x=y; filename=foo.html')
+		content_disposition(b'Content-Disposition: x=y; filename=foo.html')
 
 
 def test_attmissingdisposition3(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: "foo; filename=bar;baz"; filename=qux')
+		content_disposition(b'Content-Disposition: "foo; filename=bar;baz"; filename=qux')
 
 
 def test_attmissingdisposition4(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: filename=foo.html, filename=bar.html')
+		content_disposition(b'Content-Disposition: filename=foo.html, filename=bar.html')
 
 
 def test_emptydisposition(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: ; filename=foo.html')
+		content_disposition(b'Content-Disposition: ; filename=foo.html')
 
 
 def test_doublecolon(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: : inline; attachment; filename=foo.html')
+		content_disposition(b'Content-Disposition: : inline; attachment; filename=foo.html')
 
 
 def test_attandinline(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: inline; attachment; filename=foo.html')
+		content_disposition(b'Content-Disposition: inline; attachment; filename=foo.html')
 
 
 def test_attandinline2(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: attachment; inline; filename=foo.html')
+		content_disposition(b'Content-Disposition: attachment; inline; filename=foo.html')
 
 
 def test_attbrokenquotedfn(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: attachment; filename="foo.html".txt')
+		content_disposition(b'Content-Disposition: attachment; filename="foo.html".txt')
 
 
 def test_attbrokenquotedfn2(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: attachment; filename="bar')
+		content_disposition(b'Content-Disposition: attachment; filename="bar')
 
 
 def test_attbrokenquotedfn3(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: attachment; filename=foo"bar;baz"qux')
+		content_disposition(b'Content-Disposition: attachment; filename=foo"bar;baz"qux')
 
 
 @pytest.mark.xfail(reason='Content-Disposition is not marked as single-element-header')
 def test_attmultinstances(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: attachment; filename=foo.html, attachment; filename=bar.html')
+		content_disposition(b'Content-Disposition: attachment; filename=foo.html, attachment; filename=bar.html')
 
 
 def test_attmissingdelim2(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: attachment; filename=bar foo=foo ')
+		content_disposition(b'Content-Disposition: attachment; filename=bar foo=foo ')
 
 
 def test_attmissingdelim3(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: attachment filename=bar')
+		content_disposition(b'Content-Disposition: attachment filename=bar')
 
 
 def test_attmissingdelim(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: attachment; foo=foo filename=bar')
+		content_disposition(b'Content-Disposition: attachment; foo=foo filename=bar')
 
 
 def test_attreversed(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: filename=foo.html; attachment')
+		content_disposition(b'Content-Disposition: filename=foo.html; attachment')
 
 
 def test_attconfusedparam(content_disposition):
@@ -405,18 +407,18 @@ def test_attwithfn2231utf8comp(content_disposition):
 @pytest.mark.xfail(reason='Do we want to be that fussy?')
 def test_attwithfn2231utf8_bad(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition("Content-Disposition: attachment; filename*=iso-8859-1''foo-%c3%a4-%e2%82%ac.html")
+		content_disposition("Content-Disposition: attachment; filename*=iso-8859-1''foo-%c3%a4-%e2%82%ac.html")
 
 
 def test_attwithfn2231iso_bad(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition("Content-Disposition: attachment; filename*=utf-8''foo-%E4.html")
+		content_disposition("Content-Disposition: attachment; filename*=utf-8''foo-%E4.html")
 
 
 @pytest.mark.xfail(reason='Whitespace ignored in parameter (foo =bar)')
 def test_attwithfn2231ws1(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition("Content-Disposition: attachment; filename *=UTF-8''foo-%c3%a4.html")
+		content_disposition("Content-Disposition: attachment; filename *=UTF-8''foo-%c3%a4.html")
 
 
 def test_attwithfn2231ws2(content_disposition):
@@ -544,7 +546,7 @@ def test_attnewandfn(content_disposition):
 @pytest.mark.xfail(reason='Generic parsing in Headers.parse(). Very complicated to implement.')
 def test_attrfc2047token(content_disposition):
 	with pytest.raises(InvalidHeader):
-		h = content_disposition(b'Content-Disposition: attachment; filename==?ISO-8859-1?Q?foo-=E4.html?=')
+		content_disposition(b'Content-Disposition: attachment; filename==?ISO-8859-1?Q?foo-=E4.html?=')
 
 
 def test_attrfc2047quoted(content_disposition):

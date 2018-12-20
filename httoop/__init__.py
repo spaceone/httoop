@@ -51,7 +51,8 @@ __all__ = [
 	'SERVICE_UNAVAILABLE', 'GATEWAY_TIMEOUT',
 	'HTTP_VERSION_NOT_SUPPORTED', 'StatusException',
 	'DecodeError', 'EncodeError',
-	'__version__', 'ServerProtocol', 'UserAgentHeader', 'ServerHeader'
+	'__version__', 'ServerProtocol', 'UserAgentHeader', 'ServerHeader',
+	'cache',
 ]
 
 try:

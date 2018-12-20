@@ -5,7 +5,7 @@ from httoop.exceptions import InvalidLine
 
 def test_method_maxlength(request_):
 	with pytest.raises(InvalidLine):
-		request_.method.parse('A'*21)
+		request_.method.parse('A' * 21)
 
 
 def test_method_valid_characters(request_):

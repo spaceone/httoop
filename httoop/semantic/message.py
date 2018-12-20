@@ -54,4 +54,3 @@ class ComposedMessage(object):
 			yield start_line + headers
 			for data in self.message.body:
 				yield data
-

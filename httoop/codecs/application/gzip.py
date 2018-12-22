@@ -7,6 +7,8 @@ from httoop.exceptions import DecodeError, EncodeError
 from httoop.util import _
 
 import zlib
+import gzip
+import io
 
 
 class GZip(Codec):
@@ -17,14 +19,20 @@ class GZip(Codec):
 	@classmethod
 	def encode(cls, data, charset=None, mimetype=None):
 		try:
-			return zlib.compress(Codec.encode(data, charset), cls.compression_level)
+			out = io.BytesIO()
+			with gzip.GzipFile(fileobj=out, mode="w") as fd:
+				fd.write(Codec.encode(data, charset))
+			return out.getvalue()
+			# return zlib.compress(Codec.encode(data, charset), cls.compression_level)
 		except zlib.error:
 			raise EncodeError(_(u'Invalid gzip data.'))
 
 	@classmethod
 	def decode(cls, data, charset=None, mimetype=None):
 		try:
-			data = zlib.decompress(data, 16 + zlib.MAX_WBITS)
-		except zlib.error:
+			with gzip.GzipFile(fileobj=io.BytesIO(data)) as fd:
+				return fd.read()
+			# data = zlib.decompress(data, 16 + zlib.MAX_WBITS)
+		except (zlib.error, IOError, EOFError):
 			raise DecodeError(_(u'Invalid gzip data.'))
 		return Codec.decode(data, charset)

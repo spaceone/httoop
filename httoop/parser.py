@@ -64,6 +64,8 @@ class StateMachine(object):
 
 	def on_body_complete(self):
 		self.message.body.seek(0)
+		self.message.body.decompress()
+		self.message.body.seek(0)
 		self.set_content_length()
 
 	def on_message_complete(self):

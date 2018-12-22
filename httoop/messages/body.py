@@ -148,6 +148,13 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 		if codec:
 			self.set(codec.encode(self.__content_bytes()))
 
+	def decompress(self):
+		u"""Applies the Content-Encoding codec to the content"""
+		codec = self.content_codec
+		if codec:
+			self.set(codec.decode(self.__content_bytes()))
+			self.content_encoding = None
+
 	def set(self, content):
 		if isinstance(content, Body):
 			self.mimetype = content.mimetype
@@ -174,11 +181,11 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 		self.fd = content
 
 	def parse(self, data):
-		if self.transfer_codec:
+		if self.transfer_codec and data:
 			data = self.transfer_codec.decode(data)
 
-		if self.content_codec:
-			data = self.content_codec.decode(data)
+#		if self.content_codec and data:
+#			data = self.content_codec.decode(data)
 
 		self.write(data)
 
@@ -199,7 +206,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 		data = self.__content_iter()
 		for codec in (self.content_codec, self.transfer_codec):
 			if codec:
-				data = iter([codec.encode(d) for d in data])
+				data = iter([codec.encode(d) for d in data if d])
 		if self.chunked:
 			data = self.__compose_chunked_iter(data)
 		return data

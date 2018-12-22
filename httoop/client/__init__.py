@@ -13,5 +13,5 @@ class ClientStateMachine(StateMachine):
 
 	def remove_invalid_headers(self):
 		if self.request.method == u'CONNECT':
-			self.response.headers.pop('Transfer-Encoding', None)
-			self.response.headers.pop('Content-Length', None)
+			self.message.headers.pop('Transfer-Encoding', None)
+			self.message.headers.pop('Content-Length', None)

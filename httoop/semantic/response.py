@@ -25,6 +25,10 @@ class ComposedResponse(ComposedMessage):
 			# 1XX, 204 NO_CONTENT, 205 RESET_CONTENT, 304 NOT_MODIFIED
 			response.body = None
 
+		if 'Content-Encoding' in response.headers:
+			response.body.content_encoding = response.headers.element('Content-Encoding')
+			self.chunked = True  # TODO: workaround for not calculate Content-Length again
+
 		self.chunked = self.chunked
 		if not self.chunked:
 			response.headers['Content-Length'] = bytes(len(response.body))

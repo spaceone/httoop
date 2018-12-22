@@ -72,7 +72,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 	def content_encoding(self, value):
 		if value:
 			self.headers['Content-Encoding'] = bytes(value)
-			self.content_codec = None  # self.content_encoding.codec
+			self.content_codec = self.content_encoding.codec
 		else:
 			self.headers.pop('Content-Encoding', None)
 			self.content_codec = None
@@ -85,7 +85,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 	def transfer_encoding(self, transfer_encoding):
 		if transfer_encoding:
 			self.headers['Transfer-Encoding'] = bytes(transfer_encoding)
-			self.transfer_codec = None  # self.transfer_encoding.codec
+			self.transfer_codec = self.transfer_encoding.codec
 		else:
 			self.headers.pop('Transfer-Encoding', None)
 			self.transfer_codec = None
@@ -199,7 +199,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 		data = self.__content_iter()
 		for codec in (self.content_codec, self.transfer_codec):
 			if codec:
-				data = (codec.encode(d) for d in data)
+				data = iter([codec.encode(d) for d in data])
 		if self.chunked:
 			data = self.__compose_chunked_iter(data)
 		return data

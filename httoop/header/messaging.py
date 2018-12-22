@@ -137,6 +137,7 @@ class ContentEncoding(CodecElement, HeaderElement):
 		'identity': NotImplementedError,
 		'exi': NotImplementedError,
 		'pack200-gzip': NotImplementedError,
+		'br': NotImplementedError,
 	}
 
 

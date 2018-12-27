@@ -65,3 +65,16 @@ def test_invalid_host_header(invalid, headers):
 	headers['Host'] = b'foo%sbar' % (invalid,)
 	with pytest.raises(InvalidHeader):
 		headers.element('Host')
+
+
+@pytest.mark.parametrize('forwarded,expected', [
+	(b'for=192.0.2.43', [(u'192.0.2.43',), ]),
+	(b'for=192.0.2.43; by=127.0.0.1', [(u'192.0.2.43', u'127.0.0.1'), ]),
+	(b'for=192.0.2.43, for="[2001:db8:cafe::17]"', [(u'192.0.2.43',), (u'[2001:db8:cafe::17]',)]),
+	(b'for=192.0.2.43, FOR=198.51.100.17; by=203.0.113.60; proto=http; host=example.com', [(u'192.0.2.43',), (u'198.51.100.17', u'203.0.113.60', u'http', u'example.com')]),
+	(b'fOr=192.0.2.43, for=198.51.100.17;by=203.0.113.60;proto=http;host=example.com', [(u'192.0.2.43',), (u'198.51.100.17', u'203.0.113.60', u'http', u'example.com')]),
+])
+def test_forwarded_header(forwarded, expected, headers):
+	headers.parse(b'Forwarded: %s' % (forwarded,))
+	values = [filter(None, (x.for_, x.by, x.proto, x.host)) for x in headers.elements('Forwarded')]
+	assert expected == values

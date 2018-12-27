@@ -217,6 +217,29 @@ class From(HeaderElement):
 	pass
 
 
+class Forwarded(HeaderElement):
+
+	@property
+	def for_(self):
+		return self.params.get('for')
+
+	@property
+	def by(self):
+		return self.params.get('by')
+
+	@property
+	def host(self):
+		return self.params.get('host')
+
+	@property
+	def proto(self):
+		return self.params.get('proto')
+
+	@classmethod
+	def parse(cls, elementstr):
+		return super(Forwarded, cls).parse(u'x; %s' % (elementstr,))
+
+
 # TODO: add case insensitve HeaderElement
 class Host(HeaderElement):
 

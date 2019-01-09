@@ -1,6 +1,8 @@
 [![Build Status](https://travis-ci.org/spaceone/httoop.svg)](https://travis-ci.org/spaceone/httoop)
 [![codecov](https://codecov.io/gh/spaceone/httoop/branch/master/graph/badge.svg)](https://codecov.io/gh/spaceone/httoop)
 [![Quality](https://landscape.io/github/spaceone/httoop/master/landscape.png)](https://landscape.io/github/spaceone/httoop/master)
+[![Code Climate](https://codeclimate.com/github/spaceone/httoop/badges/gpa.svg)](https://codeclimate.com/github/spaceone/httoop)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/spaceone/httoop/raw/master/LICENSE)
 
 httoop
 ======

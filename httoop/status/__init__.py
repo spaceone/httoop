@@ -7,8 +7,6 @@
 
 import inspect
 
-__all__ = ['Status', 'REASONS', 'StatusType', 'StatusException']
-
 from httoop.status.status import Status, REASONS
 from httoop.status.types import StatusType, StatusException
 
@@ -17,6 +15,8 @@ from httoop.status import success
 from httoop.status import redirect
 from httoop.status import client_error
 from httoop.status import server_error
+
+__all__ = ['Status', 'REASONS', 'StatusType', 'StatusException']
 
 # mapping of status -> Class
 STATUSES = dict()

@@ -3,15 +3,7 @@ u"""Module containing various codecs which are
 	common used in combination with HTTP
 """
 
-__all__ = [
-	'CODECS', 'Codec',
-	'application', 'audio', 'example', 'image',
-	'message', 'model', 'multipart', 'text', 'video'
-]
-
 import inspect
-
-CODECS = dict()
 
 from httoop.codecs import application
 from httoop.codecs import audio
@@ -23,9 +15,16 @@ from httoop.codecs import multipart
 from httoop.codecs import text
 from httoop.codecs import video
 
+from httoop.codecs.codec import Codec
+
+CODECS = dict()
 types = (application, audio, example, image, message, model, multipart, text, video)
 
-from httoop.codecs.codec import Codec
+__all__ = [
+	'CODECS', 'Codec',
+	'application', 'audio', 'example', 'image',
+	'message', 'model', 'multipart', 'text', 'video'
+]
 
 
 def lookup(encoding, raise_errors=True):

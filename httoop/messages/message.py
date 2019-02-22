@@ -4,8 +4,6 @@
 .. seealso:: :rfc:`2616#section-4`
 """
 
-__all__ = ('Message')
-
 from httoop.six import with_metaclass
 
 from httoop.messages.body import Body
@@ -13,6 +11,8 @@ from httoop.messages.protocol import Protocol
 
 from httoop.header import Headers
 from httoop.meta import HTTPSemantic
+
+__all__ = ('Message')
 
 
 class Message(with_metaclass(HTTPSemantic)):

@@ -17,7 +17,7 @@ matrix:
   include:
     - python: 2.7
       install: pip install -U flake8
-      script: flake8 --ignore E501,W191,C901,E265,E402
+      script: flake8 --ignore E501,W191,C901,E265,E402,E117
       after_success:
 #    - python: 2.7
 #      install: pip install -U isort

@@ -4,8 +4,6 @@
 .. seealso:: :rfc:`2616#section-4`
 """
 
-__all__ = ('Protocol',)
-
 import re
 
 from httoop.six import with_metaclass
@@ -13,6 +11,8 @@ from httoop.six import with_metaclass
 from httoop.exceptions import InvalidLine
 from httoop.util import Unicode, _
 from httoop.meta import HTTPSemantic
+
+__all__ = ('Protocol',)
 
 
 class Protocol(with_metaclass(HTTPSemantic)):

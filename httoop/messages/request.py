@@ -4,13 +4,13 @@
 .. seealso:: :rfc:`2616#section-4`
 """
 
-__all__ = ('Request',)
-
 from httoop.messages.method import Method
 from httoop.messages.message import Message
 from httoop.uri import HTTP as URI
 from httoop.exceptions import InvalidLine, InvalidURI
 from httoop.util import _
+
+__all__ = ('Request',)
 
 
 class Request(Message):
@@ -78,11 +78,11 @@ class Request(Message):
 
 	def validate_request_uri(self):
 		uri = self.uri
-		if not isinstance(uri, (uri.SCHEMES['http'], uri.SCHEMES['https'])):
+		if not isinstance(uri, (uri.SCHEMES[b'http'], uri.SCHEMES[b'https'])):
 			raise InvalidURI(_(u'The request URI scheme must be HTTP based.'))
 		if uri.fragment or uri.username or uri.password:
 			raise InvalidURI(_(u'The request URI must not contain fragments or user information.'))
-		if uri.path.startswith(b'//'):
+		if uri.path.startswith(u'//'):
 			raise InvalidURI(_(u'The request URI path must not start with //.'))
 		if uri.path and uri.path != u'*' and uri.path[0] != u'/':
 			raise InvalidURI(_(u'The request URI path must start with /.'))

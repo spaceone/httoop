@@ -1,4 +1,5 @@
 # See also: tests/request_/test_request_method.py
+from __future__ import unicode_literals
 import pytest
 
 
@@ -23,10 +24,10 @@ def test_hashable_methods(request_):
 	methods = {}
 	request_.method = u'GET'
 	methods[request_.method] = 1
-	assert 'GET' in methods
-	assert 'POST' not in methods
+	assert b'GET' in methods
+	assert b'POST' not in methods
 	request_.method = u'POST'
-	assert 'POST' not in methods
+	assert b'POST' not in methods
 	methods[request_.method] = 1
-	assert 'POST' in methods
-	assert 'GET' in methods
+	assert b'POST' in methods
+	assert b'GET' in methods

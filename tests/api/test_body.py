@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import pytest
 from io import BytesIO, StringIO
 from tempfile import NamedTemporaryFile

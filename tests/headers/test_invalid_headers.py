@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import pytest
 from httoop.exceptions import InvalidHeader
 
@@ -31,11 +32,11 @@ def test_set_header_with_colon(request_):
 
 @pytest.mark.parametrize('name', ('Content-Encoding', 'Transfer-Encoding'))
 def test_invalid_codec(name, headers):
-	headers.parse('%s: foo' % (name,))
+	headers.parse(b'%s: foo' % (name,))
 	with pytest.raises(InvalidHeader):
 		headers.elements(name)
 
 
 def test_unknown_codec(headers):
-	headers.parse('Content-Type: foo/bar')
+	headers.parse(b'Content-Type: foo/bar')
 	assert headers.elements('Content-Type')[0].codec is None

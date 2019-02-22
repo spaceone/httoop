@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import pytest
 from httoop import Status
 
@@ -25,8 +26,10 @@ def test_staus_comparision(response):
 	assert not response.status < 203
 	assert not response.status > 205
 
-	assert response.status != 'foo'
-	assert not response.status == 'foo'
+	assert response.status != u'foo'
+	assert not response.status == u'foo'
+	assert response.status != b'foo'
+	assert not response.status == b'foo'
 
 	assert response.status == b'204 No Content'
 
@@ -91,15 +94,15 @@ def test_status_aliases(response):
 
 @pytest.mark.xfail
 def test_status_parse(response):
-	response.status.parse('400 bad request')
+	response.status.parse(b'400 bad request')
 	assert response.status == 400
 	assert response.status.reason == u'bad request'
 
-	response.status.parse('401 ')
+	response.status.parse(b'401 ')
 	assert response.status == 401
 	assert not response.status.reason
 
-	response.parse('HTTP/1.1 402')
+	response.parse(b'HTTP/1.1 402')
 	assert response.status == 402
 	assert not response.status.reason
 

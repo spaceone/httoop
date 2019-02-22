@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import pytest
 
 from httoop import Request, Response
@@ -13,9 +14,9 @@ class WSGIClient(WSGI):
 		super(WSGIClient, self).__init__(*args, **kwargs)
 
 
-OK = '200 OK'
+OK = b'200 OK'
 output = b'Hello World!'
-response_headers = [('Content-type', 'text/plain'), ('Content-Length', str(len(output)))]
+response_headers = [(b'Content-type', b'text/plain'), (b'Content-Length', str(len(output)).encode('ascii'))]
 
 
 def application1(environ, start_response):

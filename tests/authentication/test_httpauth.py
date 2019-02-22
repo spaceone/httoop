@@ -2,6 +2,7 @@
 """Implement test cases from:
 http://test.greenbytes.de/tech/tc/httpauth/
 """
+from __future__ import unicode_literals
 
 import pytest
 from httoop import Headers
@@ -118,7 +119,7 @@ def test_simplebasicnewparam2(authentication):
 
 def test_simplebasicrealmiso88591(authentication):
 	"""simple Basic auth, using "a umlaut" character encoded using ISO-8859-1"""
-	a = authentication(b'WWW-Authenticate: Basic realm="foo-ä"')
+	a = authentication(b'WWW-Authenticate: Basic realm="foo-\xe4"')
 	assert a
 
 

@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from httoop import Date
 import pytest
 import datetime

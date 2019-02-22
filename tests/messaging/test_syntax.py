@@ -1,3 +1,6 @@
+from __future__ import unicode_literals
+
+
 def test_request_syntax_basic(request_):
 	request_.uri = '/'
 	request_.method = 'GET'

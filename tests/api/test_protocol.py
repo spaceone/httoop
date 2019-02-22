@@ -1,3 +1,6 @@
+from __future__ import unicode_literals
+
+
 def test_protocol_tuple(request_):
 	request_.protocol.parse(b'HTTP/1.0')
 	assert request_.protocol == (1, 0)

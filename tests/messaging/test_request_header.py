@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from httoop import InvalidHeader
 import pytest
 
@@ -11,10 +12,10 @@ def test_header_case_insensitivity():
 
 
 def test_header_with_continuation_lines(headers):
-	headers.parse('Foo: bar\r\n baz')
-	headers.parse('Foo2: bar\r\n\tbaz')
-	headers.parse('Foo3: bar\r\n  baz')
-	headers.parse('Foo4: bar\r\n\t baz')
+	headers.parse(b'Foo: bar\r\n baz')
+	headers.parse(b'Foo2: bar\r\n\tbaz')
+	headers.parse(b'Foo3: bar\r\n  baz')
+	headers.parse(b'Foo4: bar\r\n\t baz')
 	assert headers['Foo'] == 'barbaz'
 	assert headers['Foo2'] == 'barbaz'
 	assert headers['Foo3'] == 'bar baz'

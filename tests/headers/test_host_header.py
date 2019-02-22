@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from httoop.exceptions import InvalidHeader
 import pytest
 
@@ -62,7 +63,7 @@ def _test_iter(header, host, port, headers):
 	]
 ))
 def test_invalid_host_header(invalid, headers):
-	headers['Host'] = b'foo%sbar' % (invalid,)
+	headers['Host'] = 'foo%sbar' % (invalid,)
 	with pytest.raises(InvalidHeader):
 		headers.element('Host')
 

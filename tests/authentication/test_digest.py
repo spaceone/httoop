@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import pytest
 
 from itertools import product, chain
@@ -15,7 +16,7 @@ def test_digest_www_authentication(headers):
 		'opaque': '5ccc069c403ebaf9f0171e9517f40e41'}
 	)
 	www_auth = WWWAuthenticate.parse(bytes(www_auth))
-	www_auth_bytes = '''WWW-Authenticate: Digest realm="testrealm@host.com",
+	www_auth_bytes = b'''WWW-Authenticate: Digest realm="testrealm@host.com",
 	nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
 	opaque="5ccc069c403ebaf9f0171e9517f40e41",
 	algorithm="MD5",
@@ -38,7 +39,7 @@ def test_digest_authorization(headers):
 		'opaque': '5ccc069c403ebaf9f0171e9517f40e41'}
 	)
 	auth = Authorization.parse(bytes(auth))
-	auth_bytes = '''Authorization: Digest username="Mufasa",
+	auth_bytes = b'''Authorization: Digest username="Mufasa",
 	realm="testrealm@host.com",
 	nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
 	uri="/dir/index.html",
@@ -67,10 +68,10 @@ required = ('algorithm', 'username', 'realm', 'uri')
 @pytest.mark.parametrize('params', set(tuple(tuple(set(x)) for x in chain(*list(set(product(required, repeat=i)) for i in range(1, len(required) + 1))))))
 def test_required_parameter(params, headers):
 	pvars = {
-		'algorithm': b'MD5',
-		'username': b'foo',
-		'realm': b'foo',
-		'uri': b'/'
+		b'algorithm': b'MD5',
+		b'username': b'foo',
+		b'realm': b'foo',
+		b'uri': b'/'
 	}
 	header = b', '.join(b'%s="%s"' % (p, pvars[p]) for p in params)
 	headers.parse(b'Authorization: digest %s' % header)

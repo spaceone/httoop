@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from httoop.messages import Message
 from httoop import Date
 

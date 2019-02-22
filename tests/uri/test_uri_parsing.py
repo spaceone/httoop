@@ -49,7 +49,7 @@ absolute_uris = [
 	(b'https://', (u'https', u'', u'', u'', 443, u'', u'', u'')),
 
 	# python's urlparse makes the following invalid parsing. should we do the same? better not...
-	# pytest.mark.xfail((b'int:80', (u'', u'', u'', u'', None, u'int:80', u'', u''))),
+	# pytest.param((b'int:80', (u'', u'', u'', u'', None, u'int:80', u'', u'')), marks=pytest.mark.xfail),
 	(b'int:80', (u'int', u'', u'', u'', None, u'80', u'', u'')),
 
 	(b'http://good.com@evil.com:8090/foo?bar=baz', (u'http', u'good.com', u'', u'evil.com', 8090, u'/foo', u'bar=baz', u'')),
@@ -106,7 +106,7 @@ def test_parse_absolute_uri(url, expected):
 	b'http://[dead:beef::1/foo/',
 	# invalid IPv4 Addresses
 	b'http://1.2.3.256/',
-	pytest.mark.xfail(b'http://1.2.-3.4/'),
+	pytest.param(b'http://1.2.-3.4/', marks=pytest.mark.xfail),
 	b'http://1.2.03.4/',
 	# invalid Ports
 	b'http://www.example.net:foo',

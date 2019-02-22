@@ -10,7 +10,7 @@ from httoop import URI
 	('http:.', (u'http', u'', u'', u'', 80, u'/', u'', u'')),
 	('http:..', (u'http', u'', u'', u'', 80, u'/', u'', u'')),
 	('http:/', (u'http', u'', u'', u'', 80, u'/', u'', u'')),
-	pytest.mark.xfail((b'http://f/..%2f..', (u'http', u'', u'', u'f', 80, u'/', u'', u'')), reason='Incorrect but we want to preserve /.'),
+	pytest.param(b'http://f/..%2f..', (u'http', u'', u'', u'f', 80, u'/', u'', u''), marks=pytest.mark.xfail(reason='Incorrect but we want to preserve /.')),
 ))
 def test_abspath(url, expected):
 	uri = URI()

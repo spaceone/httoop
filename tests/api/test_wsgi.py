@@ -104,8 +104,8 @@ def application13(environ, start_response):
 
 
 @pytest.mark.parametrize('application', [
-	#pytest.mark.xfail(reason='No write() call currently')(application9),
-	#pytest.mark.xfail(reason='No write() call currently')(application10),
+	pytest.param(application9, marks=pytest.mark.xfail(reason='No write() call currently')),
+	pytest.param(application10, marks=pytest.mark.xfail(reason='No write() call currently')),
 	application11,
 	application12,
 	application13,

@@ -35,6 +35,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 	priority = None
 	hop_by_hop = False
 	list_element = False
+	encode_latin1_quoted_printable = False
 
 	# Regular expression that matches `special' characters in parameters, the
 	# existance of which force quoting of the parameter value.
@@ -210,7 +211,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 	@classmethod
 	def encode(cls, value):
 		try:
-			return value.encode('ISO8859-1')
+			return value.encode('ascii' if cls.encode_latin1_quoted_printable else 'ISO8859-1')
 		except UnicodeEncodeError:
 			return value.encode('ISO8859-1', 'replace')  # FIXME: if value contains UTF-8 chars encode them in MIME; =?UTF-8?B?…?= (RFC 2047); seealso quopri
 

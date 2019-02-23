@@ -67,6 +67,8 @@ class Date(with_metaclass(HTTPSemantic)):
 			if isinstance(timeval, Unicode):
 				timeval = timeval.encode('ascii', 'ignore')
 			self.__timestamp = float(Date.parse(timeval))
+		elif isinstance(timeval, Date):
+			self.__timestamp = float(timeval)
 		else:
 			raise TypeError('Date(): got invalid argument')
 

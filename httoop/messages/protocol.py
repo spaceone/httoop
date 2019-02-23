@@ -31,7 +31,7 @@ class Protocol(with_metaclass(HTTPSemantic)):
 	def minor(self):
 		return self[1]
 
-	PROTOCOL_RE = re.compile(br"^(HTTP)/(\d+).(\d+)\Z")
+	PROTOCOL_RE = re.compile(br"^(HTTP)/(\d+)\.(\d+)\Z")
 
 	def __init__(self, protocol=(1, 1)):
 		self.__protocol = protocol

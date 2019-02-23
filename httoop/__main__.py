@@ -89,7 +89,7 @@ class CLI(object):
 				key, value = header.split(':', 1)
 			except ValueError:
 				continue
-			self.message.headers[key] = value
+			self.message.headers[key.strip()] = value.strip()
 		body = self.arguments.body
 		if body == '-':
 			body = sys.stdin.read()

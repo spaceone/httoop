@@ -135,11 +135,24 @@ class StateMachine(object):
 		header_end = self.line_end + self.line_end
 
 		if header_end not in self.buffer:
+			self._parse_single_headers()
 			# headers incomplete
 			return NOT_RECEIVED_YET
 
 		headers, self.buffer = self.buffer.split(header_end, 1)
+		self._parse_header(headers)
 
+	def _parse_single_headers(self):
+		if self.buffer.endswith(self.line_end):
+			headers, _, rest = self.buffer[:-len(self.line_end)].rpartition(self.line_end)
+			rest += self.buffer[-len(self.line_end):]
+		else:
+			headers, _, rest = self.buffer.rpartition(self.line_end)
+		if headers and _ and rest[:1] not in (b'', b'\t', b' '):
+			self.buffer = rest
+			self._parse_header(headers)
+
+	def _parse_header(self, headers):
 		# parse headers
 		if headers:
 			try:

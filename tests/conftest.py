@@ -31,7 +31,9 @@ def statemachine():
 
 @pytest.fixture
 def clientstatemachine():
-	return ClientStateMachine()
+	c = ClientStateMachine()
+	c.request = Request()
+	return c
 
 
 @pytest.fixture

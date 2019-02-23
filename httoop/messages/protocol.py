@@ -40,6 +40,8 @@ class Protocol(with_metaclass(HTTPSemantic)):
 
 	def set(self, protocol):
 		if isinstance(protocol, (bytes, Unicode)):
+			if isinstance(protocol, Unicode):
+				protocol = protocol.encode('ascii', 'replace')
 			protocol = self.parse(protocol)
 		else:
 			self.__protocol = tuple(protocol)

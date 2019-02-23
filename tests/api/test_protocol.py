@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from httoop.exceptions import InvalidLine
+import pytest
 
 
 def test_protocol_tuple(request_):
@@ -28,6 +31,18 @@ def test_set_protocol_to_protocol(request_, response):
 	assert response.protocol == (1, 0)
 
 
+@pytest.mark.parametrize('invalid', [
+	u'HTTP/111',
+	u'HTTP/2',
+	u'HTTP/3',
+	u'HTTP→1.1',
+	u'HTTÖ/1.1',
+])
+def test_invalid_protocol(request_, invalid):
+	with pytest.raises(InvalidLine):
+		request_.protocol.set(invalid)
+
+
 def test_protocol_comparision(request_):
 	request_.protocol = (1, 2)
 	assert request_.protocol < (2, 0)
@@ -42,6 +57,7 @@ def test_protocol_comparision(request_):
 	assert request_.protocol != 0
 	assert request_.protocol != 2
 	assert request_.protocol != 'foo'
+	assert request_.protocol != b'foo'
 	assert request_.protocol >= (1, 2)
 	assert request_.protocol >= (1, 1)
 	assert request_.protocol <= (1, 2)

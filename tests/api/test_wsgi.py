@@ -115,3 +115,26 @@ def test_wsgi_failure(application):
 	client = WSGIClient()
 	with pytest.raises(RuntimeError):
 		client(application)
+
+
+def application14(environ, start_response):
+	raise ValueError('test')
+
+
+def test_eror_reraising():
+	client = WSGIClient()
+	with pytest.raises(ValueError):
+		client(application14)
+
+
+def application15(environ, start_response):
+	print environ
+	result = environ['HTTP_HOST'] == 'foobar' and environ['CONTENT_LENGTH'] == '0' and environ['CONTENT_TYPE'] == 'text/html'
+	raise ValueError(result)
+
+
+def test_essential_parameters():
+	client = WSGIClient({'CONTENT_TYPE': 'text/html', 'CONTENT_LENGTH': '0', 'HTTP_HOST': 'foobar'})
+	with pytest.raises(ValueError) as exc:
+		client(application15)
+	assert exc.value.args[0] is True

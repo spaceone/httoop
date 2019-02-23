@@ -62,7 +62,7 @@ def test_unknown_algorithm(headers):
 	assert 'algorithm' in str(excinfo)
 
 
-required = ('algorithm', 'username', 'realm', 'uri')
+required = (b'algorithm', b'username', b'realm', b'uri')
 
 
 @pytest.mark.parametrize('params', set(tuple(tuple(set(x)) for x in chain(*list(set(product(required, repeat=i)) for i in range(1, len(required) + 1))))))

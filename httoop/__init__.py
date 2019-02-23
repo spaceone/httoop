@@ -6,9 +6,6 @@
 
 from __future__ import absolute_import
 
-if __import__('sys').version_info < (3, 5) and __import__('sys').version_info > (2, 8):
-	raise RuntimeError('httoop only supports >= python2.7 and >= python3.5!')
-
 from httoop.version import UserAgentHeader, ServerHeader, ServerProtocol, __version__
 from httoop.status import Status
 from httoop.date import Date
@@ -19,6 +16,7 @@ from httoop.exceptions import InvalidLine, InvalidHeader, InvalidURI, InvalidBod
 from httoop.server import ServerStateMachine
 from httoop.client import ClientStateMachine
 from httoop.proxy import ProxyStateMachine
+from httoop.semantic import ComposedRequest, ComposedResponse
 from httoop import cache
 
 from httoop.status import (
@@ -52,7 +50,7 @@ __all__ = [
 	'HTTP_VERSION_NOT_SUPPORTED', 'StatusException',
 	'DecodeError', 'EncodeError',
 	'__version__', 'ServerProtocol', 'UserAgentHeader', 'ServerHeader',
-	'cache',
+	'cache', 'ComposedRequest', 'ComposedResponse',
 ]
 
 try:

@@ -140,3 +140,16 @@ def test_body_iter_list(request_):
 	assert next(request_.body) == 'Ba'
 	assert next(request_.body) == 'Baz'
 	assert next(request_.body) == 'blub'
+
+
+def test_body_file_interface(request_):
+	assert request_.body.name is None
+	request_.body.flush()
+	request_.body = b'foo\nbar\nbaz\nblub'
+	assert request_.body.readline() == b'foo\n'
+	assert request_.body.readlines(7) == [b'bar\n', b'baz\n']
+	request_.body.seek(3)
+	request_.body.truncate()
+	assert bytes(request_.body) == b'foo'
+	request_.body.writelines([b'bar\n', b'Baz'])
+	assert bytes(request_.body) == b'foobar\nBaz'

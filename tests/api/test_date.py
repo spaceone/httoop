@@ -18,23 +18,23 @@ dates = [{
 
 @pytest.mark.parametrize('date,expected', [(date, data['datetime']) for data in dates for date in data['formats']])
 def test_date_datetime(date, expected):
-	d = Date.parse(date)
-	assert d is not None
-	assert d.datetime == expected
-	assert d == expected
+	for d in (Date.parse(date.encode('utf-8')), Date(date)):
+		assert d is not None
+		assert d.datetime == expected
+		assert d == expected
 
 
 @pytest.mark.parametrize('date,expected', [(date, data['timestamp']) for data in dates for date in data['formats']])
 def test_date_timestamp(date, expected):
-	d = Date.parse(date)
-	assert d is not None
-	assert float(d) == expected
-	assert d == expected
+	for d in (Date.parse(date.encode('utf-8')), Date(date)):
+		assert d is not None
+		assert float(d) == expected
+		assert d == expected
 
 
 @pytest.mark.parametrize('date,expected', [(date, data['gmtime']) for data in dates for date in data['formats']])
 def test_date_gmtime(date, expected):
-	d = Date.parse(date)
-	assert d is not None
-	assert d.gmtime == expected
-	assert d == expected
+	for d in (Date.parse(date.encode('utf-8')), Date(date)):
+		assert d is not None
+		assert d.gmtime == expected
+		assert d == expected

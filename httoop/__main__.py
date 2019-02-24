@@ -98,9 +98,14 @@ class CLI(object):
 			body = open(body[1:], 'rb')
 		self.message.body = body
 
-		sys.stdout.write(bytes(self.message))
-		sys.stdout.write(bytes(self.message.headers))
-		sys.stdout.write(bytes(self.message.body))
+		sys.stdout.write(self.decode(bytes(self.message)))
+		sys.stdout.write(self.decode(bytes(self.message.headers)))
+		sys.stdout.write(self.decode(bytes(self.message.body)))
+
+	def decode(self, data):
+		if str is bytes:
+			return data
+		return data.decode('ISO8859-1')
 
 
 if __name__ == '__main__':

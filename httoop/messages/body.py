@@ -62,7 +62,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 
 	@mimetype.setter
 	def mimetype(self, mimetype):
-		self.headers['Content-Type'] = bytes(mimetype)
+		self.headers['Content-Type'] = Unicode(mimetype)
 
 	@property
 	def content_encoding(self):
@@ -71,7 +71,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 	@content_encoding.setter
 	def content_encoding(self, value):
 		if value:
-			self.headers['Content-Encoding'] = bytes(value)
+			self.headers['Content-Encoding'] = Unicode(value)
 			self.content_codec = self.content_encoding.codec
 		else:
 			self.headers.pop('Content-Encoding', None)
@@ -84,7 +84,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 	@transfer_encoding.setter
 	def transfer_encoding(self, transfer_encoding):
 		if transfer_encoding:
-			self.headers['Transfer-Encoding'] = bytes(transfer_encoding)
+			self.headers['Transfer-Encoding'] = Unicode(transfer_encoding)
 			self.transfer_codec = self.transfer_encoding.codec
 		else:
 			self.headers.pop('Transfer-Encoding', None)

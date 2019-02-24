@@ -109,6 +109,7 @@ class Date(with_metaclass(HTTPSemantic)):
 			:rtype  : :class:`Date`
 
 		"""
+		timestr = timestr.decode('ISO8859-1')
 
 		# parse the most common HTTP Date format (RFC 2822)
 		date = parsedate(timestr)

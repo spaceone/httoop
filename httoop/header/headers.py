@@ -22,9 +22,9 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 	@classmethod
 	def formatkey(cls, key):
 		key = CaseInsensitiveDict.formatkey(key)
-		if cls.HEADER_RE.search(key):
-			raise InvalidHeader(_(u"Invalid header name: %r"), key.decode('ISO8859-1'))
-		return key  # TODO: do we want bytes here?
+		if cls.HEADER_RE.search(key.encode('utf-8')):
+			raise InvalidHeader(_(u"Invalid header name: %r"), key)
+		return key
 
 	def elements(self, fieldname):
 		u"""Return a sorted list of HeaderElements from
@@ -61,23 +61,22 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 		Element = HEADER.get(fieldname, HeaderElement)
 		return Element(*args, **kwargs)
 
-	def values(self, key=None):  # FIXME: overwrites dict.values()
-		if key is None:
+	def values(self, *key):
+		if not key:
 			return super(Headers, self).values()
 		# if key is set return a ordered list of element values
-		return [e.value for e in self.elements(key)]
+		return [e.value for e in self.elements(key[0])]
 
 	def append(self, _name, _value, **params):
 		if params:
 			Element = HEADER.get(_name, HeaderElement)
-			parts = [_value or b'']
+			parts = [_value or u'']
 			for k, v in iteritems(params):
-				k = k.replace('_', '-')  # TODO: find out why this is done
 				if v is None:
 					parts.append(k)
 				else:
 					parts.append(Element.formatparam(k, v))
-			_value = "; ".join(parts)
+			_value = u'; '.join(parts)
 
 		if _name not in self or not self[_name]:
 			self[_name] = _value
@@ -132,7 +131,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 			Element = HEADER.get(name, HeaderElement)
 			value = Element.decode(value)
 
-			self.append(name, value)
+			self.append(name.decode('ascii', 'ignore'), value)
 
 	def compose(self):
 		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, v) for k, v in self.__items())
@@ -145,6 +144,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 			Element = HEADER.get(key, HeaderElement)
 			if Element is not HeaderElement:
 				key = Element.__name__
+			key = key.encode('ascii', 'ignore')
 			if Element.list_element:
 				for value in Element.split(values):
 					yield key, Element.encode(value)

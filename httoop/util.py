@@ -156,7 +156,7 @@ class CaseInsensitiveDict(dict):
 
 	@staticmethod
 	def formatkey(key):
-		return to_ascii(key).title()
+		return to_unicode(key).title()
 
 	@staticmethod
 	def formatvalue(value):

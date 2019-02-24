@@ -194,7 +194,7 @@ class ContentType(HeaderElement, MimeType, CodecElement):
 
 class Cookie(_CookieElement):
 
-	RE_SPLIT = re.compile(b'; ')
+	RE_SPLIT = re.compile('; ')
 
 	@classmethod
 	def join(cls, values):

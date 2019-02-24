@@ -39,12 +39,12 @@ class HeaderElement(with_metaclass(HeaderType)):
 
 	# Regular expression that matches `special' characters in parameters, the
 	# existance of which force quoting of the parameter value.
-	RE_TSPECIALS = re.compile(b'[ \\(\\)<>@,;:\\\\"/\\[\\]\\?=]')
-	RE_SPLIT = re.compile(b',(?=(?:[^"]*"[^"]*")*[^"]*$)')
-	RE_PARAMS = re.compile(b';(?=(?:[^"]*"[^"]*")*[^"]*$)')
+	RE_TSPECIALS = re.compile('[ \\(\\)<>@,;:\\\\"/\\[\\]\\?=]')
+	RE_SPLIT = re.compile(',(?=(?:[^"]*"[^"]*")*[^"]*$)')
+	RE_PARAMS = re.compile(';(?=(?:[^"]*"[^"]*")*[^"]*$)')
 
 	def __init__(self, value, params=None):
-		self.value = bytes(value)
+		self.value = Unicode(value)
 		self.params = params or {}
 		self.sanitize()
 
@@ -340,7 +340,7 @@ class _AcceptElement(HeaderElement):
 class _CookieElement(HeaderElement):
 
 	#RE_TSPECIALS = re.compile(br'[ \(\)<>@,;:\\"\[\]\?=]')
-	RE_TSPECIALS = re.compile(br'(?!)')
+	RE_TSPECIALS = re.compile(r'(?!)')
 
 	def __init__(self, cookie_name, cookie_value, params=None):
 		self.cookie_name = Unicode(cookie_name)

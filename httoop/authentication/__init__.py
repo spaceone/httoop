@@ -69,7 +69,7 @@ class AuthResponseElement(AuthElement):
 
 	@classmethod
 	def sorted(cls, elements):
-		return list(sorted(elements, key=lambda e: {'basic': '\xff'}.get(e.value.lower(), e.value)))
+		return list(sorted(elements, key=lambda e: {'basic': u'\xff'}.get(e.value.lower(), e.value)))
 
 	@classmethod
 	def join(cls, values):

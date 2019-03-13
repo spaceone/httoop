@@ -77,6 +77,8 @@ HTTP and extensions are defined in the following RFC's:
 
 * HTTP State Management Mechanism ([RFC 6265](http://tools.ietf.org/html/6265))
 
+* Same-site Cookies ([Draft 7](https://tools.ietf.org/html/draft-west-first-party-cookies-07))
+
 * HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV) ([RFC 4918](http://tools.ietf.org/html/4918))
 
 * Hyper Text Coffee Pot Control Protocol (HTCPCP/1.0) ([RFC 2324](http://tools.ietf.org/html/2324))

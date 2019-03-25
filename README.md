@@ -89,6 +89,20 @@ Extended information about hypermedia, WWW and how HTTP is meant to be used:
 
 * Representational State Transfer [REST](http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
 
+  * [REST APIs must be hypertext-driven](https://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven)
+
+  * [Specialization](https://roy.gbiv.com/untangled/2008/specialization)
+
+  * [No REST in CMIS](https://roy.gbiv.com/untangled/2008/no-rest-in-cmis)
+
+  * [On software architecture](https://roy.gbiv.com/untangled/2008/on-software-architecture)
+
+  * [It is okay to use POST](https://roy.gbiv.com/untangled/2009/it-is-okay-to-use-post)
+
+  * [Paper tigers and hidden dragons](https://roy.gbiv.com/untangled/2008/paper-tigers-and-hidden-dragons)
+
+  * [Economies of scale](https://roy.gbiv.com/untangled/2008/economies-of-scale)
+
 * [Richardson Maturity Model](https://martinfowler.com/articles/richardsonMaturityModel.html)
 
 * [Test Cases for HTTP Content-Disposition header field](http://greenbytes.de/tech/tc2231/)

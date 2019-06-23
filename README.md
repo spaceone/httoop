@@ -67,6 +67,8 @@ HTTP and extensions are defined in the following RFC's:
 
 * PATCH Method for HTTP ([RFC 5789](http://tools.ietf.org/html/5789))
 
+* JavaScript Object Notation (JSON) Patch ([RFC 6902](https://tools.ietf.org/html/rfc6902))
+
 * Use of the Content-Disposition Header Field in the Hypertext Transfer Protocol (HTTP) ([RFC 6266](http://tools.ietf.org/html/6266))
 
 * Upgrading to TLS Within HTTP/1.1 ([RFC 2817](http://tools.ietf.org/html/2817))

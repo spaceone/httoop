@@ -10,8 +10,8 @@ from httoop.util import _
 class DigestAuthScheme(object):
 
 	algorithms = {
-		'MD5': lambda val: md5(val).hexdigest(),
-		'MD5-sess': lambda val: md5(val).hexdigest(),
+		'MD5': lambda val: md5(val).hexdigest(),  # nosec
+		'MD5-sess': lambda val: md5(val).hexdigest(),  # nosec
 	}
 	qops = ('auth', 'auth-int')  # quality of protection
 

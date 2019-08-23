@@ -7,7 +7,8 @@ from __future__ import absolute_import
 try:
 	from defusedxml.ElementTree import parse, ParseError, tostring
 except ImportError:
-	from xml.etree.ElementTree import parse, ParseError, tostring
+	# TODO: emit a warning
+	from xml.etree.ElementTree import parse, ParseError, tostring  # nosec
 
 from httoop.codecs.codec import Codec
 from httoop.exceptions import DecodeError

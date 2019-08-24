@@ -25,6 +25,8 @@ class _DateComparable(object):
 
 class ETag(HeaderElement):
 
+	is_response_header = True
+
 	def __eq__(self, other):
 		if not isinstance(other, ETag):
 			other = self.__class__(other)
@@ -33,19 +35,24 @@ class ETag(HeaderElement):
 
 class LastModified(_DateComparable, HeaderElement):
 	__name__ = 'Last-Modified'
+	is_response_header = True
 
 
 class IfMatch(HeaderElement):
 	__name__ = 'If-Match'
+	is_request_header = True
 
 
 class IfModifiedSince(_DateComparable, HeaderElement):
 	__name__ = 'If-Modified-Since'
+	is_request_header = True
 
 
 class IfNoneMatch(HeaderElement):
 	__name__ = 'If-None-Match'
+	is_request_header = True
 
 
 class IfUnmodifiedSince(_DateComparable, HeaderElement):
 	__name__ = 'If-Unmodified-Since'
+	is_request_header = True

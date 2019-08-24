@@ -33,6 +33,8 @@ class HeaderElement(with_metaclass(HeaderType)):
 	u"""An element (with parameters) from an HTTP header's element list."""
 
 	priority = None
+	is_request_header = False
+	is_response_header = False
 	hop_by_hop = False
 	list_element = False
 	encode_latin1_quoted_printable = False

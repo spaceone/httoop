@@ -4,24 +4,32 @@ from httoop.header.element import HeaderElement
 
 
 class Age(HeaderElement):
-	pass
+
+	is_response_header = True
 
 
 class CacheControl(HeaderElement):
 	__name__ = 'Cache-Control'
 
+	is_request_header = True
+	is_response_header = True
+
 
 class Expires(HeaderElement):
-	pass
+
+	is_response_header = True
 
 
 class Pragma(HeaderElement):
-	pass
+
+	is_response_header = True
 
 
 class Vary(HeaderElement):
-	pass
+
+	is_response_header = True
 
 
 class Warning(HeaderElement):  # pylint: disable=W0622
-	pass
+
+	is_response_header = True

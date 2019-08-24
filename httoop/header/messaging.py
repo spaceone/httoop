@@ -39,6 +39,8 @@ class CodecElement(object):
 
 class Accept(_AcceptElement, MimeType):
 
+	is_request_header = True
+
 	def sanitize(self):
 		super(Accept, self).sanitize()
 		if self.value == '*':
@@ -47,26 +49,32 @@ class Accept(_AcceptElement, MimeType):
 
 class AcceptCharset(_AcceptElement):
 	__name__ = 'Accept-Charset'
+	is_request_header = True
 
 
 class AcceptEncoding(_AcceptElement):
 	__name__ = 'Accept-Encoding'
+	is_request_header = True
 
 
 class AcceptLanguage(_AcceptElement):
 	__name__ = 'Accept-Language'
+	is_request_header = True
 
 
 class AcceptRanges(_AcceptElement):
 	__name__ = 'Accept-Ranges'
+	is_request_header = True
 
 
 class Allow(HeaderElement):
-	pass
+	is_response_header = True
 
 
 class Connection(_HopByHopElement, HeaderElement):
 
+	is_request_header = True
+	is_response_header = True
 	priority = '\xff'
 
 	@property
@@ -81,6 +89,7 @@ class Connection(_HopByHopElement, HeaderElement):
 class ContentDisposition(HeaderElement):
 
 	__name__ = 'Content-Disposition'
+	is_response_header = True
 
 	from httoop.date import Date
 
@@ -127,6 +136,8 @@ class ContentDisposition(HeaderElement):
 
 class ContentEncoding(CodecElement, HeaderElement):
 	__name__ = 'Content-Encoding'
+	is_request_header = True
+	is_response_header = True
 
 	# IANA assigned HTTP Content-Encoding values
 	CODECS = {
@@ -143,23 +154,32 @@ class ContentEncoding(CodecElement, HeaderElement):
 
 class ContentLanguage(HeaderElement):
 	__name__ = 'Content-Language'
+	is_request_header = True
+	is_response_header = True
 
 
 class ContentLength(HeaderElement):
 	__name__ = 'Content-Length'
+	is_request_header = True
+	is_response_header = True
 
 
 class ContentLocation(HeaderElement):
 	__name__ = 'Content-Location'
+	is_response_header = True
 
 
 class ContentMD5(HeaderElement):
 	__name__ = 'Content-MD5'
+	is_request_header = True
+	is_response_header = True
 
 
 class ContentType(HeaderElement, MimeType, CodecElement):
 
 	__name__ = 'Content-Type'
+	is_request_header = True
+	is_response_header = True
 
 	raise_on_missing_codec = False
 
@@ -194,6 +214,7 @@ class ContentType(HeaderElement, MimeType, CodecElement):
 
 class Cookie(_CookieElement):
 
+	is_request_header = True
 	RE_SPLIT = re.compile('; ')
 
 	@classmethod
@@ -204,9 +225,12 @@ class Cookie(_CookieElement):
 class Date(HeaderElement):
 
 	priority = '\x01'
+	is_response_header = True
 
 
 class Expect(HeaderElement):
+
+	is_response_header = True
 
 	@property
 	def is_100_continue(self):
@@ -214,10 +238,12 @@ class Expect(HeaderElement):
 
 
 class From(HeaderElement):
-	pass
+	is_request_header = True
 
 
 class Forwarded(HeaderElement):
+
+	is_request_header = True
 
 	@property
 	def for_(self):
@@ -242,6 +268,8 @@ class Forwarded(HeaderElement):
 
 # TODO: add case insensitve HeaderElement
 class Host(HeaderElement):
+
+	is_request_header = True
 
 	priority = '\x03'
 	RE_HOSTNAME = re.compile(r'^([^\x00-\x1F\x7F()^\'"<>@,;:/\[\]={} \t\\\\"]+)$')
@@ -301,34 +329,39 @@ class Host(HeaderElement):
 
 class XForwardedHost(Host):
 	__name__ = 'X-Forwarded-Host'
+	is_request_header = True
 
 
 class Location(HeaderElement):
-	pass
+	is_response_header = True
 
 
 class MaxForwards(HeaderElement):
 
 	__name__ = 'Max-Forwards'
+	is_response_header = True
 
 
 class Referer(HeaderElement):
-	pass
+	is_request_header = True
 
 
 class RetryAfter(HeaderElement):
 
 	__name__ = 'Retry-After'
+	is_response_header = True
 
 
 class Server(HeaderElement):
 
 	priority = '\x02'
+	is_response_header = True
 
 
 class SetCookie(_ListElement, _CookieElement):
 
 	__name__ = 'Set-Cookie'
+	is_response_header = True
 
 	from httoop.date import Date
 
@@ -376,11 +409,14 @@ class SetCookie(_ListElement, _CookieElement):
 
 class TE(_HopByHopElement, _AcceptElement):
 
-	pass
+	is_response_header = True
+	is_request_header = True
 
 
 class Trailer(_HopByHopElement, HeaderElement):
 
+	is_response_header = True
+	is_request_header = True
 	forbidden_headers = ('Transfer-Encoding', 'Content-Length', 'Trailer')
 
 	def sanitize(self):
@@ -390,6 +426,9 @@ class Trailer(_HopByHopElement, HeaderElement):
 
 class TransferEncoding(_HopByHopElement, CodecElement, HeaderElement):
 	__name__ = 'Transfer-Encoding'
+
+	is_response_header = True
+	is_request_header = True
 
 	# IANA assigned HTTP Transfer-Encoding values
 	CODECS = {
@@ -402,6 +441,9 @@ class TransferEncoding(_HopByHopElement, CodecElement, HeaderElement):
 
 
 class Upgrade(_HopByHopElement, HeaderElement):
+	is_response_header = True
+	is_request_header = True
+
 	@property
 	def websocket(self):
 		return self.value.lower() == u'websocket'
@@ -409,11 +451,16 @@ class Upgrade(_HopByHopElement, HeaderElement):
 
 class UserAgent(HeaderElement):
 	__name__ = 'User-Agent'
+	is_response_header = True
+	is_request_header = True
 
 
 class Via(HeaderElement):
-	pass
+	is_request_header = True
+	is_response_header = True
 
 
 class HTTP2Settings(HeaderElement):
 	__name__ = 'HTTP2-Settings'
+	is_request_header = True
+	is_response_header = True

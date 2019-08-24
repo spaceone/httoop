@@ -15,6 +15,7 @@ class ContentSecurityPolicy(HeaderElement):
 	"""
 
 	__name__ = 'Content-Security-Policy'
+	is_response_header = True
 
 	RE_SPLIT = re.compile(';')
 	RE_PARAMS = re.compile('\\s+')
@@ -25,6 +26,7 @@ class ContentSecurityPolicy(HeaderElement):
 
 class ContentSecurityPolicyReportOnly(ContentSecurityPolicy):
 	__name__ = 'Content-Security-Policy-Report-Only'
+	is_response_header = True
 
 
 class StrictTransportSecurity(HeaderElement):
@@ -36,6 +38,7 @@ class StrictTransportSecurity(HeaderElement):
 	"""
 
 	__name__ = 'Strict-Transport-Security'
+	is_response_header = True
 
 	@property
 	def include_sub_domains(self):
@@ -49,6 +52,7 @@ class ContentTypeOptions(HeaderElement):
 	"""
 
 	__name__ = 'X-Content-Type-Options'
+	is_response_header = True
 
 	@property
 	def nosniff(self):
@@ -65,6 +69,7 @@ class FrameOptions(HeaderElement):
 	"""
 
 	__name__ = 'X-Frame-Options'
+	is_response_header = True
 
 	RE_PARAMS = re.compile('\\s+')
 
@@ -84,11 +89,13 @@ class FrameOptions(HeaderElement):
 
 class PermittedCrossDomainPolicies(HeaderElement):
 	__name__ = 'X-Permitted-Cross-Domain-Policies'
+	is_response_header = True
 
 
 class PublicKeyPins(HeaderElement):
 	"""Public Key Pinning Extension for HTTP (HPKP)"""
 	__name__ = 'Public-Key-Pins'
+	is_response_header = True
 
 
 class XSSProtection(HeaderElement):
@@ -98,6 +105,7 @@ class XSSProtection(HeaderElement):
 	"""
 
 	__name__ = 'X-XSS-Protection'
+	is_response_header = True
 
 	@property
 	def enabled(self):

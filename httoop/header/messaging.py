@@ -67,6 +67,11 @@ class AcceptRanges(_AcceptElement):
 	is_request_header = True
 
 
+class AcceptPatch(_AcceptElement):
+	__name__ = 'Accept-Patch'
+	is_response_header = True
+
+
 class Allow(HeaderElement):
 	is_response_header = True
 

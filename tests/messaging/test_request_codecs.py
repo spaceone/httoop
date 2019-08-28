@@ -122,6 +122,17 @@ def test_plain_text_ascii(body):
 	check_raises(body, (b'b\xc3\xa4r', b'\xe2\x86\x92', b'\xe4'), unicode, UnicodeDecodeError)
 
 
+def test_hal_json(body):
+	body.mimetype = 'application/hal+json'
+	hal_doc = b'''{"_embedded": {"orders": [{"status": "shipped", "currency": "USD", "total": 30.0, "_links": {"basket": {"href": "/baskets/98712"}, "customer": {"href": "/customers/7809"}, "self": {"profile": null, "deprecation": false, "name": null, "hreflang": null, "href": "/orders/123", "templated": false, "type": null}}}, {"status": "processing", "currency": "USD", "total": 20.0, "_links": {"basket": {"href": "/baskets/97213"}, "customer": {"href": "/customers/12369"}, "self": {"href": "/orders/124"}}}]}, "currentlyProcessing": 14, "_links": {"curie": [{"profile": null, "deprecation": false, "name": "acme", "hreflang": null, "href": "http://docs.acme.com/relations/{rel}", "templated": true, "type": null}], "self": {"profile": null, "deprecation": false, "name": null, "hreflang": null, "href": "/orders", "templated": false, "type": null}, "find": {"href": "/orders{?id}", "templated": true}, "next": {"href": "/orders?page=2"}}, "shippedToday": 20}'''
+	resource = body.decode(hal_doc)
+	assert resource.get_relations() == [u'orders', u'curie', u'self', u'find', u'next']
+	assert resource.get_link('next') == {'profile': None, 'deprecation': False, 'name': None, 'hreflang': None, 'href': u'/orders?page=2', 'templated': False, 'type': None}
+	assert resource.self == u'/orders'
+	assert resource.get_curie('acme:widgets') == u'http://docs.acme.com/relations/widgets'
+	assert resource.get_resource('orders').self == u'/orders/123'
+
+
 def check_encoding_dict(body, data):
 	for byte, string in data.items():
 		body.set(byte)

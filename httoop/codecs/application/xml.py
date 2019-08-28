@@ -8,7 +8,10 @@ try:
 	from defusedxml.ElementTree import parse, ParseError, tostring
 except ImportError:
 	# TODO: emit a warning
-	from xml.etree.ElementTree import parse, ParseError, tostring  # nosec
+	from xml.etree.ElementTree import ParseError, tostring  # nosec
+
+	def parse(data):
+		raise ParseError('Will not parse without defusedxml!')
 
 from httoop.codecs.codec import Codec
 from httoop.exceptions import DecodeError

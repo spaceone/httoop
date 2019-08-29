@@ -153,7 +153,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 
 		for key, lines in iteritems(continuations):
 			value = b''
-			for i in xrange(len(lines)):
+			for i in range(len(lines)):
 				try:
 					value += lines.pop(i)
 				except KeyError:

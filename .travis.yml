@@ -29,11 +29,9 @@ matrix:
 #      after_success:
 
 install:
-  - pip install six
-  - pip install pytest
-  - pip install coveralls
-  - pip install pytest-cov
+  - pip install -Ur requirements-test.txt
   - python setup.py install
+# - pip install -Ue .
 
 script: python setup.py test
 

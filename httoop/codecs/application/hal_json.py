@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""JSON Hypertext Application Language (application/hal+json) codec"""
+
 from __future__ import absolute_import
 
 try:
@@ -97,6 +99,19 @@ class Resource(dict):
 			if link:
 				return self.expand(link['href'], rel=rel)
 		return relation
+
+	def add_link(self, relation, link):
+		links = self['_links'].setdefault(relation, [])
+		if not isinstance(links, list):
+			links = [links]
+		links.append(link)
+		self['_links'][relation] = links
+		self['_links'][relation] = list(self.get_links(relation))
+
+	def add_resource(self, relation, resource):
+		resources = list(self.get_resources(relation))
+		resources.append(resource)
+		self['_embedded'][relation] = resources
 
 
 class HAL(JSON):

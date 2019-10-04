@@ -95,6 +95,7 @@ class ContentDisposition(HeaderElement):
 
 	__name__ = 'Content-Disposition'
 	is_response_header = True
+	is_single_value_header = True
 
 	from httoop.date import Date
 
@@ -143,6 +144,7 @@ class ContentEncoding(CodecElement, HeaderElement):
 	__name__ = 'Content-Encoding'
 	is_request_header = True
 	is_response_header = True
+	#is_single_value_header = True
 
 	# IANA assigned HTTP Content-Encoding values
 	CODECS = {
@@ -161,23 +163,27 @@ class ContentLanguage(HeaderElement):
 	__name__ = 'Content-Language'
 	is_request_header = True
 	is_response_header = True
+	is_single_value_header = True
 
 
 class ContentLength(HeaderElement):
 	__name__ = 'Content-Length'
 	is_request_header = True
 	is_response_header = True
+	is_single_value_header = True
 
 
 class ContentLocation(HeaderElement):
 	__name__ = 'Content-Location'
 	is_response_header = True
+	is_single_value_header = True
 
 
 class ContentMD5(HeaderElement):
 	__name__ = 'Content-MD5'
 	is_request_header = True
 	is_response_header = True
+	is_single_value_header = True
 
 
 class ContentType(HeaderElement, MimeType, CodecElement):
@@ -185,6 +191,7 @@ class ContentType(HeaderElement, MimeType, CodecElement):
 	__name__ = 'Content-Type'
 	is_request_header = True
 	is_response_header = True
+	is_single_value_header = True
 
 	raise_on_missing_codec = False
 
@@ -231,11 +238,13 @@ class Date(HeaderElement):
 
 	priority = '\x01'
 	is_response_header = True
+	is_single_value_header = True
 
 
 class Expect(HeaderElement):
 
 	is_response_header = True
+	is_single_value_header = True
 
 	@property
 	def is_100_continue(self):
@@ -244,6 +253,7 @@ class Expect(HeaderElement):
 
 class From(HeaderElement):
 	is_request_header = True
+	is_single_value_header = True
 
 
 class Forwarded(HeaderElement):
@@ -275,6 +285,7 @@ class Forwarded(HeaderElement):
 class Host(HeaderElement):
 
 	is_request_header = True
+	is_single_value_header = True
 
 	priority = '\x03'
 	RE_HOSTNAME = re.compile(r'^([^\x00-\x1F\x7F()^\'"<>@,;:/\[\]={} \t\\\\"]+)$')
@@ -339,28 +350,33 @@ class XForwardedHost(Host):
 
 class Location(HeaderElement):
 	is_response_header = True
+	is_single_value_header = True
 
 
 class MaxForwards(HeaderElement):
 
 	__name__ = 'Max-Forwards'
 	is_response_header = True
+	is_single_value_header = True
 
 
 class Referer(HeaderElement):
 	is_request_header = True
+	is_single_value_header = True
 
 
 class RetryAfter(HeaderElement):
 
 	__name__ = 'Retry-After'
 	is_response_header = True
+	is_single_value_header = True
 
 
 class Server(HeaderElement):
 
 	priority = '\x02'
 	is_response_header = True
+	is_single_value_header = True
 
 
 class SetCookie(_ListElement, _CookieElement):
@@ -458,6 +474,7 @@ class UserAgent(HeaderElement):
 	__name__ = 'User-Agent'
 	is_response_header = True
 	is_request_header = True
+	is_single_value_header = True
 
 
 class Via(HeaderElement):

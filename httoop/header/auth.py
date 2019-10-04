@@ -6,6 +6,7 @@ from httoop.header.element import _HopByHopElement, _ListElement
 
 class Authorization(AuthRequestElement):
 	is_request_header = True
+	is_single_value_header = True
 
 
 class ProxyAuthenticate(_ListElement, _HopByHopElement, AuthResponseElement):
@@ -16,6 +17,7 @@ class ProxyAuthenticate(_ListElement, _HopByHopElement, AuthResponseElement):
 class ProxyAuthorization(_HopByHopElement, AuthRequestElement):
 	__name__ = 'Proxy-Authorization'
 	is_request_header = True
+	is_single_value_header = True
 
 
 class WWWAuthenticate(_ListElement, AuthResponseElement):

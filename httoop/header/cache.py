@@ -6,6 +6,7 @@ from httoop.header.element import HeaderElement
 class Age(HeaderElement):
 
 	is_response_header = True
+	is_single_value_header = True
 
 
 class CacheControl(HeaderElement):
@@ -18,6 +19,7 @@ class CacheControl(HeaderElement):
 class Expires(HeaderElement):
 
 	is_response_header = True
+	is_single_value_header = True
 
 
 class Pragma(HeaderElement):

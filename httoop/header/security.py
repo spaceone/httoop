@@ -39,6 +39,7 @@ class StrictTransportSecurity(HeaderElement):
 
 	__name__ = 'Strict-Transport-Security'
 	is_response_header = True
+	is_single_value_header = True
 
 	@property
 	def include_sub_domains(self):
@@ -53,6 +54,7 @@ class ContentTypeOptions(HeaderElement):
 
 	__name__ = 'X-Content-Type-Options'
 	is_response_header = True
+	is_single_value_header = True
 
 	@property
 	def nosniff(self):
@@ -70,6 +72,7 @@ class FrameOptions(HeaderElement):
 
 	__name__ = 'X-Frame-Options'
 	is_response_header = True
+	is_single_value_header = True
 
 	RE_PARAMS = re.compile('\\s+')
 
@@ -106,6 +109,7 @@ class XSSProtection(HeaderElement):
 
 	__name__ = 'X-XSS-Protection'
 	is_response_header = True
+	is_single_value_header = True
 
 	@property
 	def enabled(self):

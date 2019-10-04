@@ -130,8 +130,13 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 			value = b''.join(value).rstrip()
 			Element = HEADER.get(name, HeaderElement)
 			value = Element.decode(value)
+			name = name.decode('ascii', 'ignore')
 
-			self.append(name.decode('ascii', 'ignore'), value)
+			if name in self and Element.is_single_value_header and not Element.ignore_single_value_error:
+				# TODO: this is only for non-splitted values
+				raise InvalidHeader(_(u"Single header value given more than once: %r") % (name,))
+
+			self.append(name, value)
 
 	def compose(self):
 		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, v) for k, v in self.__items())
@@ -145,7 +150,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 			if Element is not HeaderElement:
 				key = Element.__name__
 			key = key.encode('ascii', 'ignore')
-			if Element.list_element:
+			if Element.list_element:  # TODO: and not Element.is_single_value_header?
 				for value in Element.split(values):
 					yield key, Element.encode(value)
 			else:

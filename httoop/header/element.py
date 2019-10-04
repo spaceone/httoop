@@ -38,6 +38,8 @@ class HeaderElement(with_metaclass(HeaderType)):
 	hop_by_hop = False
 	list_element = False
 	encode_latin1_quoted_printable = False
+	is_single_value_header = False
+	ignore_single_value_error = False
 
 	# Regular expression that matches `special' characters in parameters, the
 	# existance of which force quoting of the parameter value.
@@ -376,4 +378,5 @@ class _HopByHopElement(object):
 
 
 class _ListElement(object):
-	list_element = True
+	list_element = True  # TODO: rename list_element into something like allow_comma_separation = False, allow_split_foobar
+	is_single_value_header = False

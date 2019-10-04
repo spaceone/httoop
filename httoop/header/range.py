@@ -11,6 +11,7 @@ class ContentRange(HeaderElement):
 
 	__name__ = 'Content-Range'
 	is_response_header = True
+	is_single_value_header = True
 
 	def __init__(self, value, range_, length):
 		self.range = range_
@@ -56,11 +57,13 @@ class ContentRange(HeaderElement):
 class IfRange(HeaderElement):
 	__name__ = 'If-Range'
 	is_request_header = True
+	is_single_value_header = True
 
 
 class Range(HeaderElement):
 
 	is_request_header = True
+	is_single_value_header = True
 
 	def __init__(self, value, ranges, params=None):
 		self.ranges = ranges

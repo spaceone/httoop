@@ -263,7 +263,8 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 				data = next(fd)
 			except StopIteration:
 				self.set(buffer_)
-				raise
+				#raise
+				return  # Python 3.7 PEP 479
 			else:
 				buffer_.append(data)
 				yield data

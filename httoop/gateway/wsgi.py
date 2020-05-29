@@ -4,7 +4,7 @@
 .. seealso:: `PEP 333 <http://www.python.org/dev/peps/pep-0333/>`_
 """
 
-from httoop.six import reraise
+from httoop.six import reraise, PY2
 from httoop.messages import Body
 from httoop.util import iteritems
 
@@ -28,8 +28,8 @@ class WSGI(object):
 		self.use_path_info = use_path_info
 		super(WSGI, self).__init__(*args, **kwargs)
 		self.exc_info = None
-		self.server_name = bytes(self.request.uri.host)
-		self.server_port = bytes(self.request.uri.port)
+		self.server_name = self.request.uri.host.encode()
+		self.server_port = str(self.request.uri.port).encode()
 		self.environ = environ or {}
 		self.set_environ(self.environ)
 		self.headers_set = False
@@ -71,7 +71,7 @@ class WSGI(object):
 			if data:
 				break
 		else:
-			write('')   # send headers now if body was empty
+			write(b'')   # send headers now if body was empty
 			return
 
 		def buffered(data):
@@ -112,6 +112,8 @@ class WSGI(object):
 			'wsgi.multiprocess': self.multiprocess,
 			'wsgi.run_once': self.run_once,
 		})
+		if not PY2:
+			environ = dict((key, value.decode('ISO8859-1') if isinstance(value, bytes) else value) for key, value in environ.items())
 		return environ
 
 	def set_environ(self, environ):

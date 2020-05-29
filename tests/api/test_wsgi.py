@@ -57,7 +57,7 @@ def application6(environ, start_response):
 def application7(environ, start_response):
 	write = start_response(OK, response_headers)
 	write(output)
-	return ['']
+	return [b'']
 
 
 def application8(environ, start_response):
@@ -98,11 +98,11 @@ def application11(environ, start_response):
 
 
 def application12(environ, start_response):
-	yield ''
+	yield b''
 
 
 def application13(environ, start_response):
-	return ['']
+	return [b'']
 
 
 @pytest.mark.parametrize('application', [
@@ -133,7 +133,7 @@ def application15(environ, start_response):
 	try:
 		raise ValueError(result)
 	except ValueError:
-		start_response('200 OK', {}, sys.exc_info())
+		start_response(b'200 OK', {}, sys.exc_info())
 	return []
 
 

@@ -164,7 +164,7 @@ further = [
 	(b'http://a/b/c/de', b';x', b'http://a/b/c/;x'),
 	(b'a', b'b', b'b'),  # don't duplicate filename
 	#pytest.mark.xfail((b'http:///', b'..','http:///'), reason='The // is stripped due to normalization.'),
-	(b'', b'http://a/b/c/g?y/./x', 'http://a/b/c/g?y/./x'),
+	(b'', b'http://a/b/c/g?y/./x', b'http://a/b/c/g?y/./x'),
 	#pytest.mark.xfail((b'', b'http://a/./g', b'http://a/./g'), reason='The dot is stripped due to normalization'),
 	(b'svn://pathtorepo/dir1', b'dir2', b'svn://pathtorepo/dir2'),
 	(b'svn+ssh://pathtorepo/dir1', b'dir2', b'svn+ssh://pathtorepo/dir2'),

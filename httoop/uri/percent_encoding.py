@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from httoop import six
+
 
 class Percent(object):
 	u"""Percentage encoding
@@ -10,7 +12,7 @@ class Percent(object):
 		b"!#$&'()*+,/:;=?@[]"
 	"""
 
-	HEX_MAP = dict((a + b, chr(int(a + b, 16))) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef')
+	HEX_MAP = dict(((a + b).encode('ASCII'), six.int2byte(int(a + b, 16))) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef')
 
 	# ABNF
 	GEN_DELIMS = b":/?#[]@"
@@ -46,5 +48,6 @@ class Percent(object):
 
 	@classmethod
 	def quote(cls, data, charset=UNRESERVED):
-		charset = set(charset) - {b'%'}
+		charset = {six.int2byte(c) for c in six.iterbytes(charset)} - {b'%'}
+		data = (six.int2byte(d) for d in six.iterbytes(data))
 		return b''.join(b'%%%X' % (ord(d),) if d not in charset else d for d in data)

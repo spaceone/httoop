@@ -39,7 +39,7 @@ def test_query_string_parse(query_string, query):
 def test_query_string_compose(query_string, query):
 	uri = URI(b'http://example.com/')
 	uri.query = query
-	assert uri.query_string == query_string
+	assert uri.query_string == query_string.decode('ASCII')
 
 
 @pytest.mark.xfail(reason='API not yet implemented.')

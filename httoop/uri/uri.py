@@ -8,7 +8,7 @@
 import re
 from socket import inet_pton, inet_ntop, AF_INET, AF_INET6, error as SocketError
 
-from httoop.six import with_metaclass
+from httoop.six import with_metaclass, iterbytes, int2byte
 
 from httoop.exceptions import InvalidURI
 from httoop.util import Unicode, _
@@ -29,11 +29,11 @@ class URI(with_metaclass(URIType)):
 
 	@property
 	def query(self):
-		return tuple(QueryString.decode(self.query_string, self.encoding))
+		return tuple(QueryString.decode(self.query_string.encode(self.encoding), self.encoding))
 
 	@query.setter
 	def query(self, query):
-		self.query_string = QueryString.encode(query, self.encoding)
+		self.query_string = QueryString.encode(query, self.encoding).decode(self.encoding)
 
 	@property
 	def path_segments(self):
@@ -88,8 +88,8 @@ class URI(with_metaclass(URIType)):
 		if relative.path:
 			current = relative
 		joined.path = current.path
-		if relative.path and not relative.path.startswith(b'/'):
-			joined.path = b'%s%s%s' % (self.path, b'' if self.path.endswith(b'/') else '/../', relative.path)
+		if relative.path and not relative.path.startswith(u'/'):
+			joined.path = u'%s%s%s' % (self.path, u'' if self.path.endswith(u'/') else u'/../', relative.path)
 		if relative.query_string:
 			current = relative
 		joined.query_string = current.query_string
@@ -133,7 +133,7 @@ class URI(with_metaclass(URIType)):
 		for part in path.split(u'/'):
 			if part == u'..' and (not unsplit or unsplit.pop() is not None):
 				directory = True
-			elif part != b'.':
+			elif part != u'.':
 				unsplit.append(part)
 				directory = False
 			else:
@@ -145,7 +145,7 @@ class URI(with_metaclass(URIType)):
 
 	def set(self, uri):
 		if isinstance(uri, Unicode):
-			uri = uri.encode('UTF-8')  # FIXME
+			uri = uri.encode(self.encoding)  # FIXME: remove?
 
 		if isinstance(uri, bytes):
 			self.parse(uri)
@@ -194,7 +194,7 @@ class URI(with_metaclass(URIType)):
 			[<scheme>:][//[<username>[:<password>]@][<host>][:<port>]/]<path>[?<query>][#<fragment>]
 		"""
 
-		if isinstance(uri, Unicode):
+		if isinstance(uri, Unicode):  # TODO: remove?
 			try:
 				uri = uri.encode('ascii')
 			except UnicodeEncodeError:
@@ -257,8 +257,11 @@ class URI(with_metaclass(URIType)):
 		if host.startswith(b'[') and host.endswith(b']'):
 			host = host[1:-1]
 			try:
-				return u'[%s]' % inet_ntop(AF_INET6, inet_pton(AF_INET6, host)).decode('ascii')
-			except SocketError:
+				host = inet_ntop(AF_INET6, inet_pton(AF_INET6, host.decode('ascii')))
+				if isinstance(host, bytes):  # Python 2
+					host = host.decode('ascii')
+				return u'[%s]' % (host,)
+			except (SocketError, UnicodeDecodeError):
 				# IPvFuture
 				if host.startswith(b'v') and b'.' in host and host[1:].split(b'.', 1)[0].isdigit():
 					try:
@@ -269,8 +272,11 @@ class URI(with_metaclass(URIType)):
 		# IPv4
 		if all(x.isdigit() for x in host.split(b'.')):
 			try:
-				return inet_ntop(AF_INET, inet_pton(AF_INET, host)).decode('ascii')
-			except SocketError:
+				host = inet_ntop(AF_INET, inet_pton(AF_INET, host.decode('ascii')))
+				if isinstance(host, bytes):  # Python 2
+					host = host.decode('ascii')
+				return host
+			except (SocketError, UnicodeDecodeError):
 				raise InvalidURI(_('Invalid IPv4 address in URI.'))
 
 		if host.strip(Percent.UNRESERVED + Percent.SUB_DELIMS + b'%'):
@@ -320,11 +326,11 @@ class URI(with_metaclass(URIType)):
 		scheme, path, query_string, quote, fragment = self.scheme, self.path, self.query_string, self.quote, self.fragment
 		PATH = Percent.PATH
 		if not scheme and not path.startswith(u'/'):
-			PATH = set(PATH) - {b':', b'@'}
+			PATH = b''.join({int2byte(c) for c in iterbytes(PATH)} - {b':', b'@'})
 		yield b'/'.join(quote(x, PATH) for x in path.split(u'/'))
 		if query_string:
 			yield b'?'
-			yield query_string
+			yield query_string.encode(self.encoding)
 		if fragment:
 			yield b'#'
 			yield quote(fragment, Percent.FRAGMENT)
@@ -360,7 +366,7 @@ class URI(with_metaclass(URIType)):
 			return super(URI, self).__setattr__(name, value)
 
 		if name == 'scheme' and value:
-			self.__class__ = self.SCHEMES.get(value, URI)
+			self.__class__ = self.SCHEMES.get(value if isinstance(value, bytes) else value.encode(), URI)
 
 		if name in self.__slots__:
 			if isinstance(value, bytes):

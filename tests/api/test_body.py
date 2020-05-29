@@ -128,18 +128,18 @@ def test_set_invalid_body(request_):
 
 def test_body_iter_list(request_):
 	request_.body = ['asdf', 'foo', 'Ba', 'Baz', None, 'blub']
-	assert next(request_.body) == 'asdf'
-	assert next(request_.body) == 'foo'
-	assert next(request_.body) == 'Ba'
-	assert next(request_.body) == 'Baz'
-	assert next(request_.body) == 'blub'
+	assert next(request_.body) == b'asdf'
+	assert next(request_.body) == b'foo'
+	assert next(request_.body) == b'Ba'
+	assert next(request_.body) == b'Baz'
+	assert next(request_.body) == b'blub'
 	with pytest.raises(StopIteration):
 		next(request_.body)
-	assert next(request_.body) == 'asdf'
-	assert next(request_.body) == 'foo'
-	assert next(request_.body) == 'Ba'
-	assert next(request_.body) == 'Baz'
-	assert next(request_.body) == 'blub'
+	assert next(request_.body) == b'asdf'
+	assert next(request_.body) == b'foo'
+	assert next(request_.body) == b'Ba'
+	assert next(request_.body) == b'Baz'
+	assert next(request_.body) == b'blub'
 
 
 def test_body_file_interface(request_):

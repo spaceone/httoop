@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from binascii import Error as Base64Error
-from base64 import decodestring as decode_base64, encodestring as encode_base64
 
 from httoop.header.element import HeaderElement
 from httoop.exceptions import InvalidHeader
-from httoop.util import _
+from httoop.util import decode_base64, encode_base64, _
 
 
 class BasicAuthRequestScheme(object):

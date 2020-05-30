@@ -25,6 +25,10 @@ try:
 except ImportError:  # pragma: no cover
 	izip = zip
 
+try:
+	from base64 import decodebytes as decode_base64, encodebytes as encode_base64
+except ImportError:  # pragma: no cover
+	from base64 import decodestring as decode_base64, encodestring as encode_base64
 
 PY3 = sys.version_info[0] == 3
 
@@ -44,6 +48,7 @@ __all__ = [
 	'IFile', 'partial', 'parsedate', 'izip',
 	'CaseInsensitiveDict', 'decode_rfc2231',
 	'sanitize_encoding', 'make_boundary', '_',
+	'encode_base64', 'decode_base64',
 ]
 
 KNOWN_ENCODINGS = {

@@ -12,8 +12,11 @@ class JSON(Codec):
 
 	@classmethod
 	def encode(cls, data, charset=None, mimetype=None):
-		return json_encode(data)
+		data = json_encode(data)
+		if not isinstance(data, bytes):  # python3
+			data = data.encode(charset)
+		return data
 
 	@classmethod
 	def decode(cls, data, charset=None, mimetype=None):
-		return json_decode(data)
+		return json_decode(data.decode(charset or 'ASCII'))

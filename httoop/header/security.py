@@ -17,11 +17,11 @@ class ContentSecurityPolicy(HeaderElement):
 	__name__ = 'Content-Security-Policy'
 	is_response_header = True
 
-	RE_SPLIT = re.compile(';')
-	RE_PARAMS = re.compile('\\s+')
+	RE_SPLIT = re.compile(b';')
+	RE_PARAMS = re.compile(b'\\s+')
 
 	def compose(self):
-		return b'%s %s; ' % (self.value, ' '.join(self.params.keys()))
+		return b'%s %s; ' % (self.value.encode('ISO8859-1'), b' '.join(self.params.keys()))
 
 
 class ContentSecurityPolicyReportOnly(ContentSecurityPolicy):
@@ -71,7 +71,7 @@ class FrameOptions(HeaderElement):
 	__name__ = 'X-Frame-Options'
 	is_response_header = True
 
-	RE_PARAMS = re.compile('\\s+')
+	RE_PARAMS = re.compile(b'\\s+')
 
 	@property
 	def deny(self):

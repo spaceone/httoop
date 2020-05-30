@@ -25,7 +25,7 @@ class ContentRange(HeaderElement):
 	def compose(self):
 		length = b'*' if self.length is None else self.length
 		byte_range = b'%d-%d' % tuple(self.range) if self.range else b'*'
-		return b'%s %s/%s' % (self.value, byte_range, length)
+		return b'%s %s/%s' % (self.value.encode('ISO8859-1'), byte_range, length)
 
 	@classmethod
 	def parse(cls, elementstr):
@@ -50,7 +50,7 @@ class ContentRange(HeaderElement):
 				raise ValueError
 		except ValueError:
 			raise InvalidHeader(_(u'Content-Range: %r'), elementstr)
-		return cls(value, (start, end), complete_length)
+		return cls(value.decode('ISO8859-1'), (start, end), complete_length)
 
 
 class IfRange(HeaderElement):
@@ -79,13 +79,13 @@ class Range(HeaderElement):
 				start = int(start) if start else None
 				stop = int(stop) if stop else None
 				if start and start < 0 or stop and stop < 0:
-					raise ValueError
+					raise ValueError()
 			except ValueError:
 				raise InvalidHeader(_(u'no range number.'))
 			if start is not None and stop is not None and stop < start:
 				raise InvalidHeader(_(u'range start must be smaller than end.'))
 			ranges.add((start, stop))
-		return cls(bytesunit, list(sorted(ranges)))
+		return cls(bytesunit.decode('ISO8859-1'), list(sorted(ranges)))
 
 	def sanitize(self):
 		super(Range, self).sanitize()

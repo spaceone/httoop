@@ -9,10 +9,12 @@
 """
 
 import re
+from binascii import b2a_base64
+from email.errors import HeaderParseError
 
 from httoop.six import with_metaclass
 
-from httoop.util import CaseInsensitiveDict, iteritems, decode_rfc2231, Unicode, decode_header, sanitize_encoding, _
+from httoop.util import CaseInsensitiveDict, iteritems, decode_header, sanitize_encoding, _
 from httoop.exceptions import InvalidHeader
 from httoop.uri.percent_encoding import Percent
 
@@ -41,12 +43,12 @@ class HeaderElement(with_metaclass(HeaderType)):
 
 	# Regular expression that matches `special' characters in parameters, the
 	# existance of which force quoting of the parameter value.
-	RE_TSPECIALS = re.compile('[ \\(\\)<>@,;:\\\\"/\\[\\]\\?=]')
-	RE_SPLIT = re.compile(',(?=(?:[^"]*"[^"]*")*[^"]*$)')
-	RE_PARAMS = re.compile(';(?=(?:[^"]*"[^"]*")*[^"]*$)')
+	RE_TSPECIALS = re.compile(b'[ \\(\\)<>@,;:\\\\"/\\[\\]\\?=]')
+	RE_SPLIT = re.compile(b',(?=(?:[^"]*"[^"]*")*[^"]*$)')
+	RE_PARAMS = re.compile(b';(?=(?:[^"]*"[^"]*")*[^"]*$)')
 
 	def __init__(self, value, params=None):
-		self.value = Unicode(value)
+		self.value = value
 		self.params = params or {}
 		self.sanitize()
 
@@ -69,7 +71,8 @@ class HeaderElement(with_metaclass(HeaderType)):
 		return self.compose()
 
 	def __unicode__(self):
-		return self.decode(bytes(self))
+		#return bytes(self).decode('ISO8859-1')
+		return self.decode_rfc2047(bytes(self))
 
 	if str is bytes:
 		__str__ = __bytes__
@@ -78,7 +81,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 
 	def compose(self):
 		params = [b'; %s' % self.formatparam(k, v) for k, v in iteritems(self.params)]
-		return b'%s%s' % (self.value, ''.join(params))
+		return b'%s%s' % (self.encode_rfc2047(self.value), b''.join(params))
 
 	@classmethod
 	def parseparams(cls, elementstr):
@@ -111,7 +114,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 	def unescape_param(cls, value):
 		quoted = value.startswith(b'"') and value.endswith(b'"')
 		if quoted:
-			value = re.sub(r'\\(?!\\)', '', value.strip(b'"'))
+			value = re.sub(b'\\\\(?!\\\\)', b'', value[1:-1])
 		else:
 			if cls.RE_TSPECIALS.search(value):
 				raise InvalidHeader(_(u'Unquoted parameter in %r containing TSPECIALS: %r'), cls.__name__, value)
@@ -125,34 +128,35 @@ class HeaderElement(with_metaclass(HeaderType)):
 			if key in count:
 				raise InvalidHeader(_(u'Parameter given twice: %r'), key.decode('ISO8859-1'))
 			count.add(key)
-			if '*' in key:
-				if key.endswith('*') and not quoted:
-					charset, language, value_ = decode_rfc2231(value.encode('ISO8859-1'))
-					if not charset:
-						yield key, value
-						continue
-					encoding = sanitize_encoding(charset)
+			if b'*' in key:
+				if key.endswith(b'*') and not quoted and not value.startswith(b"'") and value.count(b"'") >= 2:
+					charset, language, value_ = value.split(b"'", 2)
+					encoding = sanitize_encoding(charset.decode('ASCII', 'replace'))
 					if encoding is None:
 						raise InvalidHeader(_(u'Unknown encoding: %r'), charset)
 					try:
 						key, value = key[:-1], Percent.unquote(value_).decode(encoding)
 					except UnicodeDecodeError as exc:
 						raise InvalidHeader(_(u'%s') % (exc,))
-				key_, asterisk, num = key.rpartition('*')
+				else:
+					value = value.decode('ISO8859-1')
+				key_, asterisk, num = key.rpartition(b'*')
 				if asterisk:
 					try:
-						if num != '0' and num.startswith('0'):
-							raise ValueError
+						if num != b'0' and num.startswith(b'0'):
+							raise ValueError()
 						num = int(num)
 					except ValueError:
 						yield key, value
 						continue
 					continuations.setdefault(key_, {})[num] = value
 					continue
+			else:
+				value = value.decode('ISO8859-1')
 			yield key, value
 
 		for key, lines in iteritems(continuations):
-			value = b''
+			value = u''
 			for i in range(len(lines)):
 				try:
 					value += lines.pop(i)
@@ -163,13 +167,14 @@ class HeaderElement(with_metaclass(HeaderType)):
 			if value:
 				yield key, value
 			for k, v in iteritems(lines):
-				yield '%s*%d' % (key, k), v
+				yield b'%s*%d' % (key, k), v
 
 	@classmethod
 	def parse(cls, elementstr):
 		"""Construct an instance from a string of the form 'token;key=val'."""
-		ival, params = cls.parseparams(elementstr)
-		return cls(ival, params)
+		elementstr, encoding = cls.decode_rfc2047_charset(elementstr)
+		ival, params = cls.parseparams(elementstr.encode(encoding))
+		return cls(ival.decode(encoding), params)
 
 	@classmethod
 	def split(cls, fieldvalue):
@@ -194,7 +199,14 @@ class HeaderElement(with_metaclass(HeaderType)):
 		This will quote the value if needed or if quote is true.
 		"""
 		if value:
-			value = bytes(value)
+			if not isinstance(value, bytes):
+				try:
+					value = value.encode('ASCII')
+				except UnicodeEncodeError:
+					param += b'*'
+					value = b"utf-8''%s" % (Percent.quote(value.encode('UTF-8')),)
+					quote = False
+
 			if quote or cls.RE_TSPECIALS.search(value):
 				value = value.replace(b'\\', b'\\\\').replace(b'"', br'\"')
 				return b'%s="%s"' % (param, value)
@@ -204,18 +216,33 @@ class HeaderElement(with_metaclass(HeaderType)):
 			return param
 
 	@classmethod
-	def decode(cls, value):
-		if b'=?' in value:
-			# FIXME: must not parse encoded_words in unquoted ('Content-Type', 'Content-Disposition') header params
-			return u''.join(atom.decode(charset or 'ISO8859-1') for atom, charset in decode_header(value))
-		return value.decode('ISO8859-1')
+	def decode_rfc2047(cls, value):
+		return cls.decode_rfc2047_charset(value)[0]
 
 	@classmethod
-	def encode(cls, value):
+	def decode_rfc2047_charset(cls, value):
+		if b'=?' in value and b'"=?' not in value and b'==?' not in value:
+			# FIXME: must not parse encoded_words in unquoted ('Content-Type', 'Content-Disposition') header params
+			try:
+				return u''.join(atom.decode(charset or 'ISO8859-1') for atom, charset in decode_header(value.decode('ISO8859-1'))), 'UTF-8'
+			except HeaderParseError as exc:
+				raise InvalidHeader(str(exc))
+		try:
+			return value.decode('ASCII'), 'ASCII'
+		except UnicodeDecodeError:
+			return value.decode('ISO8859-1'), 'ISO8859-1'
+
+	@classmethod
+	def encode_rfc2047(cls, value):
 		try:
 			return value.encode('ascii' if cls.encode_latin1_quoted_printable else 'ISO8859-1')
 		except UnicodeEncodeError:
-			return value.encode('ISO8859-1', 'replace')  # FIXME: if value contains UTF-8 chars encode them in MIME; =?UTF-8?B?…?= (RFC 2047); seealso quopri
+			try:
+				value.encode('ISO8859-1')
+			except UnicodeEncodeError:
+				return b'=?utf-8?b?%s?=' % (b2a_base64(value.encode('utf-8')).rstrip(b'\n'),)
+			else:
+				return b'=?ISO8859-1?b?%s?=' % (b2a_base64(value.encode('ISO8859-1')).rstrip(b'\n'),)
 
 	def __repr__(self):
 		params = ', %r' % (self.params,) if self.params else ''
@@ -231,50 +258,50 @@ class MimeType(object):
 
 	@property
 	def mimetype(self):
-		return '%s/%s' % (self.type, self.subtype_wo_vendor)
+		return u'%s/%s' % (self.type, self.subtype_wo_vendor)
 
 	@property
 	def type(self):
-		return self.value.split('/', 1)[0]
+		return self.value.split(u'/', 1)[0]
 
 	@type.setter
 	def type(self, type_):
-		self.value = '%s/%s' % (type_, self.subtype)
+		self.value = u'%s/%s' % (type_, self.subtype)
 
 	@property
 	def subtype(self):
-		return (self.value.split('/', 1) + [b''])[1]
+		return (self.value.split(u'/', 1) + [u''])[1]
 
 	@subtype.setter
 	def subtype(self, subtype):
-		self.value = '%s/%s' % (self.type, subtype)
+		self.value = u'%s/%s' % (self.type, subtype)
 
 	# TODO: official name
 	@property
 	def subtype_wo_vendor(self):
-		return self.subtype.split('+', 1).pop()
+		return self.subtype.split(u'+', 1).pop()
 
 	@subtype_wo_vendor.setter
 	def subtype_wo_vendor(self, subtype_wo_vendor):
-		self.subtype = '%s+%s' % (self.vendor, subtype_wo_vendor)
+		self.subtype = u'%s+%s' % (self.vendor, subtype_wo_vendor)
 
 	@property
 	def vendor(self):
-		if b'+' in self.subtype:
-			return self.subtype.split('+', 1)[0]
-		return b''
+		if u'+' in self.subtype:
+			return self.subtype.split(u'+', 1)[0]
+		return u''
 
 	@vendor.setter
 	def vendor(self, vendor):
-		self.subtype = '%s+%s' % (vendor, self.subtype_wo_vendor)
+		self.subtype = u'%s+%s' % (vendor, self.subtype_wo_vendor)
 
 	@property
 	def version(self):
-		return self.params.get('version', '')
+		return self.params.get('version', u'')
 
 	@version.setter
 	def version(self, version):
-		self.params['version'] = version
+		self.params['version'] = str(version)
 
 
 class _AcceptElement(HeaderElement):
@@ -305,10 +332,11 @@ class _AcceptElement(HeaderElement):
 
 	@classmethod
 	def parse(cls, elementstr):
+		elementstr, encoding = cls.decode_rfc2047_charset(elementstr)
 		qvalue = None
 		# The first "q" parameter (if any) separates the initial
 		# media-range parameter(s) (if any) from the accept-params.
-		atoms = cls.RE_Q_SEPARATOR.split(elementstr, 1)
+		atoms = cls.RE_Q_SEPARATOR.split(elementstr.encode(encoding), 1)
 		media_range = atoms.pop(0).strip()
 		if atoms:
 			# The qvalue for an Accept header can have extensions. The other
@@ -317,9 +345,9 @@ class _AcceptElement(HeaderElement):
 
 		media_type, params = cls.parseparams(media_range)
 		if qvalue is not None:
-			params["q"] = qvalue
+			params["q"] = bytes(qvalue)
 
-		return cls(media_type, params)
+		return cls(media_type.decode(encoding), params)
 
 	@classmethod
 	def sorted(cls, elements):
@@ -342,33 +370,35 @@ class _AcceptElement(HeaderElement):
 class _CookieElement(HeaderElement):
 
 	#RE_TSPECIALS = re.compile(br'[ \(\)<>@,;:\\"\[\]\?=]')
-	RE_TSPECIALS = re.compile(r'(?!)')
+	RE_TSPECIALS = re.compile(b'(?!)')
 
 	def __init__(self, cookie_name, cookie_value, params=None):
-		self.cookie_name = Unicode(cookie_name)
-		self.cookie_value = Unicode(cookie_value)
+		self.cookie_name = cookie_name
+		self.cookie_value = cookie_value
 		super(_CookieElement, self).__init__(self.value, params)
 
 	@classmethod
 	def parse(cls, elementstr):
-		value, params = cls.parseparams(elementstr)
+		elementstr, encoding = cls.decode_rfc2047_charset(elementstr)
+		value, params = cls.parseparams(elementstr.encode(encoding))
 		cookie_name, cookie_value, __ = cls.parseparam(value)
-		return cls(cookie_name, cookie_value, params)
+		return cls(cookie_name.decode(encoding), cookie_value.decode(encoding), params)
 
 	@classmethod
 	def unescape_key(cls, key):
 		key = key.strip()
-		if key.lower() in ('httponly', 'secure', 'path', 'domain', 'max-age', 'expires'):
+		if key.lower() in (b'httponly', b'secure', b'path', b'domain', b'max-age', b'expires'):
 			return key.lower()
 		return key
 
 	@property
 	def value(self):
-		return b'%s=%s' % (self.cookie_name.encode('ISO8859-1'), self.cookie_value.encode('ISO8859-1'))
+		return u'%s=%s' % (self.cookie_name, self.cookie_value)
 
 	@value.setter
 	def value(self, value):
-		self.cookie_name, self.cookie_value, __ = self.parseparam(value)
+		self.cookie_name, self.cookie_value, __ = self.parseparam(value.encode('ISO8859-1'))
+		self.cookie_name, self.cookie_value = self.cookie_name.decode('ISO8859-1'), self.cookie_value.decode('ISO8859-1')
 
 
 class _HopByHopElement(object):

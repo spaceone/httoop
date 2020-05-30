@@ -80,7 +80,7 @@ class Connection(_HopByHopElement, HeaderElement):
 
 	is_request_header = True
 	is_response_header = True
-	priority = '\xff'
+	priority = b'\xff'
 
 	@property
 	def close(self):
@@ -190,13 +190,13 @@ class ContentType(HeaderElement, MimeType, CodecElement):
 
 	@property
 	def charset(self):
-		return self.params.get('charset', '')
+		return self.params.get('charset', u'')
 
 	@charset.setter
 	def charset(self, charset):
 		self.params['charset'] = charset
 
-	VALID_BOUNDARY = re.compile(b'^[ -~]{0,200}[!-~]$')
+	VALID_BOUNDARY = re.compile(u'^[ -~]{0,200}[!-~]$')
 
 	def sanitize(self):
 		super(ContentType, self).sanitize()
@@ -204,7 +204,7 @@ class ContentType(HeaderElement, MimeType, CodecElement):
 			self.sanitize_boundary()
 
 	def sanitize_boundary(self):
-		boundary = self.params['boundary'] = self.params['boundary'].strip('"')
+		boundary = self.params['boundary'] = self.params['boundary'].strip(u'"')
 		if not self.VALID_BOUNDARY.match(boundary):
 			raise InvalidHeader(_(u'Invalid boundary in multipart form: %r'), boundary)
 
@@ -220,7 +220,7 @@ class ContentType(HeaderElement, MimeType, CodecElement):
 class Cookie(_CookieElement):
 
 	is_request_header = True
-	RE_SPLIT = re.compile('; ')
+	RE_SPLIT = re.compile(b'; ')
 
 	@classmethod
 	def join(cls, values):
@@ -229,7 +229,7 @@ class Cookie(_CookieElement):
 
 class Date(HeaderElement):
 
-	priority = '\x01'
+	priority = b'\x01'
 	is_response_header = True
 
 
@@ -268,7 +268,7 @@ class Forwarded(HeaderElement):
 
 	@classmethod
 	def parse(cls, elementstr):
-		return super(Forwarded, cls).parse(u'x; %s' % (elementstr,))
+		return super(Forwarded, cls).parse(b'x; %s' % (elementstr,))
 
 
 # TODO: add case insensitve HeaderElement
@@ -276,7 +276,7 @@ class Host(HeaderElement):
 
 	is_request_header = True
 
-	priority = '\x03'
+	priority = b'\x03'
 	RE_HOSTNAME = re.compile(r'^([^\x00-\x1F\x7F()^\'"<>@,;:/\[\]={} \t\\\\"]+)$')
 	HOSTPORT = re.compile(r'^(.*?)(?::(\d+))?$')
 
@@ -329,7 +329,7 @@ class Host(HeaderElement):
 		if self.port:
 			self.port = int(self.port)
 		if not self.hostname:
-			raise InvalidHeader(_(u'Invalid Host header'))
+			raise InvalidHeader(_(u'Invalid Host header: %s'), self.value)
 
 
 class XForwardedHost(Host):
@@ -359,7 +359,7 @@ class RetryAfter(HeaderElement):
 
 class Server(HeaderElement):
 
-	priority = '\x02'
+	priority = b'\x02'
 	is_response_header = True
 
 

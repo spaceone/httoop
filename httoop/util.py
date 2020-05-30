@@ -7,7 +7,6 @@ import sys
 import codecs
 from functools import partial
 
-from email.utils import decode_rfc2231
 from email.generator import _make_boundary as make_boundary
 
 try:
@@ -46,7 +45,7 @@ __all__ = [
 	'PY3', 'Unicode', 'iteritems',
 	'to_unicode', 'to_ascii', 'decode_header',
 	'IFile', 'partial', 'parsedate', 'izip',
-	'CaseInsensitiveDict', 'decode_rfc2231',
+	'CaseInsensitiveDict',
 	'sanitize_encoding', 'make_boundary', '_',
 	'encode_base64', 'decode_base64',
 ]

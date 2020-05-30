@@ -84,12 +84,12 @@ class ComposedResponse(ComposedMessage):
 		response.status = 206
 		range_body = range_.get_range_content(response.body.fd)
 		if len(range_.ranges) == 1:
-			response.headers.set_element('Content-Range', b'bytes', range_.ranges[0], content_length)
+			response.headers.set_element('Content-Range', 'bytes', range_.ranges[0], content_length)
 			response.body = range_body
 		else:
 			content_type = response.headers.get('Content-Type')
 			response.body = None
-			response.headers['Content-Type'] = response.headers.create_element('Content-Type', b'multipart/byteranges', {'boundary': make_boundary()})
+			response.headers['Content-Type'] = response.headers.create_element('Content-Type', 'multipart/byteranges', {'boundary': make_boundary()})
 			response.body.mimetype = response.headers['Content-Type']
 			response.body.encode(self.multipart_byteranges(range_body, range_, content_length, content_type))
 
@@ -99,7 +99,7 @@ class ComposedResponse(ComposedMessage):
 		for content, byterange in izip(range_body, range_.ranges):
 			body = Body(content)
 			body.headers['Content-Type'] = content_type
-			body.headers.set_element('Content-Range', b'bytes', byterange, content_length)
+			body.headers.set_element('Content-Range', 'bytes', byterange, content_length)
 			yield body
 
 	@property

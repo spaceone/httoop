@@ -35,13 +35,15 @@ class ComposedMessage(object):
 			self.message.headers.pop('Content-Length', None)
 			if self.chunked:
 				return
-			self.message.headers.append('Transfer-Encoding', 'chunked')
+			self.message.headers.append('Transfer-Encoding', b'chunked')
 		else:
 			if not self.chunked:
 				return
 			te = self.message.headers.elements('Transfer-Encoding')
 			te.remove('chunked')
 			self.message.headers['Transfer-Encoding'] = b''.join(map(bytes, te))
+			if not te:
+				self.message.headers.pop('Transfer-Encoding')
 
 	@contextmanager
 	def _composing(self):

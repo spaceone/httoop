@@ -30,7 +30,7 @@ class ComposedRequest(ComposedMessage):
 				self.message.headers['Content-Type'] = bytes(self.message.body.mimetype)
 
 		if 'Host' not in self.message.headers and self.message.uri.host:
-			self.message.headers['Host'] = bytes(self.message.uri.host)
+			self.message.headers['Host'] = self.message.uri.host
 
 		if self.message.method in ('PUT', 'POST') and self.message.body:
 			if 'Date' not in self.message.headers:

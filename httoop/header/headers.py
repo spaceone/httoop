@@ -3,7 +3,7 @@ import re
 
 from httoop.six import with_metaclass
 
-from httoop.util import CaseInsensitiveDict, iteritems, to_unicode
+from httoop.util import CaseInsensitiveDict, iteritems, to_unicode, Unicode
 from httoop.meta import HTTPSemantic
 from httoop.header.element import HEADER, HeaderElement
 from httoop.exceptions import InvalidHeader
@@ -17,20 +17,42 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 
 	@staticmethod
 	def formatvalue(value):
-		return to_unicode(value)  # TODO: using unicode here is not good if processed via HeaderElement
+		if isinstance(value, Unicode):
+			return HeaderElement.encode_rfc2047(value)
+		return bytes(value)
+
+	def __getitem__(self, key):
+		Element = HEADER.get(key, HeaderElement)
+		return Element.decode_rfc2047(super(Headers, self).__getitem__(key))
+
+	def get(self, key, default=None):
+		Element = HEADER.get(key, HeaderElement)
+		try:
+			return Element.decode_rfc2047(super(Headers, self).__getitem__(key))
+		except KeyError:
+			return default
+
+	def getbytes(self, key, default=None):
+		try:
+			return super(Headers, self).__getitem__(key)
+		except KeyError:
+			return default
 
 	@classmethod
 	def formatkey(cls, key):
 		key = CaseInsensitiveDict.formatkey(key)
 		if cls.HEADER_RE.search(key.encode('utf-8')):
 			raise InvalidHeader(_(u"Invalid header name: %r"), key)
-		return key
+		try:
+			return to_unicode(HEADER[key].__name__)
+		except KeyError:
+			return key
 
 	def elements(self, fieldname):
 		u"""Return a sorted list of HeaderElements from
 			the given comma-separated header string."""
 
-		fieldvalue = self.get(fieldname)
+		fieldvalue = self.getbytes(fieldname)
 		if not fieldvalue:
 			return []
 
@@ -41,15 +63,14 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 		u"""Treat the field as single element"""
 		if fieldname in self:
 			Element = HEADER.get(fieldname, HeaderElement)
-			return Element.parse(self[fieldname])
+			return Element.parse(super(Headers, self).__getitem__(fieldname))
 		return default
 
-#	# TODO: a really nice alternative method would be:
-#	def element(self, fieldname, which=None, default=None):
-#		for element in self.elements(fieldname):
-#			if which is None or element == which:
-#				return element
-#		return default
+	def get_element(self, fieldname, which=None, default=None):
+		for element in self.elements(fieldname):
+			if which is None or element == which:
+				return element
+		return default
 
 	def set_element(self, fieldname, *args, **kwargs):
 		self[fieldname] = bytes(self.create_element(fieldname, *args, **kwargs))
@@ -65,32 +86,20 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 		if not key:
 			return super(Headers, self).values()
 		# if key is set return a ordered list of element values
-		return [e.value for e in self.elements(key[0])]
+		return [e.value for e in self.elements(*key)]
 
 	def append(self, _name, _value, **params):
+		_value = self.formatvalue(_value)
 		if params:
 			Element = HEADER.get(_name, HeaderElement)
-			parts = [_value or u'']
-			for k, v in iteritems(params):
-				if v is None:
-					parts.append(k)
-				else:
-					parts.append(Element.formatparam(k, v))
-			_value = u'; '.join(parts)
+			parts = [_value or b''] + [Element.formatparam(k.encode(), v) for k, v in iteritems(params)]
+			_value = b'; '.join(parts)
 
 		if _name not in self or not self[_name]:
 			self[_name] = _value
 		else:
 			Element = HEADER.get(_name, HeaderElement)
-			self[_name] = Element.join([self[_name], _value])
-
-	def validate(self):
-		u"""validates all header elements
-
-			:raises: InvalidHeader
-		"""
-		for name in self:
-			self.elements(name)
+			self[_name] = Element.join([super(Headers, self).__getitem__(_name), _value])
 
 	def merge(self, other):
 		other = self.__class__(other)
@@ -129,9 +138,11 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 				value.append(lines.pop(0)[1:])
 			value = b''.join(value).rstrip()
 			Element = HEADER.get(name, HeaderElement)
-			value = Element.decode(value)
+			name = name.decode('ascii')
 
-			self.append(name.decode('ascii', 'ignore'), value)
+			if name in self:
+				value = Element.join([super(Headers, self).__getitem__(name), value])
+			super(Headers, self).__setitem__(name, value)
 
 	def compose(self):
 		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, v) for k, v in self.__items())
@@ -147,9 +158,9 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 			key = key.encode('ascii', 'ignore')
 			if Element.list_element:
 				for value in Element.split(values):
-					yield key, Element.encode(value)
+					yield key, value
 			else:
-				yield key, Element.encode(values)
+				yield key, values
 
 	def __repr__(self):
 		return "<HTTP Headers(%s)>" % repr(list(self.items()))

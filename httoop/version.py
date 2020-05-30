@@ -9,6 +9,6 @@ from httoop.header import Server as __Server, UserAgent as __UserAgent  # noqa
 from httoop.messages import Protocol  # noqa
 
 __version__ = 0.0
-UserAgentHeader = __UserAgent.parse('httoop/%.1f' % (__version__,))
-ServerHeader = __Server.parse('httoop/%.1f' % (__version__,))
+UserAgentHeader = __UserAgent.parse(b'httoop/%.1f' % (__version__,))
+ServerHeader = __Server.parse(b'httoop/%.1f' % (__version__,))
 ServerProtocol = Protocol((1, 1))

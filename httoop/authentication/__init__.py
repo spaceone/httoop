@@ -14,6 +14,13 @@ class AuthElement(HeaderElement):
 	schemes = {}
 	RE_SPACE_SPLIT = re.compile(br'\s+(?=(?:[^"]*"[^"]*")*[^"]*$)')
 
+	def sanitize(self):
+		for key, value in list(self.params.items()):
+			if not isinstance(value, bytes) and isinstance(value, str):
+				self.params[key] = value.encode('UTF-8')
+			elif isinstance(value, (list, tuple)):
+				self.params[key] = type(value)(x.encode('UTF-8') if not isinstance(x, bytes) and isinstance(x, str) else x for x in value)
+
 	@classmethod
 	def parseparams(cls, elementstr):
 		try:
@@ -21,7 +28,7 @@ class AuthElement(HeaderElement):
 		except ValueError:
 			raise InvalidHeader(_(u'Authorization headers must contain authentication scheme'))
 		try:
-			parser = cls.schemes[scheme.lower()]
+			parser = cls.schemes[scheme.decode('ISO8859-1').lower()]
 		except KeyError:
 			raise InvalidHeader(_(u'Unsupported authentication scheme: %r'), scheme)
 
@@ -43,7 +50,7 @@ class AuthElement(HeaderElement):
 		except KeyError as key:
 			raise InvalidHeader(_(u'Missing parameter %r for authentication scheme %r'), str(key), self.value)
 
-		return b'%s %s' % (self.value.title(), authinfo)
+		return b'%s %s' % (self.value.encode('ASCII').title(), authinfo)
 
 	@classmethod
 	def split(cls, value):
@@ -77,11 +84,14 @@ class AuthResponseElement(AuthElement):
 
 	@property
 	def realm(self):
-		return self.params.get('realm')
+		try:
+			return self.params[b'realm'].decode('ASCII')
+		except KeyError:
+			pass
 
 	@realm.setter
 	def realm(self, realm):
-		self.params['realm'] = realm.replace('"', '')
+		self.params['realm'] = realm.replace(u'"', u'').encode('ASCII', 'ignore')
 
 
 class AuthInfoElement(HeaderElement):

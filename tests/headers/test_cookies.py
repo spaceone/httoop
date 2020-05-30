@@ -43,5 +43,5 @@ set_cookie = (
 def test_set_cookie(cookie, values, headers):
 	headers['Set-Cookie'] = cookie
 	for e in headers.elements('Set-Cookie'):
-		for key, value in values[e.cookie_name].iteritems():
+		for key, value in values[e.cookie_name].items():
 			assert getattr(e, key) == value

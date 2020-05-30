@@ -14,7 +14,7 @@ def test_json(body):
 	body.mimetype = 'application/json'
 	assert body.decode(b'{"foo": "bar"}') == {u"foo": u"bar"}
 	body.encode({u"bar": u"foo"})
-	assert bytes(body) == u'{"bar": "foo"}'
+	assert bytes(body) == b'{"bar": "foo"}'
 	# TODO: non-utf8
 
 

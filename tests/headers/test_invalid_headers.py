@@ -1,15 +1,16 @@
 from __future__ import unicode_literals
 import pytest
 from httoop.exceptions import InvalidHeader
+from httoop import six
 
 LATIN_CHARS = bytes(bytearray(range(0x80, 0xff + 1)))
 INVALID_HEADER_FIELD_NAMES = bytes(bytearray(range(0x00, 0x1F + 1))) + b"()<>@,;\\\\\"/\\[\\]?={} \t"
 
 
-@pytest.mark.parametrize('invalid', INVALID_HEADER_FIELD_NAMES + LATIN_CHARS)
+@pytest.mark.parametrize('invalid', six.iterbytes(INVALID_HEADER_FIELD_NAMES + LATIN_CHARS))
 def test_parse_invalid_characters(invalid, request_):
 	with pytest.raises(InvalidHeader):
-		invalid = b'foo%sbaz: blub' % (invalid,)
+		invalid = b'foo%sbaz: blub' % (six.int2byte(invalid),)
 		request_.headers.parse(invalid)
 
 
@@ -20,13 +21,13 @@ def test_set_header_with_colon(request_):
 
 #@pytest.mark.skip()
 #def test_set_invalid_characters(request_):
-#	for invalid in INVALID_HEADER_FIELD_NAMES:
-#		name = b'foo%sbar' % (invalid,)
+#	for invalid in six.iterbytes(INVALID_HEADER_FIELD_NAMES):
+#		name = b'foo%sbar' % (six.int2byte(invalid),)
 #		request_.headers[name] = 'baz'
 #		assert name not in request_.headers
-#	for invalid in LATIN_CHARS:
+#	for invalid in six.iterbytes(LATIN_CHARS):
 #		with pytest.raises(InvalidHeader):
-#			name = b'foo%sbar' % (invalid,)
+#			name = b'foo%sbar' % (six.int2byte(invalid),)
 #			request_.headers[name] = 'baz'
 
 

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import sys
 import pytest
 
 # Server: Zope/(2.13.21, python 2.7.8, linux2) ZServer/1.1
@@ -11019,7 +11018,6 @@ all_user_agents = [
 ]
 
 
-@pytest.mark.skipif(sys.version_info > (3, 0), reason="takes too long on python3 due to failures")
 @pytest.mark.parametrize('user_agent', all_user_agents)
 def test_parse_user_agent(headers, user_agent):
 	headers.parse(b'User-Agent: %s' % (user_agent,))

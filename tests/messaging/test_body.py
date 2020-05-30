@@ -16,9 +16,9 @@ def test_chunked_body_without_trailer(request_):
 
 
 def test_parse_chunked_body_without_trailer(statemachine):
-	request_body = ''.join([
-		'This is a chunked body with some lines',
-		'foo', 'bar', 'Baz', '\n', '', 'blah!', 'blub'
+	request_body = b''.join([
+		b'This is a chunked body with some lines',
+		b'foo', b'bar', b'Baz', b'\n', b'', b'blah!', b'blub'
 	])
 	data = b'POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nAccept: */*\r\nUser-Agent: httoop/0.0\r\nHost: localhost\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n26\r\nThis is a chunked body with some lines\r\n3\r\nfoo\r\n3\r\nbar\r\n3\r\nBaz\r\n1\r\n\n\r\n5\r\nblah!\r\n4\r\nblub\r\n0\r\n\r\n'
 	request_ = statemachine.parse(data)[0][0]
@@ -30,7 +30,7 @@ def test_parse_chunked_body_without_trailer_2(request_):
 		'This is a chunked body with some lines',
 		'foo', 'bar', 'Baz', '\n', '', 'blah!', 'blub'
 	]
-	''.join(request_.body)
+	b''.join(request_.body)
 	request_.method = 'POST'
 	request_.headers['Transfer-Encoding'] = 'chunked'
 	request_.headers['Host'] = 'localhost'

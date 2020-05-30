@@ -11,17 +11,17 @@ def test_parse_continuation_lines(clientstatemachine):
 	clientstatemachine.parse(b'HTTP/1.1 200 OK\r\nHost: foo\r\n')
 	assert not clientstatemachine.message.headers
 	clientstatemachine.parse(b'Content-Type: text/\r\n')
-	assert clientstatemachine.message.headers == {"Host": "foo"}
+	assert clientstatemachine.message.headers == {"Host": b"foo"}
 	clientstatemachine.parse(b' ht\r\n')
 	clientstatemachine.parse(b'\tml\r\n')
-	assert clientstatemachine.message.headers == {"Host": "foo"}
+	assert clientstatemachine.message.headers == {"Host": b"foo"}
 	clientstatemachine.parse(b'f')
 	clientstatemachine.parse(b'oo')
-	assert clientstatemachine.message.headers == {"Host": "foo", "Content-Type": "text/html"}
+	assert clientstatemachine.message.headers == {"Host": b"foo", "Content-Type": b"text/html"}
 	clientstatemachine.parse(b': bar\r')
 	clientstatemachine.parse(b'\n baz\r\nContent-Length: 0\r\n')
-	assert clientstatemachine.message.headers == {"Host": "foo", "Content-Type": "text/html", "Foo": "barbaz"}
-	assert clientstatemachine.parse(b'\r\n')[0].headers == {"Host": "foo", "Content-Type": "text/html", "Foo": "barbaz", "Content-Length": "0"}
+	assert clientstatemachine.message.headers == {"Host": b"foo", "Content-Type": b"text/html", "Foo": b"barbaz"}
+	assert clientstatemachine.parse(b'\r\n')[0].headers == {"Host": b"foo", "Content-Type": b"text/html", "Foo": b"barbaz", "Content-Length": b"0"}
 
 
 def test_parse_without_header(clientstatemachine):

@@ -77,5 +77,5 @@ def test_invalid_host_header(invalid, headers):
 ])
 def test_forwarded_header(forwarded, expected, headers):
 	headers.parse(b'Forwarded: %s' % (forwarded,))
-	values = [filter(None, (x.for_, x.by, x.proto, x.host)) for x in headers.elements('Forwarded')]
+	values = [tuple(y for y in (x.for_, x.by, x.proto, x.host) if y) for x in headers.elements('Forwarded')]
 	assert expected == values

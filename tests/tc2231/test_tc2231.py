@@ -167,7 +167,7 @@ def test_attwithasciifilenamenqws(content_disposition):
 
 
 def test_attwithfntokensq(content_disposition):
-	h = content_disposition("Content-Disposition: attachment; filename='foo.bar'")
+	h = content_disposition(b"Content-Disposition: attachment; filename='foo.bar'")
 	assert h.attachment
 	assert h.filename == u"'foo.bar'"
 
@@ -379,28 +379,28 @@ def test_dispextbadfn(content_disposition):
 
 
 def test_attwithisofn2231iso(content_disposition):
-	h = content_disposition("Content-Disposition: attachment; filename*=iso-8859-1''foo-%E4.html")
+	h = content_disposition(b"Content-Disposition: attachment; filename*=iso-8859-1''foo-%E4.html")
 	assert h.attachment
 	assert h.filename == u'foo-\xe4.html'
 
 
 def test_attwithfn2231utf8(content_disposition):
-	h = content_disposition("Content-Disposition: attachment; filename*=UTF-8''foo-%c3%a4-%e2%82%ac.html")
+	h = content_disposition(b"Content-Disposition: attachment; filename*=UTF-8''foo-%c3%a4-%e2%82%ac.html")
 	assert h.attachment
 	assert h.filename == u'foo-\xe4-\u20ac.html'
 
 
 def test_attwithfn2231noc(content_disposition):
-	h = content_disposition("Content-Disposition: attachment; filename*=''foo-%c3%a4-%e2%82%ac.html")
+	h = content_disposition(b"Content-Disposition: attachment; filename*=''foo-%c3%a4-%e2%82%ac.html")
 	assert h.attachment
 	assert not h.filename
-	assert h.params['filename*'] == "''foo-%c3%a4-%e2%82%ac.html"
+	assert h.params['filename*'] == u"''foo-%c3%a4-%e2%82%ac.html"
 
 
 @pytest.mark.skipif(sys.platform != 'win32', reason='Windows specific')
 @pytest.mark.xfail(sys.platform == 'win32', reason="Don't have a windows system to test")
 def test_attwithfn2231utf8comp(content_disposition):
-	h = content_disposition("Content-Disposition: attachment; filename*=UTF-8''foo-a%cc%88.html")
+	h = content_disposition(b"Content-Disposition: attachment; filename*=UTF-8''foo-a%cc%88.html")
 	assert h.attachment
 	assert h.filename == u'foo-\xe4.html'
 
@@ -408,28 +408,28 @@ def test_attwithfn2231utf8comp(content_disposition):
 @pytest.mark.xfail(reason='Do we want to be that fussy?')
 def test_attwithfn2231utf8_bad(content_disposition):
 	with pytest.raises(InvalidHeader):
-		content_disposition("Content-Disposition: attachment; filename*=iso-8859-1''foo-%c3%a4-%e2%82%ac.html")
+		content_disposition(b"Content-Disposition: attachment; filename*=iso-8859-1''foo-%c3%a4-%e2%82%ac.html")
 
 
 def test_attwithfn2231iso_bad(content_disposition):
 	with pytest.raises(InvalidHeader):
-		content_disposition("Content-Disposition: attachment; filename*=utf-8''foo-%E4.html")
+		content_disposition(b"Content-Disposition: attachment; filename*=utf-8''foo-%E4.html")
 
 
 @pytest.mark.xfail(reason='Whitespace ignored in parameter (foo =bar)')
 def test_attwithfn2231ws1(content_disposition):
 	with pytest.raises(InvalidHeader):
-		content_disposition("Content-Disposition: attachment; filename *=UTF-8''foo-%c3%a4.html")
+		content_disposition(b"Content-Disposition: attachment; filename *=UTF-8''foo-%c3%a4.html")
 
 
 def test_attwithfn2231ws2(content_disposition):
-	h = content_disposition("Content-Disposition: attachment; filename*= UTF-8''foo-%c3%a4.html")
+	h = content_disposition(b"Content-Disposition: attachment; filename*= UTF-8''foo-%c3%a4.html")
 	assert h.attachment
 	assert h.filename == u'foo-\xe4.html'
 
 
 def test_attwithfn2231ws3(content_disposition):
-	h = content_disposition("Content-Disposition: attachment; filename* =UTF-8''foo-%c3%a4.html")
+	h = content_disposition(b"Content-Disposition: attachment; filename* =UTF-8''foo-%c3%a4.html")
 	assert h.attachment
 	assert h.filename == u'foo-\xe4.html'
 
@@ -445,30 +445,30 @@ def test_attwithfn2231quot2(content_disposition):
 
 
 def test_attwithfn2231singleqmissing(content_disposition):
-	h = content_disposition("Content-Disposition: attachment; filename*=UTF-8'foo-%c3%a4.html")
+	h = content_disposition(b"Content-Disposition: attachment; filename*=UTF-8'foo-%c3%a4.html")
 	assert h.params['filename*'] == u"UTF-8'foo-%c3%a4.html"
 
 
 @pytest.mark.xfail(raises=KeyError, reason='Percent encoding does not raise errors')
 def test_attwithfn2231nbadpct1(content_disposition):
-	h = content_disposition("Content-Disposition: attachment; filename*=UTF-8''foo%")
+	h = content_disposition(b"Content-Disposition: attachment; filename*=UTF-8''foo%")
 	assert h.params['filename*'] == u"UTF-8''foo%"
 
 
 @pytest.mark.xfail(raises=KeyError, reason='Percent encoding does not raise errors')
 def test_attwithfn2231nbadpct2(content_disposition):
-	h = content_disposition("Content-Disposition: attachment; filename*=UTF-8''f%oo.html")
+	h = content_disposition(b"Content-Disposition: attachment; filename*=UTF-8''f%oo.html")
 	assert h.params['filename*'] == u"UTF-8''f%oo.html"
 
 
 def test_attwithfn2231dpct(content_disposition):
-	h = content_disposition("Content-Disposition: attachment; filename*=UTF-8''A-%2541.html")
+	h = content_disposition(b"Content-Disposition: attachment; filename*=UTF-8''A-%2541.html")
 	assert h.attachment
 	assert h.filename == u'A-%41.html'
 
 
 def test_attwithfn2231abspathdisguised(content_disposition):
-	h = content_disposition("Content-Disposition: attachment; filename*=UTF-8''%5cfoo.html")
+	h = content_disposition(b"Content-Disposition: attachment; filename*=UTF-8''%5cfoo.html")
 	assert h.attachment
 	assert h.filename == u'\\foo.html'
 
@@ -532,7 +532,7 @@ def test_attfnboth2(content_disposition):
 
 @pytest.mark.xfail(reason='Should be implemented generic')
 def test_attfnboth3(content_disposition):
-	h = content_disposition("Content-Disposition: attachment; filename*0*=ISO-8859-15''euro-sign%3d%a4; filename*=ISO-8859-1''currency-sign%3d%a4")
+	h = content_disposition(b"Content-Disposition: attachment; filename*0*=ISO-8859-15''euro-sign%3d%a4; filename*=ISO-8859-1''currency-sign%3d%a4")
 	assert h.filename == u'currency-sign=\xa4'
 	assert h.params['filename*0*'] == u"ISO-8859-15''euro-sign%3d%a4"
 
@@ -544,7 +544,7 @@ def test_attnewandfn(content_disposition):
 	assert h.params['foobar'] == u'x'
 
 
-@pytest.mark.xfail(reason='Generic parsing in Headers.parse(). Very complicated to implement.')
+#@pytest.mark.xfail(reason='Generic parsing in Headers.parse(). Very complicated to implement.')
 def test_attrfc2047token(content_disposition):
 	with pytest.raises(InvalidHeader):
 		content_disposition(b'Content-Disposition: attachment; filename==?ISO-8859-1?Q?foo-=E4.html?=')

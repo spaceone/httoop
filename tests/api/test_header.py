@@ -37,3 +37,8 @@ def test_trailer(request_):
 	assert request_.trailer['B'] == 'B'
 	assert request_.trailer['C'] == 'c'
 	assert request_.trailer['E'] == 'e'
+
+
+def test_string_type(headers):
+	headers['Content-Type'] = 'text/html'
+	assert headers.get('Content-Type', '').startswith('text/html')

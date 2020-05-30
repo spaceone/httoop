@@ -137,7 +137,7 @@ class Date(with_metaclass(HTTPSemantic)):
 		finally:
 			locale.setlocale(locale.LC_TIME, old)
 
-		raise InvalidDate(_(u'Invalid date: %r'), date)
+		raise InvalidDate(_(u'Invalid date: %r'), timestr)
 
 	def __int__(self):
 		return int(float(self))
@@ -165,13 +165,15 @@ class Date(with_metaclass(HTTPSemantic)):
 
 	def __other(self, other):
 		if other is None:
-			raise NotImplementedError
+			return Date(0)
+			raise NotImplementedError()
 		if isinstance(other, Date):
 			return other
 		try:
 			return Date(other)
 		except (InvalidDate, TypeError):
-			raise NotImplementedError
+			return Date(0)
+			raise NotImplementedError()
 
 	def __repr__(self):
 		return '<HTTP Date(%d)>' % (int(self),)

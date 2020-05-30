@@ -73,8 +73,8 @@ def test_invalid_date(invalid):
 	d = Date(784111777.0)
 	assert d != invalid
 	assert not d == invalid
-	assert not d > invalid
-	assert d < invalid
+	assert d > invalid
+	assert not d < invalid
 
 	with pytest.raises(TypeError):
 		Date({})

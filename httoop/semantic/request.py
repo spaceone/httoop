@@ -24,7 +24,7 @@ class ComposedRequest(ComposedMessage):
 
 		if self.message.body:
 			if not self.chunked:
-				self.message.headers['Content-Length'] = bytes(len(self.message.body))
+				self.message.headers['Content-Length'] = str(len(self.message.body))
 
 			if self.message.body.mimetype and 'Content-Type' not in self.message.headers:
 				self.message.headers['Content-Type'] = bytes(self.message.body.mimetype)

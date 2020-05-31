@@ -31,7 +31,7 @@ class ComposedResponse(ComposedMessage):
 
 		self.chunked = self.chunked
 		if not self.chunked:
-			response.headers['Content-Length'] = bytes(len(response.body))
+			response.headers['Content-Length'] = str(len(response.body)).encode('ASCII')
 
 		response.headers['Date'] = bytes(Date())  # RFC 2616 Section 14.18
 
@@ -93,7 +93,7 @@ class ComposedResponse(ComposedMessage):
 			response.body.mimetype = response.headers['Content-Type']
 			response.body.encode(self.multipart_byteranges(range_body, range_, content_length, content_type))
 
-		response.headers['Content-Length'] = bytes(len(response.body))  # TODO: len(response.body) causes the whole body to be generated
+		response.headers['Content-Length'] = str(len(response.body)).encode('ASCII')  # TODO: len(response.body) causes the whole body to be generated
 
 	def multipart_byteranges(self, range_body, range_, content_length, content_type):
 		for content, byterange in izip(range_body, range_.ranges):

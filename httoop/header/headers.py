@@ -11,6 +11,13 @@ from httoop.util import _
 
 
 class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
+	"""HTTP headers.
+
+	The handling of encoding of HTTP headers is tricky:
+	First, when parsing the MIME syntax of RFC 2047 needs to be respected.
+	Then, parameters in RFC 2231 syntax.
+
+	"""
 
 	# disallowed bytes for HTTP header field names
 	HEADER_RE = re.compile(br"[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]")

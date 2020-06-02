@@ -14,7 +14,7 @@ from email.errors import HeaderParseError
 
 from httoop.six import with_metaclass
 
-from httoop.util import CaseInsensitiveDict, iteritems, decode_header, sanitize_encoding, ByteUnicodeDict, _
+from httoop.util import CaseInsensitiveDict, ByteUnicodeDict, iteritems, decode_header, sanitize_encoding, _
 from httoop.exceptions import InvalidHeader
 from httoop.uri.percent_encoding import Percent
 
@@ -32,7 +32,10 @@ class HeaderType(type):
 
 
 class HeaderElement(with_metaclass(HeaderType)):
-	u"""An element (with parameters) from an HTTP header's element list."""
+	u"""An element (with parameters) from an HTTP header's element list.
+
+		.. seealso:: rfc:`2047`
+	"""
 
 	priority = None
 	is_request_header = False
@@ -48,7 +51,11 @@ class HeaderElement(with_metaclass(HeaderType)):
 	RE_PARAMS = re.compile(b';(?=(?:[^"]*"[^"]*")*[^"]*$)')
 
 	def __init__(self, value, params=None):
-		self.value = value
+		if isinstance(value, bytes):
+			from httoop.log import logger
+			import traceback
+			logger.debug('value is bytes: %r\n%s', value, ''.join(traceback.format_stack()))
+		self.value = value  # .decode() if isinstance(value, bytes) else value
 		self.params = ByteUnicodeDict(params or {})
 		self.sanitize()
 
@@ -71,7 +78,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 		return self.compose()
 
 	def __unicode__(self):
-		#return bytes(self).decode('ISO8859-1')
+		return bytes(self).decode('ISO8859-1')
 		return self.decode_rfc2047(bytes(self))
 
 	if str is bytes:
@@ -345,7 +352,7 @@ class _AcceptElement(HeaderElement):
 
 		media_type, params = cls.parseparams(media_range)
 		if qvalue is not None:
-			params["q"] = bytes(qvalue)
+			params[b"q"] = bytes(qvalue)
 
 		return cls(media_type.decode(encoding), params)
 
@@ -373,8 +380,8 @@ class _CookieElement(HeaderElement):
 	RE_TSPECIALS = re.compile(b'(?!)')
 
 	def __init__(self, cookie_name, cookie_value, params=None):
-		self.cookie_name = cookie_name
-		self.cookie_value = cookie_value
+		self.cookie_name = cookie_name.decode() if isinstance(cookie_name, bytes) else cookie_name
+		self.cookie_value = cookie_value.decode() if isinstance(cookie_value, bytes) else cookie_value
 		super(_CookieElement, self).__init__(self.value, params)
 
 	@classmethod
@@ -393,12 +400,14 @@ class _CookieElement(HeaderElement):
 
 	@property
 	def value(self):
-		return u'%s=%s' % (self.cookie_name, self.cookie_value)
+		return '%s=%s' % (self.cookie_name, self.cookie_value)
 
 	@value.setter
 	def value(self, value):
-		self.cookie_name, self.cookie_value, __ = self.parseparam(value.encode('ISO8859-1'))
-		self.cookie_name, self.cookie_value = self.cookie_name.decode('ISO8859-1'), self.cookie_value.decode('ISO8859-1')
+		if not isinstance(value, bytes):
+			value = value.encode()
+		self.cookie_name, self.cookie_value, __ = self.parseparam(value)
+		self.cookie_name, self.cookie_value = self.cookie_name.decode(), self.cookie_value.decode()
 
 
 class _HopByHopElement(object):

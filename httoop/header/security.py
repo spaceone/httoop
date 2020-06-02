@@ -21,12 +21,51 @@ class ContentSecurityPolicy(HeaderElement):
 	RE_PARAMS = re.compile(b'\\s+')
 
 	def compose(self):
-		return b'%s %s; ' % (self.value.encode('ISO8859-1'), b' '.join(self.params.keys()))
+		return b'%s %s; ' % (self.value, b' '.join(self.params.keys()))
 
 
 class ContentSecurityPolicyReportOnly(ContentSecurityPolicy):
 	__name__ = 'Content-Security-Policy-Report-Only'
 	is_response_header = True
+
+
+class FeaturePolicy(ContentSecurityPolicy):
+	"""
+	geolocation
+	midi
+	notifications
+	push
+	sync-xhr
+	microphone
+	camera
+	magnetometer
+	gyroscope
+	speaker
+	vibrate
+	fullscreen
+	payment (PaymentRequest)
+	"""
+	__name__ = 'Feature-Policy'
+
+
+class PermissionsPolicy(ContentSecurityPolicy):
+	__name__ = 'Permissions-Policy'
+
+
+class ReferrerPolicy(HeaderElement):
+	"""
+	"no-referrer",
+	"no-referrer-when-downgrade",
+	"same-origin",
+	"origin",
+	"strict-origin",
+	"origin-when-cross-origin",
+	"strict-origin-when-cross-origin",
+	"unsafe-url"
+
+	.. seealso:: https://www.w3.org/TR/referrer-policy/
+	"""
+	__name__ = 'Referrer-Policy'
 
 
 class StrictTransportSecurity(HeaderElement):

@@ -14,7 +14,7 @@ from email.errors import HeaderParseError
 
 from httoop.six import with_metaclass
 
-from httoop.util import CaseInsensitiveDict, iteritems, decode_header, sanitize_encoding, _
+from httoop.util import CaseInsensitiveDict, iteritems, decode_header, sanitize_encoding, ByteUnicodeDict, _
 from httoop.exceptions import InvalidHeader
 from httoop.uri.percent_encoding import Percent
 
@@ -49,7 +49,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 
 	def __init__(self, value, params=None):
 		self.value = value
-		self.params = params or {}
+		self.params = ByteUnicodeDict(params or {})
 		self.sanitize()
 
 	def sanitize(self):

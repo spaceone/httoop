@@ -1,0 +1,40 @@
+Source: httoop
+Section: libs
+Priority: optional
+Maintainer: Florian Best <space@wechall.net>
+Standards-Version: 3.9.8
+Build-Depends:
+ debhelper,
+ dh-python,
+ python-all,
+ python-debian,
+ python3-all,
+ python3-debian,
+
+Package: python-httoop
+Architecture: all
+Depends:
+ ${misc:Depends},
+ ${python:Depends},
+Provides:
+ ${python:Provides},
+Recommends:
+ python-defusedxml,
+ python-uritemplate,
+Description: HTTOOP - An object oriented HTTP library.
+ Httoop can be used to parse, compose and work with HTTP-Request- and Response-Messages.
+ It is an generic library for implementing HTTP servers, clients, caches and proxies.
+
+Package: python3-httoop
+Architecture: all
+Depends:
+ ${misc:Depends},
+ ${python3:Depends},
+Provides:
+ ${python3:Provides},
+Recommends:
+ python3-defusedxml,
+ python3-uritemplate,
+Description: HTTOOP - An object oriented HTTP library.
+ Httoop can be used to parse, compose and work with HTTP-Request- and Response-Messages.
+ It is an generic library for implementing HTTP servers, clients, caches and proxies.

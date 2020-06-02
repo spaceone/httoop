@@ -207,6 +207,12 @@ class CaseInsensitiveDict(dict):
 		return cls(dict((key, value) for key in seq))
 
 
+class ByteUnicodeDict(CaseInsensitiveDict):
+	@staticmethod
+	def formatkey(key):
+		return key if isinstance(key, bytes) else key.encode('UTF-8')
+
+
 class _Translateable(object):
 
 	def __init__(self, message, *args, **kwargs):

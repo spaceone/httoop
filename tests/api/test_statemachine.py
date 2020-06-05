@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 import pytest
-from httoop import BAD_REQUEST
+from httoop import BAD_REQUEST, URI_TOO_LONG
 
 
 def test_statemachine_parsing_with_streamed_input():
@@ -36,3 +36,13 @@ def test_host_header_required(statemachine):
 		statemachine.parse(b'GET / HTTP/1.1\r\nContent-Length: 0\r\n\r\n')
 	assert 'Missing Host header' in str(exc.value.description)
 	statemachine.parse(b'GET / HTTP/1.0\r\nContent-Length: 0\r\n\r\n')
+
+
+def test_max_uri_length(statemachine):
+	statemachine.MAX_URI_LENGTH = 100
+	path = b'A' * (statemachine.MAX_URI_LENGTH - 5)
+	statemachine.parse(b'GET /%s HTTP/1.1\r\nHost: example.com\r\nContent-Length: 0\r\n\r\n' % (path,))
+	with pytest.raises(URI_TOO_LONG) as exc:
+		path = b'A' * statemachine.MAX_URI_LENGTH
+		statemachine.parse(b'GET /%s HTTP/1.1\r\nHost: example.com\r\nContent-Length: 0\r\n\r\n' % (path,))
+	assert 'The maximum length of the request is 100' in str(exc.value.description)

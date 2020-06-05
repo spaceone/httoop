@@ -44,6 +44,7 @@ class ServerStateMachine(StateMachine):
 		state = super(ServerStateMachine, self).parse_startline()
 		if state is NOT_RECEIVED_YET:
 			self._check_uri_max_length(self.buffer)
+		return state
 
 	def on_startline_complete(self):
 		self.state['method'] = True
@@ -56,6 +57,7 @@ class ServerStateMachine(StateMachine):
 
 	def on_uri_complete(self):
 		super(ServerStateMachine, self).on_uri_complete()
+		self._check_uri_max_length(bytes(self.request.uri))
 		self.sanitize_request_uri_path()
 		self.validate_request_uri_scheme()
 		self.set_server_response_header()

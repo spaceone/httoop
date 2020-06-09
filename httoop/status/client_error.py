@@ -18,6 +18,7 @@ class BAD_REQUEST(ClientErrorStatus):
 		about what is wrong with the request."""
 
 	code = 400
+	cacheable = True
 
 
 class UNAUTHORIZED(ClientErrorStatus):
@@ -57,6 +58,7 @@ class NOT_FOUND(ClientErrorStatus):
 	u"""No resource could be found at the given URI."""
 
 	code = 404
+	cacheable = True
 
 	def __init__(self, path, **kwargs):
 		self.path = path
@@ -121,6 +123,7 @@ class GONE(ClientErrorStatus):
 	u"""The resource exists but is not anymore available (propably DELETEd)"""
 
 	code = 410
+	cacheable = True
 
 
 class LENGTH_REQUIRED(ClientErrorStatus):

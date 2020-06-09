@@ -21,6 +21,7 @@ class INTERNAL_SERVER_ERROR(ServerErrorStatus):
 		Mostly used when an exception in the request handler occurrs."""
 
 	code = 500
+	cacheable = True
 
 
 class NOT_IMPLEMENTED(ServerErrorStatus):
@@ -34,6 +35,7 @@ class BAD_GATEWAY(ServerErrorStatus):
 	u"""Problem with the proxy server."""
 
 	code = 502
+	cacheable = True
 
 
 class SERVICE_UNAVAILABLE(ServerErrorStatus):
@@ -41,12 +43,14 @@ class SERVICE_UNAVAILABLE(ServerErrorStatus):
 		Propably too many requests at once."""
 
 	code = 503
+	cacheable = True
 
 
 class GATEWAY_TIMEOUT(ServerErrorStatus):
 	u"""The proxy could not connect to the upstream server."""
 
 	code = 504
+	cacheable = True
 
 
 class HTTP_VERSION_NOT_SUPPORTED(ServerErrorStatus):

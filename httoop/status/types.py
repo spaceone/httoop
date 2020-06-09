@@ -62,6 +62,8 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 
 	description = ''
 
+	cacheable = False
+
 	@property
 	def traceback(self):
 		return self._traceback

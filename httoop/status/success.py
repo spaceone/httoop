@@ -18,6 +18,7 @@ class OK(SuccessStatus):
 	"""
 
 	code = 200
+	cacheable = True
 
 
 class CREATED(SuccessStatus):
@@ -55,6 +56,7 @@ class NON_AUTHORITATIVE_INFORMATION(SuccessStatus):
 		may be altered by a third party."""
 
 	code = 203
+	cacheable = True
 
 
 class NO_CONTENT(SuccessStatus):
@@ -66,6 +68,7 @@ class NO_CONTENT(SuccessStatus):
 
 	code = 204
 	body = None
+	cacheable = True
 
 
 class RESET_CONTENT(SuccessStatus):

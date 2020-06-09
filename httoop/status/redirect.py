@@ -41,11 +41,13 @@ class MOVED_PERMANENTLY(RedirectStatus):
 		renamed to prevent broken links."""
 
 	code = 301
+	cacheable = True
 
 
 class FOUND(RedirectStatus):
 
 	code = 302
+	cacheable = True
 
 
 class SEE_OTHER(RedirectStatus):
@@ -57,6 +59,7 @@ class SEE_OTHER(RedirectStatus):
 		/release-latest.tar.gz -> /release-1.2.tar.gz"""
 
 	code = 303
+	cacheable = True
 
 
 class NOT_MODIFIED(RedirectStatus):
@@ -97,8 +100,10 @@ class TEMPORARY_REDIRECT(RedirectStatus):
 		important that the request was not processed."""
 
 	code = 307
+	cacheable = True
 
 
 class PERMANENT_REDIRECT(RedirectStatus):
 
 	code = 308
+	cacheable = True

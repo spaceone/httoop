@@ -15,7 +15,7 @@ def importable(module):
 
 
 def main():
-	cmd = ["py.test", "-r", "fsxX", "--durations=1", "--ignore=tmp", '--color=yes']
+	cmd = ["py.test", "-r", "fsxX", "--durations=1", "--ignore=tmp", '--color=yes', '--continue-on-collection-errors']
 
 	if importable("pytest_cov"):
 		cmd.append("--cov=httoop")

@@ -121,6 +121,13 @@ class HeaderElement(with_metaclass(HeaderType)):
 		return value, quoted
 
 	@classmethod
+	def _sanitize_encoding(cls, charset):
+		encoding = sanitize_encoding(charset)
+		if encoding is None:
+			raise InvalidHeader(_(u'Unknown encoding: %r'), charset)
+		return encoding
+
+	@classmethod
 	def _rfc2231_and_continuation_params(cls, params):  # TODO: complexity
 		count = set()
 		continuations = dict()
@@ -131,9 +138,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 			if b'*' in key:
 				if key.endswith(b'*') and not quoted and not value.startswith(b"'") and value.count(b"'") >= 2:
 					charset, language, value_ = value.split(b"'", 2)
-					encoding = sanitize_encoding(charset.decode('ASCII', 'replace'))
-					if encoding is None:
-						raise InvalidHeader(_(u'Unknown encoding: %r'), charset)
+					encoding = cls._sanitize_encoding(charset.decode('ASCII', 'replace'))
 					try:
 						key, value = key[:-1], Percent.unquote(value_).decode(encoding)
 					except UnicodeDecodeError as exc:
@@ -224,8 +229,8 @@ class HeaderElement(with_metaclass(HeaderType)):
 		if b'=?' in value and b'"=?' not in value and b'==?' not in value:
 			# FIXME: must not parse encoded_words in unquoted ('Content-Type', 'Content-Disposition') header params
 			try:
-				return u''.join(atom.decode(charset or 'ISO8859-1') for atom, charset in decode_header(value.decode('ISO8859-1'))), 'UTF-8'
-			except HeaderParseError as exc:
+				return u''.join(atom.decode(cls._sanitize_encoding(charset or 'ISO8859-1')) for atom, charset in decode_header(value.decode('ISO8859-1'))), 'UTF-8'
+			except (UnicodeDecodeError, HeaderParseError) as exc:
 				raise InvalidHeader(str(exc))
 		try:
 			return value.decode('ASCII'), 'ASCII'

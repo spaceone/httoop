@@ -41,3 +41,25 @@ def test_invalid_codec(name, headers):
 def test_unknown_codec(headers):
 	headers.parse(b'Content-Type: foo/bar')
 	assert headers.elements('Content-Type')[0].codec is None
+
+
+def test_unknown_charset(headers):
+	headers.parse(b"Foo: bar; filename*=BAR-8''foo.html")
+	with pytest.raises(InvalidHeader):
+		headers.get_element('foo')
+
+
+def test_invalid_qvalue_accept(headers):
+	headers.parse(b'Accept: foo/bar; q=a')
+	with pytest.raises(InvalidHeader) as exc:
+		headers.elements('Accept')
+	assert 'Quality value must be float' in str(exc.value)
+
+
+def test_invalid_encoding_rfc2047(headers):
+	headers.parse(b'Foo: =?utf-8?b?xxx?=')
+	with pytest.raises(InvalidHeader):
+		headers['Foo']
+	headers.parse(b'Bar: =?utf-8?b?=l?=')
+	with pytest.raises(InvalidHeader):
+		headers['Bar']

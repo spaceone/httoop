@@ -2,6 +2,8 @@ from __future__ import unicode_literals
 import pytest
 from datetime import datetime
 
+from httoop.exceptions import InvalidHeader
+
 
 @pytest.mark.parametrize('cookie,values', [
 	('Foo=bar', {'Foo': 'bar'}),
@@ -26,6 +28,8 @@ set_cookie = (
 			'domain': '.google.de',
 			'httponly': False,
 			'secure': False,
+			'persistent': True,
+			'max_age': None,
 		},
 		'NID': {
 			'cookie_value': '71=qx1aDrIv1ZCfe9nzprBX_6_GMe5jmnD2RniOFz5UINXwR_3TQU0Kon20XczY4aUNlt75z_2r1wHOJw4FKL9RMUCo5QIEbmKGw3W4U7nkpZZolbPBCGbw6RN2N0p7D3q6fhXQbg',
@@ -34,6 +38,8 @@ set_cookie = (
 			'domain': '.google.de',
 			'httponly': True,
 			'secure': False,
+			'persistent': True,
+			'max_age': None,
 		},
 	}),)
 )
@@ -45,3 +51,44 @@ def test_set_cookie(cookie, values, headers):
 	for e in headers.elements('Set-Cookie'):
 		for key, value in values[e.cookie_name].items():
 			assert getattr(e, key) == value
+
+
+def test_invalid_expires(headers):
+	headers['Set-Cookie'] = 'foo=bar; expires=xyz'
+	with pytest.raises(InvalidHeader):
+		headers.get_element('Set-Cookie').expires
+
+
+def test_invalid_max_age(headers):
+	headers['Set-Cookie'] = 'foo=bar; max-age=1.1'
+	with pytest.raises(InvalidHeader):
+		headers.get_element('Set-Cookie').max_age
+
+
+def test_persistent(headers):
+	headers['Set-Cookie'] = 'foo=bar; '
+	assert not headers.get_element('Set-Cookie').persistent
+	headers['Set-Cookie'] = 'foo=bar; expires=Thu, 31-Dec-2015 16:02:17 GMT'
+	assert headers.get_element('Set-Cookie').persistent
+	headers['Set-Cookie'] = 'foo=bar; max-age=1'
+	assert headers.get_element('Set-Cookie').persistent
+
+
+def test_mulitline_set_cookie(headers):
+	headers.append('Set-Cookie', b'foo=bar;')
+	headers.append('Set-Cookie', b'bar=baz; max-age=1')
+	assert bytes(headers) == b'Set-Cookie: foo=bar;\r\nSet-Cookie: bar=baz; max-age=1\r\n\r\n'
+
+
+def test_joining_multiple_cookies(headers):
+	headers.append('Cookie', b'foo=bar')
+	headers.append('Cookie', b'bar=baz')
+	assert bytes(headers) == b'Cookie: foo=bar; bar=baz\r\n\r\n'
+
+
+@pytest.mark.xfail(reason='Cookie must only be one header, separated by ;')
+def test_parsing_multiple_cookie_lines(statemachine):
+	statemachine.parse(b'GET / HTTP/1.1\r\nHost: www.example.com\r\n')
+	statemachine.parse(b'Cookie: foo=bar\r\n')
+	with pytest.raises(InvalidHeader):
+		statemachine.parse(b'Cookie: bar=baz\r\n\r\n')

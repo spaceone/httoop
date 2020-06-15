@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import pytest
+import json
 from httoop import Body
 from httoop.exceptions import InvalidHeader
 
@@ -131,6 +132,18 @@ def test_hal_json(body):
 	assert resource.self == u'/orders'
 	assert resource.get_curie('acme:widgets') == u'http://docs.acme.com/relations/widgets'
 	assert resource.get_resource('orders').self == u'/orders/123'
+	assert resource.get_link('not-existing') is None
+	assert resource.get_resource('not-existing') is None
+	assert resource.get_curie('acme') == 'acme'
+	resource.add_link('find', {'href': 'bar', 'name': 'xx'})
+	resource.add_link('relation', {'href': 'bar', 'name': 'xx'})
+	resource.add_link('relation', {'href': 'foo', 'templated': 'true', 'name': 'name', 'deprecation': 'true'})
+	assert resource.get_link('relation', 'name') == {'deprecation': False, 'href': u'foo', 'hreflang': None, 'name': 'name', 'templated': False, 'type': None, 'profile': None}
+	resource.add_resource('relation', {})
+	assert resource.get_resource('relation') == {'_embedded': {}, '_links': {}}
+
+	body.encode(resource)
+	assert {"_embedded": {"relation": [{}], "orders": [{"status": "shipped", "currency": "USD", "total": 30.0, "_links": {"basket": {"href": "/baskets/98712"}, "customer": {"href": "/customers/7809"}, "self": {"profile": None, "deprecation": False, "name": None, "hreflang": None, "href": "/orders/123", "templated": False, "type": None}}}, {"status": "processing", "currency": "USD", "total": 20.0, "_links": {"basket": {"href": "/baskets/97213"}, "customer": {"href": "/customers/12369"}, "self": {"href": "/orders/124"}}}]}, "currentlyProcessing": 14, "_links": {"curie": [{"profile": None, "deprecation": False, "name": "acme", "hreflang": None, "href": "http://docs.acme.com/relations/{rel}", "templated": True, "type": None}], "self": {"profile": None, "deprecation": False, "name": None, "hreflang": None, "href": "/orders", "templated": False, "type": None}, "relation": [{"profile": None, "deprecation": False, "name": "xx", "hreflang": None, "href": "bar", "templated": False, "type": None}, {"profile": None, "deprecation": False, "name": "name", "hreflang": None, "href": "foo", "templated": False, "type": None}], "find": [{"href": "/orders{?id}", "templated": True, "profile": None, "deprecation": False, "hreflang": None, "type": None, "name": None}, {'href': 'bar', 'name': 'xx', "profile": None, "deprecation": False, "hreflang": None, "templated": False, "type": None}], "next": {"profile": None, "deprecation": False, "name": None, "hreflang": None, "href": "/orders?page=2", "templated": False, "type": None}}, "shippedToday": 20} == json.loads(bytes(body).decode('ASCII'))
 
 
 def check_encoding_dict(body, data):
@@ -140,9 +153,47 @@ def check_encoding_dict(body, data):
 		body.set(string)
 		assert bytes(body) == byte
 
+		# use the codec for text/plain explicit
+		body.set(None)
+		body.decode(byte)
+		assert unicode(body) == string
+		body.set(None)
+		body.encode(string)
+		assert bytes(body) == byte
+
 
 def check_raises(body, chars, type_, exception):
 	for chr_ in chars:
 		with pytest.raises(exception):
 			body.set(chr_)
 			type_(body)
+
+
+def test_message_http_response(body, request_):
+	body.mimetype = 'message/http'
+	request_.headers['User-Agent'] = 'foo'
+	body.encode(request_)
+	assert bytes(body) == b'GET / HTTP/1.1\r\nUser-Agent: foo\r\n\r\n'
+	body.decode(b'HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\n')
+	assert body.data.status == 200
+	assert body.data.headers['Content-Length'] == '12'
+
+
+def test_message_http_request(body, response):
+	body.mimetype = 'message/http'
+	response.headers['Content-Length'] = '0'
+	body.encode(response)
+	assert bytes(body) == b'HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n'
+	body.decode(b'GET / HTTP/1.1\r\nHost: example.com\r\n\r\n')
+	assert body.data.method == 'GET'
+	assert body.data.headers['Host'] == 'example.com'
+
+
+def test_application_xml(body):
+	body.mimetype = 'application/xml'
+	body.decode(b'<?xml version="1.0" encoding="UTF-8" ?><fooml><head foo="bar"></head></fooml>')
+	assert body.data.find('head').attrib == {'foo': 'bar'}
+	root = body.data
+	body.set(None)
+	body.encode(root)
+	assert b'<fooml><head foo="bar" /></fooml>' in bytes(body)

@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 import pytest
-from httoop import URI
+from httoop import URI, InvalidURI
 
 
 @pytest.mark.parametrize('query_string,query', [
@@ -78,3 +78,12 @@ def test_urlencode_object():
 	u = URI()
 	u.query = {u'a': Trivial()}
 	assert u.query_string == b'a=trivial'
+
+
+@pytest.mark.parametrize('query', [
+	b'00', b'01', b'02', b'03', b'04', b'05', b'06', b'07', b'08', b'09', b'0a', b'0b', b'0c', b'0d', b'0e', b'0f', b'10', b'11', b'12', b'13', b'14', b'15', b'16', b'17', b'18', b'19', b'1a', b'1b', b'1c', b'1d', b'1e', b'1f', b'7f'
+])
+def test_invalid_query_string_tokens(query):
+	with pytest.raises(InvalidURI) as exc:
+		URI().parse(b'/?foo=%%%s' % (query,))
+	assert 'Invalid query string: contains invalid token' in str(exc.value)

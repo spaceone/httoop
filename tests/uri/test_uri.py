@@ -35,9 +35,10 @@ def test_invalid_port():
 	pass
 
 
-def test_invalid_query_string():
-	pass
-
-
 def test_normalized_uri_redirects():
 	pass
+
+
+def test_uri_composing_username_and_password():
+	assert bytes(URI(b'http://username@example.com')) == b'http://username@example.com'
+	assert bytes(URI(b'http://username:password@example.com')) == b'http://username:password@example.com'

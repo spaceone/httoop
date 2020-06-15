@@ -149,3 +149,8 @@ def test_client_reraising():
 	with pytest.raises(ValueError) as exc:
 		client(application15)
 	assert exc.value.args[0] is True
+
+
+def test_path_info():
+	client = WSGIClient({'CONTENT_TYPE': 'text/html', 'CONTENT_LENGTH': '0', 'HTTP_HOST': 'foobar', 'PATH_INFO': '/my/cool/path'}, use_path_info=True)
+	assert client.request.uri.path == '/my/cool/path'

@@ -7,8 +7,13 @@ def test_multiple_same_headers():
 	pass
 
 
-def test_header_case_insensitivity():
-	pass
+def test_header_case_insensitivity(headers):
+	headers.parse(b'Foo: bar')
+	assert headers['foo'] == 'bar'
+	assert headers['Foo'] == 'bar'
+	assert headers['FOO'] == 'bar'
+	assert headers['FoO'] == 'bar'
+	assert headers['foO'] == 'bar'
 
 
 def test_header_with_continuation_lines(headers):

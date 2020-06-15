@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 import pytest
 from io import BytesIO, StringIO
 from tempfile import NamedTemporaryFile
+from httoop import Body
 
 try:
 	unicode
@@ -86,7 +87,19 @@ def test_body_set_generator(request_):
 
 
 def test_body_set_body(request_):
-	pass
+	b = Body()
+	b.mimetype = 'application/json'
+	b.set('{}')
+	request_.body = b
+	assert request_.body.mimetype == 'application/json'
+	assert bytes(request_.body) == b'{}'
+	assert request_.body.fd is b.fd
+
+
+def test_body_iterencode(request_):
+	request_.body.mimetype = 'application/json'
+	request_.body.iterencode({})
+	assert bytes(request_.body) == b'{}'
 
 
 def tets_body_set_none(request_):

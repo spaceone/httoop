@@ -43,3 +43,14 @@ def test_order(headers):
 	headers.parse(b'WWW-Authenticate: basic realm="foo"')
 	headers.parse(b'WWW-Authenticate: digest realm="bar", nonce=foo, opaque=foo, algorithm=MD5, qop=auth')
 	assert headers.elements(u'WWW-Authenticate') == [u'Digest', u'Basic']
+
+
+def test_no_realm(headers):
+	headers.parse(b'WWW-Authenticate: basic foo="bar"')
+	assert headers.get_element('WWW-Authenticate').realm == ''
+
+
+def test_multiple_headers(headers):
+	headers.parse(b'WWW-Authenticate: basic realm="foo"')
+	headers.parse(b'WWW-Authenticate: digest realm="bar", nonce=foo, opaque=foo, algorithm=MD5, qop=auth')
+	assert bytes(headers) == b'WWW-Authenticate: basic realm="foo"\r\nWWW-Authenticate: digest realm="bar", nonce=foo, opaque=foo, algorithm=MD5, qop=auth\r\n\r\n'

@@ -114,6 +114,11 @@ def test_parse_absolute_uri(url, expected):
 	b'http://www.example.net:-123',
 	b'http://www.example.net:65536',
 	b'http://www.example.net:0',
+	# Invalid IPvFuture
+	b'http://[v123.deaf:bee\xff]/',
+	# Invalid host
+	b'http://www.ex%c3%a4mple.net',
+	pytest.param(b'http://www.ex%e4mple.net', marks=pytest.mark.xfail()),
 ])
 def test_parse_invalid_netloc(url):
 	with pytest.raises(InvalidURI):
@@ -171,3 +176,26 @@ def test_rfc2732(url, hostname, port):
 def test_ipvfuture(url, hostname, port):
 	url = URI(url)
 	assert url.hostname == hostname
+
+
+def test_invalid_idna_uri():
+	pass
+
+
+@pytest.mark.parametrize('char', [
+	b'\x00', b'\x01', b'\x02', b'\x03', b'\x04', b'\x05', b'\x06', b'\x07', b'\x08', b'\t', b'\n', b'\x0b', b'\x0c', b'\r', b'\x0e', b'\x0f', b'\x10', b'\x11', b'\x12', b'\x13', b'\x14', b'\x15', b'\x16', b'\x17', b'\x18', b'\x19', b'\x1a', b'\x1b', b'\x1c', b'\x1d', b'\x1e', b'\x1f', b' ', b'\xff'
+])
+def test_invalid_uri_characters(char):
+	with pytest.raises(InvalidURI) as exc:
+		URI().parse(b'/foo%sbar' % (char,))
+	assert 'must consist of printable ASCII characters without whitespace.' in str(exc.value)
+
+
+@pytest.mark.parametrize('char', [
+	#b'\x00', b'\x01', b'\x02', b'\x03', b'\x04', b'\x05', b'\x06', b'\x07', b'\x08', b'\t', b'\n', b'\x0b', b'\x0c', b'\r', b'\x0e', b'\x0f', b'\x10', b'\x11', b'\x12', b'\x13', b'\x14', b'\x15', b'\x16', b'\x17', b'\x18', b'\x19', b'\x1a', b'\x1b', b'\x1c', b'\x1d', b'\x1e', b'\x1f', b' ',
+	b'!', b'"', b'$', b'%', b'&', b"'", b'(', b')', b'*', b',', b'/', b':', b';', b'<', b'=', b'>', b'@', b'[', b'\\', b']', b'^', b'_', b'`', b'{', b'|', b'}', b'~',
+])
+def test_invalid_uri_scheme_characters(char):
+	with pytest.raises(InvalidURI) as exc:
+		URI().parse(b'ht%sp://example.com/' % (char,))
+	assert 'must only contain alphanumeric letters or plus, dash, dot.' in str(exc.value)

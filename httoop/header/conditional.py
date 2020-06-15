@@ -11,16 +11,20 @@ class _DateComparable(object):
 
 	def sanitize(self):
 		super(_DateComparable, self).sanitize()
-		self.value = self.Date.parse(self.value)
+		self.value = self.Date.parse(self.value.encode('ASCII', 'replace'))
 
 	def __eq__(self, other):
-		#super(_DateComparable, self).__eq__(other)
 		if not isinstance(other, Date):
+			if isinstance(other, _DateComparable):
+				other = int(other)
 			try:
 				other = Date(other)
 			except InvalidDate:
 				return False
 		return self.value == other
+
+	def __int__(self):
+		return int(self.value)
 
 
 class ETag(HeaderElement):

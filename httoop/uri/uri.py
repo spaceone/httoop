@@ -11,7 +11,7 @@ from socket import inet_pton, inet_ntop, AF_INET, AF_INET6, error as SocketError
 from httoop.six import with_metaclass, iterbytes, int2byte
 
 from httoop.exceptions import InvalidURI
-from httoop.util import Unicode, _
+from httoop.util import integer, Unicode, _
 from httoop.uri.percent_encoding import Percent
 from httoop.uri.query_string import QueryString
 from httoop.uri.type import URIType
@@ -59,8 +59,8 @@ class URI(with_metaclass(URIType)):
 		port = port or self.PORT
 		if port:
 			try:
-				port = int(port)
-				if not 0 < int(port) <= 65535:
+				port = integer(port)
+				if not 0 < integer(port) <= 65535:
 					raise ValueError
 			except ValueError:
 				raise InvalidURI(_(u'Invalid port: %r'), port)  # TODO: TypeError
@@ -314,12 +314,9 @@ class URI(with_metaclass(URIType)):
 				yield b':'
 				yield quote(password, Percent.USERINFO)
 			yield b'@'
-		try:
-			yield host.encode('idna')
-		except UnicodeError:  # u'..'.encode('idna')
-			raise InvalidURI(_(u'Invalid URI: cannot encode host as IDNA.'))
-		if port and int(port) != self.PORT:
-			yield b':%d' % int(port)
+		yield host.encode('idna')
+		if port and integer(port) != self.PORT:
+			yield b':%d' % integer(port)
 
 	def _compose_relative_iter(self):
 		u"""Composes the relative URI beginning with the path"""

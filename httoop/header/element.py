@@ -14,7 +14,7 @@ from email.errors import HeaderParseError
 
 from httoop.six import with_metaclass
 
-from httoop.util import CaseInsensitiveDict, iteritems, decode_header, sanitize_encoding, ByteUnicodeDict, _
+from httoop.util import CaseInsensitiveDict, iteritems, decode_header, sanitize_encoding, ByteUnicodeDict, integer, _
 from httoop.exceptions import InvalidHeader
 from httoop.uri.percent_encoding import Percent
 
@@ -25,10 +25,10 @@ HEADER = CaseInsensitiveDict()
 
 class HeaderType(type):
 
-	def __new__(mcs, name, bases, dict_):
+	def __new__(cls, name, bases, dict_):
 		__all__.append(name)
 		name = dict_.get('__name__', name)
-		return super(HeaderType, mcs).__new__(mcs, name, bases, dict_)
+		return super(HeaderType, cls).__new__(cls, name, bases, dict_)
 
 
 class HeaderElement(with_metaclass(HeaderType)):
@@ -145,7 +145,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 					try:
 						if num != b'0' and num.startswith(b'0'):
 							raise ValueError()
-						num = int(num)
+						num = integer(num)
 					except ValueError:
 						yield key, value
 						continue

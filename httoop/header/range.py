@@ -4,7 +4,7 @@ from os import SEEK_END, SEEK_SET
 
 from httoop.header.element import HeaderElement
 from httoop.exceptions import InvalidHeader
-from httoop.util import _
+from httoop.util import integer, _
 
 
 class ContentRange(HeaderElement):
@@ -17,15 +17,15 @@ class ContentRange(HeaderElement):
 		if self.range:
 			start, end = self.range
 			start = start or 0
-			end = end or int(length)
+			end = end or integer(length)
 			self.range = (start, end)
-		self.length = length if length is None else int(length)
+		self.length = length if length is None else integer(length)
 		super(ContentRange, self).__init__(value)
 
 	def compose(self):
 		length = b'*' if self.length is None else self.length
 		byte_range = b'%d-%d' % tuple(self.range) if self.range else b'*'
-		return b'%s %s/%s' % (self.value.encode('ISO8859-1'), byte_range, length)
+		return b'%s %s/%s' % (self.value.encode('ISO8859-1'), byte_range, str(length).encode('ASCII') if isinstance(length, int) else length)
 
 	@classmethod
 	def parse(cls, elementstr):
@@ -36,18 +36,18 @@ class ContentRange(HeaderElement):
 				raise InvalidHeader(_(u'Only "bytes" Content-Range supported'))
 			byte_range, complete_length = content_range.split(b'/')
 			if complete_length != b'*':
-				complete_length = int(complete_length)
+				complete_length = integer(complete_length)
 				if complete_length < 0:
-					raise ValueError
+					raise ValueError()
 			else:
 				complete_length = None
 			if byte_range != b'*':
 				start, end = byte_range.split(b'-', 1)
-				start, end = int(start), int(end)
+				start, end = integer(start), integer(end)
 				if start >= end or start < 0 or end < 0:
-					raise ValueError
+					raise ValueError()
 			if complete_length is None and start is None:
-				raise ValueError
+				raise ValueError()
 		except ValueError:
 			raise InvalidHeader(_(u'Content-Range: %r'), elementstr)
 		return cls(value.decode('ISO8859-1'), (start, end), complete_length)
@@ -76,8 +76,8 @@ class Range(HeaderElement):
 			if (not start and not stop) or not __:
 				raise InvalidHeader(_(u'no range start/stop.'))
 			try:
-				start = int(start) if start else None
-				stop = int(stop) if stop else None
+				start = integer(start) if start else None
+				stop = integer(stop) if stop else None
 				if start and start < 0 or stop and stop < 0:
 					raise ValueError()
 			except ValueError:

@@ -9,7 +9,7 @@ import re
 
 from httoop.six import with_metaclass
 
-from httoop.util import Unicode, _
+from httoop.util import integer, Unicode, _
 from httoop.exceptions import InvalidLine
 from httoop.meta import HTTPSemantic
 
@@ -135,12 +135,12 @@ class Status(with_metaclass(HTTPSemantic)):
 			code, reason = status
 			if isinstance(reason, bytes):
 				reason = reason.decode('ascii')
-			self.__code, self.__reason = int(code), reason
+			self.__code, self.__reason = integer(code), reason
 		elif isinstance(status, (bytes, Unicode)):
 			code, reason = status.split(None, 1)
 			if isinstance(reason, bytes):
 				reason = reason.decode('ascii')
-			self.__code, self.__reason = int(code), reason
+			self.__code, self.__reason = integer(code), reason
 		elif isinstance(status, Status):
 			self.__code, self.__reason = status.code, status.reason
 		else:

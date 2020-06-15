@@ -3,7 +3,7 @@
 import re
 
 from httoop.header.element import HeaderElement, _AcceptElement, _CookieElement, _HopByHopElement, _ListElement, MimeType
-from httoop.util import Unicode, _
+from httoop.util import Unicode, integer, _
 from httoop.exceptions import InvalidHeader, InvalidDate
 from httoop.codecs import lookup
 
@@ -327,7 +327,7 @@ class Host(HeaderElement):
 		if self.host.endswith(']') and self.host.startswith('['):
 			self.host = self.host[1:-1]
 		if self.port:
-			self.port = int(self.port)
+			self.port = integer(self.port)
 		if not self.hostname:
 			raise InvalidHeader(_(u'Invalid Host header: %s'), self.value)
 
@@ -399,7 +399,7 @@ class SetCookie(_ListElement, _CookieElement):
 	def max_age(self):
 		if self.params.get('max-age'):
 			try:
-				return int(self.params['max-age'])
+				return integer(self.params['max-age'])
 			except ValueError:
 				raise InvalidHeader(_(u'Cookie: max-age is not a number: %r'), self.params['max-age'])
 

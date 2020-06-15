@@ -4,6 +4,7 @@
 import re
 
 from httoop.header.element import HeaderElement
+from httoop.util import integer
 
 
 class ContentSecurityPolicy(HeaderElement):
@@ -42,7 +43,11 @@ class StrictTransportSecurity(HeaderElement):
 
 	@property
 	def include_sub_domains(self):
-		return 'includeSubDomains' in self.params
+		return 'includesubdomains' in self.params
+
+	@property
+	def max_age(self):
+		return integer(self.value.split(u'=', 1)[1])  # TODO: more generic parsing
 
 
 class ContentTypeOptions(HeaderElement):

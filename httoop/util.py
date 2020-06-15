@@ -48,6 +48,7 @@ __all__ = [
 	'CaseInsensitiveDict',
 	'sanitize_encoding', 'make_boundary', '_',
 	'encode_base64', 'decode_base64',
+	'integer',
 ]
 
 KNOWN_ENCODINGS = {
@@ -100,6 +101,19 @@ def if_has(func):
 			return func(self, *args, **kwargs)
 		return False
 	return _decorated
+
+
+def integer(number, *args):
+	"""In Python 3 int() is broken.
+	>>> int(bytearray(b'1_0'))
+	Traceback (most recent call last):
+		...
+	ValueError:
+	"""
+	num = int(number, *args)
+	if isinstance(number, str) and '_' in number or isinstance(number, (bytes, bytearray)) and b' ' in number:
+		raise ValueError()
+	return num
 
 
 class IFile(object):

@@ -8,7 +8,7 @@ from __future__ import absolute_import
 from httoop.messages import Message
 from httoop.header import Headers
 from httoop.exceptions import InvalidLine, InvalidHeader, InvalidBody, InvalidURI, Invalid
-from httoop.util import Unicode, _
+from httoop.util import integer, Unicode, _
 from httoop.status import BAD_REQUEST, NOT_IMPLEMENTED
 
 CR = b'\r'
@@ -186,10 +186,10 @@ class StateMachine(object):
 		else:
 			# Content-Length header defines the length of the message body
 			try:
-				self.message_length = int(message.headers.get("Content-Length", "0"))
+				self.message_length = integer(message.headers.get("Content-Length", "0"))
 				if self.message_length < 0:
 					self.message_length = None
-					raise ValueError
+					raise ValueError()
 			except ValueError:
 				raise BAD_REQUEST(_(u'Invalid Content-Length header.'))
 
@@ -232,13 +232,13 @@ class StateMachine(object):
 
 	def __parse_chunk_size(self):
 		line, rest_chunk = self.buffer.split(self.line_end, 1)
-		chunk_size = line.split(b";", 1)[0].strip()
+		_chunk_size = line.split(b";", 1)[0].strip()
 		try:
-			chunk_size = int(bytes(chunk_size), 16)
+			chunk_size = integer(bytes(_chunk_size), 16)
 			if chunk_size < 0:
-				raise ValueError
+				raise ValueError()
 		except (ValueError, OverflowError):
-			exc = InvalidHeader(_(u'Invalid chunk size: %r'), chunk_size.decode('ISO8859-1'))
+			exc = InvalidHeader(_(u'Invalid chunk size: %r'), _chunk_size.decode('ISO8859-1'))
 			raise BAD_REQUEST(Unicode(exc))
 		else:
 			return chunk_size, rest_chunk

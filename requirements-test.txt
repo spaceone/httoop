@@ -2,3 +2,4 @@ six
 pytest
 pytest-cov
 coveralls
+defusedxml

@@ -80,16 +80,17 @@ class FrameOptions(HeaderElement):
 
 	@property
 	def deny(self):
-		return self.value == 'DENY'
+		return self.value.upper() == 'DENY'
 
 	@property
 	def same_origin(self):
-		return self.value == 'SAMEORIGIN'
+		return self.value.upper() == 'SAMEORIGIN'
 
 	@property
 	def allow_from(self):
-		if self.value == 'ALLOW-FROM':
-			return self.params
+		if self.value.upper() == 'ALLOW-FROM':
+			from httoop.uri import URI
+			return [URI(uri) for uri in self.params.keys()]
 
 
 class PermittedCrossDomainPolicies(HeaderElement):

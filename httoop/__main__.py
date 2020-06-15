@@ -53,10 +53,10 @@ class CLI(object):
 		add('-H', '--header', action='append', default=[])
 		add('-b', '--body', default='')
 
-	def parse_request(self):
+	def parse_request(self):  # pragma: no cover
 		raise NotImplementedError('TODO')
 
-	def parse_response(self):
+	def parse_response(self):  # pragma: no cover
 		raise NotImplementedError('TODO')
 
 	def request(self):
@@ -81,10 +81,11 @@ class CLI(object):
 		if self.arguments.protocol:
 			protocol = self.arguments.protocol
 			try:
-				protocol = map(int, protocol.split('.', 1))
+				protocol = [int(x) for x in protocol.split('.', 1)]
 			except ValueError:
 				pass
-			self.message.protocol = protocol
+			else:
+				self.message.protocol = protocol
 		for header in self.arguments.header:
 			try:
 				key, value = header.split(':', 1)
@@ -103,9 +104,9 @@ class CLI(object):
 		sys.stdout.write(self.decode(bytes(self.message.body)))
 
 	def decode(self, data):
-		if str is bytes:
-			return data
-		return data.decode('ISO8859-1')
+		if str is not bytes:
+			data = data.decode('ISO8859-1')
+		return data
 
 
 if __name__ == '__main__':

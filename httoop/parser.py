@@ -39,7 +39,8 @@ class StateMachine(object):
 			startline=False,
 			protocol=False,
 			headers=False,
-			body=False
+			body=False,
+			trailer=False,
 		)
 
 	def on_message_started(self):
@@ -84,7 +85,7 @@ class StateMachine(object):
 		self.buffer.extend(data)
 		try:
 			return tuple(x for x in self._parse() if x is not None)
-		except (InvalidHeader, InvalidLine, InvalidURI) as exc:
+		except (InvalidHeader, InvalidLine, InvalidURI, InvalidBody) as exc:
 			raise BAD_REQUEST(Unicode(exc))
 
 	def _parse(self):
@@ -206,6 +207,8 @@ class StateMachine(object):
 			return NOT_RECEIVED_YET
 
 	def parse_chunked_body(self):
+		if self.state['trailer']:
+			return self.parse_trailers()
 		if self.line_end not in self.buffer:
 			# chunk size info not received yet
 			return NOT_RECEIVED_YET
@@ -221,10 +224,11 @@ class StateMachine(object):
 		self.buffer = rest_chunk
 
 		if chunk_size == 0:
+			self.state['trailer'] = True
 			return self.parse_trailers()
 
 		if not rest_chunk.startswith(self.line_end):
-			raise InvalidBody(_(u'Invalid chunk terminator: %r'), repr(rest_chunk[:2]))
+			raise InvalidBody(_(u'Invalid chunk terminator: %r'), rest_chunk[:2].decode('ISO8859-1'))
 		self.buffer = self.buffer[len(self.line_end):]
 
 		# next chunk

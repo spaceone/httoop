@@ -67,9 +67,13 @@ class Range(HeaderElement):
 		super(Range, self).__init__(value, params)
 
 	@classmethod
+	def split(cls, fieldvalue):
+		return [fieldvalue]
+
+	@classmethod
 	def parse(cls, elementstr):
 		bytesunit, __, byteranges = elementstr.partition(b'=')
-		byteranges = cls.split(byteranges)
+		byteranges = super(Range, cls).split(byteranges)
 		ranges = set()
 		for brange in byteranges:
 			start, __, stop = (x.strip() for x in brange.partition(b'-'))
@@ -82,10 +86,10 @@ class Range(HeaderElement):
 					raise ValueError()
 			except ValueError:
 				raise InvalidHeader(_(u'no range number.'))
-			if start is not None and stop is not None and stop < start:
+			if start is not None and stop is not None and stop <= start:
 				raise InvalidHeader(_(u'range start must be smaller than end.'))
 			ranges.add((start, stop))
-		return cls(bytesunit.decode('ISO8859-1'), list(sorted(ranges)))
+		return cls(bytesunit.decode('ISO8859-1'), list(sorted(ranges, key=lambda x: x[0] if x[0] is not None else -1)))
 
 	def sanitize(self):
 		super(Range, self).sanitize()

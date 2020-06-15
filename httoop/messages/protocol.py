@@ -44,7 +44,8 @@ class Protocol(with_metaclass(HTTPSemantic)):
 				protocol = protocol.encode('ascii', 'replace')
 			protocol = self.parse(protocol)
 		else:
-			self.__protocol = tuple(protocol)
+			major, minor = tuple(protocol)
+			self.__protocol = (int(major), int(minor))
 
 	def parse(self, protocol):
 		match = self.PROTOCOL_RE.match(protocol)

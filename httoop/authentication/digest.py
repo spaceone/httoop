@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from hashlib import md5
+from hashlib import md5, sha256
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
@@ -12,6 +12,11 @@ class DigestAuthScheme(object):
 	algorithms = {
 		'MD5': lambda val: md5(val).hexdigest().encode('ASCII'),  # nosec
 		'MD5-sess': lambda val: md5(val).hexdigest().encode('ASCII'),  # nosec
+		'SHA-256': lambda val: sha256(val).hexdigest().encode('ASCII'),
+		'SHA-256-sess': lambda val: sha256(val).hexdigest().encode('ASCII'),
+		#'SHA-512-256': lambda val: sha256(val).hexdigest().encode('ASCII'), TODO: ??
+		#'SHA-512-256-sess': lambda val: sha256(val).hexdigest().encode('ASCII'), TODO: ??
+
 	}
 	qops = (b'auth', b'auth-int')  # quality of protection
 

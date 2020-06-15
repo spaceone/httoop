@@ -147,6 +147,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 		codec = self.content_codec
 		if codec:
 			self.set(codec.encode(self.__content_bytes()))
+			self.content_encoding = None
 
 	def decompress(self):
 		u"""Applies the Content-Encoding codec to the content"""
@@ -182,10 +183,10 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 
 	def parse(self, data):
 		if self.transfer_codec and data:
-			data = self.transfer_codec.decode(data)
+			data = self.transfer_codec.decode(data, self.encoding).encode(self.encoding)
 
 #		if self.content_codec and data:
-#			data = self.content_codec.decode(data)
+#			data = self.content_codec.decode(data, self.encoding).encode(self.encode)
 
 		self.write(data)
 

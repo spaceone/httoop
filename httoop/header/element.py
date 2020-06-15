@@ -183,7 +183,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 
 	@classmethod
 	def split(cls, fieldvalue):
-		return cls.RE_SPLIT.split(fieldvalue)
+		return [x.strip() for x in cls.RE_SPLIT.split(fieldvalue)]
 
 	@classmethod
 	def join(cls, values):

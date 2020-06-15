@@ -222,6 +222,8 @@ class Cookie(_CookieElement):
 	is_request_header = True
 	RE_SPLIT = re.compile(b'; ')
 
+	# TODO: prohibit that multiple Cookie lines are parsed as valid
+
 	@classmethod
 	def join(cls, values):
 		return b'; '.join(values)

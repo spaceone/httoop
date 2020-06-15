@@ -70,11 +70,12 @@ class ServerStateMachine(StateMachine):
 	def on_headers_complete(self):
 		self.check_host_header_exists()
 		self.set_request_uri_host()
+		self.check_http2_upgrade()
 		super(ServerStateMachine, self).on_headers_complete()
 
 	def on_body_complete(self):
-		super(ServerStateMachine, self).on_body_complete()
 		self.check_message_without_body_containing_data()
+		super(ServerStateMachine, self).on_body_complete()
 		self.check_methods_without_body()
 
 	def check_request_protocol(self):
@@ -101,7 +102,7 @@ class ServerStateMachine(StateMachine):
 
 	def validate_request_uri_scheme(self):
 		if self.message.uri.scheme:
-			if self.message.uri.scheme not in ('http', 'https'):
+			if self.message.uri.scheme not in ('http', 'https'):  # pragma: no cover
 				exc = InvalidURI(_(u'Invalid URL: wrong scheme'))
 				raise BAD_REQUEST(Unicode(exc))
 		else:

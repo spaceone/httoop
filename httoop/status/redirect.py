@@ -78,7 +78,7 @@ class NOT_MODIFIED(RedirectStatus):
 
 	def __init__(self, *args, **kwargs):
 		# don't set location
-		super(NOT_MODIFIED, self).__init__(self, None, *args, **kwargs)
+		super(NOT_MODIFIED, self).__init__(None, *args, **kwargs)
 
 	header_to_remove = (
 		"Allow", "Content-Encoding", "Content-Language",

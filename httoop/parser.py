@@ -272,9 +272,6 @@ class StateMachine(object):
 			value = self.trailers.pop(name, None)
 			if value is not None:
 				message.headers.append(name, value)
-			else:
-				# ignore
-				pass
 		if self.trailers:
 			msg_trailers = u'" ,"'.join(self.trailers.keys())
 			raise BAD_REQUEST(u'untold trailers: "%s"' % msg_trailers)

@@ -162,7 +162,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 					value += lines.pop(i)
 				except KeyError:
 					break
-			if not key:
+			if not key:  # pragma: no cover
 				raise InvalidHeader(_(u'...'))
 			if value:
 				yield key, value
@@ -241,7 +241,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 				value.encode('ISO8859-1')
 			except UnicodeEncodeError:
 				return b'=?utf-8?b?%s?=' % (b2a_base64(value.encode('utf-8')).rstrip(b'\n'),)
-			else:
+			else:  # pragma: no cover
 				return b'=?ISO8859-1?b?%s?=' % (b2a_base64(value.encode('ISO8859-1')).rstrip(b'\n'),)
 
 	def __repr__(self):
@@ -318,7 +318,7 @@ class _AcceptElement(HeaderElement):
 	def quality(self):
 		"""The quality of this value."""
 		val = self.params.get("q", "1")
-		if isinstance(val, HeaderElement):
+		if isinstance(val, HeaderElement):  # pragma: no cover
 			val = val.value
 		if val:
 			return float(val)

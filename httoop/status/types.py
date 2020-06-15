@@ -11,7 +11,7 @@ from httoop.meta import HTTPSemantic
 
 class StatusType(HTTPSemantic):
 
-	def __new__(mcs, name, bases, dict_):
+	def __new__(cls, name, bases, dict_):
 		code = int(dict_.get('code', 0))
 		if 99 < code < 200:
 			scls = 'InformationalStatus'
@@ -32,7 +32,7 @@ class StatusType(HTTPSemantic):
 		reason = REASONS.get(code, ('', ''))
 		dict_.setdefault('reason', reason[0])
 		dict_.setdefault('description', reason[1])
-		return super(StatusType, mcs).__new__(mcs, name, bases, dict_)
+		return super(StatusType, cls).__new__(cls, name, bases, dict_)
 
 
 class StatusException(with_metaclass(StatusType, Status, Exception)):
@@ -53,8 +53,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 
 	@body.setter
 	def body(self, value):
-		self.body  # pylint: disable=W0104
-		self._body.set(value)
+		self.body.set(value)
 
 	header_to_remove = ()
 	u"""a tuple of header field names which should be

@@ -7,7 +7,7 @@ class ComposedMessage(object):
 
 	# FIXME: use it
 	@property
-	def close(self):
+	def close(self):  # pragma: no cover
 		# TODO: find out why this constraint
 		return 'Transfer-Encoding' in self.message.headers and 'chunked' not in self.message.headers.elements('Transfer-Encoding')
 

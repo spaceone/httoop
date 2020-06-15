@@ -124,7 +124,7 @@ class Date(with_metaclass(HTTPSemantic)):
 				date = time.strptime(timestr, '%A, %d-%b-%y %H:%M:%S GMT')
 			except ValueError:
 				pass
-			else:
+			else:  # pragma: no cover
 				return cls(date)
 
 			# parse C's asctime format
@@ -132,7 +132,7 @@ class Date(with_metaclass(HTTPSemantic)):
 				date = time.strptime(timestr, '%a %b %d %H:%M:%S %Y')
 			except ValueError:
 				pass
-			else:
+			else:  # pragma: no cover
 				return cls(date)
 		finally:
 			locale.setlocale(locale.LC_TIME, old)
@@ -148,32 +148,32 @@ class Date(with_metaclass(HTTPSemantic)):
 	def __eq__(self, other):
 		try:
 			return int(self) == int(self.__other(other))
-		except NotImplementedError:
+		except NotImplementedError:  # pragma: no cover
 			return NotImplemented
 
 	def __gt__(self, other):
 		try:
 			return int(self) > int(self.__other(other))
-		except NotImplementedError:
+		except NotImplementedError:  # pragma: no cover
 			return NotImplemented
 
 	def __lt__(self, other):
 		try:
 			return int(self) < int(self.__other(other))
-		except NotImplementedError:
+		except NotImplementedError:  # pragma: no cover
 			return NotImplemented
 
 	def __other(self, other):
 		if other is None:
 			return Date(0)
-			raise NotImplementedError()
+			raise NotImplementedError()  # pragma: no cover
 		if isinstance(other, Date):
 			return other
 		try:
 			return Date(other)
 		except (InvalidDate, TypeError):
 			return Date(0)
-			raise NotImplementedError()
+			raise NotImplementedError()  # pragma: no cover
 
 	def __repr__(self):
 		return '<HTTP Date(%d)>' % (int(self),)

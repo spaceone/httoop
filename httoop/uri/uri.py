@@ -194,12 +194,6 @@ class URI(with_metaclass(URIType)):
 			[<scheme>:][//[<username>[:<password>]@][<host>][:<port>]/]<path>[?<query>][#<fragment>]
 		"""
 
-		if isinstance(uri, Unicode):  # TODO: remove?
-			try:
-				uri = uri.encode('ascii')
-			except UnicodeEncodeError:
-				raise TypeError('URI must be ASCII bytes.')
-
 		if type(self) is URI and b':' in uri:
 			self.scheme = uri.split(b':', 1)[0].lower()
 			if type(self) is not URI:
@@ -232,7 +226,7 @@ class URI(with_metaclass(URIType)):
 
 		try:
 			scheme = scheme.decode('ascii').lower()
-		except UnicodeDecodeError:
+		except UnicodeDecodeError:  # pragma: no cover
 			raise InvalidURI(_(u'Invalid scheme: must be ASCII.'))
 
 		if scheme and scheme.strip(u'abcdefghijklmnopqrstuvwxyz0123456789.-+'):
@@ -266,7 +260,7 @@ class URI(with_metaclass(URIType)):
 				if host.startswith(b'v') and b'.' in host and host[1:].split(b'.', 1)[0].isdigit():
 					try:
 						return u'[%s]' % host.decode('ascii')
-					except UnicodeDecodeError:
+					except UnicodeDecodeError:  # pragma: no cover
 						raise InvalidURI(_('Invalid IPvFuture address: must be ASCII.'))
 				raise InvalidURI(_('Invalid IP address in URI.'))
 		# IPv4
@@ -286,7 +280,7 @@ class URI(with_metaclass(URIType)):
 		host = self.unquote(host)
 		try:
 			return host.encode('ascii').decode('idna').lower()
-		except UnicodeError:
+		except UnicodeError:  # pragma: no cover
 			raise InvalidURI(_('Invalid host.'))
 
 	def compose(self):

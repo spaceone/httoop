@@ -43,7 +43,7 @@ def _(x):
 
 __all__ = [
 	'PY3', 'Unicode', 'iteritems',
-	'to_unicode', 'to_ascii', 'decode_header',
+	'to_unicode', 'decode_header',
 	'IFile', 'partial', 'parsedate', 'izip',
 	'CaseInsensitiveDict',
 	'sanitize_encoding', 'make_boundary', '_',
@@ -87,12 +87,6 @@ def to_unicode(string):
 		except UnicodeDecodeError:
 			return string.decode('ISO8859-1')
 	return Unicode(string)
-
-
-def to_ascii(string):
-	if isinstance(string, Unicode):
-		return string.encode('ascii', 'ignore')
-	return bytes(string).decode('ascii', 'ignore').encode('ascii')
 
 
 def if_has(func):

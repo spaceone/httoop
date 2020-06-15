@@ -16,7 +16,7 @@ class Deflate(Codec):
 	def encode(cls, data, charset=None, mimetype=None):
 		try:
 			return zlib.compress(Codec.encode(data, charset))
-		except zlib.error:
+		except zlib.error:  # pragma: no cover
 			raise EncodeError(_(u'Invalid zlib/deflate data.'))
 
 	@classmethod

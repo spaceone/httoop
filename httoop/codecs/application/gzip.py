@@ -24,14 +24,14 @@ class GZip(Codec):
 				fd.write(Codec.encode(data, charset))
 			return out.getvalue()
 			# return zlib.compress(Codec.encode(data, charset), cls.compression_level)
-		except zlib.error:
+		except zlib.error:  # pragma: no cover
 			raise EncodeError(_(u'Invalid gzip data.'))
 
 	@classmethod
 	def decode(cls, data, charset=None, mimetype=None):
 		try:
 			with gzip.GzipFile(fileobj=io.BytesIO(data)) as fd:
-				return fd.read()
+				data = fd.read()
 			# data = zlib.decompress(data, 16 + zlib.MAX_WBITS)
 		except (zlib.error, IOError, EOFError):
 			raise DecodeError(_(u'Invalid gzip data.'))

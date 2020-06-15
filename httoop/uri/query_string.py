@@ -8,12 +8,9 @@ from httoop.util import _
 
 
 class QueryString(FormURLEncoded):
-	INVALID = (stringprep.in_table_c21,)
 
-	@classmethod
-	def quote(cls, data, charset=None):
-		data = data.encode(charset or 'ISO8859-1')
-		return Percent.quote(data, Percent.QUERY.replace(b'+', b''))
+	INVALID = (stringprep.in_table_c21,)
+	UNQUOTED = Percent.QUERY.replace(b'+', b'')
 
 	@classmethod
 	def decode(cls, data, charset=None):

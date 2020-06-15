@@ -26,10 +26,7 @@ class Multipart(Codec):
 		part = parts.pop(0)
 		if part:
 			raise DecodeError(_(u'Data before boundary: %r'), part.decode('ISO8859-1'))
-		try:
-			part = parts.pop()
-		except IndexError:
-			raise DecodeError(u'No end of boundary')
+		part = parts.pop()
 		if part not in (b'--', b'--\r\n'):
 			raise DecodeError(_(u'Invalid multipart end: %r'), part.decode('ISO8859-1'))
 
@@ -43,7 +40,7 @@ class Multipart(Codec):
 			if not separator:
 				raise DecodeError(_(u'Multipart does not contain CRLF header separator'))
 			if not content.endswith(b'\r\n'):
-				raise DecodeError(_(u'Multipart does not end with CRLF: %r'), content[-2].decode('ISO8859-1'))
+				raise DecodeError(_(u'Multipart does not end with CRLF: %r'), content[-2:].decode('ISO8859-1'))
 			content = content[:-2]
 			body = Body()
 			body.headers.clear()

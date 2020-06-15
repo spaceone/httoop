@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from httoop.codecs.codec import Codec
+from httoop.exceptions import DecodeError, EncodeError
 
 
 class PlainText(Codec):
@@ -8,18 +9,16 @@ class PlainText(Codec):
 
 	@classmethod
 	def decode(cls, data, charset=None, mimetype=None):
-		for encoding in (charset or 'UTF-8', 'UTF-8', 'ISO8859-1'):
-			try:
-				return data.decode(encoding)
-			except UnicodeDecodeError:
-				pass
+		try:
+			assert isinstance(data, bytes)
+			return data.decode(charset or 'UTF-8')
+		except UnicodeDecodeError:
+			raise DecodeError(u'Wrong encoding.')
 
 	@classmethod
 	def encode(cls, data, charset=None, mimetype=None):
-		charset = charset or 'UTF-8'
-		if isinstance(data, bytes):
-			try:
-				return data.decode('UTF-8').encode(charset)
-			except UnicodeDecodeError:
-				return data.decode('ISO8859-1').encode(charset)
-		return data.encode(charset)
+		try:
+			assert not isinstance(data, bytes)
+			return data.encode(charset or 'UTF-8')
+		except UnicodeEncodeError:
+			raise EncodeError(u'Wrong encoding.')

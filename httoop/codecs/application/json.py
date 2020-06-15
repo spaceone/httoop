@@ -14,7 +14,7 @@ class JSON(Codec):
 	def encode(cls, data, charset=None, mimetype=None):
 		data = json_encode(data)
 		if not isinstance(data, bytes):  # python3
-			data = data.encode(charset)
+			data = data.encode(charset or 'UTF-8')
 		return data
 
 	@classmethod

@@ -7,6 +7,8 @@ from httoop.uri.percent_encoding import Percent
 class FormURLEncoded(Codec):
 	mimetype = 'application/x-www-form-urlencoded'
 
+	UNQUOTED = Percent.UNRESERVED
+
 	@classmethod
 	def decode(cls, data, charset=None, mimetype=None):
 		if not data:
@@ -32,4 +34,4 @@ class FormURLEncoded(Codec):
 	@classmethod
 	def quote(cls, data, charset=None):
 		data = data.encode(charset or 'ISO8859-1')
-		return Percent.quote(data, cls.UNRESERVED)
+		return Percent.quote(data, cls.UNQUOTED)

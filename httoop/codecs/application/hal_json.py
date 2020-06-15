@@ -76,7 +76,7 @@ class Resource(dict):
 		embedded = self['_embedded'].get(relation)
 		if not embedded:
 			return
-		if isinstance(embedded, dict):
+		if not isinstance(embedded, list):
 			embedded = [embedded]
 		for resource in embedded:
 			if not isinstance(resource, dict):

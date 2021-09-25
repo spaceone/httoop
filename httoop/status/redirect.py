@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from httoop.uri import URI
 from httoop.status.types import StatusException
+from httoop.uri import URI
 
 
 class RedirectStatus(StatusException):

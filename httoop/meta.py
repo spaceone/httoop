@@ -3,7 +3,8 @@
 """
 
 from __future__ import absolute_import
-from httoop.util import Unicode, PY3
+
+from httoop.util import PY3, Unicode
 
 __all__ = ['HTTPSemantic']
 

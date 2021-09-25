@@ -2,9 +2,9 @@
 
 from os import SEEK_END, SEEK_SET
 
-from httoop.header.element import HeaderElement
 from httoop.exceptions import InvalidHeader
-from httoop.util import integer, _
+from httoop.header.element import HeaderElement
+from httoop.util import _, integer
 
 
 class ContentRange(HeaderElement):

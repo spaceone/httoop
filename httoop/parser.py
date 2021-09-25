@@ -5,11 +5,11 @@ u"""Implements a state machine for the parsing process.
 
 from __future__ import absolute_import
 
-from httoop.messages import Message
+from httoop.exceptions import Invalid, InvalidBody, InvalidHeader, InvalidLine, InvalidURI
 from httoop.header import Headers
-from httoop.exceptions import InvalidLine, InvalidHeader, InvalidBody, InvalidURI, Invalid
-from httoop.util import integer, Unicode, _
+from httoop.messages import Message
 from httoop.status import BAD_REQUEST, NOT_IMPLEMENTED
+from httoop.util import Unicode, _, integer
 
 CR = b'\r'
 LF = b'\n'

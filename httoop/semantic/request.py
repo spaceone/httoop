@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from contextlib import contextmanager
 
-from httoop.version import UserAgentHeader
 from httoop.date import Date
 from httoop.semantic.message import ComposedMessage
 from httoop.uri import URI
+from httoop.version import UserAgentHeader
 
 
 class ComposedRequest(ComposedMessage):

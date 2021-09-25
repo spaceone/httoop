@@ -3,11 +3,10 @@ u"""Utilities for python2/3 compatibility"""
 
 from __future__ import absolute_import
 
-import sys
 import codecs
-from functools import partial
-
+import sys
 from email.generator import _make_boundary as make_boundary
+from functools import partial
 
 try:
 	from email.utils import parsedate_tz as parsedate

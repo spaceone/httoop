@@ -4,13 +4,11 @@
 .. seealso:: :rfc:`2616#section-4`
 """
 
-from httoop.six import with_metaclass
-
+from httoop.header import Headers
 from httoop.messages.body import Body
 from httoop.messages.protocol import Protocol
-
-from httoop.header import Headers
 from httoop.meta import HTTPSemantic
+from httoop.six import with_metaclass
 
 __all__ = ('Message')
 

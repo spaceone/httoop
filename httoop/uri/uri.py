@@ -6,15 +6,14 @@
 # TODO: parse HTTP/1.0-';'-params?
 
 import re
-from socket import inet_pton, inet_ntop, AF_INET, AF_INET6, error as SocketError
-
-from httoop.six import with_metaclass, iterbytes, int2byte
+from socket import AF_INET, AF_INET6, error as SocketError, inet_ntop, inet_pton
 
 from httoop.exceptions import InvalidURI
-from httoop.util import integer, Unicode, _
+from httoop.six import int2byte, iterbytes, with_metaclass
 from httoop.uri.percent_encoding import Percent
 from httoop.uri.query_string import QueryString
 from httoop.uri.type import URIType
+from httoop.util import Unicode, _, integer
 
 
 class URI(with_metaclass(URIType)):

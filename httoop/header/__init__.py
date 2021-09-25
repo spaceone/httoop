@@ -13,17 +13,11 @@
 
 import inspect
 
-from httoop.header.element import HEADER, HeaderElement, HeaderType
-from httoop.header.messaging import Server, UserAgent
-from httoop.header.headers import Headers
-
-from httoop.header import semantics
-from httoop.header import messaging
-from httoop.header import conditional
 from httoop.header import range  # pylint: disable=W0622
-from httoop.header import cache
-from httoop.header import auth
-from httoop.header import security
+from httoop.header import auth, cache, conditional, messaging, security, semantics
+from httoop.header.element import HEADER, HeaderElement, HeaderType
+from httoop.header.headers import Headers
+from httoop.header.messaging import Server, UserAgent
 
 __all__ = ['Headers', 'Server', 'UserAgent']
 

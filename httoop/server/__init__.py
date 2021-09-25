@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-from httoop.parser import StateMachine, NOT_RECEIVED_YET
-from httoop.status import (
-	BAD_REQUEST, LENGTH_REQUIRED, URI_TOO_LONG,
-	MOVED_PERMANENTLY, HTTP_VERSION_NOT_SUPPORTED, SWITCHING_PROTOCOLS
-)
-from httoop.messages import Request, Response
-from httoop.version import ServerProtocol, ServerHeader
-from httoop.util import Unicode, _
 from httoop.exceptions import InvalidURI
+from httoop.messages import Request, Response
+from httoop.parser import NOT_RECEIVED_YET, StateMachine
+from httoop.status import (
+	BAD_REQUEST, HTTP_VERSION_NOT_SUPPORTED, LENGTH_REQUIRED, MOVED_PERMANENTLY, SWITCHING_PROTOCOLS,
+	URI_TOO_LONG,
+)
+from httoop.util import Unicode, _
+from httoop.version import ServerHeader, ServerProtocol
 
 
 class ServerStateMachine(StateMachine):

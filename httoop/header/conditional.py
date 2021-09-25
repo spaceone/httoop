@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from httoop.header.element import HeaderElement
 from httoop.date import Date
 from httoop.exceptions import InvalidDate
+from httoop.header.element import HeaderElement
 
 
 class _DateComparable(object):

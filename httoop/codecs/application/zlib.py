@@ -2,11 +2,11 @@
 
 from __future__ import absolute_import
 
+import zlib
+
 from httoop.codecs.codec import Codec
 from httoop.exceptions import DecodeError, EncodeError
 from httoop.util import _
-
-import zlib
 
 
 class Deflate(Codec):

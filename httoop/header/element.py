@@ -12,11 +12,12 @@ import re
 from binascii import b2a_base64
 from email.errors import HeaderParseError
 
-from httoop.six import with_metaclass
-
-from httoop.util import CaseInsensitiveDict, iteritems, decode_header, sanitize_encoding, ByteUnicodeDict, integer, _
 from httoop.exceptions import InvalidHeader
+from httoop.six import with_metaclass
 from httoop.uri.percent_encoding import Percent
+from httoop.util import (
+	ByteUnicodeDict, CaseInsensitiveDict, _, decode_header, integer, iteritems, sanitize_encoding,
+)
 
 __all__ = ['HEADER', 'HeaderElement']
 # a mapping of all headers to HeaderElement classes

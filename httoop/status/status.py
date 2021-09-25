@@ -7,11 +7,10 @@
 
 import re
 
-from httoop.six import with_metaclass
-
-from httoop.util import integer, Unicode, _
 from httoop.exceptions import InvalidLine
 from httoop.meta import HTTPSemantic
+from httoop.six import with_metaclass
+from httoop.util import Unicode, _, integer
 
 
 class Status(with_metaclass(HTTPSemantic)):

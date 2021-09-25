@@ -4,10 +4,10 @@
 .. seealso:: :rfc:`2616#section-4`
 """
 
-from httoop.messages.method import Method
-from httoop.messages.message import Message
-from httoop.uri import HTTP as URI
 from httoop.exceptions import InvalidLine, InvalidURI
+from httoop.messages.message import Message
+from httoop.messages.method import Method
+from httoop.uri import HTTP as URI
 from httoop.util import _
 
 __all__ = ('Request',)

@@ -4,15 +4,14 @@
 .. seealso:: :rfc:`2616#section-4.3`
 """
 
-from os import fstat
 from io import BytesIO
+from os import fstat
 from types import GeneratorType
 
-from httoop.six import with_metaclass
-
 from httoop.header import Headers
-from httoop.util import IFile, Unicode
 from httoop.meta import HTTPSemantic
+from httoop.six import with_metaclass
+from httoop.util import IFile, Unicode
 
 
 class Body(with_metaclass(HTTPSemantic, IFile)):

@@ -5,16 +5,7 @@ u"""Module containing various codecs which are
 
 import inspect
 
-from httoop.codecs import application
-from httoop.codecs import audio
-from httoop.codecs import example
-from httoop.codecs import image
-from httoop.codecs import message
-from httoop.codecs import model
-from httoop.codecs import multipart
-from httoop.codecs import text
-from httoop.codecs import video
-
+from httoop.codecs import application, audio, example, image, message, model, multipart, text, video
 from httoop.codecs.codec import Codec
 
 CODECS = dict()

@@ -3,10 +3,9 @@
 
 .. seealso:: :rfc:`2616#section-10`"""
 
-from httoop.six import with_metaclass
-
-from httoop.status.status import Status, REASONS
 from httoop.meta import HTTPSemantic
+from httoop.six import with_metaclass
+from httoop.status.status import REASONS, Status
 
 
 class StatusType(HTTPSemantic):

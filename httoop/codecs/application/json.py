@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-from httoop.codecs.codec import Codec
+from json import dumps as json_encode, loads as json_decode
 
-from json import dumps as json_encode
-from json import loads as json_decode
+from httoop.codecs.codec import Codec
 
 
 class JSON(Codec):

@@ -2,9 +2,9 @@
 
 from binascii import Error as Base64Error
 
-from httoop.header.element import HeaderElement
 from httoop.exceptions import InvalidHeader
-from httoop.util import decode_base64, encode_base64, _
+from httoop.header.element import HeaderElement
+from httoop.util import _, decode_base64, encode_base64
 
 
 class BasicAuthRequestScheme(object):

@@ -5,7 +5,7 @@ from __future__ import absolute_import
 # TODO: http://docs.python.org/2/library/xml.html#xml-vulnerabilities
 # TODO: https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
 try:
-	from defusedxml.ElementTree import fromstring, ParseError, tostring
+	from defusedxml.ElementTree import ParseError, fromstring, tostring
 except ImportError:  # pragma: no cover
 	# TODO: emit a warning
 	from xml.etree.ElementTree import ParseError, tostring  # nosec

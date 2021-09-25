@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import re
 
-from httoop.header.element import HeaderElement
-from httoop.exceptions import InvalidHeader
-from httoop.util import _
-
 from httoop.authentication.basic import BasicAuthRequestScheme, BasicAuthResponseScheme
-from httoop.authentication.digest import DigestAuthResponseScheme, DigestAuthRequestScheme
+from httoop.authentication.digest import DigestAuthRequestScheme, DigestAuthResponseScheme
+from httoop.exceptions import InvalidHeader
+from httoop.header.element import HeaderElement
+from httoop.util import _
 
 
 class AuthElement(HeaderElement):

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from httoop.semantic.message import ComposedMessage
-from httoop.exceptions import InvalidHeader
-from httoop.status import STATUSES
 from httoop.date import Date
-from httoop.util import make_boundary, izip
+from httoop.exceptions import InvalidHeader
 from httoop.messages.body import Body
+from httoop.semantic.message import ComposedMessage
+from httoop.status import STATUSES
+from httoop.util import izip, make_boundary
 
 
 class ComposedResponse(ComposedMessage):

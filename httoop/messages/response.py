@@ -4,10 +4,9 @@
 .. seealso:: :rfc:`2616#section-4`
 """
 
-from httoop.messages.message import Message
-
-from httoop.status import Status
 from httoop.exceptions import InvalidLine
+from httoop.messages.message import Message
+from httoop.status import Status
 from httoop.util import _
 
 __all__ = ('Response',)

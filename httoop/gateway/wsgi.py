@@ -4,8 +4,8 @@
 .. seealso:: `PEP 333 <http://www.python.org/dev/peps/pep-0333/>`_
 """
 
-from httoop.six import reraise, PY2
 from httoop.messages import Body
+from httoop.six import PY2, reraise
 from httoop.util import iteritems
 
 __all__ = ('WSGI',)

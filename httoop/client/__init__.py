@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from httoop.parser import StateMachine
 from httoop.messages import Response
+from httoop.parser import StateMachine
 
 
 class ClientStateMachine(StateMachine):

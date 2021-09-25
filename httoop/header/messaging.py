@@ -2,10 +2,12 @@
 # TODO: Via, Server, User-Agent can contain comments → parse them
 import re
 
-from httoop.header.element import HeaderElement, _AcceptElement, _CookieElement, _HopByHopElement, _ListElement, MimeType
-from httoop.util import Unicode, integer, _
-from httoop.exceptions import InvalidHeader, InvalidDate
 from httoop.codecs import lookup
+from httoop.exceptions import InvalidDate, InvalidHeader
+from httoop.header.element import (
+	HeaderElement, MimeType, _AcceptElement, _CookieElement, _HopByHopElement, _ListElement,
+)
+from httoop.util import Unicode, _, integer
 
 
 class CodecElement(object):
@@ -284,7 +286,7 @@ class Host(HeaderElement):
 
 	@property
 	def is_ip4(self):
-		from socket import inet_pton, AF_INET, error
+		from socket import AF_INET, error, inet_pton
 		try:
 			inet_pton(AF_INET, self.host)
 			return True
@@ -293,7 +295,7 @@ class Host(HeaderElement):
 
 	@property
 	def is_ip6(self):
-		from socket import inet_pton, AF_INET6, error
+		from socket import AF_INET6, error, inet_pton
 		try:
 			inet_pton(AF_INET6, self.host)
 			return True

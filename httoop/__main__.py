@@ -6,8 +6,7 @@ from __future__ import print_function
 import sys
 from argparse import ArgumentParser
 
-from httoop import __version__ as version, __name__ as name
-from httoop import Request, Response
+from httoop import Request, Response, __name__ as name, __version__ as version
 
 
 class CLI(object):

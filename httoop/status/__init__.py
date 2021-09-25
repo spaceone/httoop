@@ -7,14 +7,9 @@
 
 import inspect
 
-from httoop.status.status import Status, REASONS
-from httoop.status.types import StatusType, StatusException
-
-from httoop.status import informational
-from httoop.status import success
-from httoop.status import redirect
-from httoop.status import client_error
-from httoop.status import server_error
+from httoop.status import client_error, informational, redirect, server_error, success
+from httoop.status.status import REASONS, Status
+from httoop.status.types import StatusException, StatusType
 
 __all__ = ['Status', 'REASONS', 'StatusType', 'StatusException']
 

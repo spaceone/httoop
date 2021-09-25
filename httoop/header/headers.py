@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 import re
 
-from httoop.six import with_metaclass
-
-from httoop.util import CaseInsensitiveDict, iteritems, to_unicode, Unicode
-from httoop.meta import HTTPSemantic
-from httoop.header.element import HEADER, HeaderElement
 from httoop.exceptions import InvalidHeader
-from httoop.util import _
+from httoop.header.element import HEADER, HeaderElement
+from httoop.meta import HTTPSemantic
+from httoop.six import with_metaclass
+from httoop.util import CaseInsensitiveDict, Unicode, _, iteritems, to_unicode
 
 
 class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):

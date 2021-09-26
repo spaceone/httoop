@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from httoop.exceptions import InvalidURI
-
 import pytest
+
+from httoop.exceptions import InvalidURI
 
 
 def test_uri_set_string(request_):

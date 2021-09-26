@@ -5,6 +5,7 @@ http://test.greenbytes.de/tech/tc/httpauth/
 from __future__ import unicode_literals
 
 import pytest
+
 from httoop import Headers
 from httoop.exceptions import InvalidHeader
 

@@ -1,8 +1,11 @@
 from __future__ import unicode_literals
-import pytest
+
 from itertools import chain
-from httoop.header import WWWAuthenticate, Authorization, ProxyAuthenticate, ProxyAuthorization
+
+import pytest
+
 from httoop.exceptions import InvalidHeader
+from httoop.header import Authorization, ProxyAuthenticate, ProxyAuthorization, WWWAuthenticate
 
 
 @pytest.mark.parametrize('scheme', ['Basic', 'Digest'])

@@ -1,5 +1,6 @@
 # See also: tests/request_/test_request_method.py
 from __future__ import unicode_literals
+
 import pytest
 
 

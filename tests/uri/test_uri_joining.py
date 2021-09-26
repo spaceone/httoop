@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
+
 import pytest
+
 from httoop import URI
 
 RFC1808_BASE = b'http://a/b/c/d;p?q#f'

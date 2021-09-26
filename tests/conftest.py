@@ -1,7 +1,8 @@
 from __future__ import unicode_literals
+
 import pytest
 
-from httoop import Request, Response, Headers, Body, ClientStateMachine, ServerStateMachine, URI
+from httoop import URI, Body, ClientStateMachine, Headers, Request, Response, ServerStateMachine
 
 
 @pytest.fixture

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from itertools import chain, product
+
 import pytest
 
-from itertools import product, chain
-
-from httoop.header import WWWAuthenticate, Authorization
 from httoop.authentication.digest import DigestAuthRequestScheme
 from httoop.exceptions import InvalidHeader
+from httoop.header import Authorization, WWWAuthenticate
 
 
 def test_digest_www_authentication(headers):

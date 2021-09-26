@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import pytest
 
-from httoop.header import WWWAuthenticate, Authorization
 from httoop.exceptions import InvalidHeader
+from httoop.header import Authorization, WWWAuthenticate
 
 
 def test_basic_www_authenticate(headers):

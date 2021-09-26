@@ -1,8 +1,10 @@
 from __future__ import unicode_literals
-from httoop import Date, InvalidDate
-import pytest
+
 import datetime
 
+import pytest
+
+from httoop import Date, InvalidDate
 
 dates = [{
 	'datetime': datetime.datetime(1994, 11, 6, 8, 49, 37),

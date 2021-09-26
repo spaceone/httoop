@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import sys
-from types import ModuleType
 from os.path import abspath, dirname
-from subprocess import Popen, STDOUT
+from subprocess import STDOUT, Popen
+from types import ModuleType
 
 
 def importable(module):

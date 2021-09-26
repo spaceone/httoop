@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import pytest
-from httoop.codecs import register, lookup, Codec
+
+from httoop.codecs import Codec, lookup, register
 from httoop.exceptions import DecodeError, EncodeError
 
 

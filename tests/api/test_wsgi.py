@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import pytest
+
 import sys
+
+import pytest
 
 from httoop import Request, Response
 from httoop.gateway.wsgi import WSGI

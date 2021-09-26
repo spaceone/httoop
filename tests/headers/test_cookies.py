@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
-import pytest
+
 from datetime import datetime
+
+import pytest
 
 from httoop.exceptions import InvalidHeader
 

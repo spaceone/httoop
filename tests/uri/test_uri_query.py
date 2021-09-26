@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
+
 import pytest
+
 from httoop import URI, InvalidURI
 
 

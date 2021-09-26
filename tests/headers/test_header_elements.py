@@ -1,5 +1,6 @@
-import pytest
 import io
+
+import pytest
 
 from httoop.exceptions import InvalidHeader
 

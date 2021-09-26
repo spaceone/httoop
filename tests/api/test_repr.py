@@ -2,8 +2,8 @@ from __future__ import unicode_literals
 
 import six
 
-from httoop.messages import Message
 from httoop import Date
+from httoop.messages import Message
 from httoop.meta import HTTPSemantic
 
 

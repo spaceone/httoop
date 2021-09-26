@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
-from httoop import InvalidHeader
+
 import pytest
+
+from httoop import InvalidHeader
 
 
 def test_multiple_same_headers():

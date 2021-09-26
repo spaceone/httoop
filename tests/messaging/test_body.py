@@ -1,12 +1,13 @@
 from __future__ import unicode_literals
 
 import sys
+
 import pytest
 
-from httoop.semantic.request import ComposedRequest
-from httoop.semantic.response import ComposedResponse
 from httoop import BAD_REQUEST
 from httoop.codecs import lookup
+from httoop.semantic.request import ComposedRequest
+from httoop.semantic.response import ComposedResponse
 
 
 def test_chunked_body_without_trailer(request_):

@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
 #from glob import glob
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 from httoop.version import __version__ as version
-
 
 setup(
 	name='httoop',

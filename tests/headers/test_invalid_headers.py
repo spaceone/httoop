@@ -1,7 +1,9 @@
 from __future__ import unicode_literals
+
 import pytest
-from httoop.exceptions import InvalidHeader
+
 from httoop import six
+from httoop.exceptions import InvalidHeader
 
 LATIN_CHARS = bytes(bytearray(range(0x80, 0xff + 1)))
 INVALID_HEADER_FIELD_NAMES = bytes(bytearray(range(0x00, 0x1F + 1))) + b"()<>@,;\\\\\"/\\[\\]?={} \t"

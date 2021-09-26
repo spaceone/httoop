@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
-from httoop.exceptions import InvalidHeader
+
 import pytest
+
+from httoop.exceptions import InvalidHeader
 
 
 def test_http1_1_request_without_host_header():

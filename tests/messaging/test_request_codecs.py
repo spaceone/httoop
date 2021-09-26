@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import pytest
+
 import json
+
+import pytest
+
 from httoop import Body
 from httoop.exceptions import InvalidHeader
 

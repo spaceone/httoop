@@ -1,6 +1,11 @@
 from __future__ import unicode_literals
+
 import pytest
-from httoop import BAD_REQUEST, URI_TOO_LONG, HTTP_VERSION_NOT_SUPPORTED, LENGTH_REQUIRED, SWITCHING_PROTOCOLS, MOVED_PERMANENTLY, NOT_IMPLEMENTED
+
+from httoop import (
+	BAD_REQUEST, HTTP_VERSION_NOT_SUPPORTED, LENGTH_REQUIRED, MOVED_PERMANENTLY, NOT_IMPLEMENTED,
+	SWITCHING_PROTOCOLS, URI_TOO_LONG,
+)
 
 
 def test_statemachine_parsing_with_streamed_input():

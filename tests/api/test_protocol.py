@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from httoop.exceptions import InvalidLine
+
 import pytest
+
+from httoop.exceptions import InvalidLine
 
 
 def test_protocol_tuple(request_):

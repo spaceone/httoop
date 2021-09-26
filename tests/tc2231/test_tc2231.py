@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import pytest
+
 import datetime
 import sys
+
+import pytest
+
 from httoop import Headers
 from httoop.exceptions import InvalidHeader
 

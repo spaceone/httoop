@@ -9,7 +9,7 @@ from httoop.messages.message import Message
 from httoop.status import Status
 from httoop.util import _
 
-__all__ = ('Response',)
+__all__ = ('Response', )
 
 
 class Response(Message):

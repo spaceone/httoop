@@ -72,7 +72,7 @@ class ComposedResponse(ComposedMessage):
 		response = self.response
 		yield response.status == 200
 		yield 'Range' in self.request.headers
-		yield self.request.method in (u'GET',)
+		yield self.request.method in (u'GET', )
 		yield response.headers.element('Accept-Ranges') == 'bytes'
 		yield not self.chunked
 		yield response.body

@@ -8,7 +8,7 @@ from httoop.messages import Body
 from httoop.six import PY2, reraise
 from httoop.util import iteritems
 
-__all__ = ('WSGI',)
+__all__ = ('WSGI', )
 
 
 class WSGIBody(Body):
@@ -43,6 +43,7 @@ class WSGI(object):
 		pass
 
 	def __call__(self, application):
+
 		def write(data):
 			if not self.headers_set:
 				raise RuntimeError("write() before start_response()")
@@ -71,7 +72,7 @@ class WSGI(object):
 			if data:
 				break
 		else:
-			write(b'')   # send headers now if body was empty
+			write(b'')  # send headers now if body was empty
 			return
 
 		def buffered(data):

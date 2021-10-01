@@ -272,7 +272,7 @@ class Forwarded(HeaderElement):
 
 	@classmethod
 	def parse(cls, elementstr):
-		return super(Forwarded, cls).parse(b'x; %s' % (elementstr,))
+		return super(Forwarded, cls).parse(b'x; %s' % (elementstr, ))
 
 
 # TODO: add case insensitve HeaderElement

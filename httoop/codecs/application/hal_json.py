@@ -9,8 +9,9 @@ except ImportError:
 	# TODO: emit a warning
 	def expand(href, templates):
 		for templ, value in templates.items():
-			href = href.replace('{%s}' % (templ,), value)
+			href = href.replace('{%s}' % (templ, ), value)
 		return href
+
 
 from httoop.codecs.application.json import JSON
 from httoop.exceptions import DecodeError, EncodeError

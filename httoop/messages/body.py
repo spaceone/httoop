@@ -237,7 +237,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 				if isinstance(data, Unicode):
 					data = data.encode(self.encoding)
 				elif not isinstance(data, bytes):  # pragma: no cover
-					raise TypeError('Iterable contained non-bytes: %r' % (type(data).__name__,))
+					raise TypeError('Iterable contained non-bytes: %r' % (type(data).__name__, ))
 				yield data
 		finally:
 			self.seek(t)
@@ -298,4 +298,5 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 		except StopIteration:
 			self.__iter = None
 			raise
+
 	next = __next__

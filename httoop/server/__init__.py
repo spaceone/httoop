@@ -134,6 +134,7 @@ class ServerStateMachine(StateMachine):
 			raise BAD_REQUEST('A %s request is considered as safe and MUST NOT contain a request body.' % self.message.method)
 
 	def check_http2_upgrade(self):
+
 		def is_http2_upgrade():
 			connection = self.message.headers.values('Connection')
 			yield 'Upgrade' in connection
@@ -142,6 +143,7 @@ class ServerStateMachine(StateMachine):
 			yield self.message.headers.element('Upgrade') == 'h2c'
 			yield 'HTTP2-Settings' in self.message.headers
 			yield self.message.headers.element('HTTP2-Settings')
+
 		if all(is_http2_upgrade()):
 			if self.HTTP2 is None:
 				return

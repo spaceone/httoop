@@ -84,4 +84,4 @@ class Message(with_metaclass(HTTPSemantic)):
 		self.protocol.parse(protocol)
 
 	def __repr__(self):
-		return '<HTTP Message(protocol=%s)>' % (self.protocol,)
+		return '<HTTP Message(protocol=%s)>' % (self.protocol, )

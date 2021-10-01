@@ -13,6 +13,7 @@ except ImportError:  # pragma: no cover
 	def fromstring(data):
 		raise ParseError('Will not parse without defusedxml!')
 
+
 from httoop.codecs.codec import Codec
 from httoop.exceptions import DecodeError
 

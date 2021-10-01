@@ -24,7 +24,7 @@ class Semantic(object):
 		raise NotImplementedError('%s.parse(%.5r)' % (type(self).__name__, data))
 
 	def compose(self):  # pragma: no cover
-		raise NotImplementedError('%s.compose()' % (type(self).__name__,))
+		raise NotImplementedError('%s.compose()' % (type(self).__name__, ))
 
 	def __eq__(self, other):
 		if isinstance(other, Unicode):

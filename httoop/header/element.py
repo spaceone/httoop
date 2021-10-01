@@ -143,7 +143,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 					try:
 						key, value = key[:-1], Percent.unquote(value_).decode(encoding)
 					except UnicodeDecodeError as exc:
-						raise InvalidHeader(_(u'%s') % (exc,))
+						raise InvalidHeader(_(u'%s') % (exc, ))
 				else:
 					value = value.decode('ISO8859-1')
 				key_, asterisk, num = key.rpartition(b'*')
@@ -210,7 +210,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 					value = value.encode('ASCII')
 				except UnicodeEncodeError:
 					param += b'*'
-					value = b"utf-8''%s" % (Percent.quote(value.encode('UTF-8')),)
+					value = b"utf-8''%s" % (Percent.quote(value.encode('UTF-8')), )
 					quote = False
 
 			if quote or cls.RE_TSPECIALS.search(value):
@@ -246,12 +246,12 @@ class HeaderElement(with_metaclass(HeaderType)):
 			try:
 				value.encode('ISO8859-1')
 			except UnicodeEncodeError:
-				return b'=?utf-8?b?%s?=' % (b2a_base64(value.encode('utf-8')).rstrip(b'\n'),)
+				return b'=?utf-8?b?%s?=' % (b2a_base64(value.encode('utf-8')).rstrip(b'\n'), )
 			else:  # pragma: no cover
-				return b'=?ISO8859-1?b?%s?=' % (b2a_base64(value.encode('ISO8859-1')).rstrip(b'\n'),)
+				return b'=?ISO8859-1?b?%s?=' % (b2a_base64(value.encode('ISO8859-1')).rstrip(b'\n'), )
 
 	def __repr__(self):
-		params = ', %r' % (self.params,) if self.params else ''
+		params = ', %r' % (self.params, ) if self.params else ''
 		return '<%s(%r%s)>' % (self.__class__.__name__, self.value, params)
 
 

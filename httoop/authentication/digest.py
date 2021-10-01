@@ -16,7 +16,6 @@ class DigestAuthScheme(object):
 		'SHA-256-sess': lambda val: sha256(val).hexdigest().encode('ASCII'),
 		#'SHA-512-256': lambda val: sha256(val).hexdigest().encode('ASCII'), TODO: ??
 		#'SHA-512-256-sess': lambda val: sha256(val).hexdigest().encode('ASCII'), TODO: ??
-
 	}
 	qops = (b'auth', b'auth-int')  # quality of protection
 
@@ -182,7 +181,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
 		elif qop is None:
 			data = b'%s:%s' % (authinfo['nonce'], hash_a2)
 		else:  # pragma: no cover
-			raise NotImplementedError('Unknown quality of protection: %r' % (qop,))
+			raise NotImplementedError('Unknown quality of protection: %r' % (qop, ))
 
 		return H(b'%s:%s' % (secret, data))
 
@@ -195,7 +194,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
 			H = cls.get_algorithm(params['algorithm'])
 			return b'%s:%s:%s' % (params['method'], params['uri'], H(params['entity_body']))
 		else:  # pragma: no cover
-			raise NotImplementedError('Unknown quality of protection: %r' % (qop,))
+			raise NotImplementedError('Unknown quality of protection: %r' % (qop, ))
 
 	@classmethod
 	def A1(cls, params):
@@ -208,4 +207,4 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
 			s = b'%s:%s:%s' % (params['username'], params['realm'], params['password'])
 			return b'%s:%s:%s' % (H(s), params['nonce'], params['cnonce'])
 		else:  # pragma: no cover
-			raise NotImplementedError('Unknown algorithm: %s' % (algorithm,))
+			raise NotImplementedError('Unknown algorithm: %s' % (algorithm, ))

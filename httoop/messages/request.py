@@ -10,7 +10,7 @@ from httoop.messages.method import Method
 from httoop.uri import HTTP as URI
 from httoop.util import _
 
-__all__ = ('Request',)
+__all__ = ('Request', )
 
 
 class Request(Message):
@@ -72,7 +72,7 @@ class Request(Message):
 		if uri.startswith(b'//'):
 			raise InvalidURI(_(u'The request URI must be an absolute path or contain a scheme.'))
 		if self.method == u'CONNECT':
-			uri = b'//%s' % (uri,)
+			uri = b'//%s' % (uri, )
 		self.uri.parse(uri)
 		self.validate_request_uri()
 

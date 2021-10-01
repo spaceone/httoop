@@ -108,7 +108,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 	def __repr__(self):
 		description = ''
 		if self.description:
-			description = '(%s)' % (self.description,)
+			description = '(%s)' % (self.description, )
 		return '<HTTP Status %d %r %s>' % (int(self), self.reason, description)
 
 	__str__ = __repr__

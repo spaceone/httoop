@@ -111,7 +111,7 @@ class URI(with_metaclass(URIType)):
 
 		self.abspath()
 		if not self.path.startswith(u'/') and self.host and self.scheme and self.path:
-			self.path = u'/%s' % (self.path,)
+			self.path = u'/%s' % (self.path, )
 
 	def abspath(self):
 		"""Clear out any '..' and excessive slashes from the path
@@ -155,7 +155,7 @@ class URI(with_metaclass(URIType)):
 		elif isinstance(uri, dict):
 			self.dict = uri
 		else:
-			raise TypeError('URI must be bytes/unicode/tuple/dict not %r' % (type(uri).__name__,))
+			raise TypeError('URI must be bytes/unicode/tuple/dict not %r' % (type(uri).__name__, ))
 
 	@property
 	def dict(self):
@@ -253,7 +253,7 @@ class URI(with_metaclass(URIType)):
 				host = inet_ntop(AF_INET6, inet_pton(AF_INET6, host.decode('ascii')))
 				if isinstance(host, bytes):  # Python 2
 					host = host.decode('ascii')
-				return u'[%s]' % (host,)
+				return u'[%s]' % (host, )
 			except (SocketError, UnicodeDecodeError):
 				# IPvFuture
 				if host.startswith(b'v') and b'.' in host and host[1:].split(b'.', 1)[0].isdigit():

@@ -4,6 +4,7 @@ from httoop.util import Unicode
 
 
 class Codec(object):
+
 	@classmethod
 	def decode(cls, data, charset=None, mimetype=None):  # pragma: no cover
 		if isinstance(data, bytes):

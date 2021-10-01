@@ -174,4 +174,4 @@ class Date(with_metaclass(HTTPSemantic)):
 			raise NotImplementedError()  # pragma: no cover
 
 	def __repr__(self):
-		return '<HTTP Date(%d)>' % (int(self),)
+		return '<HTTP Date(%d)>' % (int(self), )

@@ -215,6 +215,7 @@ class CaseInsensitiveDict(dict):
 
 
 class ByteUnicodeDict(CaseInsensitiveDict):
+
 	@staticmethod
 	def formatkey(key):
 		return key if isinstance(key, bytes) else key.encode('UTF-8')

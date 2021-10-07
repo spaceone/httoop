@@ -14,6 +14,8 @@ __all__ = ('WSGI', )
 class WSGIBody(Body):
 	u"""A Body for WSGI requests and responses"""
 
+	__slots__ = ()
+
 	def write(self, bytes_):
 		return super(WSGIBody, self).write(bytes_)
 

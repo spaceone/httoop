@@ -11,6 +11,8 @@ __all__ = ['HTTPSemantic']
 
 class Semantic(object):
 
+	__slots__ = ()
+
 	def __str__(self):
 		return self.__unicode__() if PY3 else self.__bytes__()
 

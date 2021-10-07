@@ -36,6 +36,8 @@ class Date(with_metaclass(HTTPSemantic)):
 			Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
 	"""
 
+	__slots__ = ('__composed', '__timestamp', '__datetime', '__time_struct')
+
 	def __init__(self, timeval=None):
 		u"""
 			:param timeval:

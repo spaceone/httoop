@@ -19,7 +19,7 @@ class Status(with_metaclass(HTTPSemantic)):
 		:rfc:`2616#section-6.2`
 	"""
 
-#	__slots__ = ('__code', '__reason')
+	# __slots__ = ('__code', '__reason')  # conflicts with StatusException
 
 	@property
 	def informational(self):

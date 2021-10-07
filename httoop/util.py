@@ -165,6 +165,8 @@ class CaseInsensitiveDict(dict):
 		Each value is stored as unicode
 	"""
 
+	__slots__ = ()
+
 	@staticmethod
 	def formatkey(key):
 		return to_unicode(key).title()

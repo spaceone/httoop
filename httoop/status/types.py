@@ -93,7 +93,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 
 		Status.__init__(self, self.__class__.code, reason=reason)  # pylint: disable=W0233
 
-		self._headers = dict()
+		self._headers = {}
 		self._traceback = None
 
 		if isinstance(headers, dict):

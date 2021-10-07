@@ -10,6 +10,8 @@ from httoop.util import CaseInsensitiveDict, Unicode, _, iteritems, to_unicode
 
 class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 
+	__slots__ = ()
+
 	# disallowed bytes for HTTP header field names
 	HEADER_RE = re.compile(br"[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]")
 

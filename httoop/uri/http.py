@@ -9,10 +9,12 @@ from httoop.uri.uri import URI
 
 
 class HTTP(URI):
+	__slots__ = ()
 	SCHEME = b'http'
 	PORT = 80
 
 
 class HTTPS(HTTP):
+	__slots__ = ()
 	SCHEME = b'HTTPS'
 	PORT = 443

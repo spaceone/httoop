@@ -48,15 +48,15 @@ class Message(with_metaclass(HTTPSemantic)):
 	def trailer(self):
 		return Headers((key, self.headers[key]) for key in self.headers.values('Trailer') if key in self.headers)
 
-#	@trailer.setter
-#	def trailer(self, trailer):
-#		self.headers.pop('Trailer', None)
-#		if trailer:
-#			trailer = Headers(trailer)
-#			for key in trailer:
-#				self.headers.append('Trailer', key)
-#			self.headers.elements('Trailer')  # sanitize
-#			self.headers.merge(trailer)
+	# @trailer.setter
+	# def trailer(self, trailer):
+	# 	self.headers.pop('Trailer', None)
+	# 	if trailer:
+	# 		trailer = Headers(trailer)
+	# 		for key in trailer:
+	# 			self.headers.append('Trailer', key)
+	# 		self.headers.elements('Trailer')  # sanitize
+	# 		self.headers.merge(trailer)
 
 	def __init__(self, protocol=None, headers=None, body=None):
 		u"""Initiates a new Message to hold information about the message.

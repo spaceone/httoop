@@ -233,13 +233,13 @@ class REQUEST_HEADER_FIELDS_TOO_LARGE(ClientErrorStatus):
 #class NO_RESPONSE(ClientErrorStatus):
 #
 #	code = 444
-
-
+#
+#
 #class UNAVAILABLE_FOR_LEGAL_REASONS(ClientErrorStatus):
 #
 #	code = 451
-
-
+#
+#
 #class CLIENT_CLOSED_REQUEST(ClientErrorStatus):
 #
 #	code = 499

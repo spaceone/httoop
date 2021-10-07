@@ -14,8 +14,8 @@ class CLI(object):
 	def __init__(self):
 		self.message = None
 		self.parser = ArgumentParser(name, description=__doc__, epilog='https://github.com/spaceone/httoop/')
-	#	self.parser.add_argument('--parse')
-	#	self.parser.add_argument('--validate', action='store_true')
+		# self.parser.add_argument('--parse')
+		# self.parser.add_argument('--validate', action='store_true')
 		self.parser.add_argument('-v', '--version', action='version', version='%%(prog)s %s' % (version,))
 		self.parsers = self.parser.add_subparsers(dest='type')
 		self.modes = {

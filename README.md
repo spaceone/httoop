@@ -109,3 +109,5 @@ Extended information about hypermedia, WWW and how HTTP is meant to be used:
 * [Test Cases for HTTP Content-Disposition header field](http://greenbytes.de/tech/tc2231/)
 
 * [Cross-Origin Resource Sharing](http://www.w3.org/TR/cors/)
+
+* [HTTP (HTML) Leaks](https://github.com/cure53/HTTPLeaks/blob/main/leak.html)

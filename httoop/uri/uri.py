@@ -20,6 +20,7 @@ class URI(with_metaclass(URIType)):
 	u"""Uniform Resource Identifier"""
 
 	__slots__ = ('scheme', 'username', 'password', 'host', '_port', 'path', 'query_string', 'fragment')
+	slots = __slots__
 
 	SCHEMES = {}
 	SCHEME = None
@@ -159,18 +160,18 @@ class URI(with_metaclass(URIType)):
 
 	@property
 	def dict(self):
-		slots = (key.lstrip('_') for key in self.__slots__)
+		slots = (key.lstrip('_') for key in self.slots)
 		return dict((key, getattr(self, key)) for key in slots)
 
 	@dict.setter
 	def dict(self, uri):
-		for key in self.__slots__:
+		for key in self.slots:
 			key = key.lstrip('_')
 			setattr(self, key, uri.get(key, u''))
 
 	@property
 	def tuple(self):
-		return tuple(getattr(self, key) for key in self.__slots__)
+		return tuple(getattr(self, key) for key in self.slots)
 
 	@tuple.setter
 	def tuple(self, tuple_):
@@ -358,7 +359,7 @@ class URI(with_metaclass(URIType)):
 		if name == 'scheme' and value:
 			self.__class__ = self.SCHEMES.get(value if isinstance(value, bytes) else value.encode(), URI)
 
-		if name in self.__slots__:
+		if name in self.slots:
 			if isinstance(value, bytes):
 				try:
 					value = value.decode('UTF-8')

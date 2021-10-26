@@ -79,6 +79,7 @@ class Status(with_metaclass(HTTPSemantic)):
 			:type  reason: unicode
 		"""
 		self.__code = 0
+		self.__reason = ''
 		reason = reason or u''
 		reason = reason or reason or REASONS.get(code, ('', ''))[0]
 		if code:

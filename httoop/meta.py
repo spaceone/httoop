@@ -42,6 +42,9 @@ class Semantic(object):
 	def __le__(self, other):
 		return self == other or self < other
 
+	def __format__(self, format_spec):
+		return format(str(self), format_spec)
+
 	def __repr__(self):
 		return '<HTTP %s(0x%x)>' % (self.__class__.__name__, id(self))
 

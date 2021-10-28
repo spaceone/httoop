@@ -59,10 +59,10 @@ def test_strict_transport_security(headers):
 @pytest.mark.parametrize('byte_range,ranges,content', [
 	(b'bytes=0-15', [(0, 15)], [b'this foo bar tes']),
 	(b'bytes=-5', [(None, 5)], [b' test']),
-	(b'bytes=0-', [(0, None)], [b'this foo bar test']),
 	(b'bytes=5-7', [(5, 7)], [b'foo']),
-	(b'bytes=-0', [(None, 0)], [b'']),  # TODO: check if valid
 	(b'bytes=-5,6-', [(None, 5), (6, None)], [b' test', b'oo bar test']),  # TODO: check if valid
+	# (b'bytes=0-', [(0, None)], [b'this foo bar test']),  # one could argue that this is valid
+	# (b'bytes=-0', [(None, 0)], [b'']),  # does not make sense
 ])
 def test_range(headers, byte_range, ranges, content):
 	fd = io.BytesIO(b'this foo bar test')
@@ -86,6 +86,14 @@ def test_range(headers, byte_range, ranges, content):
 	'bytes=5-7,6-8,5-7',
 	'bytes=-5,-6',
 	'bytes=5-,6-',
+	'bytes=0-',
+	'bytes=-0',
+	'bytes=3-6,3-',
+	'bytes=3-6,4-',
+	'bytes=-6,1-6',
+	'bytes=-6,1-4',
+	'bytes=-6,1-',
+	'bytes=4-7, 11-19',  # ranges exceeding high standard deviation
 ])
 def test_invalid_range(headers, byte_range):
 	headers['Range'] = byte_range

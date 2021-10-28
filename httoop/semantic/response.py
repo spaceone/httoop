@@ -68,6 +68,7 @@ class ComposedResponse(ComposedMessage):
 		try:
 			range_ = self.request.headers.element('Range')
 		except InvalidHeader:
+			# TODO: implement? self.response.status = 416
 			return False
 		else:
 			return self.prepare_range(range_)

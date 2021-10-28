@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from math import sqrt
 from os import SEEK_END, SEEK_SET
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
 from httoop.util import _, integer
+
+__all__ = ('ContentRange', 'IfRange', 'Range')
 
 
 class ContentRange(HeaderElement):
@@ -88,6 +91,8 @@ class Range(HeaderElement):
 				raise InvalidHeader(_(u'no range number.'))
 			if start is not None and stop is not None and stop <= start:
 				raise InvalidHeader(_(u'range start must be smaller than end.'))
+			if not start and not stop:
+				raise InvalidHeader(_(u'full range requested.'))
 			ranges.add((start, stop))
 		return cls(bytesunit.decode('ISO8859-1'), list(sorted(ranges, key=lambda x: x[0] if x[0] is not None else -1)))
 
@@ -99,11 +104,24 @@ class Range(HeaderElement):
 		if len([x for x in self.ranges if x[0] is None]) > 1 or len([x for x in self.ranges if x[1] is None]) > 1:
 			raise InvalidHeader(_(u'too many overlapping ranges.'))
 		byterange = set()
-		for start, stop in ((x, y) for x, y in self.ranges if x is not None and y is not None):
+		for start, stop in ((x or 0, y or max((m[1] or 0) + 1 for m in self.ranges)) for x, y in self.ranges):
 			range_ = set(range(start, stop))
 			if any(x in byterange for x in range_):
 				raise InvalidHeader(_(u'duplicated range.'))
 			byterange.update(range_)
+
+		if self.stddev([(x[1] or float('inf')) - (x[0] or 0) for x in self.ranges]) > 2.0:
+			raise InvalidHeader(_('ranges exceeding high standard deviation'))
+
+	def stddev(self, xs):
+		def average(xs):
+			return sum(xs) * 1.0 / len(xs)
+
+		def variance(xs):
+			avg = average(xs)
+			return [(x - avg) ** 2 for x in xs]
+
+		return sqrt(average(variance(xs)))
 
 	@property
 	def positions(self):

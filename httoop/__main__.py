@@ -2,8 +2,8 @@
 """httoop CLI tool.
 
 Examples:
-python3 -m httoop request -H 'Host: www.example.net'  | python3 -m httoop parse request
-python3 -m httoop response  | python3 -m httoop parse response
+python3 -m httoop compose request -H 'Host: www.example.net'  | python3 -m httoop parse request
+python3 -m httoop compose response  | python3 -m httoop parse response
 """
 
 from __future__ import print_function
@@ -22,52 +22,52 @@ class CLI(object):
 	def __init__(self):
 		self.message = None
 		self.parser = ArgumentParser(name, description=self.__doc__, epilog='https://github.com/spaceone/httoop/')
-		# self.parser.add_argument('--parse')
-		# self.parser.add_argument('--validate', action='store_true')
+		self.parent_parser = ArgumentParser(add_help=False)
 		self.parser.add_argument('-v', '--version', action='version', version='%%(prog)s %s' % (version,))
-		self.parsers = self.parser.add_subparsers(dest='type')
-		self.modes = {
-			'request': self.compose_request,
-			'response': self.compose_response,
-			'parse': {
-				'request': self.parse_request,
-				'response': self.parse_response,
-			}
-		}
 		self.add_subparsers()
 		self.parse_arguments()
 
 	def add_subparsers(self):
-		request = self.parsers.add_parser('request')
+		action_subparsers = self.parser.add_subparsers(title="action", dest="action", required=True)
+		parse_parser = action_subparsers.add_parser("parse", parents=[self.parent_parser])
+		compose_parser = action_subparsers.add_parser("compose", parents=[self.parent_parser])
+
+		compose_message_subparsers = compose_parser.add_subparsers(title="message", dest="message")
+		request = compose_message_subparsers.add_parser("request", parents=[self.parent_parser])
+		request.set_defaults(func=self.compose_request)
 		add = request.add_argument
 		add('-m', '--method')
 		add('-u', '--uri')
 		self.add_common_arguments(add)
 
-		response = self.parsers.add_parser('response')
+		response = compose_message_subparsers.add_parser("response", parents=[self.parent_parser])
+		response.set_defaults(func=self.compose_response)
 		add = response.add_argument
 		add('-s', '--status')
 		add('--reason')
 		self.add_common_arguments(add)
 
-		parse = self.parsers.add_parser('parse')
-		add = parse.add_argument
-		add('subtype', choices=['request', 'response'])
+		parse_message_subparsers = parse_parser.add_subparsers(title="message", dest="message")
+		request = parse_message_subparsers.add_parser("request", parents=[self.parent_parser])
+		request.set_defaults(func=self.parse_request)
+		add = request.add_argument
 		add('--file', default='-', type=FileType('rb'))
 		add('--scheme', default='http')
 		add('--host', default='www.example.net')
 		add('--port', default=80, type=int)
 
+		response = parse_message_subparsers.add_parser("response", parents=[self.parent_parser])
+		add = response.add_argument
+		response.set_defaults(func=self.parse_response)
+		add('--file', default='-', type=FileType('rb'))
+
 	def parse_arguments(self):
 		self.arguments = self.parser.parse_args()
 
-		cb = self.modes[self.arguments.type]
-		if isinstance(cb, dict):
-			cb = cb[self.arguments.subtype]
-			if hasattr(self.arguments.file, 'buffer'):
-				# https://bugs.python.org/issue14156
-				self.arguments.file = self.arguments.file.buffer
-		cb()
+		if self.arguments.action == 'parse' and hasattr(self.arguments.file, 'buffer'):
+			# https://bugs.python.org/issue14156
+			self.arguments.file = self.arguments.file.buffer
+		self.arguments.func()
 
 	def add_common_arguments(self, add):
 		add('--protocol')

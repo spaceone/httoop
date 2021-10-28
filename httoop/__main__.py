@@ -1,26 +1,34 @@
 # -*- coding: utf-8 -*-
-"""httoop CLI tool."""
+"""httoop CLI tool.
+
+Examples:
+python3 -m httoop request -H 'Host: www.example.net'  | python3 -m httoop parse request
+python3 -m httoop response  | python3 -m httoop parse response
+"""
 
 from __future__ import print_function
 
 import sys
-from argparse import ArgumentParser
+from argparse import ArgumentParser, FileType
 
 from httoop import Request, Response, __name__ as name, __version__ as version
+from httoop.client import ClientStateMachine
+from httoop.server import ServerStateMachine
 
 
 class CLI(object):
+	"""httoop CLI tool."""
 
 	def __init__(self):
 		self.message = None
-		self.parser = ArgumentParser(name, description=__doc__, epilog='https://github.com/spaceone/httoop/')
+		self.parser = ArgumentParser(name, description=self.__doc__, epilog='https://github.com/spaceone/httoop/')
 		# self.parser.add_argument('--parse')
 		# self.parser.add_argument('--validate', action='store_true')
 		self.parser.add_argument('-v', '--version', action='version', version='%%(prog)s %s' % (version,))
 		self.parsers = self.parser.add_subparsers(dest='type')
 		self.modes = {
-			'request': self.request,
-			'response': self.response,
+			'request': self.compose_request,
+			'response': self.compose_response,
 			'parse': {
 				'request': self.parse_request,
 				'response': self.parse_response,
@@ -42,9 +50,23 @@ class CLI(object):
 		add('--reason')
 		self.add_common_arguments(add)
 
+		parse = self.parsers.add_parser('parse')
+		add = parse.add_argument
+		add('subtype', choices=['request', 'response'])
+		add('--file', default='-', type=FileType('rb'))
+		add('--scheme', default='http')
+		add('--host', default='www.example.net')
+		add('--port', default=80, type=int)
+
 	def parse_arguments(self):
 		self.arguments = self.parser.parse_args()
+
 		cb = self.modes[self.arguments.type]
+		if isinstance(cb, dict):
+			cb = cb[self.arguments.subtype]
+			if hasattr(self.arguments.file, 'buffer'):
+				# https://bugs.python.org/issue14156
+				self.arguments.file = self.arguments.file.buffer
 		cb()
 
 	def add_common_arguments(self, add):
@@ -52,13 +74,29 @@ class CLI(object):
 		add('-H', '--header', action='append', default=[])
 		add('-b', '--body', default='')
 
-	def parse_request(self):  # pragma: no cover
-		raise NotImplementedError('TODO')
+	def parse_request(self):
+		server = ServerStateMachine(self.arguments.scheme, self.arguments.host, self.arguments.port)
+		for request, response in server.parse(self.arguments.file.read()):
+			print(repr(response))
+			print(repr(response.headers))
+			print(repr(response.body))
 
-	def parse_response(self):  # pragma: no cover
-		raise NotImplementedError('TODO')
+	def parse_response(self):
+		client = ClientStateMachine()
+		client.request = Request()
+		for response in client.parse(self.arguments.file.read()):
+			print(repr(response))
+			print(repr(response.headers))
+			print(repr(response.body))
+			print(repr(bytes(response.body)))
+		if client.buffer:
+			print('WARNING: response not yet complete!:')
+			print(repr(client.message))
+			print(repr(client.message.headers))
+			print(repr(client.message.body))
+			print(repr(client.buffer))
 
-	def request(self):
+	def compose_request(self):
 		self.message = Request()
 		if self.arguments.method:
 			self.message.method = self.arguments.method
@@ -66,7 +104,7 @@ class CLI(object):
 			self.message.uri = self.arguments.uri
 		self.common()
 
-	def response(self):
+	def compose_response(self):
 		self.message = Response()
 		status = self.message.status.code
 		if self.arguments.status:

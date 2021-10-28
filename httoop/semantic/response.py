@@ -18,7 +18,6 @@ class ComposedResponse(ComposedMessage):
 		u"""prepares the response for being ready for transmitting"""
 
 		response = self.response
-		request = self.request
 
 		status = int(response.status)
 		if status < 200 or status in (204, 205, 304):
@@ -51,25 +50,32 @@ class ComposedResponse(ComposedMessage):
 		if response.status == 200 and response.body.fileable and not self.chunked and 'Etag' in response.headers or 'Last-Modified' in response.headers:
 			response.headers.setdefault('Accept-Ranges', b'bytes')
 
-		if all(self.range_conditions()):
-			try:
-				range_ = request.headers.element('Range')
-			except InvalidHeader:
-				pass
-			else:
-				self.prepare_range(range_)
+		self.prepare_ranges()
 
 		if response.status == 416:
 			response.headers.set_element('Content-Range', 'bytes', None, response.headers.get('Content-Length'))
 
-		if request.method == u'TRACE':
+		if self.request.method == u'TRACE':
 			response.headers.pop('Set-Cookie', None)
 
-		if request.method == u'HEAD':
+		if self.request.method == u'HEAD':
 			response.body = None  # RFC 2616 Section 9.4
+
+	def prepare_ranges(self):
+		if not all(self.range_conditions()):
+			return False
+
+		try:
+			range_ = self.request.headers.element('Range')
+		except InvalidHeader:
+			return False
+		else:
+			return self.prepare_range(range_)
 
 	def range_conditions(self):
 		response = self.response
+		yield response.protocol >= (1, 1)
+		yield self.request.protocol >= (1, 1)
 		yield response.status == 200
 		yield 'Range' in self.request.headers
 		yield self.request.method in (u'GET', )
@@ -93,7 +99,8 @@ class ComposedResponse(ComposedMessage):
 			response.body.mimetype = response.headers['Content-Type']
 			response.body.encode(self.multipart_byteranges(range_body, range_, content_length, content_type))
 
-		response.headers['Content-Length'] = str(len(response.body)).encode('ASCII')  # TODO: len(response.body) causes the whole body to be generated
+		response.headers['Content-Length'] = str(len(response.body)).encode('ASCII')  # FIXME: len(response.body) causes the whole body to be generated
+		return True
 
 	def multipart_byteranges(self, range_body, range_, content_length, content_type):
 		for content, byterange in izip(range_body, range_.ranges):

@@ -12,31 +12,33 @@ Httoop can be used to parse, compose and work with HTTP-Request- and Response-Me
 
 It is an generic library for implementing HTTP servers, clients, caches and proxies.
 
-Httoop provides an powerful interface using the vocabularity used in RFC 7230 - 7235 and focuses on implementing HTTP "compliant" as defined in [RFC 7230 Section 2.5](http://tools.ietf.org/html/rfc7230#section-2.5).
+Httoop provides an powerful interface using the vocabularity used in RFC 7230 - 7235 and focuses on implementing HTTP "compliant" as defined in [RFC 7230 Section 2.5](https://datatracker.ietf.org/doc/html/rfc7230#section-2.5).
 
 "An implementation is not compliant if it fails to satisfy one or more of the MUST or REQUIRED level requirements for the protocols it implements."
-[RFC 2616 Section 1.2](http://tools.ietf.org/html/rfc2616#section-1.2)
+[RFC 2616 Section 1.2](https://datatracker.ietf.org/doc/html/rfc2616#section-1.2)
 
 On top of the object oriented abstraction of HTTP httoop provides an easy way to support WSGI.
 
 
 HTTP and extensions are defined in the following RFC's:
 
-* HTTP/1.1 RFC 7230 [Message Syntax and Routing](http://tools.ietf.org/html/7230)
+* HTTP/1.1 RFC 7230 [Message Syntax and Routing](https://datatracker.ietf.org/doc/html/rfc7230)
 
-* HTTP/1.1 RFC 7231 [Semantics and Content](http://tools.ietf.org/html/7231)
+* HTTP/1.1 RFC 7231 [Semantics and Content](https://datatracker.ietf.org/doc/html/rfc7231)
 
-* HTTP/1.1 RFC 7232 [Conditional Requests](http://tools.ietf.org/html/7232)
+* HTTP/1.1 RFC 7232 [Conditional Requests](https://datatracker.ietf.org/doc/html/rfc7232)
 
-* HTTP/1.1 RFC 7233 [Range Requests](http://tools.ietf.org/html/7233)
+* HTTP/1.1 RFC 7233 [Range Requests](https://datatracker.ietf.org/doc/html/rfc7233)
 
-* HTTP/1.1 RFC 7234 [Caching](http://tools.ietf.org/html/7234)
+* HTTP/1.1 RFC 7234 [Caching](https://datatracker.ietf.org/doc/html/rfc7234)
 
-* HTTP/1.1 RFC 7235 [Authentication](http://tools.ietf.org/html/7235)
+* HTTP/1.1 RFC 7235 [Authentication](https://datatracker.ietf.org/doc/html/rfc7235)
 
-* HTTP/2 RFC 7540 [Hypertext Transfer Protocol Version 2](https://tools.ietf.org/html/rfc7540)
+* <s>Hypertext Transfer Protocol -- HTTP/1.1 ([RFC 2616](https://datatracker.ietf.org/doc/html/rfc2616)) </s>
 
-* HTTP/2 RFC 7541 [HPACK: Header Compression for HTTP/2](https://tools.ietf.org/html/rfc7541)
+* HTTP/2 RFC 7540 [Hypertext Transfer Protocol Version 2](https://datatracker.ietf.org/doc/html/rfc7540)
+
+* HTTP/2 RFC 7541 [HPACK: Header Compression for HTTP/2](https://datatracker.ietf.org/doc/html/rfc7541)
 
 * [IANA HTTP Status Codes](http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml)
 
@@ -50,43 +52,49 @@ HTTP and extensions are defined in the following RFC's:
 
 * [IANA HTTP Cache Directives](http://www.iana.org/assignments/http-cache-directives/http-cache-directives.xhtml)
 
-* RFC 5987 [Character Set and Language Encoding for Hypertext Transfer Protocol (HTTP) Header Field Parameters](https://tools.ietf.org/html/rfc5987)
+* RFC 5987 [Character Set and Language Encoding for Hypertext Transfer Protocol (HTTP) Header Field Parameters](https://datatracker.ietf.org/doc/html/rfc5987)
 
-* Uniform Resource Identifier (URI) ([RFC 3986](https://tools.ietf.org/html/rfc3986))
+* Uniform Resource Identifier (URI) ([RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986))
 
-* Internet Message Format ([RFC 822](http://tools.ietf.org/html/822), [2822](http://tools.ietf.org/html/2822), [5322](http://tools.ietf.org/html/5322))
+* Internet Message Format ([RFC 822](https://datatracker.ietf.org/doc/html/rfc822), [2822](https://datatracker.ietf.org/doc/html/rfc2822), [5322](https://datatracker.ietf.org/doc/html/rfc5322))
 
-* HTTP Authentication: Basic and Digest Access Authentication ([RFC 2617](http://tools.ietf.org/html/2617))
+* <s>HTTP Authentication: Basic and Digest Access Authentication ([RFC 2617](https://datatracker.ietf.org/doc/html/rfc2617))</s>
 
-* Additional HTTP Status Codes ([RFC 6585](http://tools.ietf.org/html/6585))
+* HTTP Authentication-Info and Proxy-Authentication-Info Response Header Fields ([RFC 7615](https://datatracker.ietf.org/doc/html/rfc7615))
 
-* Forwarded HTTP Extension [RFC 7239](https://tools.ietf.org/html/rfc7239)
+* HTTP Digest Access Authentication ([RFC 7616](https://datatracker.ietf.org/doc/html/rfc7616))
 
-* Prefer Header for HTTP [RFC 7240](https://tools.ietf.org/html/rfc7240)
+* The 'Basic' HTTP Authentication Scheme ([RFC 7617](https://datatracker.ietf.org/doc/html/rfc7617))
 
-* PATCH Method for HTTP ([RFC 5789](http://tools.ietf.org/html/5789))
+* Additional HTTP Status Codes ([RFC 6585](https://datatracker.ietf.org/doc/html/rfc6585))
 
-* JavaScript Object Notation (JSON) Patch ([RFC 6902](https://tools.ietf.org/html/rfc6902))
+* Forwarded HTTP Extension [RFC 7239](https://datatracker.ietf.org/doc/html/rfc7239)
 
-* Use of the Content-Disposition Header Field in the Hypertext Transfer Protocol (HTTP) ([RFC 6266](http://tools.ietf.org/html/6266))
+* Prefer Header for HTTP [RFC 7240](https://datatracker.ietf.org/doc/html/rfc7240)
 
-* Upgrading to TLS Within HTTP/1.1 ([RFC 2817](http://tools.ietf.org/html/2817))
+* PATCH Method for HTTP ([RFC 5789](https://datatracker.ietf.org/doc/html/rfc5789))
 
-* Transparent Content Negotiation in HTTP ([RFC 2295](http://tools.ietf.org/html/2295))
+* JavaScript Object Notation (JSON) Patch ([RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902))
 
-* HTTP Remote Variant Selection Algorithm -- RVSA/1.0 ([RFC 2296](http://tools.ietf.org/html/2296))
+* Use of the Content-Disposition Header Field in the Hypertext Transfer Protocol (HTTP) ([RFC 6266](https://datatracker.ietf.org/doc/html/rfc6266))
 
-* HTTP State Management Mechanism ([RFC 6265](http://tools.ietf.org/html/6265))
+* Upgrading to TLS Within HTTP/1.1 ([RFC 2817](https://datatracker.ietf.org/doc/html/rfc2817))
 
-* Same-site Cookies ([Draft 7](https://tools.ietf.org/html/draft-west-first-party-cookies-07))
+* Transparent Content Negotiation in HTTP ([RFC 2295](https://datatracker.ietf.org/doc/html/rfc2295))
 
-* HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV) ([RFC 4918](http://tools.ietf.org/html/4918))
+* HTTP Remote Variant Selection Algorithm -- RVSA/1.0 ([RFC 2296](https://datatracker.ietf.org/doc/html/rfc2296))
 
-* Hyper Text Coffee Pot Control Protocol (HTCPCP/1.0) ([RFC 2324](http://tools.ietf.org/html/2324))
+* HTTP State Management Mechanism ([RFC 6265](https://datatracker.ietf.org/doc/html/rfc6265))
+
+* Same-site Cookies ([Draft 7](https://datatracker.ietf.org/doc/html/rfcdraft-west-first-party-cookies-07))
+
+* HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV) ([RFC 4918](https://datatracker.ietf.org/doc/html/rfc4918))
+
+* Hyper Text Coffee Pot Control Protocol (HTCPCP/1.0) ([RFC 2324](https://datatracker.ietf.org/doc/html/rfc2324))
 
 Extended information about hypermedia, WWW and how HTTP is meant to be used:
 
-* Web Linking ([RFC 5988](http://tools.ietf.org/html/5988))
+* Web Linking ([RFC 5988](https://datatracker.ietf.org/doc/html/rfc5988))
 
 * Representational State Transfer [REST](http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
 

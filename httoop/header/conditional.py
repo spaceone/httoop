@@ -27,6 +27,12 @@ class _DateComparable(object):
 		return int(self.value)
 
 
+class _MatchElement(object):
+
+	def matches(self, value):
+		return self == value or self == '*'
+
+
 class ETag(HeaderElement):
 
 	is_response_header = True
@@ -42,7 +48,7 @@ class LastModified(_DateComparable, HeaderElement):
 	is_response_header = True
 
 
-class IfMatch(HeaderElement):
+class IfMatch(_MatchElement, HeaderElement):
 	__name__ = 'If-Match'
 	is_request_header = True
 
@@ -52,7 +58,7 @@ class IfModifiedSince(_DateComparable, HeaderElement):
 	is_request_header = True
 
 
-class IfNoneMatch(HeaderElement):
+class IfNoneMatch(_MatchElement, HeaderElement):
 	__name__ = 'If-None-Match'
 	is_request_header = True
 

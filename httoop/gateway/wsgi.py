@@ -39,7 +39,7 @@ class WSGI(object):
 
 		self.request.body.__class__ = WSGIBody
 		self.response.body.__class__ = WSGIBody
-		self.response.chunked = True
+		self.response.body.chunked = True
 
 	def start_response(self):
 		pass
@@ -64,8 +64,9 @@ class WSGI(object):
 				raise RuntimeError("start_response() must be called only once!")
 			self.headers_set = True
 			self.exc_info = exc_info
-			self.response.status.parse(status)
-			self.response.headers.update(dict(response_headers))
+			self.response.status.parse(status.encode('ISO8859-1'))
+			for name, value in response_headers:
+				self.response.headers.append(name, value)
 			return write
 
 		result = application(self.get_environ(), start_response)
@@ -132,6 +133,7 @@ class WSGI(object):
 			self.request.headers['Content-Length'] = environ.pop('CONTENT_LENGTH')
 
 		self.request.method = environ.pop('REQUEST_METHOD', 'GET')
+		self.script_name = environ.pop('SCRIPT_NAME', '')
 		self.path_info = environ.pop('PATH_INFO', '')
 		self.request.uri = environ.pop('REQUEST_URI', '')
 		if self.use_path_info:
@@ -142,6 +144,7 @@ class WSGI(object):
 		self.server_address = environ.pop('SERVER_ADDR', None)
 		self.server_port = environ.pop('SERVER_PORT', None)
 		self.request.protocol = environ.pop('SERVER_PROTOCOL', 'HTTP/1.1')
+		self.response.protocol = self.request.protocol
 		self.wsgi_version = environ.pop('wsgi.version', (1, 0))
 		self.request.body = environ.pop('wsgi.input', None)
 		self.request.body.seek(0)

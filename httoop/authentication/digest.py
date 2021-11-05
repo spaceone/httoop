@@ -27,6 +27,15 @@ class DigestAuthScheme(object):
 			raise InvalidHeader(_(u'Unknown digest authentication algorithm: %r'), algorithm)
 
 	@classmethod
+	def generate_nonce(cls, authinfo):
+		from time import time
+		from uuid import uuid4
+		nonce = b'%d:%s:%s' % (time(), authinfo.get('etag', authinfo.get('realm', b'')), str(uuid4()).encode('ASCII'), )
+		algorithm = authinfo.get('algorithm', b'MD5').decode('ASCII', 'replace')
+		H = cls.get_algorithm(algorithm)
+		return H(nonce)
+
+	@classmethod
 	def compose(cls, authinfo):
 		params = cls._compose(authinfo)
 		return b', '.join([HeaderElement.formatparam(k.encode('ASCII'), v) for k, v in params])
@@ -147,15 +156,6 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
 			('nc', nonce_count),
 		]
 		return dict([(k, v) for k, v in params if v is not None])
-
-	@classmethod
-	def generate_nonce(cls, authinfo):
-		from time import time
-		from uuid import uuid4
-		nonce = b'%d:%s:%s' % (time(), authinfo.get('etag', authinfo.get('realm', b'')), str(uuid4()).encode('ASCII'), )
-		algorithm = authinfo.get('algorithm', b'MD5').decode('ASCII', 'replace')
-		H = cls.get_algorithm(algorithm)
-		return H(nonce)
 
 	@classmethod
 	def check(cls, authinfo, request_params):

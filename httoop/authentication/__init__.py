@@ -60,10 +60,30 @@ class AuthElement(HeaderElement):
 
 class AuthRequestElement(AuthElement):
 
+	encoding = 'ASCII'
+
 	schemes = {
 		'basic': BasicAuthRequestScheme,
 		'digest': DigestAuthRequestScheme
 	}
+
+	@property
+	def username(self):
+		return self.params.get('username').decode(self.encoding)
+
+	@username.setter
+	def username(self, username):
+		self.params['username'] = username.encode(self.encoding)
+
+	@property
+	def password(self):
+		if self == 'basic':
+			return self.params.get('password').decode(self.encoding)
+
+	@password.setter
+	def password(self, password):
+		if self == 'basic':
+			self.params['password'] = password.encode(self.encoding)
 
 
 class AuthResponseElement(AuthElement):

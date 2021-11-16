@@ -19,8 +19,10 @@ class Codec(object):
 
 	@classmethod
 	def iterencode(cls, data, charset=None, mimetype=None):  # pragma: no cover
-		return cls.encode(data, charset, mimetype)
+		for part in data:
+			yield cls.encode(part, charset, mimetype)
 
 	@classmethod
 	def iterdecode(cls, data, charset=None, mimetype=None):  # pragma: no cover
-		return cls.decode(data, charset, mimetype)
+		for part in data:
+			yield cls.decode(part, charset, mimetype)

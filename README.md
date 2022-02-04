@@ -119,3 +119,13 @@ Extended information about hypermedia, WWW and how HTTP is meant to be used:
 * [Cross-Origin Resource Sharing](http://www.w3.org/TR/cors/)
 
 * [HTTP (HTML) Leaks](https://github.com/cure53/HTTPLeaks/blob/main/leak.html)
+
+OAuth 2.0:
+
+* [OAuth Working Group Specifications](https://oauth.net/specs/)
+* [OAuth 2.0 Security Best Current Practice](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics)
+* [The OAuth 2.0 Authorization Framework](https://datatracker.ietf.org/doc/html/rfc6749)
+* [Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750)
+* [JSON Web Token (JWT)](https://datatracker.ietf.org/doc/html/rfc7519)
+* [JSON Web Token (JWT) Profile for OAuth 2.0 Access Tokens](https://datatracker.ietf.org/doc/html/rfc9068)
+* [Resource Indicators for OAuth 2.0](https://datatracker.ietf.org/doc/html/rfc8707

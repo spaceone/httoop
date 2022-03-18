@@ -275,7 +275,7 @@ class Forwarded(HeaderElement):
 		return super(Forwarded, cls).parse(b'x; %s' % (elementstr, ))
 
 
-# TODO: add case insensitve HeaderElement
+# TODO: add case insensitive HeaderElement
 class Host(HeaderElement):
 
 	is_request_header = True

@@ -98,7 +98,6 @@ class MULTI_STATUS(SuccessStatus):
 	"""This status code indicated that the entity-body contains information
 	about the states of the batch request.
 	It is not an official HTTP-Status-Code: WebDAV
-	It is not realy RESTful to use.
 	The entity-body is descripted in RFC 2518."""
 
 	code = 207

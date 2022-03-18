@@ -18,7 +18,7 @@ class ServerErrorStatus(StatusException):
 
 class INTERNAL_SERVER_ERROR(ServerErrorStatus):
 	u"""The generic status code.
-		Mostly used when an exception in the request handler occurrs."""
+		Mostly used when an exception in the request handler occurs."""
 
 	code = 500
 	cacheable = True
@@ -40,7 +40,7 @@ class BAD_GATEWAY(ServerErrorStatus):
 
 class SERVICE_UNAVAILABLE(ServerErrorStatus):
 	u"""There is currently a problem with the server.
-		Propably too many requests at once."""
+		Probably too many requests at once."""
 
 	code = 503
 	cacheable = True

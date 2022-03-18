@@ -100,7 +100,7 @@ class URI(with_metaclass(URIType)):
 		return joined
 
 	def normalize(self):
-		u"""Normalize the URI to make it compareable.
+		u"""Normalize the URI to make it comparable.
 
 			.. seealso:: :rfc:`3986#section-6`
 		"""

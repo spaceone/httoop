@@ -43,7 +43,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 	encode_latin1_quoted_printable = False
 
 	# Regular expression that matches `special' characters in parameters, the
-	# existance of which force quoting of the parameter value.
+	# existence of which force quoting of the parameter value.
 	RE_TSPECIALS = re.compile(b'[ \\(\\)<>@,;:\\\\"/\\[\\]\\?=]')
 	RE_SPLIT = re.compile(b',(?=(?:[^"]*"[^"]*")*[^"]*$)')
 	RE_PARAMS = re.compile(b';(?=(?:[^"]*"[^"]*")*[^"]*$)')

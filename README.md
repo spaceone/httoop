@@ -128,4 +128,4 @@ OAuth 2.0:
 * [Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750)
 * [JSON Web Token (JWT)](https://datatracker.ietf.org/doc/html/rfc7519)
 * [JSON Web Token (JWT) Profile for OAuth 2.0 Access Tokens](https://datatracker.ietf.org/doc/html/rfc9068)
-* [Resource Indicators for OAuth 2.0](https://datatracker.ietf.org/doc/html/rfc8707
+* [Resource Indicators for OAuth 2.0](https://datatracker.ietf.org/doc/html/rfc8707)

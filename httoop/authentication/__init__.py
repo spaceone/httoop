@@ -68,6 +68,10 @@ class AuthRequestElement(AuthElement):
 	}
 
 	@property
+	def scheme(self):
+		return self.value.lower()
+
+	@property
 	def username(self):
 		return self.params.get('username').decode(self.encoding)
 
@@ -77,12 +81,12 @@ class AuthRequestElement(AuthElement):
 
 	@property
 	def password(self):
-		if self == 'basic':
+		if self.scheme == 'basic':
 			return self.params.get('password').decode(self.encoding)
 
 	@password.setter
 	def password(self, password):
-		if self == 'basic':
+		if self.scheme == 'basic':
 			self.params['password'] = password.encode(self.encoding)
 
 

@@ -1,4 +1,10 @@
-httoop (0.0.0-1) unstable; urgency=medium
+httoop (0.1.1) unstable; urgency=medium
+
+  * various fixes regarding authentication, compression, etc.
+
+ -- Florian Best <space@wechall.net>  Tue, 20 Dec 2022 00:12:18 +0100
+
+httoop (0.0.1) unstable; urgency=medium
 
   * Initial Release
 

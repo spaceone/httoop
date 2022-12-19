@@ -8,7 +8,7 @@ if __import__('sys').version_info < (3, 5) and __import__('sys').version_info > 
 from httoop.header import Server as __Server, UserAgent as __UserAgent  # noqa
 from httoop.messages import Protocol  # noqa
 
-__version__ = 0.0
-UserAgentHeader = __UserAgent.parse(b'httoop/%.1f' % (__version__, ))
-ServerHeader = __Server.parse(b'httoop/%.1f' % (__version__, ))
+__version__ = '0.1.1'
+UserAgentHeader = __UserAgent.parse(b'httoop/%s' % (__version__.encode(), ))
+ServerHeader = __Server.parse(b'httoop/%s' % (__version__.encode(), ))
 ServerProtocol = Protocol((1, 1))

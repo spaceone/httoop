@@ -17,6 +17,8 @@ class WSGIBody(Body):
 	__slots__ = ()
 
 	def write(self, bytes_):
+		if not isinstance(bytes_, bytes):
+			bytes_ = bytes_.encode(self.encoding)
 		return super(WSGIBody, self).write(bytes_)
 
 	def read(self, *size):

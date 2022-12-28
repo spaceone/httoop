@@ -28,10 +28,23 @@ class WSGI(object):
 
 	def __init__(self, environ=None, use_path_info=False, *args, **kwargs):
 		self.use_path_info = use_path_info
-		super(WSGI, self).__init__(*args, **kwargs)
+		super(WSGI, self).__init__()
 		self.exc_info = None
+
+		# defaults which will be overriden by set_environ()!
+		self.script_name = ''
+		self.path_info = ''
 		self.server_name = self.request.uri.host.encode()
+		self.server_address = None
 		self.server_port = str(self.request.uri.port).encode()
+		self.wsgi_version = (1, 0)
+		self.errors = None
+		self.multithread = False
+		self.multiprocess = False
+		self.run_once = True
+		self.remote_address = None
+		self.remote_port = None
+
 		self.environ = environ or {}
 		self.set_environ(self.environ)
 		self.headers_set = False
@@ -39,13 +52,11 @@ class WSGI(object):
 
 		self.request.body.__class__ = WSGIBody
 		self.response.body.__class__ = WSGIBody
-		self.response.body.chunked = True
 
 	def start_response(self):
 		pass
 
 	def __call__(self, application):
-
 		def write(data):
 			if not self.headers_set:
 				raise RuntimeError("write() before start_response()")
@@ -65,12 +76,18 @@ class WSGI(object):
 			self.headers_set = True
 			self.exc_info = exc_info
 			self.response.status.parse(status.encode('ISO8859-1'))
+
 			for name, value in response_headers:
 				self.response.headers.append(name, value)
 			return write
 
-		result = application(self.get_environ(), start_response)
-		result = iter(result)
+		raw_result = application(self.get_environ(), start_response)
+		if WSGIBody(raw_result).generator:
+			# self.response.body.headers = self.response.headers
+			self.response.headers['Transfer-Encoding'] = 'chunked'
+			self.response.body.chunked = True
+
+		result = iter([raw_result] if isinstance(raw_result, (bytes, str)) else raw_result)
 		for data in result:
 			if data:
 				break
@@ -88,6 +105,7 @@ class WSGI(object):
 				if hasattr(result, 'close'):
 					result.close()
 		self.response.body = buffered(data)
+		return raw_result
 
 	def get_environ(self):
 		environ = {}
@@ -132,17 +150,21 @@ class WSGI(object):
 		if 'CONTENT_LENGTH' in environ:
 			self.request.headers['Content-Length'] = environ.pop('CONTENT_LENGTH')
 
+		self.server_name = environ.pop('SERVER_NAME', None)
+		self.server_address = environ.pop('SERVER_ADDR', None)
+		self.server_port = environ.pop('SERVER_PORT', None)
+
 		self.request.method = environ.pop('REQUEST_METHOD', 'GET')
 		self.script_name = environ.pop('SCRIPT_NAME', '')
 		self.path_info = environ.pop('PATH_INFO', '')
 		self.request.uri = environ.pop('REQUEST_URI', '')
 		if self.use_path_info:
 			self.request.uri.path = self.path_info
+		else:
+			self.request.uri.host = self.server_name  # could also be Host header?!
+			self.request.uri.port = self.server_port
 		self.request.uri.scheme = environ.pop('REQUEST_SCHEME', environ.pop('wsgi.url_scheme', 'http'))
 		self.request.uri.query_string = environ.pop('QUERY_STRING', '')
-		self.server_name = environ.pop('SERVER_NAME', None)
-		self.server_address = environ.pop('SERVER_ADDR', None)
-		self.server_port = environ.pop('SERVER_PORT', None)
 		self.request.protocol = environ.pop('SERVER_PROTOCOL', 'HTTP/1.1')
 		self.response.protocol = self.request.protocol
 		self.wsgi_version = environ.pop('wsgi.version', (1, 0))

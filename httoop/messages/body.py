@@ -232,7 +232,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 
 		try:
 			for data in iterable:
-				if data is None:
+				if not data:
 					continue
 				if isinstance(data, Unicode):
 					data = data.encode(self.encoding)

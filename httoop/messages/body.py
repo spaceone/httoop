@@ -42,7 +42,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 
 	@property
 	def generator(self):
-		return isinstance(self.fd, GeneratorType)
+		return isinstance(self.fd, (GeneratorType, type(iter([]))))
 
 	@property
 	def encoding(self):

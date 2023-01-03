@@ -88,6 +88,12 @@ class WSGI(object):
 			# self.response.body.headers = self.response.headers
 			self.response.headers['Transfer-Encoding'] = 'chunked'
 			self.response.body.chunked = True
+		if raw_result and isinstance(raw_result, (list, tuple)):
+			write(type(raw_result[0])().join(raw_result))
+			return raw_result
+		if isinstance(raw_result, (str, bytes)):
+			write(raw_result)
+			return raw_result
 
 		result = iter([raw_result] if isinstance(raw_result, (bytes, str)) else raw_result)
 		for data in result:

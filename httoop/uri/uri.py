@@ -7,6 +7,7 @@
 
 import re
 from socket import AF_INET, AF_INET6, error as SocketError, inet_ntop, inet_pton
+from typing import Any, Iterator, Optional, Union
 
 from httoop.exceptions import InvalidURI
 from httoop.six import int2byte, iterbytes, with_metaclass
@@ -44,7 +45,7 @@ class URI(with_metaclass(URIType)):
 		self.path = u'/'.join(seq.replace(u'/', u'%2f') for seq in path)
 
 	@property
-	def hostname(self):
+	def hostname(self) -> str:
 		host = self.host
 		if host.startswith(u'[v') and host.endswith(u']') and u'.' in host and host[2:-1].split(u'.', 1)[0].isdigit():
 			return host[2:-1].split(u'.', 1)[1]
@@ -66,10 +67,10 @@ class URI(with_metaclass(URIType)):
 				raise InvalidURI(_(u'Invalid port: %r'), port)  # TODO: TypeError
 		self._port = port
 
-	def __init__(self, uri=None, *args, **kwargs):
+	def __init__(self, uri: Optional[Any]=None, *args, **kwargs) -> None:
 		self.set(kwargs or args or uri or b'')
 
-	def join(self, other=None, *args, **kwargs):
+	def join(self, other: Optional[bytes]=None, *args, **kwargs) -> Union["HTTP", "SvnSSH", "URI"]:
 		u"""Join a URI with another absolute or relative URI."""
 		relative = URI(other or args or kwargs)
 		joined = URI()
@@ -99,7 +100,7 @@ class URI(with_metaclass(URIType)):
 		joined.normalize()
 		return joined
 
-	def normalize(self):
+	def normalize(self) -> None:
 		u"""Normalize the URI to make it comparable.
 
 		.. seealso:: :rfc:`3986#section-6`
@@ -114,7 +115,7 @@ class URI(with_metaclass(URIType)):
 		if not self.path.startswith(u'/') and self.host and self.scheme and self.path:
 			self.path = u'/%s' % (self.path, )
 
-	def abspath(self):
+	def abspath(self) -> None:
 		"""Clear out any '..' and excessive slashes from the path.
 
 		>>> dangerous = (u'/./', u'/../', u'./', u'/.', u'../', u'/..', u'//')
@@ -143,7 +144,7 @@ class URI(with_metaclass(URIType)):
 			unsplit.append(u'')
 		self.path = u'/'.join(unsplit) or u'/'
 
-	def set(self, uri):
+	def set(self, uri: Any) -> None:
 		if isinstance(uri, Unicode):
 			uri = uri.encode(self.encoding)  # FIXME: remove?
 
@@ -178,7 +179,7 @@ class URI(with_metaclass(URIType)):
 		(self.scheme, self.username, self.password, self.host,
 			self.port, self.path, self.query_string, self.fragment) = tuple_
 
-	def parse(self, uri):
+	def parse(self, uri: bytes) -> None:
 		r"""Parses a well formed absolute or relative URI.
 
 		foo://example.com:8042/over/there?name=ferret#nose
@@ -245,7 +246,7 @@ class URI(with_metaclass(URIType)):
 			unquote(fragment)
 		)
 
-	def _unquote_host(self, host):
+	def _unquote_host(self, host: bytes) -> str:
 		# IPv6 / IPvFuture
 		if host.startswith(b'[') and host.endswith(b']'):
 			host = host[1:-1]
@@ -282,10 +283,10 @@ class URI(with_metaclass(URIType)):
 		except UnicodeError:  # pragma: no cover
 			raise InvalidURI(_('Invalid host.'))
 
-	def compose(self):
+	def compose(self) -> bytes:
 		return b''.join(self._compose_absolute_iter())
 
-	def _compose_absolute_iter(self):
+	def _compose_absolute_iter(self) -> Iterator[bytes]:
 		u"""composes the whole URI."""
 		scheme, username, password, host, port, path, _, fragment = self.tuple
 		if scheme:
@@ -297,7 +298,7 @@ class URI(with_metaclass(URIType)):
 		yield authority
 		yield b''.join(self._compose_relative_iter())
 
-	def _compose_authority_iter(self):
+	def _compose_authority_iter(self) -> Iterator[bytes]:
 		if not self.host:
 			return
 		username, password, host, port, quote = self.username, self.password, self.host, self.port, self.quote
@@ -311,7 +312,7 @@ class URI(with_metaclass(URIType)):
 		if port and integer(port) != self.PORT:
 			yield b':%d' % integer(port)
 
-	def _compose_relative_iter(self):
+	def _compose_relative_iter(self) -> Iterator[bytes]:
 		u"""Composes the relative URI beginning with the path."""
 		scheme, path, query_string, quote, fragment = self.scheme, self.path, self.query_string, self.quote, self.fragment
 		PATH = Percent.PATH
@@ -325,13 +326,13 @@ class URI(with_metaclass(URIType)):
 			yield b'#'
 			yield quote(fragment, Percent.FRAGMENT)
 
-	def unquote(self, data):
+	def unquote(self, data: bytes) -> str:
 		return Percent.unquote(bytes(data)).decode(self.encoding)
 
-	def quote(self, data, charset):
+	def quote(self, data: str, charset: bytes) -> bytes:
 		return Percent.quote(Unicode(data).encode(self.encoding), charset)
 
-	def __eq__(self, other):
+	def __eq__(self, other: Any) -> bool:
 		u"""Compares the URI with another string or URI.
 
 		.. seealso:: :rfc:`2616#section-3.2.3`
@@ -351,7 +352,7 @@ class URI(with_metaclass(URIType)):
 
 		return self_.tuple == other.tuple
 
-	def __setattr__(self, name, value):
+	def __setattr__(self, name: str, value: Any) -> None:
 		if name.startswith('_'):
 			return super(URI, self).__setattr__(name, value)
 
@@ -371,5 +372,5 @@ class URI(with_metaclass(URIType)):
 
 		super(URI, self).__setattr__(name, value)
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return '<URI(%s)>' % bytes(self)

@@ -28,7 +28,7 @@ class Response(Message):
 	def status(self, status):
 		self.__status.set(status)
 
-	def __init__(self, status=None, headers=None, body=None, protocol=None):
+	def __init__(self, status: None=None, headers: None=None, body: None=None, protocol: None=None) -> None:
 		"""Creates a new Response object to hold information about the response.
 
 		:param status:
@@ -40,7 +40,7 @@ class Response(Message):
 
 		self.__status = Status(status or 200)
 
-	def parse(self, line):
+	def parse(self, line: bytes) -> None:
 		u"""parses the response line."""
 		bits = line.strip().split(None, 1)
 		try:
@@ -54,9 +54,9 @@ class Response(Message):
 		# status
 		self.status.parse(status)
 
-	def compose(self):
+	def compose(self) -> bytes:
 		u"""composes the response line."""
 		return b"%s %s\r\n" % (bytes(self.protocol), bytes(self.status))
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return "<HTTP Response(%d %s)>" % (self.status, self.body.mimetype)

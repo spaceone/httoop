@@ -7,6 +7,7 @@ import codecs
 import sys
 from email.generator import _make_boundary as make_boundary
 from functools import partial
+from typing import Any, Callable, Dict, Optional, Tuple, Union
 
 try:
 	from email.utils import parsedate_tz as parsedate
@@ -36,7 +37,7 @@ except NameError:  # pragma: no cover
 	Unicode = str
 
 
-def _(x):
+def _(x: str) -> str:
 	return x
 
 
@@ -63,7 +64,7 @@ KNOWN_ENCODINGS = {
 }
 
 
-def sanitize_encoding(encoding):
+def sanitize_encoding(encoding: str) -> Optional[str]:
 	try:
 		name = codecs.lookup(encoding).name
 		if name not in KNOWN_ENCODINGS:
@@ -77,7 +78,7 @@ def iteritems(d, **kw):
 	return iter(getattr(d, 'items' if PY3 else 'iteritems')(**kw))
 
 
-def to_unicode(string):
+def to_unicode(string: Optional[Union[bytes, str]]) -> str:
 	if string is None:
 		return u''
 	if isinstance(string, bytes):
@@ -88,7 +89,7 @@ def to_unicode(string):
 	return Unicode(string)
 
 
-def if_has(func):
+def if_has(func: Callable) -> Callable:
 	def _decorated(self, *args, **kwargs):
 		if hasattr(self.fd, func.__name__):
 			return func(self, *args, **kwargs)
@@ -96,7 +97,7 @@ def if_has(func):
 	return _decorated
 
 
-def integer(number, *args):
+def integer(number: Union[int, str, bytes], *args) -> int:
 	"""In Python 3 int() is broken.
 	>>> int(bytearray(b'1_0'))
 	Traceback (most recent call last):
@@ -115,7 +116,7 @@ class IFile(object):
 	__slots__ = ('fd')
 
 	@property
-	def name(self):
+	def name(self) -> None:
 		return getattr(self.fd, 'name', None)
 
 	@if_has
@@ -147,7 +148,7 @@ class IFile(object):
 		return self.fd.writelines(sequence_of_strings)
 
 	@if_has
-	def seek(self, offset, whence=0):
+	def seek(self, offset, whence: int=0):
 		return self.fd.seek(offset, whence)
 
 	@if_has
@@ -169,39 +170,40 @@ class CaseInsensitiveDict(dict):
 	__slots__ = ()
 
 	@staticmethod
-	def formatkey(key):
+	def formatkey(key: Union[bytes, str]) -> str:
 		return to_unicode(key).title()
 
 	@staticmethod
-	def formatvalue(value):
+	def formatvalue(value: Any) -> Any:
 		return value
 
-	def __init__(self, *args, **kwargs):
+	def __init__(self, *args, **kwargs) -> None:
 		d = dict(*args, **kwargs)
 		for key, value in iteritems(d):
 			dict.__setitem__(self, self.formatkey(key), self.formatvalue(value))
 		dict.__init__(self)
 
-	def __getitem__(self, key):
+	def __getitem__(self, key: Union[bytes, str]) -> Any:
 		return dict.__getitem__(self, self.formatkey(key))
 
-	def __setitem__(self, key, value):
+	def __setitem__(self, key: Union[bytes, str], value: Any) -> None:
 		dict.__setitem__(self, self.formatkey(key), self.formatvalue(value))
 
-	def __delitem__(self, key):
+	def __delitem__(self, key: str) -> None:
 		dict.__delitem__(self, self.formatkey(key))
 
-	def __contains__(self, key):
+	def __contains__(self, key: Union[bytes, str]) -> bool:
 		return dict.__contains__(self, self.formatkey(key))
 
-	def get(self, key, default=None):
+	def get(self, key: Union[bytes, str], default: Optional[Any]=None) -> Any:
 		return dict.get(self, self.formatkey(key), default)
 
-	def update(self, E):
+	def update(self, E: Dict[str, str]) -> None:
 		for key in E.keys():
 			self[self.formatkey(key)] = self.formatvalue(E[key])
 
-	def setdefault(self, key, x=None):
+	#def setdefault(self, key: str, x: Optional[Union[UserAgent, Server, str, bytes]]=None) -> bytes:
+	def setdefault(self, key: str, x: Optional[Union[str, bytes]]=None) -> bytes:
 		key = self.formatkey(key)
 		try:
 			return dict.__getitem__(self, key)
@@ -209,33 +211,33 @@ class CaseInsensitiveDict(dict):
 			self[key] = self.formatvalue(x)
 			return dict.__getitem__(self, key)
 
-	def pop(self, key, default=None):
+	def pop(self, key: str, default: None=None) -> Optional[bytes]:
 		return dict.pop(self, self.formatkey(key), default)
 
 	@classmethod
-	def fromkeys(cls, seq, value=None):
+	def fromkeys(cls, seq: Tuple[str, str, str], value: Optional[str]=None) -> "Headers":
 		return cls(dict((key, value) for key in seq))
 
 
 class ByteUnicodeDict(CaseInsensitiveDict):
 
 	@staticmethod
-	def formatkey(key):
+	def formatkey(key: Union[bytes, str]) -> bytes:
 		return key if isinstance(key, bytes) else key.encode('UTF-8')
 
 
 class _Translateable(object):
 
-	def __init__(self, message, *args, **kwargs):
+	def __init__(self, message: str, *args, **kwargs) -> None:
 		self.message = message
 		self._args = args
 		self._kwargs = kwargs
 		super(_Translateable, self).__init__(message, args, kwargs)
 
-	def translate(self):
+	def translate(self) -> str:
 		return self.message % (self._kwargs or self._args)
 
-	def __unicode__(self):
+	def __unicode__(self) -> str:
 		return self.translate()
 
 	def __bytes__(self):

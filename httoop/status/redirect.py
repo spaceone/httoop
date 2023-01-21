@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from typing import Dict, Optional, Tuple, Union
+
 from httoop.status.types import StatusException
 from httoop.uri import URI
 
@@ -11,14 +13,14 @@ class RedirectStatus(StatusException):
 
 	location = None
 
-	def __init__(self, location, *args, **kwargs):
+	def __init__(self, location: Optional[Union[bytes, Tuple[str, str], str]], *args, **kwargs) -> None:
 		if not isinstance(location, (type(None), list, tuple)):
 			location = [location]
 		if location is not None:
 			kwargs.setdefault('headers', {})['Location'] = ', '.join(str(URI(uri)) for uri in location)
 		super(RedirectStatus, self).__init__(*args, **kwargs)
 
-	def to_dict(self):
+	def to_dict(self) -> Dict[str, Union[int, str, Dict[str, str]]]:
 		dct = super(RedirectStatus, self).to_dict()
 		if self.headers.get('Location'):
 			dct.update(dict(Location=self.headers['Location']))
@@ -80,7 +82,7 @@ class NOT_MODIFIED(RedirectStatus):
 	code = 304
 	body = None
 
-	def __init__(self, *args, **kwargs):
+	def __init__(self, *args, **kwargs) -> None:
 		# don't set location
 		super(NOT_MODIFIED, self).__init__(None, *args, **kwargs)
 

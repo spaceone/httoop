@@ -37,7 +37,7 @@ class Request(Message):
 	def uri(self, uri):
 		self.__uri.set(uri)
 
-	def __init__(self, method=None, uri=None, headers=None, body=None, protocol=None):  # pylint: disable=R0913
+	def __init__(self, method: None=None, uri: None=None, headers: None=None, body: None=None, protocol: None=None) -> None:  # pylint: disable=R0913
 		"""Creates a new Request object to hold information about a request.
 
 		:param method: the requested method
@@ -51,7 +51,7 @@ class Request(Message):
 		self.__method = Method(method or 'GET')
 		self.__uri = URI(uri or '/')
 
-	def parse(self, line):
+	def parse(self, line: bytes) -> None:
 		"""parses the request line and sets method, uri and protocol version
 		:param line: the request line
 		:type  line: bytes.
@@ -76,7 +76,7 @@ class Request(Message):
 		self.uri.parse(uri)
 		self.validate_request_uri()
 
-	def validate_request_uri(self):
+	def validate_request_uri(self) -> None:
 		uri = self.uri
 		if not isinstance(uri, (uri.SCHEMES[b'http'], uri.SCHEMES[b'https'])):
 			raise InvalidURI(_(u'The request URI scheme must be HTTP based.'))
@@ -89,10 +89,10 @@ class Request(Message):
 		if self.method == u'CONNECT' and (uri.scheme or uri.path or uri.query_string or not uri.host):
 			raise InvalidURI(_(u'The request URI of an CONNECT request must be a authority.'))
 
-	def compose(self):
+	def compose(self) -> bytes:
 		u"""composes the request line."""
 		self.validate_request_uri()
 		return b"%s %s %s\r\n" % (bytes(self.__method), bytes(self.__uri) or b'/', bytes(self.protocol))
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return "<HTTP Request(%s %s %s)>" % (self.__method, self.__uri.path, self.protocol)

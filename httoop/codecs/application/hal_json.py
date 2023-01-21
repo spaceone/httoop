@@ -3,11 +3,13 @@
 
 from __future__ import absolute_import
 
+from typing import Any, Dict, Iterator, List, Optional, Union
+
 try:
 	from uritemplate import expand
 except ImportError:
 	# TODO: emit a warning
-	def expand(href, templates):
+	def expand(href: str, templates: Dict[str, str]) -> str:
 		for templ, value in templates.items():
 			href = href.replace('{%s}' % (templ, ), value)
 		return href
@@ -21,7 +23,7 @@ from httoop.six import string_types
 class Resource(dict):
 	"""A JSON Hypertext Application Language resource."""
 
-	def __init__(self, *args, **kwargs):
+	def __init__(self, *args, **kwargs) -> None:
 		super(Resource, self).__init__(*args, **kwargs)
 		self.setdefault('_links', {})
 		self.setdefault('_embedded', {})
@@ -31,10 +33,10 @@ class Resource(dict):
 			raise DecodeError(u'HAL embedded must be JSON objects.')
 
 	@property
-	def self(self):
+	def self(self) -> str:
 		return self.expand(self.get_link('self')['href'])
 
-	def get_links(self, relation, name=None):
+	def get_links(self, relation: str, name: None=None) -> Iterator[Dict[str, Union[None, bool, str]]]:
 		links = self['_links'].get(relation)
 		if links is None:
 			return
@@ -64,16 +66,16 @@ class Resource(dict):
 				link['deprecation'] = False
 			yield link
 
-	def get_link(self, relation, name=None):
+	def get_link(self, relation: str, name: Optional[str]=None) -> Optional[Dict[str, Optional[Union[bool, str]]]]:
 		try:
 			return next(self.get_links(relation, name))
 		except StopIteration:
 			pass
 
-	def get_relations(self):
+	def get_relations(self) -> List[str]:
 		return list(set(self['_links'].keys()) | set(self['_embedded'].keys()))
 
-	def get_resources(self, relation):
+	def get_resources(self, relation: str) -> None:
 		embedded = self['_embedded'].get(relation)
 		if not embedded:
 			return
@@ -84,7 +86,7 @@ class Resource(dict):
 				raise DecodeError(u'HAL resources must be objects')
 			yield Resource(resource.copy())
 
-	def get_resource(self, relation):
+	def get_resource(self, relation: str) -> Optional["Resource"]:
 		try:
 			return next(self.get_resources(relation))
 		except StopIteration:
@@ -93,7 +95,7 @@ class Resource(dict):
 	def expand(___self, ___href, **templates):
 		return expand(___href, templates)
 
-	def get_curie(self, relation):
+	def get_curie(self, relation: str) -> str:
 		if ':' in relation:
 			name, rel = relation.split(':', 1)
 			link = self.get_link('curie', name)
@@ -101,7 +103,7 @@ class Resource(dict):
 				return self.expand(link['href'], rel=rel)
 		return relation
 
-	def add_link(self, relation, link):
+	def add_link(self, relation: str, link: Dict[str, str]) -> None:
 		links = self['_links'].setdefault(relation, [])
 		if not isinstance(links, list):
 			links = [links]
@@ -109,7 +111,7 @@ class Resource(dict):
 		self['_links'][relation] = links
 		self['_links'][relation] = list(self.get_links(relation))
 
-	def add_resource(self, relation, resource):
+	def add_resource(self, relation: str, resource: Dict[Any, Any]) -> None:
 		resources = list(self.get_resources(relation))
 		resources.append(resource)
 		self['_embedded'][relation] = resources
@@ -119,14 +121,14 @@ class HAL(JSON):
 	mimetype = 'application/hal+json'
 
 	@classmethod
-	def decode(cls, data, charset=None, mimetype=None):
+	def decode(cls, data: bytes, charset: Optional[str]=None, mimetype: Optional["ContentType"]=None) -> "Resource":
 		data = super(HAL, cls).decode(data)
 		if not isinstance(data, dict):
 			raise DecodeError(u'HAL documents must be JSON objects.')
 		return Resource(data)
 
 	@classmethod
-	def encode(cls, data, charset=None, mimetype=None):
+	def encode(cls, data: Union[Dict[str, None], Resource], charset: Optional[str]=None, mimetype: Optional["ContentType"]=None) -> bytes:
 		if not isinstance(data, dict):
 			raise EncodeError(u'HAL documents must be JSON objects.')
 

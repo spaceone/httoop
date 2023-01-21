@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from binascii import Error as Base64Error
+from typing import Dict, Union
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
-from httoop.util import _, decode_base64, encode_base64
+from httoop.util import ByteUnicodeDict, _, decode_base64, encode_base64
 
 
 class BasicAuthRequestScheme(object):
 
 	@staticmethod
-	def parse(authinfo):
+	def parse(authinfo: bytes) -> Dict[str, bytes]:
 		#try:
 		#	authinfo = authinfo.encode('ascii')
 		#except ValueError:
@@ -32,7 +33,7 @@ class BasicAuthRequestScheme(object):
 		return authinfo
 
 	@staticmethod
-	def compose(authinfo):
+	def compose(authinfo: ByteUnicodeDict) -> bytes:
 		username = authinfo['username']
 		password = authinfo['password']
 		#username = username.encode('ISO8859-1')
@@ -43,11 +44,11 @@ class BasicAuthRequestScheme(object):
 class BasicAuthResponseScheme(object):
 
 	@staticmethod
-	def parse(authinfo):
+	def parse(authinfo: bytes) -> Dict[bytes, Union[str, bytes]]:
 		params = HeaderElement.parseparams(b'X;%s' % authinfo)[1]
 		params.setdefault(b'realm', b'')
 		return params
 
 	@staticmethod
-	def compose(authinfo):
+	def compose(authinfo: ByteUnicodeDict) -> bytes:
 		return HeaderElement.formatparam(b'realm', authinfo['realm'], True)

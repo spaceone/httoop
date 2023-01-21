@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from contextlib import contextmanager
+from typing import Iterator
 
 
 class ComposedMessage(object):
@@ -46,10 +47,10 @@ class ComposedMessage(object):
 				self.message.headers.pop('Transfer-Encoding')
 
 	@contextmanager
-	def _composing(self):
+	def _composing(self) -> Iterator[None]:
 		yield
 
-	def __iter__(self):
+	def __iter__(self) -> Iterator[bytes]:
 		with self._composing():
 			start_line = bytes(self.message)
 			headers = bytes(self.message.headers)

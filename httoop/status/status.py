@@ -6,6 +6,7 @@
 """
 
 import re
+from typing import Any, Optional, Union
 
 from httoop.exceptions import InvalidLine
 from httoop.meta import HTTPSemantic
@@ -22,32 +23,32 @@ class Status(with_metaclass(HTTPSemantic)):
 	# __slots__ = ('__code', '__reason')  # conflicts with StatusException
 
 	@property
-	def informational(self):
+	def informational(self) -> bool:
 		return 99 < self.__code < 200
 
 	@property
-	def successful(self):
+	def successful(self) -> bool:
 		return 199 < self.__code < 300
 
 	@property
-	def redirection(self):
+	def redirection(self) -> bool:
 		return 299 < self.__code < 400
 
 	@property
-	def client_error(self):
+	def client_error(self) -> bool:
 		return 399 < self.__code < 500
 
 	@property
-	def server_error(self):
+	def server_error(self) -> bool:
 		return 499 < self.__code < 600
 
 	# aliases
 	@property
-	def status(self):
+	def status(self) -> int:
 		return self.__code
 
 	@property
-	def reason_phrase(self):
+	def reason_phrase(self) -> str:
 		return self.__reason
 
 	@property
@@ -68,7 +69,7 @@ class Status(with_metaclass(HTTPSemantic)):
 
 	STATUS_RE = re.compile(br"^([1-5]\d{2})(?:\s+([\s\w]*))\Z")
 
-	def __init__(self, code=None, reason=None):
+	def __init__(self, code: Optional[int]=None, reason: Optional[bytes]=None) -> None:
 		"""
 		:param code:
 		the HTTP Statuscode
@@ -85,7 +86,7 @@ class Status(with_metaclass(HTTPSemantic)):
 		if code:
 			self.set((code, reason,))
 
-	def parse(self, status):
+	def parse(self, status: bytes) -> None:
 		"""parse a Statuscode and Reason-Phrase.
 
 		:param status: the code and reason
@@ -97,17 +98,17 @@ class Status(with_metaclass(HTTPSemantic)):
 
 		self.set((int(match.group(1)), match.group(2).decode('ascii'),))
 
-	def compose(self):
+	def compose(self) -> bytes:
 		return b'%d %s' % (self.__code, self.__reason.encode('ascii'))
 
-	def __unicode__(self):
+	def __unicode__(self) -> str:
 		return self.compose().decode('ascii')
 
-	def __int__(self):
+	def __int__(self) -> int:
 		u"""Returns this status as number."""
 		return self.__code
 
-	def __eq__(self, other):
+	def __eq__(self, other: Any) -> bool:
 		u"""Compares a status with another :class:`Status` or :class:`int`."""
 		if isinstance(other, int):
 			return self.__code == other
@@ -115,13 +116,13 @@ class Status(with_metaclass(HTTPSemantic)):
 			return self.__code == other.code
 		return super(Status, self).__eq__(other)
 
-	def __lt__(self, other):
+	def __lt__(self, other: Union[int, "Status"]) -> bool:
 		return self.__code < other
 
-	def __gt__(self, other):
+	def __gt__(self, other: Union[int, "Status"]) -> bool:
 		return self.__code > other
 
-	def set(self, status):
+	def set(self, status: Any) -> None:
 		u"""sets reason and status.
 
 		:param status:
@@ -146,7 +147,7 @@ class Status(with_metaclass(HTTPSemantic)):
 		else:
 			raise TypeError('invalid status')
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return '<HTTP Status (code=%d, reason=%r)>' % (self.__code, self.__reason)
 
 

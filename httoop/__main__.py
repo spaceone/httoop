@@ -70,7 +70,7 @@ class CLI(object):
 			self.arguments.file = self.arguments.file.buffer
 		self.arguments.func()
 
-	def add_common_arguments(self, add):
+	def add_common_arguments(self, add) -> None:
 		add('--protocol')
 		add('-H', '--header', action='append', default=[])
 		add('-b', '--body', default='')

@@ -4,6 +4,7 @@ common used in combination with HTTP.
 """
 
 import inspect
+from typing import Any, Type
 
 from httoop.codecs import application, audio, example, image, message, model, multipart, text, video
 from httoop.codecs.codec import Codec
@@ -18,12 +19,12 @@ __all__ = [
 ]
 
 
-def lookup(encoding, raise_errors=True):
+def lookup(encoding: str, raise_errors: bool=True) -> Any:
 	type_ = '%s/*' % (encoding.split('/', 1)[0], )
 	return CODECS.get(encoding) or CODECS.get(type_) or (raise_errors and CODECS[encoding]) or None
 
 
-def register(encoding, codec):
+def register(encoding: str, codec: Type["Codec"]) -> None:
 	CODECS[encoding] = codec
 
 

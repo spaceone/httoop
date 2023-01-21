@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from typing import Dict, Union
+
 from httoop.status.types import StatusException
 
 
@@ -30,11 +32,11 @@ class CREATED(SuccessStatus):
 
 	code = 201
 
-	def __init__(self, location, *args, **kwargs):
+	def __init__(self, location: str, *args, **kwargs) -> None:
 		kwargs.setdefault('headers', {})['Location'] = location
 		super(CREATED, self).__init__(*args, **kwargs)
 
-	def to_dict(self):
+	def to_dict(self) -> Dict[str, Union[int, str, Dict[str, str]]]:
 		dct = super(CREATED, self).to_dict()
 		dct.update(dict(Location=self.headers['Location']))
 		return dct

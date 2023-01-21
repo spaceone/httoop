@@ -10,6 +10,7 @@ import locale
 import time
 #import calendar
 from datetime import datetime
+from typing import Any, Optional, Union
 
 from httoop.exceptions import InvalidDate
 from httoop.meta import HTTPSemantic
@@ -38,7 +39,7 @@ class Date(with_metaclass(HTTPSemantic)):
 
 	__slots__ = ('__composed', '__timestamp', '__datetime', '__time_struct')
 
-	def __init__(self, timeval=None):
+	def __init__(self, timeval: Optional[Any]=None) -> None:
 		u"""
 		:param timeval:
 		:type  timeval:
@@ -72,18 +73,18 @@ class Date(with_metaclass(HTTPSemantic)):
 			raise TypeError('Date(): got invalid argument')
 
 	@property
-	def datetime(self):
+	def datetime(self) -> datetime:
 		if self.__datetime is None:
 			self.__datetime = datetime.utcfromtimestamp(int(self))
 		return self.__datetime
 
 	@property
-	def gmtime(self):
+	def gmtime(self) -> 	time.struct_time:
 		if self.__time_struct is None:
 			self.__time_struct = time.gmtime(int(self))
 		return self.__time_struct
 
-	def compose(self):
+	def compose(self) -> bytes:
 		if self.__composed is None:
 			self.__composed = self.__compose()
 		return self.__composed
@@ -98,7 +99,7 @@ class Date(with_metaclass(HTTPSemantic)):
 		)
 
 	@classmethod
-	def parse(cls, timestr=None):
+	def parse(cls, timestr: Optional[bytes]=None) -> "Date":
 		u"""parses a HTTP date string and returns a :class:`Date` object.
 
 		:param timestr: the time string in one of the http formats
@@ -138,25 +139,25 @@ class Date(with_metaclass(HTTPSemantic)):
 
 		raise InvalidDate(_(u'Invalid date: %r'), timestr)
 
-	def __int__(self):
+	def __int__(self) -> int:
 		return int(float(self))
 
-	def __float__(self):
+	def __float__(self) -> float:
 		return float(self.__timestamp)
 
-	def __eq__(self, other):
+	def __eq__(self, other: Any) -> bool:
 		try:
 			return int(self) == int(self.__other(other))
 		except NotImplementedError:  # pragma: no cover
 			return NotImplemented
 
-	def __gt__(self, other):
+	def __gt__(self, other: Optional[Union["Date", str]]) -> bool:
 		try:
 			return int(self) > int(self.__other(other))
 		except NotImplementedError:  # pragma: no cover
 			return NotImplemented
 
-	def __lt__(self, other):
+	def __lt__(self, other: Optional[Union["Date", str]]) -> bool:
 		try:
 			return int(self) < int(self.__other(other))
 		except NotImplementedError:  # pragma: no cover
@@ -174,5 +175,5 @@ class Date(with_metaclass(HTTPSemantic)):
 			return Date(0)
 			raise NotImplementedError()  # pragma: no cover
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return '<HTTP Date(%d)>' % (int(self), )

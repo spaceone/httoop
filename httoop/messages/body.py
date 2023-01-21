@@ -7,6 +7,7 @@
 from io import BytesIO
 from os import fstat
 from types import GeneratorType
+from typing import Any, Iterator, List, Optional, Union
 
 from httoop.header import Headers
 from httoop.meta import HTTPSemantic
@@ -37,12 +38,12 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 	MAX_CHUNK_SIZE = 4096
 
 	@property
-	def fileable(self):
+	def fileable(self) -> bool:
 		u"""Flag whether the set content provides the file interface."""
 		return all(hasattr(self.fd, method) for method in ('read', 'write', 'close'))
 
 	@property
-	def generator(self):
+	def generator(self) -> bool:
 		return isinstance(self.fd, (GeneratorType, type(iter([]))))
 
 	@property
@@ -100,7 +101,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 	def chunked(self, chunked):
 		self.transfer_encoding = 'chunked' if chunked else None
 
-	def __init__(self, content=None, mimetype=None):
+	def __init__(self, content: Optional[Union[bytes, List[bytes], str]]=None, mimetype: Optional[str]=None) -> None:
 		self.data = None
 		self.__iter = None
 		self.fd = BytesIO()
@@ -112,7 +113,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 		self.mimetype = mimetype or b'text/plain; charset=UTF-8'
 		self.set(content)
 
-	def encode(self, *data):
+	def encode(self, *data) -> None:
 		u"""Encode the object in :attr:`data` if a codec for the mimetype exists."""
 		codec = self.mimetype.codec
 		if codec:
@@ -123,7 +124,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 			self.set(value)
 			self.data = data
 
-	def iterencode(self, *data):
+	def iterencode(self, *data) -> None:
 		codec = self.mimetype.codec
 		if codec:
 			data = data[0] if data else self.data
@@ -131,7 +132,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 			self.set(value)
 			self.data = data
 
-	def decode(self, *data):
+	def decode(self, *data) -> Any:
 		u"""Decodes the body content if a codec for the mimetype exists.
 		Stores the decoded object in :attr:`data`.
 		"""
@@ -142,21 +143,21 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 			self.data = codec.decode(self.__content_bytes(), self.encoding, self.mimetype)
 			return self.data
 
-	def compress(self):
+	def compress(self) -> None:
 		u"""Applies the Content-Encoding codec to the content."""
 		codec = self.content_codec
 		if codec:
 			self.set(codec.encode(self.__content_bytes()))
 			self.content_encoding = None
 
-	def decompress(self):
+	def decompress(self) -> None:
 		u"""Applies the Content-Encoding codec to the content."""
 		codec = self.content_codec
 		if codec:
 			self.set(codec.decode(self.__content_bytes()))
 			self.content_encoding = None
 
-	def set(self, content):
+	def set(self, content: Any) -> None:
 		if isinstance(content, Body):
 			self.mimetype = content.mimetype
 			self.data = content.data
@@ -181,7 +182,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 			raise TypeError('Content must be iterable.')
 		self.fd = content
 
-	def parse(self, data):
+	def parse(self, data: bytes) -> None:
 		if self.transfer_codec and data:
 			data = self.transfer_codec.decode(data, self.encoding).encode(self.encoding)
 
@@ -190,19 +191,19 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 
 		self.write(data)
 
-	def compose(self):
+	def compose(self) -> bytes:
 		return b''.join(self.__iter__())
 
-	def close(self):
+	def close(self) -> None:
 		fileable = self.fileable
 		super(Body, self).close()
 		if fileable:
 			self.set('')
 
-	def __unicode__(self):
+	def __unicode__(self) -> str:
 		return self.__content_bytes().decode(self.encoding)
 
-	def __iter__(self):
+	def __iter__(self) -> Iterator[Any]:
 		u"""Iterates over the content applying Content-Encoding and Transfer-Encoding."""
 		data = self.__content_iter()
 		for codec in (self.content_codec, self.transfer_codec):
@@ -278,10 +279,10 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 	# 	body.content_encoding = self.content_encoding
 	# 	return body
 
-	def __bool__(self):
+	def __bool__(self) -> bool:
 		return bool(len(self))
 
-	def __len__(self):
+	def __len__(self) -> int:
 		body = self.fd
 
 		if isinstance(body, BytesIO):
@@ -291,7 +292,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 
 		return len(self.__content_bytes())
 
-	def __next__(self):
+	def __next__(self) -> bytes:
 		if self.__iter is None:
 			self.__iter = self.__iter__()
 		try:

@@ -4,6 +4,8 @@
 .. seealso:: `PEP 333 <http://www.python.org/dev/peps/pep-0333/>`_
 """
 
+from typing import Any, Callable, Dict, Iterator, Optional, Tuple, Union
+
 from httoop.messages import Body
 from httoop.six import PY2, reraise
 from httoop.util import iteritems
@@ -28,7 +30,7 @@ class WSGIBody(Body):
 class WSGI(object):
 	u"""A mixin class which implements the WSGI interface."""
 
-	def __init__(self, environ=None, use_path_info=False, *args, **kwargs):
+	def __init__(self, environ: Optional[Dict[str, str]]=None, use_path_info: bool=False, *args, **kwargs) -> None:
 		self.use_path_info = use_path_info
 		super(WSGI, self).__init__()
 		self.exc_info = None
@@ -55,10 +57,10 @@ class WSGI(object):
 		self.request.body.__class__ = WSGIBody
 		self.response.body.__class__ = WSGIBody
 
-	def start_response(self):
+	def start_response(self) -> None:
 		pass
 
-	def __call__(self, application):
+	def __call__(self, application: Callable) -> Iterator[Any]:
 		def write(data):
 			if not self.headers_set:
 				raise RuntimeError("write() before start_response()")
@@ -115,7 +117,7 @@ class WSGI(object):
 		self.response.body = buffered(data)
 		return raw_result
 
-	def get_environ(self):
+	def get_environ(self) -> Dict[str, Optional[Union[str, Tuple[int, int], WSGIBody, bool]]]:
 		environ = {}
 		environ.update(dict(self.environ.items()))
 		environ.update(dict([
@@ -146,7 +148,7 @@ class WSGI(object):
 			environ = dict((key, value.decode('ISO8859-1') if isinstance(value, bytes) else value) for key, value in environ.items())
 		return environ
 
-	def set_environ(self, environ):
+	def set_environ(self, environ: Dict[str, str]) -> None:
 		environ = environ.copy()
 
 		for name, value in list(environ.items()):

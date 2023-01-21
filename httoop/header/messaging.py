@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # TODO: Via, Server, User-Agent can contain comments → parse them
 import re
+from typing import Any, List, Optional
 
 from httoop.codecs import lookup
 from httoop.exceptions import InvalidDate, InvalidHeader
@@ -16,13 +17,13 @@ class CodecElement(object):
 
 	raise_on_missing_codec = True
 
-	def sanitize(self):
+	def sanitize(self) -> None:
 		super(CodecElement, self).sanitize()
 		if self.value and self.codec is None and self.raise_on_missing_codec:
 			raise InvalidHeader(_(u'Unknown %s: %r'), self.__name__, self.value)
 
 	@property
-	def codec(self):
+	def codec(self) -> Any:
 		try:
 			mimetype = self.mimetype
 		except AttributeError:
@@ -43,7 +44,7 @@ class Accept(_AcceptElement, MimeType):
 
 	is_request_header = True
 
-	def sanitize(self):
+	def sanitize(self) -> None:
 		super(Accept, self).sanitize()
 		if self.value == '*':
 			self.value = '*/*'
@@ -85,11 +86,11 @@ class Connection(_HopByHopElement, HeaderElement):
 	priority = b'\xff'
 
 	@property
-	def close(self):
+	def close(self) -> bool:
 		return self.value.lower() == u'close'
 
 	@property
-	def upgrade(self):
+	def upgrade(self) -> bool:
 		return self.value.lower() == u'upgrade'
 
 
@@ -101,32 +102,32 @@ class ContentDisposition(HeaderElement):
 	from httoop.date import Date
 
 	@property
-	def filename(self):
+	def filename(self) -> Optional[str]:
 		return self.params.get('filename')
 
 	@property
-	def attachment(self):
+	def attachment(self) -> bool:
 		return self.value == 'attachment'
 
 	@property
-	def form_data(self):
+	def form_data(self) -> bool:
 		return self.value == 'form-data'
 
 	@property
-	def inline(self):
+	def inline(self) -> bool:
 		return self.value == 'inline'
 
 	@property
-	def creation_date(self):
+	def creation_date(self) -> Optional["Date"]:
 		if 'creation-date' in self.params:
 			return self.Date(self.params['creation-date'])
 
 	@property
-	def modification_date(self):
+	def modification_date(self) -> Optional["Date"]:
 		if 'modification-date' in self.params:
 			return self.Date(self.params['modification-date'])
 
-	def sanitize(self):
+	def sanitize(self) -> None:
 		self.value = self.value.lower()
 		if self.attachment:
 			if b'inline' in self.params:
@@ -200,12 +201,12 @@ class ContentType(HeaderElement, MimeType, CodecElement):
 
 	VALID_BOUNDARY = re.compile(u'^[ -~]{0,200}[!-~]$')
 
-	def sanitize(self):
+	def sanitize(self) -> None:
 		super(ContentType, self).sanitize()
 		if 'boundary' in self.params:
 			self.sanitize_boundary()
 
-	def sanitize_boundary(self):
+	def sanitize_boundary(self) -> None:
 		boundary = self.params['boundary'] = self.params['boundary'].strip(u'"')
 		if not self.VALID_BOUNDARY.match(boundary):
 			raise InvalidHeader(_(u'Invalid boundary in multipart form: %r'), boundary)
@@ -227,7 +228,7 @@ class Cookie(_CookieElement):
 	# TODO: prohibit that multiple Cookie lines are parsed as valid
 
 	@classmethod
-	def join(cls, values):
+	def join(cls, values: List[bytes]) -> bytes:
 		return b'; '.join(values)
 
 
@@ -242,7 +243,7 @@ class Expect(HeaderElement):
 	is_response_header = True
 
 	@property
-	def is_100_continue(self):
+	def is_100_continue(self) -> bool:
 		return self.value.lower() == u'100-continue'
 
 
@@ -255,23 +256,23 @@ class Forwarded(HeaderElement):
 	is_request_header = True
 
 	@property
-	def for_(self):
+	def for_(self) -> str:
 		return self.params.get('for')
 
 	@property
-	def by(self):
+	def by(self) -> Optional[str]:
 		return self.params.get('by')
 
 	@property
-	def host(self):
+	def host(self) -> Optional[str]:
 		return self.params.get('host')
 
 	@property
-	def proto(self):
+	def proto(self) -> Optional[str]:
 		return self.params.get('proto')
 
 	@classmethod
-	def parse(cls, elementstr):
+	def parse(cls, elementstr: bytes) -> "Forwarded":
 		return super(Forwarded, cls).parse(b'x; %s' % (elementstr, ))
 
 
@@ -285,7 +286,7 @@ class Host(HeaderElement):
 	HOSTPORT = re.compile(r'^(.*?)(?::(\d+))?$')
 
 	@property
-	def is_ip4(self):
+	def is_ip4(self) -> bool:
 		from socket import AF_INET, error, inet_pton
 		try:
 			inet_pton(AF_INET, self.host)
@@ -294,7 +295,7 @@ class Host(HeaderElement):
 			return False
 
 	@property
-	def is_ip6(self):
+	def is_ip6(self) -> bool:
 		from socket import AF_INET6, error, inet_pton
 		try:
 			inet_pton(AF_INET6, self.host)
@@ -303,29 +304,29 @@ class Host(HeaderElement):
 			return False
 
 	@property
-	def is_fqdn(self):
+	def is_fqdn(self) -> bool:
 		return not self.is_ip4 and not self.is_ip6 and self.RE_HOSTNAME.match(self.host) is not None
 
 	@property
-	def fqdn(self):
+	def fqdn(self) -> Optional[str]:
 		if self.is_fqdn:
 			return self.host
 
 	@property
-	def hostname(self):
+	def hostname(self) -> Optional[str]:
 		return self.ip6address or self.ip4address or self.fqdn
 
 	@property
-	def ip6address(self):
+	def ip6address(self) -> Optional[str]:
 		if self.is_ip6:
 			return self.host
 
 	@property
-	def ip4address(self):
+	def ip4address(self) -> Optional[str]:
 		if self.is_ip4:
 			return self.host
 
-	def sanitize(self):
+	def sanitize(self) -> None:
 		self.value = self.value.lower()
 		self.host, self.port = self.HOSTPORT.match(self.value).groups()
 		if self.host.endswith(']') and self.host.startswith('['):
@@ -375,32 +376,32 @@ class SetCookie(_ListElement, _CookieElement):
 	from httoop.date import Date
 
 	@classmethod
-	def split(cls, fieldvalue):
+	def split(cls, fieldvalue: bytes) -> List[bytes]:
 		fieldvalue = re.sub(b'(expires)=([^"][^;]+)', b'\\1="\\2"', fieldvalue, flags=re.I)
 		return super(SetCookie, cls).split(fieldvalue)
 
 	@property
-	def httponly(self):
+	def httponly(self) -> bool:
 		return 'httponly' in self.params
 
 	@property
-	def secure(self):
+	def secure(self) -> bool:
 		return 'secure' in self.params
 
 	@property
-	def path(self):
+	def path(self) -> str:
 		return self.params.get('path')
 
 	@property
-	def domain(self):
+	def domain(self) -> str:
 		return self.params.get('domain')
 
 	@property
-	def persistent(self):
+	def persistent(self) -> bool:
 		return 'max-age' in self.params or 'expires' in self.params
 
 	@property
-	def max_age(self):
+	def max_age(self) -> None:
 		if self.params.get('max-age'):
 			try:
 				return integer(self.params['max-age'])
@@ -408,7 +409,7 @@ class SetCookie(_ListElement, _CookieElement):
 				raise InvalidHeader(_(u'Cookie: max-age is not a number: %r'), self.params['max-age'])
 
 	@property
-	def expires(self):
+	def expires(self) -> Date:
 		if self.params.get('expires'):
 			try:
 				return self.Date(self.params['expires'])
@@ -428,7 +429,7 @@ class Trailer(_HopByHopElement, HeaderElement):
 	is_request_header = True
 	forbidden_headers = ('Transfer-Encoding', 'Content-Length', 'Trailer')
 
-	def sanitize(self):
+	def sanitize(self) -> None:
 		if self.value.title() in self.forbidden_headers:
 			raise InvalidHeader(_(u'A Trailer header MUST NOT contain %r field'), self.value.title())
 
@@ -454,7 +455,7 @@ class Upgrade(_HopByHopElement, HeaderElement):
 	is_request_header = True
 
 	@property
-	def websocket(self):
+	def websocket(self) -> bool:
 		return self.value.lower() == u'websocket'
 
 

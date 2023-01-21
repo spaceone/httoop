@@ -4,6 +4,8 @@
 .. seealso:: :rfc:`2616#section-10`
 """
 
+from typing import Any, Dict, Optional, Type, Union
+
 from httoop.meta import HTTPSemantic
 from httoop.six import with_metaclass
 from httoop.status.status import REASONS, Status
@@ -11,7 +13,7 @@ from httoop.status.status import REASONS, Status
 
 class StatusType(HTTPSemantic):
 
-	def __new__(cls, name, bases, dict_):
+	def __new__(cls: Type, name: str, bases: Any, dict_: Dict[str, Any]) -> Any:
 		code = int(dict_.get('code', 0))
 		if 99 < code < 200:
 			scls = 'InformationalStatus'
@@ -42,7 +44,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 	"""
 
 	@property
-	def headers(self):
+	def headers(self) -> Dict[str, str]:
 		return self._headers
 
 	@property
@@ -76,7 +78,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 
 	code = 0
 
-	def __init__(self, description=None, reason=None, headers=None, traceback=None):
+	def __init__(self, description: Optional[str]=None, reason: None=None, headers: Optional[Dict[str, str]]=None, traceback: Optional[str]=None) -> None:
 		u"""
 		:param description:
 		a description of the error which happened
@@ -107,7 +109,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 		if traceback:
 			self.traceback = traceback
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		description = ''
 		if self.description:
 			description = '(%s)' % (self.description, )
@@ -115,7 +117,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 
 	__str__ = __repr__
 
-	def to_dict(self):
+	def to_dict(self) -> Dict[str, Union[int, str, Dict[str, str]]]:
 		u"""the default body arguments."""
 		return dict(
 			status=self.status,

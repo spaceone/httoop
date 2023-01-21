@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from typing import Iterator
+
 from httoop import six
 
 
@@ -31,11 +33,11 @@ class Percent(object):
 	FRAGMENT = PCHAR + b'/?'
 
 	@classmethod
-	def unquote(cls, data):
+	def unquote(cls, data: bytes) -> bytes:
 		return b''.join(cls._decode_iter(data))
 
 	@classmethod
-	def _decode_iter(cls, data):
+	def _decode_iter(cls, data: bytes) -> Iterator[bytes]:
 		data = data.split(b'%')
 		yield data.pop(0)
 		for item in data:
@@ -47,7 +49,7 @@ class Percent(object):
 				yield item
 
 	@classmethod
-	def quote(cls, data, charset=UNRESERVED):
+	def quote(cls, data: bytes, charset: bytes=UNRESERVED) -> bytes:
 		charset = {six.int2byte(c) for c in six.iterbytes(charset)} - {b'%'}
 		data = (six.int2byte(d) for d in six.iterbytes(data))
 		return b''.join(b'%%%X' % (ord(d), ) if d not in charset else d for d in data)

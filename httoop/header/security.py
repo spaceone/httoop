@@ -2,8 +2,10 @@
 """Security related header."""
 
 import re
+from typing import List
 
 from httoop.header.element import HeaderElement
+from httoop.uri.http import HTTPS
 from httoop.util import integer
 
 
@@ -21,7 +23,7 @@ class ContentSecurityPolicy(HeaderElement):
 	RE_SPLIT = re.compile(b';')
 	RE_PARAMS = re.compile(b'\\s+')
 
-	def compose(self):
+	def compose(self) -> bytes:
 		return b'%s %s; ' % (self.value.encode('ISO8859-1'), b' '.join(self.params.keys()))
 
 
@@ -42,11 +44,11 @@ class StrictTransportSecurity(HeaderElement):
 	is_response_header = True
 
 	@property
-	def include_sub_domains(self):
+	def include_sub_domains(self) -> bool:
 		return 'includesubdomains' in self.params
 
 	@property
-	def max_age(self):
+	def max_age(self) -> int:
 		return integer(self.value.split(u'=', 1)[1])  # TODO: more generic parsing
 
 
@@ -60,7 +62,7 @@ class ContentTypeOptions(HeaderElement):
 	is_response_header = True
 
 	@property
-	def nosniff(self):
+	def nosniff(self) -> bool:
 		return self == 'nosniff'
 
 
@@ -79,15 +81,15 @@ class FrameOptions(HeaderElement):
 	RE_PARAMS = re.compile(b'\\s+')
 
 	@property
-	def deny(self):
+	def deny(self) -> bool:
 		return self.value.upper() == 'DENY'
 
 	@property
-	def same_origin(self):
+	def same_origin(self) -> bool:
 		return self.value.upper() == 'SAMEORIGIN'
 
 	@property
-	def allow_from(self):
+	def allow_from(self) -> List[HTTPS]:
 		if self.value.upper() == 'ALLOW-FROM':
 			from httoop.uri import URI
 			return [URI(uri) for uri in self.params.keys()]
@@ -115,9 +117,9 @@ class XSSProtection(HeaderElement):
 	is_response_header = True
 
 	@property
-	def enabled(self):
+	def enabled(self) -> bool:
 		return self == '1'
 
 	@property
-	def block(self):
+	def block(self) -> bool:
 		return self.params.get('mode') == 'block'

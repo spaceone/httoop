@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+from typing import Any, Dict, List, Optional, Union
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HEADER, HeaderElement
@@ -16,30 +17,30 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 	HEADER_RE = re.compile(br"[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]")
 
 	@staticmethod
-	def formatvalue(value):
+	def formatvalue(value: Any) -> bytes:
 		if isinstance(value, Unicode):
 			return HeaderElement.encode_rfc2047(value)
 		return bytes(value)
 
-	def __getitem__(self, key):
+	def __getitem__(self, key: str) -> str:
 		Element = HEADER.get(key, HeaderElement)
 		return Element.decode_rfc2047(super(Headers, self).__getitem__(key))
 
-	def get(self, key, default=None):
+	def get(self, key: str, default: Optional[Union[bytes, str]]=None) -> Optional[Union[bytes, str]]:
 		Element = HEADER.get(key, HeaderElement)
 		try:
 			return Element.decode_rfc2047(super(Headers, self).__getitem__(key))
 		except KeyError:
 			return default
 
-	def getbytes(self, key, default=None):
+	def getbytes(self, key: Union[bytes, str], default: None=None) -> Optional[bytes]:
 		try:
 			return super(Headers, self).__getitem__(key)
 		except KeyError:
 			return default
 
 	@classmethod
-	def formatkey(cls, key):
+	def formatkey(cls, key: Union[bytes, str]) -> str:
 		key = CaseInsensitiveDict.formatkey(key)
 		if cls.HEADER_RE.search(key.encode('utf-8')):
 			raise InvalidHeader(_(u"Invalid header name: %r"), key)
@@ -48,7 +49,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 		except KeyError:
 			return key
 
-	def elements(self, fieldname):
+	def elements(self, fieldname: Union[bytes, str]) -> List[Any]:
 		u"""Return a sorted list of HeaderElements from
 		the given comma-separated header string.
 		"""
@@ -59,36 +60,36 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 		Element = HEADER.get(fieldname, HeaderElement)
 		return Element.sorted([Element.parse(element) for element in Element.split(fieldvalue)])
 
-	def element(self, fieldname, default=None):
+	def element(self, fieldname: Union[bytes, str], default: None=None) -> Any:
 		u"""Treat the field as single element."""
 		if fieldname in self:
 			Element = HEADER.get(fieldname, HeaderElement)
 			return Element.parse(super(Headers, self).__getitem__(fieldname))
 		return default
 
-	def get_element(self, fieldname, which=None, default=None):
+	def get_element(self, fieldname: str, which: Optional[str]=None, default: Optional[object]=None) -> Any:
 		for element in self.elements(fieldname):
 			if which is None or element == which:
 				return element
 		return default
 
-	def set_element(self, fieldname, *args, **kwargs):
+	def set_element(self, fieldname: str, *args, **kwargs) -> None:
 		self[fieldname] = bytes(self.create_element(fieldname, *args, **kwargs))
 
-	def append_element(self, fieldname, *args, **kwargs):
+	def append_element(self, fieldname: str, *args, **kwargs) -> None:
 		self.append(fieldname, bytes(self.create_element(fieldname, *args, **kwargs)))
 
-	def create_element(self, fieldname, *args, **kwargs):
+	def create_element(self, fieldname: str, *args, **kwargs) -> "HeaderElement":
 		Element = HEADER.get(fieldname, HeaderElement)
 		return Element(*args, **kwargs)
 
-	def values(self, *key):
+	def values(self, *key) -> List[Union[Any, str]]:
 		if not key:
 			return super(Headers, self).values()
 		# if key is set return a ordered list of element values
 		return [e.value for e in self.elements(*key)]
 
-	def append(self, _name, _value, **params):
+	def append(self, _name: str, _value: Union[bytes, str], **params) -> None:
 		_value = self.formatvalue(_value)
 		if params:
 			Element = HEADER.get(_name, HeaderElement)
@@ -101,17 +102,17 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 			Element = HEADER.get(_name, HeaderElement)
 			self[_name] = Element.join([super(Headers, self).__getitem__(_name), _value])
 
-	def merge(self, other):
+	def merge(self, other: "Headers") -> None:
 		other = self.__class__(other)
 		for key in other:
 			Element = HEADER.get(key, HeaderElement)
 			self[key] = Element.merge(self.elements(key), other.elements(key))
 
-	def set(self, headers):
+	def set(self, headers: Dict[str, str]) -> None:
 		self.clear()
 		self.update(headers)
 
-	def parse(self, data):
+	def parse(self, data: bytes) -> None:
 		r"""parses HTTP headers.
 
 		:param data:
@@ -143,7 +144,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 				value = Element.join([super(Headers, self).__getitem__(name), value])
 			super(Headers, self).__setitem__(name, value)
 
-	def compose(self):
+	def compose(self) -> bytes:
 		return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, v) for k, v in self.__items())
 
 	def __items(self):
@@ -161,5 +162,5 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 			else:
 				yield key, values
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return "<HTTP Headers(%s)>" % repr(list(self.items()))

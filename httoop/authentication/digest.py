@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from hashlib import md5, sha256
+from typing import Callable, Dict, List, Tuple, Union
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
@@ -20,14 +21,14 @@ class DigestAuthScheme(object):
 	qops = (b'auth', b'auth-int')  # quality of protection
 
 	@classmethod
-	def get_algorithm(cls, algorithm):
+	def get_algorithm(cls, algorithm: Union[bytes, str]) -> Callable:
 		try:
 			return cls.algorithms[algorithm.decode('ASCII', 'ignore') if isinstance(algorithm, bytes) else algorithm]
 		except KeyError:
 			raise InvalidHeader(_(u'Unknown digest authentication algorithm: %r'), algorithm)
 
 	@classmethod
-	def generate_nonce(cls, authinfo):
+	def generate_nonce(cls, authinfo: ByteUnicodeDict) -> bytes:
 		from time import time
 		from uuid import uuid4
 		nonce = b'%d:%s:%s' % (time(), authinfo.get('etag', authinfo.get('realm', b'')), str(uuid4()).encode('ASCII'), )
@@ -36,7 +37,7 @@ class DigestAuthScheme(object):
 		return H(nonce)
 
 	@classmethod
-	def compose(cls, authinfo):
+	def compose(cls, authinfo: ByteUnicodeDict) -> bytes:
 		params = cls._compose(authinfo)
 		return b', '.join([HeaderElement.formatparam(k.encode('ASCII'), v) for k, v in params])
 
@@ -45,7 +46,7 @@ class DigestAuthScheme(object):
 		return authinfo
 
 	@classmethod
-	def parse(cls, authinfo):
+	def parse(cls, authinfo: bytes) -> ByteUnicodeDict:
 		atoms = [x.strip() for x in authinfo.split(b',') if x.strip()] or [b'']
 
 		params = dict((key.strip(), value.strip().strip(b'"')) for key, _, value in (atom.partition(b'=') for atom in atoms))
@@ -55,7 +56,7 @@ class DigestAuthScheme(object):
 class DigestAuthResponseScheme(DigestAuthScheme):  # WWW-Authenticate
 
 	@classmethod
-	def _compose(cls, authinfo):
+	def _compose(cls, authinfo: ByteUnicodeDict) -> List[Tuple[str, bytes]]:
 		realm = authinfo['realm']
 		algorithm = authinfo.get('algorithm', b'MD5')
 		domain = authinfo.get('domain')
@@ -84,7 +85,7 @@ class DigestAuthResponseScheme(DigestAuthScheme):  # WWW-Authenticate
 		return [(k, v) for k, v in params if v is not None]
 
 	@classmethod
-	def parse(cls, authinfo):
+	def parse(cls, authinfo: bytes) -> Dict[str, Union[bytes, List[bytes], bool]]:
 		params = super(cls, cls).parse(authinfo)
 		if b'"' in params['nonce']:
 			raise InvalidHeader(_(u'Nonce must not contain double quote'))
@@ -106,7 +107,7 @@ class DigestAuthResponseScheme(DigestAuthScheme):  # WWW-Authenticate
 class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
 
 	@classmethod
-	def _compose(cls, authinfo):
+	def _compose(cls, authinfo: ByteUnicodeDict) -> List[Tuple[str, bytes]]:
 		username = authinfo['username']
 		realm = authinfo['realm']
 		digest_uri = authinfo['uri']
@@ -135,7 +136,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
 		return [(k, v) for k, v in params if v is not None]
 
 	@classmethod
-	def parse(cls, authinfo):
+	def parse(cls, authinfo: bytes) -> Dict[str, bytes]:
 		params = super(cls, cls).parse(authinfo)
 		message_qop = params.get('qop')
 		cnonce = None
@@ -158,14 +159,14 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
 		return dict([(k, v) for k, v in params if v is not None])
 
 	@classmethod
-	def check(cls, authinfo, request_params):
+	def check(cls, authinfo: ByteUnicodeDict, request_params: ByteUnicodeDict) -> bool:
 		if authinfo['realm'] != request_params['realm']:
 			return False
 		response = cls.calculate_request_digest(authinfo)
 		return response == request_params['response']
 
 	@classmethod
-	def calculate_request_digest(cls, authinfo):
+	def calculate_request_digest(cls, authinfo: ByteUnicodeDict) -> bytes:
 		algorithm = authinfo.get('algorithm', b'MD5').decode('ASCII', 'replace')
 		H = cls.get_algorithm(algorithm)
 
@@ -186,7 +187,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
 		return H(b'%s:%s' % (secret, data))
 
 	@classmethod
-	def A2(cls, params):
+	def A2(cls, params: ByteUnicodeDict) -> bytes:
 		qop = params.get('qop', b'')
 		if not qop or qop == b'auth':
 			return b'%s:%s' % (params['method'], params['uri'])
@@ -197,7 +198,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
 			raise NotImplementedError('Unknown quality of protection: %r' % (qop, ))
 
 	@classmethod
-	def A1(cls, params):
+	def A1(cls, params: ByteUnicodeDict) -> bytes:
 		algorithm = params.get('algorithm', b'')
 
 		if not algorithm or algorithm == b'MD5':

@@ -4,6 +4,7 @@
 .. seealso:: :rfc:`2616#section-4`
 """
 
+import httoop.header.headers
 from httoop.header import Headers
 from httoop.messages.body import Body
 from httoop.messages.protocol import Protocol
@@ -46,7 +47,7 @@ class Message(with_metaclass(HTTPSemantic)):
 		self.__body.set(body)
 
 	@property
-	def trailer(self):
+	def trailer(self) -> 	httoop.header.headers.Headers:
 		return Headers((key, self.headers[key]) for key in self.headers.values('Trailer') if key in self.headers)
 
 	# @trailer.setter
@@ -59,7 +60,7 @@ class Message(with_metaclass(HTTPSemantic)):
 	# 		self.headers.elements('Trailer')  # sanitize
 	# 		self.headers.merge(trailer)
 
-	def __init__(self, protocol=None, headers=None, body=None):
+	def __init__(self, protocol: None=None, headers: None=None, body: None=None) -> None:
 		u"""Initiates a new Message to hold information about the message.
 
 		:param protocol: the requested protocol
@@ -75,7 +76,7 @@ class Message(with_metaclass(HTTPSemantic)):
 		self.__headers = Headers(headers or {})
 		self.__body = Body(body or b'')
 
-	def parse(self, protocol):
+	def parse(self, protocol: bytes) -> None:
 		u"""parses the HTTP protocol version.
 
 		:param protocol: the protocol version string
@@ -83,5 +84,5 @@ class Message(with_metaclass(HTTPSemantic)):
 		"""
 		self.protocol.parse(protocol)
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return '<HTTP Message(protocol=%s)>' % (self.protocol, )

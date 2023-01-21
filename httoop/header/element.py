@@ -11,6 +11,7 @@
 import re
 from binascii import b2a_base64
 from email.errors import HeaderParseError
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Type, Union
 
 from httoop.exceptions import InvalidHeader
 from httoop.six import with_metaclass
@@ -26,7 +27,7 @@ HEADER = CaseInsensitiveDict()
 
 class HeaderType(type):
 
-	def __new__(cls, name, bases, dict_):
+	def __new__(cls: Type, name: str, bases: Any, dict_: Dict[str, Any]) -> Any:
 		__all__.append(name)
 		name = dict_.get('__name__', name)
 		return super(HeaderType, cls).__new__(cls, name, bases, dict_)
@@ -48,30 +49,30 @@ class HeaderElement(with_metaclass(HeaderType)):
 	RE_SPLIT = re.compile(b',(?=(?:[^"]*"[^"]*")*[^"]*$)')
 	RE_PARAMS = re.compile(b';(?=(?:[^"]*"[^"]*")*[^"]*$)')
 
-	def __init__(self, value, params=None):
+	def __init__(self, value: str, params: Optional[Any]=None) -> None:
 		self.value = value
 		self.params = ByteUnicodeDict(params or {})
 		self.sanitize()
 
-	def sanitize(self):
+	def sanitize(self) -> None:
 		pass
 
-	def __lt__(self, other):
+	def __lt__(self, other: Union[str]) -> bool:
 		return self.value < getattr(other, 'value', other)
 
-	def __gt__(self, other):
+	def __gt__(self, other: Union[str]) -> bool:
 		return self.value > getattr(other, 'value', other)
 
-	def __eq__(self, other):
+	def __eq__(self, other: Any) -> bool:
 		return self.value == getattr(other, 'value', other)
 
-	def __ne__(self, other):
+	def __ne__(self, other: Any) -> bool:
 		return not self == other
 
-	def __bytes__(self):
+	def __bytes__(self) -> bytes:
 		return self.compose()
 
-	def __unicode__(self):
+	def __unicode__(self) -> str:
 		#return bytes(self).decode('ISO8859-1')
 		return self.decode_rfc2047(bytes(self))
 
@@ -80,12 +81,12 @@ class HeaderElement(with_metaclass(HeaderType)):
 	else:  # pragma: no cover
 		__str__ = __unicode__
 
-	def compose(self):
+	def compose(self) -> bytes:
 		params = [b'; %s' % self.formatparam(k, v) for k, v in iteritems(self.params)]
 		return b'%s%s' % (self.encode_rfc2047(self.value), b''.join(params))
 
 	@classmethod
-	def parseparams(cls, elementstr):
+	def parseparams(cls, elementstr: bytes) -> Union[Tuple[bytes, Dict[bytes, str]], Tuple[bytes, Dict[Any, Any]]]:
 		"""Transform 'token;key=val' to ('token', {'key': 'val'})."""
 		# Split the element into a value and parameters. The 'value' may
 		# be of the form, "token=token", but we don't split that here.
@@ -99,7 +100,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 		return value, dict(params)
 
 	@classmethod
-	def parseparam(cls, atom):
+	def parseparam(cls, atom: bytes) -> Tuple[bytes, bytes, bool]:
 		key, __, val = atom.partition(b'=')
 		try:
 			val, quoted = cls.unescape_param(val.strip())
@@ -108,11 +109,11 @@ class HeaderElement(with_metaclass(HeaderType)):
 		return cls.unescape_key(key), val, quoted
 
 	@classmethod
-	def unescape_key(cls, key):
+	def unescape_key(cls, key: bytes) -> bytes:
 		return key.strip().lower()
 
 	@classmethod
-	def unescape_param(cls, value):
+	def unescape_param(cls, value: bytes) -> Tuple[bytes, bool]:
 		quoted = value.startswith(b'"') and value.endswith(b'"')
 		if quoted:
 			value = re.sub(b'\\\\(?!\\\\)', b'', value[1:-1])
@@ -122,14 +123,14 @@ class HeaderElement(with_metaclass(HeaderType)):
 		return value, quoted
 
 	@classmethod
-	def _sanitize_encoding(cls, charset):
+	def _sanitize_encoding(cls, charset: str) -> str:
 		encoding = sanitize_encoding(charset)
 		if encoding is None:
 			raise InvalidHeader(_(u'Unknown encoding: %r'), charset)
 		return encoding
 
 	@classmethod
-	def _rfc2231_and_continuation_params(cls, params):  # TODO: complexity
+	def _rfc2231_and_continuation_params(cls, params: Iterator[Any]) -> Iterator[Tuple[bytes, str]]:  # TODO: complexity
 		count = set()
 		continuations = dict()
 		for key, value, quoted in params:
@@ -176,30 +177,30 @@ class HeaderElement(with_metaclass(HeaderType)):
 				yield b'%s*%d' % (key, k), v
 
 	@classmethod
-	def parse(cls, elementstr):
+	def parse(cls, elementstr: bytes) -> "HeaderElement":
 		"""Construct an instance from a string of the form 'token;key=val'."""
 		elementstr, encoding = cls.decode_rfc2047_charset(elementstr)
 		ival, params = cls.parseparams(elementstr.encode(encoding))
 		return cls(ival.decode(encoding), params)
 
 	@classmethod
-	def split(cls, fieldvalue):
+	def split(cls, fieldvalue: bytes) -> List[bytes]:
 		return [x.strip() for x in cls.RE_SPLIT.split(fieldvalue)]
 
 	@classmethod
-	def join(cls, values):
+	def join(cls, values: List[bytes]) -> bytes:
 		return b', '.join(values)
 
 	@classmethod
-	def sorted(cls, elements):
+	def sorted(cls, elements: List["HeaderElement"]) -> List["HeaderElement"]:
 		return elements
 
 	@classmethod
-	def merge(cls, elements, others):
+	def merge(cls, elements: List, others: List) -> bytes:
 		return cls.join([bytes(x) for x in cls.sorted(elements + others)])
 
 	@classmethod
-	def formatparam(cls, param, value=None, quote=False):
+	def formatparam(cls, param: bytes, value: Optional[Union[bytes, str]]=None, quote: bool=False) -> bytes:
 		"""Convenience function to format and return a key=value pair.
 
 		This will quote the value if needed or if quote is true.
@@ -222,11 +223,11 @@ class HeaderElement(with_metaclass(HeaderType)):
 			return param
 
 	@classmethod
-	def decode_rfc2047(cls, value):
+	def decode_rfc2047(cls, value: bytes) -> str:
 		return cls.decode_rfc2047_charset(value)[0]
 
 	@classmethod
-	def decode_rfc2047_charset(cls, value):
+	def decode_rfc2047_charset(cls, value: bytes) -> Tuple[str, str]:
 		if b'=?' in value and b'"=?' not in value and b'==?' not in value:
 			# FIXME: must not parse encoded_words in unquoted ('Content-Type', 'Content-Disposition') header params
 			try:
@@ -239,7 +240,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 			return value.decode('ISO8859-1'), 'ISO8859-1'
 
 	@classmethod
-	def encode_rfc2047(cls, value):
+	def encode_rfc2047(cls, value: str) -> bytes:
 		try:
 			return value.encode('ascii' if cls.encode_latin1_quoted_printable else 'ISO8859-1')
 		except UnicodeEncodeError:
@@ -250,7 +251,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 			else:  # pragma: no cover
 				return b'=?ISO8859-1?b?%s?=' % (b2a_base64(value.encode('ISO8859-1')).rstrip(b'\n'), )
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		params = ', %r' % (self.params, ) if self.params else ''
 		return '<%s(%r%s)>' % (self.__class__.__name__, self.value, params)
 
@@ -263,7 +264,7 @@ class MimeType(object):
 	"""
 
 	@property
-	def mimetype(self):
+	def mimetype(self) -> str:
 		return u'%s/%s' % (self.type, self.subtype_wo_vendor)
 
 	@property
@@ -321,7 +322,7 @@ class _AcceptElement(HeaderElement):
 	RE_Q_SEPARATOR = re.compile(br';\s*q\s*=\s*')
 
 	@property
-	def quality(self):
+	def quality(self) -> float:
 		"""The quality of this value."""
 		val = self.params.get("q", "1")
 		if isinstance(val, HeaderElement):  # pragma: no cover
@@ -329,7 +330,7 @@ class _AcceptElement(HeaderElement):
 		if val:
 			return float(val)
 
-	def sanitize(self):
+	def sanitize(self) -> None:
 		super(_AcceptElement, self).sanitize()
 		try:
 			self.quality
@@ -337,7 +338,7 @@ class _AcceptElement(HeaderElement):
 			raise InvalidHeader(_(u'Quality value must be float.'))
 
 	@classmethod
-	def parse(cls, elementstr):
+	def parse(cls, elementstr: bytes) -> "HeaderElement":
 		elementstr, encoding = cls.decode_rfc2047_charset(elementstr)
 		qvalue = None
 		# The first "q" parameter (if any) separates the initial
@@ -356,15 +357,15 @@ class _AcceptElement(HeaderElement):
 		return cls(media_type.decode(encoding), params)
 
 	@classmethod
-	def sorted(cls, elements):
+	def sorted(cls, elements: List) -> List:
 		return list(sorted(elements, reverse=True))
 
-	def __eq__(self, other):
+	def __eq__(self, other: str) -> bool:
 		if not isinstance(other, _AcceptElement):
 			other = _AcceptElement(other)
 		return other.value == self.value and other.quality == self.quality
 
-	def __lt__(self, other):
+	def __lt__(self, other: Union[str]) -> bool:
 		if not isinstance(other, _AcceptElement):
 			other = _AcceptElement(other)
 		if self.quality == other.quality:
@@ -378,20 +379,20 @@ class _CookieElement(HeaderElement):
 	#RE_TSPECIALS = re.compile(br'[ \(\)<>@,;:\\"\[\]\?=]')
 	RE_TSPECIALS = re.compile(b'(?!)')
 
-	def __init__(self, cookie_name, cookie_value, params=None):
+	def __init__(self, cookie_name: str, cookie_value: str, params: Optional[Dict[bytes, str]]=None) -> None:
 		self.cookie_name = cookie_name
 		self.cookie_value = cookie_value
 		super(_CookieElement, self).__init__(self.value, params)
 
 	@classmethod
-	def parse(cls, elementstr):
+	def parse(cls, elementstr: bytes) -> "HeaderElement":
 		elementstr, encoding = cls.decode_rfc2047_charset(elementstr)
 		value, params = cls.parseparams(elementstr.encode(encoding))
 		cookie_name, cookie_value, __ = cls.parseparam(value)
 		return cls(cookie_name.decode(encoding), cookie_value.decode(encoding), params)
 
 	@classmethod
-	def unescape_key(cls, key):
+	def unescape_key(cls, key: bytes) -> bytes:
 		key = key.strip()
 		if key.lower() in (b'httponly', b'secure', b'path', b'domain', b'max-age', b'expires'):
 			return key.lower()

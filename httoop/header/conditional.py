@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from typing import Any, Union
+
 from httoop.date import Date
 from httoop.exceptions import InvalidDate
 from httoop.header.element import HeaderElement
@@ -9,11 +11,11 @@ class _DateComparable(object):
 
 	Date = Date
 
-	def sanitize(self):
+	def sanitize(self) -> None:
 		super(_DateComparable, self).sanitize()
 		self.value = self.Date.parse(self.value.encode('ASCII', 'replace'))
 
-	def __eq__(self, other):
+	def __eq__(self, other: Any) -> bool:
 		if not isinstance(other, Date):
 			if isinstance(other, _DateComparable):
 				other = int(other)
@@ -23,7 +25,7 @@ class _DateComparable(object):
 				return False
 		return self.value == other
 
-	def __int__(self):
+	def __int__(self) -> int:
 		return int(self.value)
 
 
@@ -37,7 +39,7 @@ class ETag(HeaderElement):
 
 	is_response_header = True
 
-	def __eq__(self, other):
+	def __eq__(self, other: Any) -> bool:
 		if not isinstance(other, ETag):
 			other = self.__class__(other)
 		return other.value == self.value or other.value == '*'

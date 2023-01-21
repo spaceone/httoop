@@ -17,7 +17,7 @@ class GZip(Codec):
 	compression_level = 6
 
 	@classmethod
-	def encode(cls, data, charset=None, mimetype=None):
+	def encode(cls, data: bytes, charset: None=None, mimetype: None=None) -> bytes:
 		try:
 			out = io.BytesIO()
 			with gzip.GzipFile(fileobj=out, mode="w", compresslevel=cls.compression_level) as fd:
@@ -27,7 +27,7 @@ class GZip(Codec):
 			raise EncodeError(_(u'Invalid gzip data.'))
 
 	@classmethod
-	def decode(cls, data, charset=None, mimetype=None):
+	def decode(cls, data: bytes, charset: None=None, mimetype: None=None) -> str:
 		try:
 			with gzip.GzipFile(fileobj=io.BytesIO(data)) as fd:
 				data = fd.read()

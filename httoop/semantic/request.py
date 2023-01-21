@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from contextlib import contextmanager
+from typing import Iterator
 
 from httoop.date import Date
+from httoop.messages.request import Request
 from httoop.semantic.message import ComposedMessage
 from httoop.uri import URI
 from httoop.version import UserAgentHeader
@@ -11,10 +13,10 @@ class ComposedRequest(ComposedMessage):
 
 	USER_AGENT = UserAgentHeader
 
-	def __init__(self, request):
+	def __init__(self, request: Request) -> None:
 		self.message = request
 
-	def prepare(self):
+	def prepare(self) -> None:
 		if self.message.method.safe:
 			self.message.body = None
 			self.chunked = False
@@ -55,12 +57,12 @@ class ComposedRequest(ComposedMessage):
 			self.message.headers.pop('Connection', None)
 
 	@contextmanager
-	def _composing(self):
+	def _composing(self) -> Iterator[None]:
 		with self.relative_uri(), super(ComposedRequest, self)._composing():
 			yield
 
 	@contextmanager
-	def relative_uri(self):
+	def relative_uri(self) -> Iterator[None]:
 		with self.absolute_uri():
 			self.message.uri.scheme = None
 			self.message.uri.host = None
@@ -68,7 +70,7 @@ class ComposedRequest(ComposedMessage):
 			yield
 
 	@contextmanager
-	def absolute_uri(self):
+	def absolute_uri(self) -> Iterator[None]:
 		try:
 			uri = URI(self.message.uri)
 			self.message.uri = URI(uri)

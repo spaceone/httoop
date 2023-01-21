@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from typing import Dict, Union
+
 from httoop.status.types import StatusException
 
 
@@ -10,7 +12,7 @@ class ServerErrorStatus(StatusException):
 	it knows that the problem is temporary.
 	"""
 
-	def to_dict(self):
+	def to_dict(self) -> Dict[str, Union[str, int]]:
 		dct = super(ServerErrorStatus, self).to_dict()
 		dct.update(dict(traceback=self.traceback or ""))
 		return dct

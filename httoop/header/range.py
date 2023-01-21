@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from io import BytesIO
 from math import sqrt
 from os import SEEK_END, SEEK_SET
+from typing import Iterator, List, Optional, Tuple, Union
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
@@ -15,7 +17,7 @@ class ContentRange(HeaderElement):
 	__name__ = 'Content-Range'
 	is_response_header = True
 
-	def __init__(self, value, range_, length):
+	def __init__(self, value: str, range_: Optional[Union[Tuple[int, None], Tuple[int, int]]], length: Optional[Union[int, str]]) -> None:
 		self.range = range_
 		if self.range:
 			start, end = self.range
@@ -25,13 +27,13 @@ class ContentRange(HeaderElement):
 		self.length = length if length is None else integer(length)
 		super(ContentRange, self).__init__(value)
 
-	def compose(self):
+	def compose(self) -> bytes:
 		length = b'*' if self.length is None else self.length
 		byte_range = b'%d-%d' % tuple(self.range) if self.range else b'*'
 		return b'%s %s/%s' % (self.value.encode('ISO8859-1'), byte_range, str(length).encode('ASCII') if isinstance(length, int) else length)
 
 	@classmethod
-	def parse(cls, elementstr):
+	def parse(cls, elementstr: bytes) -> "ContentRange":
 		value, start, end, complete_length = None, None, None, None
 		try:
 			value, content_range = elementstr.split(None, 1)
@@ -65,16 +67,16 @@ class Range(HeaderElement):
 
 	is_request_header = True
 
-	def __init__(self, value, ranges, params=None):
+	def __init__(self, value: str, ranges: List[Union[Tuple[None, int], Tuple[int, int], Tuple[int, None]]], params: None=None) -> None:
 		self.ranges = ranges
 		super(Range, self).__init__(value, params)
 
 	@classmethod
-	def split(cls, fieldvalue):
+	def split(cls, fieldvalue: bytes) -> List[bytes]:
 		return [fieldvalue]
 
 	@classmethod
-	def parse(cls, elementstr):
+	def parse(cls, elementstr: bytes) -> "Range":
 		bytesunit, __, byteranges = elementstr.partition(b'=')
 		byteranges = super(Range, cls).split(byteranges)
 		ranges = set()
@@ -96,11 +98,11 @@ class Range(HeaderElement):
 			ranges.add((start, stop))
 		return cls(bytesunit.decode('ISO8859-1'), list(sorted(ranges, key=lambda x: x[0] if x[0] is not None else -1)))
 
-	def sanitize(self):
+	def sanitize(self) -> None:
 		super(Range, self).sanitize()
 		self.prevent_denial_of_service()
 
-	def prevent_denial_of_service(self):
+	def prevent_denial_of_service(self) -> None:
 		if len([x for x in self.ranges if x[0] is None]) > 1 or len([x for x in self.ranges if x[1] is None]) > 1:
 			raise InvalidHeader(_(u'too many overlapping ranges.'))
 		byterange = set()
@@ -113,7 +115,7 @@ class Range(HeaderElement):
 		if self.stddev([(x[1] or float('inf')) - (x[0] or 0) for x in self.ranges]) > 2.0:
 			raise InvalidHeader(_('ranges exceeding high standard deviation'))
 
-	def stddev(self, xs):
+	def stddev(self, xs: List[Union[int, float]]) -> float:
 		def average(xs):
 			return sum(xs) * 1.0 / len(xs)
 
@@ -124,7 +126,7 @@ class Range(HeaderElement):
 		return sqrt(average(variance(xs)))
 
 	@property
-	def positions(self):
+	def positions(self) -> Iterator[Union[Tuple[int, int, int], Tuple[int, int, None]]]:
 		for start, end in self.ranges:
 			if start is None:
 				yield -end, SEEK_END, None
@@ -133,7 +135,7 @@ class Range(HeaderElement):
 			else:
 				yield start, SEEK_SET, end + 1 - start
 
-	def get_range_content(self, fd):
+	def get_range_content(self, fd: BytesIO) -> Iterator[bytes]:
 		for offset, whence, length in self.positions:
 			fd.seek(offset, whence)
 			length = () if length is None else (length, )

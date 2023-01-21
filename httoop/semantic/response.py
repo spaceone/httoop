@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from typing import Any, Iterator, Union
+
 from httoop.date import Date
 from httoop.exceptions import InvalidHeader
 from httoop.messages.body import Body
@@ -9,12 +11,12 @@ from httoop.util import izip, make_boundary
 
 class ComposedResponse(ComposedMessage):
 
-	def __init__(self, response, request):
+	def __init__(self, response: "Response", request: "Request") -> None:
 		super(ComposedResponse, self).__init__()
 		self.request = request
 		self.response = self.message = response
 
-	def prepare(self):
+	def prepare(self) -> None:
 		u"""prepares the response for being ready for transmitting."""
 		response = self.response
 
@@ -60,7 +62,7 @@ class ComposedResponse(ComposedMessage):
 		if self.request.method == u'HEAD':
 			response.body = None  # RFC 2616 Section 9.4
 
-	def prepare_ranges(self):
+	def prepare_ranges(self) -> bool:
 		if not all(self.range_conditions()):
 			return False
 
@@ -72,7 +74,7 @@ class ComposedResponse(ComposedMessage):
 		else:
 			return self.prepare_range(range_)
 
-	def range_conditions(self):
+	def range_conditions(self) -> Iterator[Union[bool, Body]]:
 		response = self.response
 		yield response.protocol >= (1, 1)
 		yield self.request.protocol >= (1, 1)
@@ -84,7 +86,7 @@ class ComposedResponse(ComposedMessage):
 		yield response.body
 		yield response.body.fileable
 
-	def prepare_range(self, range_):
+	def prepare_range(self, range_: "Range") -> bool:
 		response = self.response
 		content_length = response.headers.get('Content-Length')
 		response.status = 206
@@ -102,7 +104,7 @@ class ComposedResponse(ComposedMessage):
 		response.headers['Content-Length'] = str(len(response.body)).encode('ASCII')  # FIXME: len(response.body) causes the whole body to be generated
 		return True
 
-	def multipart_byteranges(self, range_body, range_, content_length, content_type):
+	def multipart_byteranges(self, range_body: Iterator[Any], range_: "Range", content_length: str, content_type: str) -> Iterator[Body]:
 		for content, byterange in izip(range_body, range_.ranges):
 			body = Body(content)
 			body.headers['Content-Type'] = content_type

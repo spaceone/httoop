@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""HTTP request and response body
+"""HTTP request and response body.
 
 .. seealso:: :rfc:`2616#section-4.3`
 """
@@ -15,19 +15,20 @@ from httoop.util import IFile, Unicode
 
 
 class Body(with_metaclass(HTTPSemantic, IFile)):
-	u"""A HTTP message body
+	u"""A HTTP message body.
 
-		This class is capable of handling HTTP Transfer-Encoding
-		and Content-Encoding as defined in RFC 2616.
+	This class is capable of handling HTTP Transfer-Encoding
+	and Content-Encoding as defined in RFC 2616.
 
-		It provides an interface which makes it possible to use either
-		unicode, bytes, bytearray, file, file-like objects (e.g. from the
-		codecs module), StringIO, BytesIO, NamedTemporaryFiles or any iterable
-		returning bytes/unicode as type for the content.
+	It provides an interface which makes it possible to use either
+	unicode, bytes, bytearray, file, file-like objects (e.g. from the
+	codecs module), StringIO, BytesIO, NamedTemporaryFiles or any iterable
+	returning bytes/unicode as type for the content.
 
-		The encode and decode methods can also control the automatic en/decoding of
-		the content using the codec specified in the MIME media type.
+	The encode and decode methods can also control the automatic en/decoding of
+	the content using the codec specified in the MIME media type.
 	"""
+
 	__slots__ = (
 		'fd', 'data', '__iter', 'headers', 'trailer',
 		'content_codec', 'transfer_codec'
@@ -37,7 +38,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 
 	@property
 	def fileable(self):
-		u"""Flag whether the set content provides the file interface"""
+		u"""Flag whether the set content provides the file interface."""
 		return all(hasattr(self.fd, method) for method in ('read', 'write', 'close'))
 
 	@property
@@ -56,7 +57,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 
 	@property
 	def mimetype(self):
-		u"""Represents the MIME media type of the content"""
+		u"""Represents the MIME media type of the content."""
 		return self.headers.element('Content-Type')
 
 	@mimetype.setter
@@ -112,7 +113,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 		self.set(content)
 
 	def encode(self, *data):
-		u"""Encode the object in :attr:`data` if a codec for the mimetype exists"""
+		u"""Encode the object in :attr:`data` if a codec for the mimetype exists."""
 		codec = self.mimetype.codec
 		if codec:
 			if self.data is None and not data:
@@ -132,7 +133,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 
 	def decode(self, *data):
 		u"""Decodes the body content if a codec for the mimetype exists.
-			Stores the decoded object in :attr:`data`
+		Stores the decoded object in :attr:`data`.
 		"""
 		codec = self.mimetype.codec
 		if data:
@@ -142,14 +143,14 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 			return self.data
 
 	def compress(self):
-		u"""Applies the Content-Encoding codec to the content"""
+		u"""Applies the Content-Encoding codec to the content."""
 		codec = self.content_codec
 		if codec:
 			self.set(codec.encode(self.__content_bytes()))
 			self.content_encoding = None
 
 	def decompress(self):
-		u"""Applies the Content-Encoding codec to the content"""
+		u"""Applies the Content-Encoding codec to the content."""
 		codec = self.content_codec
 		if codec:
 			self.set(codec.decode(self.__content_bytes()))
@@ -202,7 +203,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 		return self.__content_bytes().decode(self.encoding)
 
 	def __iter__(self):
-		u"""Iterates over the content applying Content-Encoding and Transfer-Encoding"""
+		u"""Iterates over the content applying Content-Encoding and Transfer-Encoding."""
 		data = self.__content_iter()
 		for codec in (self.content_codec, self.transfer_codec):
 			if codec:

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-u"""Utilities for python2/3 compatibility"""
+u"""Utilities for python2/3 compatibility."""
 
 from __future__ import absolute_import
 
@@ -110,7 +110,8 @@ def integer(number, *args):
 
 
 class IFile(object):
-	u"""The file interface"""
+	u"""The file interface."""
+
 	__slots__ = ('fd')
 
 	@property
@@ -161,8 +162,8 @@ class IFile(object):
 class CaseInsensitiveDict(dict):
 	"""A case-insensitive dict subclass optimized for HTTP header use.
 
-		Each key is stored as case insensitive ascii
-		Each value is stored as unicode
+	Each key is stored as case insensitive ascii
+	Each value is stored as unicode
 	"""
 
 	__slots__ = ()

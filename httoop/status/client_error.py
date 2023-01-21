@@ -5,8 +5,8 @@ from httoop.status.types import StatusException
 
 class ClientErrorStatus(StatusException):
 	u"""CLIENT_ERRORS = 4xx
-		Something is wrong with the client: e.g. authentication,
-		format of wanted representation, or error in the clients http library.
+	Something is wrong with the client: e.g. authentication,
+	format of wanted representation, or error in the clients http library.
 	"""
 
 	pass
@@ -14,8 +14,9 @@ class ClientErrorStatus(StatusException):
 
 class BAD_REQUEST(ClientErrorStatus):
 	u"""The generic response code for client side errors.
-		The response entity-body should contain information
-		about what is wrong with the request."""
+	The response entity-body should contain information
+	about what is wrong with the request.
+	"""
 
 	code = 400
 	cacheable = True
@@ -23,11 +24,11 @@ class BAD_REQUEST(ClientErrorStatus):
 
 class UNAUTHORIZED(ClientErrorStatus):
 	u"""The requested resource is protected and no or wrong
-		authentication credentials were given.
-		The WWW-Authenticate-header contains information about
-		the accepted authentication method.
-		The entity-body should contain information about what was wrong with
-		the given credentials and where to register a new account.
+	authentication credentials were given.
+	The WWW-Authenticate-header contains information about
+	the accepted authentication method.
+	The entity-body should contain information about what was wrong with
+	the given credentials and where to register a new account.
 	"""
 
 	code = 401
@@ -49,7 +50,8 @@ class PAYMENT_REQUIRED(ClientErrorStatus):
 
 class FORBIDDEN(ClientErrorStatus):
 	u"""The resource can only be served for specific users, at a specific time
-		or from a certain IP address, etc."""
+	or from a certain IP address, etc.
+	"""
 
 	code = 403
 
@@ -68,7 +70,7 @@ class NOT_FOUND(ClientErrorStatus):
 
 class METHOD_NOT_ALLOWED(ClientErrorStatus):
 	u"""The client tried to use a HTTP Method which is not allowed.
-		The Allow-header has to contain the allowed methods for this resource.
+	The Allow-header has to contain the allowed methods for this resource.
 	"""
 
 	code = 405
@@ -85,9 +87,10 @@ class METHOD_NOT_ALLOWED(ClientErrorStatus):
 
 class NOT_ACCEPTABLE(ClientErrorStatus):
 	r"""The clients Accept-\*-header wants a representation of
-		the resource which the server can not deliver.
-		The entity body should contain a list of links with
-		acceptable representations (similar to 300)."""
+	the resource which the server can not deliver.
+	The entity body should contain a list of links with
+	acceptable representations (similar to 300).
+	"""
 
 	code = 406
 
@@ -99,7 +102,8 @@ class PROXY_AUTHENTICATION_REQUIRED(ClientErrorStatus):
 
 class REQUEST_TIMEOUT(ClientErrorStatus):
 	u"""The client opens a connection to a server without sending a
-		request after a specific amount of time."""
+	request after a specific amount of time.
+	"""
 
 	code = 408
 
@@ -110,17 +114,18 @@ class REQUEST_TIMEOUT(ClientErrorStatus):
 
 class CONFLICT(ClientErrorStatus):
 	u"""If the request would cause to leave the resource in an inconsequent
-		state this status is send.
-		Examples: DELETE of a non empty bucket, changing a username to
-		a already taken username.
-		The location header can point to the conflicting resource.
-		The entity body should contain a description of the conflict."""
+	state this status is send.
+	Examples: DELETE of a non empty bucket, changing a username to
+	a already taken username.
+	The location header can point to the conflicting resource.
+	The entity body should contain a description of the conflict.
+	"""
 
 	code = 409
 
 
 class GONE(ClientErrorStatus):
-	u"""The resource exists but is not anymore available (propably DELETEd)"""
+	u"""The resource exists but is not anymore available (propably DELETEd)."""
 
 	code = 410
 	cacheable = True
@@ -128,23 +133,26 @@ class GONE(ClientErrorStatus):
 
 class LENGTH_REQUIRED(ClientErrorStatus):
 	u"""If a request representation is given but no Content-Length-header
-		the HTTP server can decide to respond with this status code."""
+	the HTTP server can decide to respond with this status code.
+	"""
 
 	code = 411
 
 
 class PRECONDITION_FAILED(ClientErrorStatus):
 	r"""If a condition from any of the If-\*-headers except for conditional
-		GET fails this status code is the respond."""
+	GET fails this status code is the respond.
+	"""
 
 	code = 412
 
 
 class PAYLOAD_TOO_LARGE(ClientErrorStatus):
 	u"""The HTTP server can deny too large representations.
-		A LBYL request can be useful.
-		If the server can only not handle the request e.g. because of
-		full disk space it can send the Retry-After-header."""
+	A LBYL request can be useful.
+	If the server can only not handle the request e.g. because of
+	full disk space it can send the Retry-After-header.
+	"""
 
 	code = 413
 
@@ -157,8 +165,9 @@ class URI_TOO_LONG(ClientErrorStatus):
 
 class UNSUPPORTED_MEDIA_TYPE(ClientErrorStatus):
 	u"""This status code is sent when the server does not know
-		the representation media type given in Content-Type-header.
-		If the representation is just broken use 400 or 422."""
+	the representation media type given in Content-Type-header.
+	If the representation is just broken use 400 or 422.
+	"""
 
 	code = 415
 
@@ -170,7 +179,8 @@ class RANGE_NOT_SATISFIABLE(ClientErrorStatus):
 
 class EXPECTATION_FAILED(ClientErrorStatus):
 	u"""This is the response code if a LBYL request (Expect-header) fails.
-		It is the flip side of 100 Continue."""
+	It is the flip side of 100 Continue.
+	"""
 
 	code = 417
 

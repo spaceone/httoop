@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""HTTP request and response messages
+"""HTTP request and response messages.
 
 .. seealso:: :rfc:`2616#section-4`
 """
@@ -13,10 +13,11 @@ __all__ = ('Response', )
 
 
 class Response(Message):
-	u"""A HTTP response message
+	u"""A HTTP response message.
 
-		.. seealso:: :rfc:`2616#section-6`
+	.. seealso:: :rfc:`2616#section-6`
 	"""
+
 	__slots__ = ('__protocol', '__headers', '__body', '__status')
 
 	@property
@@ -30,19 +31,17 @@ class Response(Message):
 	def __init__(self, status=None, headers=None, body=None, protocol=None):
 		"""Creates a new Response object to hold information about the response.
 
-			:param status:
-				A HTTP status, default is 200
-			:type status:
-				int or str or :class:`Status`
+		:param status:
+		A HTTP status, default is 200
+		:type status:
+		int or str or :class:`Status`
 		"""
-
 		super(Response, self).__init__(protocol, headers, body)
 
 		self.__status = Status(status or 200)
 
 	def parse(self, line):
-		u"""parses the response line"""
-
+		u"""parses the response line."""
 		bits = line.strip().split(None, 1)
 		try:
 			version, status = bits
@@ -56,7 +55,7 @@ class Response(Message):
 		self.status.parse(status)
 
 	def compose(self):
-		u"""composes the response line"""
+		u"""composes the response line."""
 		return b"%s %s\r\n" % (bytes(self.protocol), bytes(self.status))
 
 	def __repr__(self):

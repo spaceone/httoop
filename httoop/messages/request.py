@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""HTTP request and response messages
+"""HTTP request and response messages.
 
 .. seealso:: :rfc:`2616#section-4`
 """
@@ -14,10 +14,11 @@ __all__ = ('Request', )
 
 
 class Request(Message):
-	u"""A HTTP request message
+	u"""A HTTP request message.
 
-		.. seealso:: :rfc:`2616#section-5`
+	.. seealso:: :rfc:`2616#section-5`
 	"""
+
 	__slots__ = ('__protocol', '__headers', '__body', '__uri', '__method')
 
 	@property
@@ -39,22 +40,21 @@ class Request(Message):
 	def __init__(self, method=None, uri=None, headers=None, body=None, protocol=None):  # pylint: disable=R0913
 		"""Creates a new Request object to hold information about a request.
 
-			:param method: the requested method
-			:type  method: str
+		:param method: the requested method
+		:type  method: str
 
-			:param uri: the requested URI
-			:type  uri: str or :class:`URI`
+		:param uri: the requested URI
+		:type  uri: str or :class:`URI`
 
 		"""
-
 		super(Request, self).__init__(protocol, headers, body)
 		self.__method = Method(method or 'GET')
 		self.__uri = URI(uri or '/')
 
 	def parse(self, line):
 		"""parses the request line and sets method, uri and protocol version
-			:param line: the request line
-			:type  line: bytes
+		:param line: the request line
+		:type  line: bytes.
 		"""
 		bits = line.strip().split(None, 2)
 		try:
@@ -90,7 +90,7 @@ class Request(Message):
 			raise InvalidURI(_(u'The request URI of an CONNECT request must be a authority.'))
 
 	def compose(self):
-		u"""composes the request line"""
+		u"""composes the request line."""
 		self.validate_request_uri()
 		return b"%s %s %s\r\n" % (bytes(self.__method), bytes(self.__uri) or b'/', bytes(self.protocol))
 

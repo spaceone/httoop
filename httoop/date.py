@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""HTTP Date
+"""HTTP Date.
 
 .. seealso:: :rfc:`2616#section-3.3`
 """
@@ -20,33 +20,32 @@ __all__ = ['Date']
 
 
 class Date(with_metaclass(HTTPSemantic)):
-	u"""A HTTP Date string
+	u"""A HTTP Date string.
 
-		It provides a API to multiple time representations:
+	It provides a API to multiple time representations:
 
-		* datetime
-		* time struct
-		* UNIX timestamp
+	* datetime
+	* time struct
+	* UNIX timestamp
 
-		Supported HTTP date string formats:
+	Supported HTTP date string formats:
 
-		:example:
-			Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
-			Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
-			Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
+	:example:
+	Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
+	Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
+	Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
 	"""
 
 	__slots__ = ('__composed', '__timestamp', '__datetime', '__time_struct')
 
 	def __init__(self, timeval=None):
 		u"""
-			:param timeval:
-			:type  timeval:
-				either seconds since epoch in float
-				or a datetime object
-				or a timetuple
+		:param timeval:
+		:type  timeval:
+		either seconds since epoch in float
+		or a datetime object
+		or a timetuple
 		"""
-
 		self.__composed = None
 		self.__timestamp = None
 		self.__datetime = None
@@ -100,13 +99,13 @@ class Date(with_metaclass(HTTPSemantic)):
 
 	@classmethod
 	def parse(cls, timestr=None):
-		u"""parses a HTTP date string and returns a :class:`Date` object
+		u"""parses a HTTP date string and returns a :class:`Date` object.
 
-			:param timestr: the time string in one of the http formats
-			:type  timestr: str
+		:param timestr: the time string in one of the http formats
+		:type  timestr: str
 
-			:returns: the HTTP Date object
-			:rtype  : :class:`Date`
+		:returns: the HTTP Date object
+		:rtype  : :class:`Date`
 
 		"""
 		timestr = timestr.decode('ISO8859-1')

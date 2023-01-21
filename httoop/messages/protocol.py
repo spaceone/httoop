@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""HTTP request and response messages
+"""HTTP request and response messages.
 
 .. seealso:: :rfc:`2616#section-4`
 """
@@ -15,7 +15,8 @@ __all__ = ('Protocol', )
 
 
 class Protocol(with_metaclass(HTTPSemantic)):
-	u"""The HTTP protocol version"""
+	u"""The HTTP protocol version."""
+
 	__slots__ = ('name', '__protocol')
 
 	@property

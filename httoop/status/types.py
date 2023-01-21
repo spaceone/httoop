@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-"""HTTP status codes
+"""HTTP status codes.
 
-.. seealso:: :rfc:`2616#section-10`"""
+.. seealso:: :rfc:`2616#section-10`
+"""
 
 from httoop.meta import HTTPSemantic
 from httoop.six import with_metaclass
@@ -36,7 +37,9 @@ class StatusType(HTTPSemantic):
 
 class StatusException(with_metaclass(StatusType, Status, Exception)):
 	u"""This class represents a small HTTP Response message
-		for error handling purposes"""
+	for error handling purposes
+	.
+	"""
 
 	@property
 	def headers(self):
@@ -75,22 +78,21 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 
 	def __init__(self, description=None, reason=None, headers=None, traceback=None):
 		u"""
-			:param description:
-				a description of the error which happened
-			:type description: str
+		:param description:
+		a description of the error which happened
+		:type description: str
 
-			:param reason:
-				a additional reason phrase
-			:type reason: str
+		:param reason:
+		a additional reason phrase
+		:type reason: str
 
-			:param headers:
-			:type headers: dict
+		:param headers:
+		:type headers: dict
 
-			:param traceback:
-				A Traceback for the error
-			:type traceback: str
+		:param traceback:
+		A Traceback for the error
+		:type traceback: str
 		"""
-
 		Status.__init__(self, self.__class__.code, reason=reason)  # pylint: disable=W0233
 
 		self._headers = {}
@@ -114,7 +116,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 	__str__ = __repr__
 
 	def to_dict(self):
-		u"""the default body arguments"""
+		u"""the default body arguments."""
 		return dict(
 			status=self.status,
 			reason=self.reason,

@@ -5,9 +5,9 @@ from httoop.status.types import StatusException
 
 class ServerErrorStatus(StatusException):
 	u"""SERVER_ERRORS = 5xx
-		Indicates that something gone wrong on the server side.
-		The server can send the Retry-After header if
-		it knows that the problem is temporary.
+	Indicates that something gone wrong on the server side.
+	The server can send the Retry-After header if
+	it knows that the problem is temporary.
 	"""
 
 	def to_dict(self):
@@ -18,7 +18,8 @@ class ServerErrorStatus(StatusException):
 
 class INTERNAL_SERVER_ERROR(ServerErrorStatus):
 	u"""The generic status code.
-		Mostly used when an exception in the request handler occurs."""
+	Mostly used when an exception in the request handler occurs.
+	"""
 
 	code = 500
 	cacheable = True
@@ -26,7 +27,8 @@ class INTERNAL_SERVER_ERROR(ServerErrorStatus):
 
 class NOT_IMPLEMENTED(ServerErrorStatus):
 	u"""The client tried to use a HTTP feature which the server does not support.
-		Used if the server does not know the request method."""
+	Used if the server does not know the request method.
+	"""
 
 	code = 501
 
@@ -40,7 +42,8 @@ class BAD_GATEWAY(ServerErrorStatus):
 
 class SERVICE_UNAVAILABLE(ServerErrorStatus):
 	u"""There is currently a problem with the server.
-		Probably too many requests at once."""
+	Probably too many requests at once.
+	"""
 
 	code = 503
 	cacheable = True
@@ -55,8 +58,9 @@ class GATEWAY_TIMEOUT(ServerErrorStatus):
 
 class HTTP_VERSION_NOT_SUPPORTED(ServerErrorStatus):
 	u"""The clients http version is not supported.
-		This should not happen since HTTP 1.1 is backward compatible.
-		The entity-body should contain a list of supported protocols."""
+	This should not happen since HTTP 1.1 is backward compatible.
+	The entity-body should contain a list of supported protocols.
+	"""
 
 	code = 505
 

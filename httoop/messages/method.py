@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""HTTP request and response messages
+"""HTTP request and response messages.
 
 .. seealso:: :rfc:`2616#section-4`
 """
@@ -15,7 +15,8 @@ __all__ = ('Method', )
 
 
 class Method(with_metaclass(HTTPSemantic)):
-	u"""A HTTP request method"""
+	u"""A HTTP request method."""
+
 	__slots__ = ('__method')
 
 	@property

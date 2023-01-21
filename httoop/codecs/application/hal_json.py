@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""JSON Hypertext Application Language (application/hal+json) codec"""
+"""JSON Hypertext Application Language (application/hal+json) codec."""
 
 from __future__ import absolute_import
 
@@ -19,7 +19,7 @@ from httoop.six import string_types
 
 
 class Resource(dict):
-	"""A JSON Hypertext Application Language resource"""
+	"""A JSON Hypertext Application Language resource."""
 
 	def __init__(self, *args, **kwargs):
 		super(Resource, self).__init__(*args, **kwargs)

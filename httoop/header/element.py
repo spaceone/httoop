@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""HTTP header elements
+"""HTTP header elements.
 
 .. seealso:: :rfc:`2616#section-2.2`
 
@@ -257,9 +257,9 @@ class HeaderElement(with_metaclass(HeaderType)):
 
 class MimeType(object):
 	u"""
-		.. seealso:: rfc:`2046`
+	.. seealso:: rfc:`2046`.
 
-		.. seealso:: rfc:`3023`
+	.. seealso:: rfc:`3023`
 	"""
 
 	@property
@@ -311,9 +311,9 @@ class MimeType(object):
 
 
 class _AcceptElement(HeaderElement):
-	"""An Accept element with quality value
+	"""An Accept element with quality value.
 
-		.. seealso:: :rfc:`2616#section-3.9`
+	.. seealso:: :rfc:`2616#section-3.9`
 
 	"""
 

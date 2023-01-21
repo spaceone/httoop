@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Uniform Resource Identifier
+"""Uniform Resource Identifier.
 
 .. seealso:: :rfc:`3986`
 """

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""HTTP request and response messages
+"""HTTP request and response messages.
 
 .. seealso:: :rfc:`2616#section-4`
 """

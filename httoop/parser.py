@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-u"""Implements a state machine for the parsing process.
-"""
+u"""Implements a state machine for the parsing process."""
 # TODO: translation API
 
 from __future__ import absolute_import
@@ -19,7 +18,8 @@ NOT_RECEIVED_YET = True
 
 class StateMachine(object):
 	u"""A protocol state machine which supports pipelining and
-		parses HTTP messages by turning them into appropriate objects."""
+	parses HTTP messages by turning them into appropriate objects.
+	"""
 
 	Message = Message  # subclass provides the type
 
@@ -76,11 +76,11 @@ class StateMachine(object):
 
 	def parse(self, data):
 		u"""Appends the given data to the internal buffer
-			and parses it as HTTP Request-Messages.
+		and parses it as HTTP Request-Messages.
 
-			:param data:
-				data to parse
-			:type  data: bytes
+		:param data:
+		data to parse
+		:type  data: bytes
 		"""
 		self.buffer.extend(data)
 		try:

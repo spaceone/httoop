@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """httoop CLI tool.
 
-Examples:
+Examples
+--------
 python3 -m httoop compose request -H 'Host: www.example.net'  | python3 -m httoop parse request
 python3 -m httoop compose response  | python3 -m httoop parse response
 """

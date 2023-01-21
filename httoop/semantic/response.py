@@ -15,8 +15,7 @@ class ComposedResponse(ComposedMessage):
 		self.response = self.message = response
 
 	def prepare(self):
-		u"""prepares the response for being ready for transmitting"""
-
+		u"""prepares the response for being ready for transmitting."""
 		response = self.response
 
 		status = int(response.status)

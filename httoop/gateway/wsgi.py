@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Web Server Gateway Interface
+"""Web Server Gateway Interface.
 
 .. seealso:: `PEP 333 <http://www.python.org/dev/peps/pep-0333/>`_
 """
@@ -12,7 +12,7 @@ __all__ = ('WSGI', )
 
 
 class WSGIBody(Body):
-	u"""A Body for WSGI requests and responses"""
+	u"""A Body for WSGI requests and responses."""
 
 	__slots__ = ()
 
@@ -26,7 +26,7 @@ class WSGIBody(Body):
 
 
 class WSGI(object):
-	u"""A mixin class which implements the WSGI interface"""
+	u"""A mixin class which implements the WSGI interface."""
 
 	def __init__(self, environ=None, use_path_info=False, *args, **kwargs):
 		self.use_path_info = use_path_info

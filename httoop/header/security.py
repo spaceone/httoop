@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Security related header"""
+"""Security related header."""
 
 import re
 
@@ -10,9 +10,9 @@ from httoop.util import integer
 class ContentSecurityPolicy(HeaderElement):
 	"""Content security policy (CSP).
 
-		Prevent content injection vulnerabilities e.g. Cross Site Scripting.
+	Prevent content injection vulnerabilities e.g. Cross Site Scripting.
 
-		..seealso:: http://www.w3.org/TR/CSP2/
+	..seealso:: http://www.w3.org/TR/CSP2/
 	"""
 
 	__name__ = 'Content-Security-Policy'
@@ -33,9 +33,9 @@ class ContentSecurityPolicyReportOnly(ContentSecurityPolicy):
 class StrictTransportSecurity(HeaderElement):
 	"""HTTP strict transport security (HSTS).
 
-		Enforce secure connection.
+	Enforce secure connection.
 
-		..seealso:: :rfc:`rfc6797`
+	..seealso:: :rfc:`rfc6797`
 	"""
 
 	__name__ = 'Strict-Transport-Security'
@@ -53,7 +53,7 @@ class StrictTransportSecurity(HeaderElement):
 class ContentTypeOptions(HeaderElement):
 	"""Content Type options.
 
-		"nosniff" forces user agents to strictly evaluate the Content-Type response header.
+	"nosniff" forces user agents to strictly evaluate the Content-Type response header.
 	"""
 
 	__name__ = 'X-Content-Type-Options'
@@ -67,10 +67,10 @@ class ContentTypeOptions(HeaderElement):
 class FrameOptions(HeaderElement):
 	"""Frame Options.
 
-		(Dis)allow to display the resource in a HTML frameset/iframe.
-		Prevents clickjacking attacks.
+	(Dis)allow to display the resource in a HTML frameset/iframe.
+	Prevents clickjacking attacks.
 
-		..seealso:: :rfc:`7034`
+	..seealso:: :rfc:`7034`
 	"""
 
 	__name__ = 'X-Frame-Options'
@@ -99,7 +99,8 @@ class PermittedCrossDomainPolicies(HeaderElement):
 
 
 class PublicKeyPins(HeaderElement):
-	"""Public Key Pinning Extension for HTTP (HPKP)"""
+	"""Public Key Pinning Extension for HTTP (HPKP)."""
+
 	__name__ = 'Public-Key-Pins'
 	is_response_header = True
 
@@ -107,7 +108,7 @@ class PublicKeyPins(HeaderElement):
 class XSSProtection(HeaderElement):
 	"""Cross site scripting (XSS) protection.
 
-		Enable cross site scripting filter in the user agent.
+	Enable cross site scripting filter in the user agent.
 	"""
 
 	__name__ = 'X-XSS-Protection'

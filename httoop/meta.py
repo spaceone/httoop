@@ -1,6 +1,4 @@
-"""MetaClasses for HTTOOP types
-
-"""
+"""MetaClasses for HTTOOP types."""
 
 from __future__ import absolute_import
 
@@ -50,7 +48,7 @@ class Semantic(object):
 
 
 class HTTPSemantic(type):
-	u"""Implements the HTTP Semantic interface"""
+	u"""Implements the HTTP Semantic interface."""
 
 	def __new__(mcs, name, bases, dict_):
 		bases = list(bases)

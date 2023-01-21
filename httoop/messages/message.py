@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""HTTP request and response messages
+"""HTTP request and response messages.
 
 .. seealso:: :rfc:`2616#section-4`
 """
@@ -14,10 +14,11 @@ __all__ = ('Message')
 
 
 class Message(with_metaclass(HTTPSemantic)):
-	u"""A HTTP message
+	u"""A HTTP message.
 
-		.. seealso:: :rfc:`2616#section-4`
+	.. seealso:: :rfc:`2616#section-4`
 	"""
+
 	__slots__ = ('__protocol', '__headers', '__body')
 
 	@property
@@ -61,26 +62,25 @@ class Message(with_metaclass(HTTPSemantic)):
 	def __init__(self, protocol=None, headers=None, body=None):
 		u"""Initiates a new Message to hold information about the message.
 
-			:param protocol: the requested protocol
-			:type  protocol: str|tuple
+		:param protocol: the requested protocol
+		:type  protocol: str|tuple
 
-			:param headers: the request headers
-			:type  headers: dict or :class:`Headers`
+		:param headers: the request headers
+		:type  headers: dict or :class:`Headers`
 
-			:param body: the request body
-			:type  body: any
+		:param body: the request body
+		:type  body: any
 		"""
 		self.__protocol = Protocol(protocol or (1, 1))
 		self.__headers = Headers(headers or {})
 		self.__body = Body(body or b'')
 
 	def parse(self, protocol):
-		u"""parses the HTTP protocol version
+		u"""parses the HTTP protocol version.
 
-			:param protocol: the protocol version string
-			:type  protocol: bytes
+		:param protocol: the protocol version string
+		:type  protocol: bytes
 		"""
-
 		self.protocol.parse(protocol)
 
 	def __repr__(self):

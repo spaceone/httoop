@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""HTTP status codes
+"""HTTP status codes.
 
 .. seealso:: :rfc:`2616#section-6.2`
 .. seealso:: :rfc:`2616#section-10`
@@ -14,9 +14,9 @@ from httoop.util import Unicode, _, integer
 
 
 class Status(with_metaclass(HTTPSemantic)):
-	u"""A HTTP Status
+	u"""A HTTP Status.
 
-		:rfc:`2616#section-6.2`
+	:rfc:`2616#section-6.2`
 	"""
 
 	# __slots__ = ('__code', '__reason')  # conflicts with StatusException
@@ -70,13 +70,13 @@ class Status(with_metaclass(HTTPSemantic)):
 
 	def __init__(self, code=None, reason=None):
 		"""
-			:param code:
-				the HTTP Statuscode
-			:type  code: int
+		:param code:
+		the HTTP Statuscode
+		:type  code: int
 
-			:param reason:
-				the HTTP Reason-Phrase
-			:type  reason: unicode
+		:param reason:
+		the HTTP Reason-Phrase
+		:type  reason: unicode
 		"""
 		self.__code = 0
 		self.__reason = ''
@@ -86,10 +86,10 @@ class Status(with_metaclass(HTTPSemantic)):
 			self.set((code, reason,))
 
 	def parse(self, status):
-		"""parse a Statuscode and Reason-Phrase
+		"""parse a Statuscode and Reason-Phrase.
 
-			:param status: the code and reason
-			:type  status: bytes
+		:param status: the code and reason
+		:type  status: bytes
 		"""
 		match = self.STATUS_RE.match(status)
 		if match is None:
@@ -104,11 +104,11 @@ class Status(with_metaclass(HTTPSemantic)):
 		return self.compose().decode('ascii')
 
 	def __int__(self):
-		u"""Returns this status as number"""
+		u"""Returns this status as number."""
 		return self.__code
 
 	def __eq__(self, other):
-		u"""Compares a status with another :class:`Status` or :class:`int`"""
+		u"""Compares a status with another :class:`Status` or :class:`int`."""
 		if isinstance(other, int):
 			return self.__code == other
 		if isinstance(other, Status):
@@ -122,12 +122,12 @@ class Status(with_metaclass(HTTPSemantic)):
 		return self.__code > other
 
 	def set(self, status):
-		u"""sets reason and status
+		u"""sets reason and status.
 
-			:param status:
-				A HTTP Status, e.g.: 200, (200, 'OK'), '200 OK'
-			:type  status:
-				int or tuple or bytes or Status
+		:param status:
+		A HTTP Status, e.g.: 200, (200, 'OK'), '200 OK'
+		:type  status:
+		int or tuple or bytes or Status
 		"""
 		if isinstance(status, int) and 99 < status < 600:
 			self.__code, self.__reason = status, REASONS.get(status, (u'', u''))[0]

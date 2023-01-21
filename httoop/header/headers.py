@@ -50,8 +50,8 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 
 	def elements(self, fieldname):
 		u"""Return a sorted list of HeaderElements from
-			the given comma-separated header string."""
-
+		the given comma-separated header string.
+		"""
 		fieldvalue = self.getbytes(fieldname)
 		if not fieldvalue:
 			return []
@@ -60,7 +60,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 		return Element.sorted([Element.parse(element) for element in Element.split(fieldvalue)])
 
 	def element(self, fieldname, default=None):
-		u"""Treat the field as single element"""
+		u"""Treat the field as single element."""
 		if fieldname in self:
 			Element = HEADER.get(fieldname, HeaderElement)
 			return Element.parse(super(Headers, self).__getitem__(fieldname))
@@ -112,14 +112,13 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 		self.update(headers)
 
 	def parse(self, data):
-		r"""parses HTTP headers
+		r"""parses HTTP headers.
 
-			:param data:
-				the header string containing headers separated by "\r\n"
-				without trailing "\r\n"
-			:type  data: bytes
+		:param data:
+		the header string containing headers separated by "\r\n"
+		without trailing "\r\n"
+		:type  data: bytes
 		"""
-
 		lines = data.split(b'\r\n')
 
 		while lines:

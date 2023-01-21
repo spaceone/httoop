@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Uniform Resource Identifier
+"""Uniform Resource Identifier.
 
 .. seealso:: :rfc:`3986`
 """
@@ -17,7 +17,7 @@ from httoop.util import Unicode, _, integer
 
 
 class URI(with_metaclass(URIType)):
-	u"""Uniform Resource Identifier"""
+	u"""Uniform Resource Identifier."""
 
 	__slots__ = ('scheme', 'username', 'password', 'host', '_port', 'path', 'query_string', 'fragment')
 	slots = __slots__
@@ -70,7 +70,7 @@ class URI(with_metaclass(URIType)):
 		self.set(kwargs or args or uri or b'')
 
 	def join(self, other=None, *args, **kwargs):
-		u"""Join a URI with another absolute or relative URI"""
+		u"""Join a URI with another absolute or relative URI."""
 		relative = URI(other or args or kwargs)
 		joined = URI()
 		current = URI(self)
@@ -102,7 +102,7 @@ class URI(with_metaclass(URIType)):
 	def normalize(self):
 		u"""Normalize the URI to make it comparable.
 
-			.. seealso:: :rfc:`3986#section-6`
+		.. seealso:: :rfc:`3986#section-6`
 		"""
 		self.scheme = self.scheme.lower()
 		self.host = self.host.lower()
@@ -115,15 +115,15 @@ class URI(with_metaclass(URIType)):
 			self.path = u'/%s' % (self.path, )
 
 	def abspath(self):
-		"""Clear out any '..' and excessive slashes from the path
+		"""Clear out any '..' and excessive slashes from the path.
 
-			>>> dangerous = (u'/./', u'/../', u'./', u'/.', u'../', u'/..', u'//')
-			>>> uris = (URI(b'/foo/./bar/../baz//blah/.'), )
-			>>> _ = [uri.abspath() for uri in uris]
-			>>> all(all(d not in uri.path for d in dangerous) for uri in uris)
-			True
-			>>> u = URI(b'/foo/../bar/.'); u.abspath(); u.path == u'/bar/'
-			True
+		>>> dangerous = (u'/./', u'/../', u'./', u'/.', u'../', u'/..', u'//')
+		>>> uris = (URI(b'/foo/./bar/../baz//blah/.'), )
+		>>> _ = [uri.abspath() for uri in uris]
+		>>> all(all(d not in uri.path for d in dangerous) for uri in uris)
+		True
+		>>> u = URI(b'/foo/../bar/.'); u.abspath(); u.path == u'/bar/'
+		True
 		"""
 		path = re.sub(u'\\/{2,}', u'/', self.path)  # remove //
 		if not path:
@@ -181,19 +181,18 @@ class URI(with_metaclass(URIType)):
 	def parse(self, uri):
 		r"""Parses a well formed absolute or relative URI.
 
-				foo://example.com:8042/over/there?name=ferret#nose
-				\_/   \______________/\_________/ \_________/ \__/
-				|            |            |            |        |
-			scheme     authority       path        query   fragment
-				|    _____________________|__
-				/ \ /                        \
+		foo://example.com:8042/over/there?name=ferret#nose
+		\_/   \______________/\_________/ \_________/ \__/
+		|            |            |            |        |
+		scheme     authority       path        query   fragment
+		|    _____________________|__
+		/ \ /                        \
 				urn:example:animal:ferret:nose
 
-			https://username:password@[::1]:8090/some/path?query#fragment
-			<scheme>://<username>:<password>@<host>:<port>/<path>?<query>#<fragment>
-			[<scheme>:][//[<username>[:<password>]@][<host>][:<port>]/]<path>[?<query>][#<fragment>]
+		https://username:password@[::1]:8090/some/path?query#fragment
+		<scheme>://<username>:<password>@<host>:<port>/<path>?<query>#<fragment>
+		[<scheme>:][//[<username>[:<password>]@][<host>][:<port>]/]<path>[?<query>][#<fragment>]
 		"""
-
 		if type(self) is URI and b':' in uri:
 			self.scheme = uri.split(b':', 1)[0].lower()
 			if type(self) is not URI:
@@ -287,7 +286,7 @@ class URI(with_metaclass(URIType)):
 		return b''.join(self._compose_absolute_iter())
 
 	def _compose_absolute_iter(self):
-		u"""composes the whole URI"""
+		u"""composes the whole URI."""
 		scheme, username, password, host, port, path, _, fragment = self.tuple
 		if scheme:
 			yield self.quote(scheme, Percent.SCHEME)
@@ -313,7 +312,7 @@ class URI(with_metaclass(URIType)):
 			yield b':%d' % integer(port)
 
 	def _compose_relative_iter(self):
-		u"""Composes the relative URI beginning with the path"""
+		u"""Composes the relative URI beginning with the path."""
 		scheme, path, query_string, quote, fragment = self.scheme, self.path, self.query_string, self.quote, self.fragment
 		PATH = Percent.PATH
 		if not scheme and not path.startswith(u'/'):
@@ -333,17 +332,17 @@ class URI(with_metaclass(URIType)):
 		return Percent.quote(Unicode(data).encode(self.encoding), charset)
 
 	def __eq__(self, other):
-		u"""Compares the URI with another string or URI
+		u"""Compares the URI with another string or URI.
 
-			.. seealso:: :rfc:`2616#section-3.2.3`
+		.. seealso:: :rfc:`2616#section-3.2.3`
 
-			.. seealso:: :rfc:`3986#section-6`
+		.. seealso:: :rfc:`3986#section-6`
 
-			>>> u1 = URI(b'http://abc.com:80/~smith/home.html')
-			>>> u2 = b'http://ABC.com/%7Esmith/home.html'
-			>>> u3 = URI(b'http://ABC.com:/%7esmith/home.html')
-			>>> u1 == u2 == u3
-			True
+		>>> u1 = URI(b'http://abc.com:80/~smith/home.html')
+		>>> u2 = b'http://ABC.com/%7Esmith/home.html'
+		>>> u3 = URI(b'http://ABC.com:/%7esmith/home.html')
+		>>> u1 == u2 == u3
+		True
 		"""
 		cls = type(self)
 		self_, other = cls(self), cls(other)

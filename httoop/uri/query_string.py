@@ -11,7 +11,7 @@ from httoop.util import _
 class QueryString(FormURLEncoded):
 
 	INVALID = (stringprep.in_table_c21, )
-	UNQUOTED = Percent.QUERY.replace(b'+', b'')
+	UNQUOTED = Percent.QUERY.replace(b'+', b'').replace(b'=', b'').replace(b'&', b'')
 
 	@classmethod
 	def decode(cls, data: bytes, charset: Optional[str]=None) -> Union[Tuple[()], Tuple[Tuple[str, str]], Tuple[Tuple[str, str], Tuple[str, str], Tuple[str, str]], Tuple[Tuple[str, str], Tuple[str, str]]]:

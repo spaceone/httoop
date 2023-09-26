@@ -19,6 +19,7 @@ from httoop import URI, InvalidURI
 	(b'a=a%20b&b=b%20c', ((u'a', u'a b'), (u'b', u'b c'))),
 	(b'a=a+b&b=b%20c', ((u'a', u'a b'), (u'b', u'b c'))),
 	(b'a=1&a=2', ((u'a', u'1'), (u'a', u'2'))),
+	(b'x=b%3Da%26r', ((u'x', u'b=a&r'),)),
 ])
 def test_query_string_parse(query_string, query):
 	uri = URI(b'http://example.com/?%s' % (query_string,))
@@ -37,6 +38,7 @@ def test_query_string_parse(query_string, query):
 	(b'a=1&a=2', ((u'a', u'1'), (u'a', u'2'))),
 	(b"a=some+value", {'a': 'some value'}),
 	(b"a=some+value/another", {'a': 'some value/another'}),
+	(b'x=b%3Da%26r', {'x': 'b=a&r'}),
 ])
 def test_query_string_compose(query_string, query):
 	uri = URI(b'http://example.com/')

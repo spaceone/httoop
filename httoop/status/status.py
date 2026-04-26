@@ -1,4 +1,5 @@
-"""HTTP status codes.
+"""
+HTTP status codes.
 
 .. seealso:: :rfc:`2616#section-6.2`
 .. seealso:: :rfc:`2616#section-10`
@@ -15,7 +16,8 @@ from httoop.util import Unicode, _, integer
 
 
 class Status(with_metaclass(HTTPSemantic)):
-    """A HTTP Status.
+    """
+    A HTTP Status.
 
     :rfc:`2616#section-6.2`
     """
@@ -87,7 +89,8 @@ class Status(with_metaclass(HTTPSemantic)):
             self.set((code, reason,))
 
     def parse(self, status: bytes) -> None:
-        """parse a Statuscode and Reason-Phrase.
+        """
+        parse a Statuscode and Reason-Phrase.
 
         :param status: the code and reason
         :type  status: bytes
@@ -123,7 +126,8 @@ class Status(with_metaclass(HTTPSemantic)):
         return self.__code > other
 
     def set(self, status: Any) -> None:
-        """sets reason and status.
+        """
+        sets reason and status.
 
         :param status:
         A HTTP Status, e.g.: 200, (200, 'OK'), '200 OK'

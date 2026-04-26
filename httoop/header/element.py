@@ -1,4 +1,5 @@
-"""HTTP header elements.
+"""
+HTTP header elements.
 
 .. seealso:: :rfc:`2616#section-2.2`
 
@@ -201,7 +202,8 @@ class HeaderElement(with_metaclass(HeaderType)):
 
     @classmethod
     def formatparam(cls, param: bytes, value: Optional[Union[bytes, str]] = None, quote: bool = False) -> bytes:
-        """Convenience function to format and return a key=value pair.
+        """
+        Convenience function to format and return a key=value pair.
 
         This will quote the value if needed or if quote is true.
         """
@@ -312,7 +314,8 @@ class MimeType(object):
 
 
 class _AcceptElement(HeaderElement):
-    """An Accept element with quality value.
+    """
+    An Accept element with quality value.
 
     .. seealso:: :rfc:`2616#section-3.9`
 

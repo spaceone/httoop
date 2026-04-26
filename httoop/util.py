@@ -97,7 +97,8 @@ def if_has(func: Callable) -> Callable:
 
 
 def integer(number: Union[int, str, bytes], *args) -> int:
-    """In Python 3 int() is broken.
+    """
+    In Python 3 int() is broken.
     >>> int(bytearray(b'1_0'))
     Traceback (most recent call last):
             ...
@@ -160,7 +161,8 @@ class IFile(object):
 
 
 class CaseInsensitiveDict(dict):
-    """A case-insensitive dict subclass optimized for HTTP header use.
+    """
+    A case-insensitive dict subclass optimized for HTTP header use.
 
     Each key is stored as case insensitive ascii
     Each value is stored as unicode

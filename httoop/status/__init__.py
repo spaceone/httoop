@@ -1,4 +1,5 @@
-"""HTTP status codes.
+"""
+HTTP status codes.
 
 .. seealso:: :rfc:`2616#section-6.2`
 .. seealso:: :rfc:`2616#section-10`

@@ -1,4 +1,5 @@
-"""Uniform Resource Identifier.
+"""
+Uniform Resource Identifier.
 
 .. seealso:: :rfc:`3986`
 """
@@ -101,7 +102,8 @@ class URI(with_metaclass(URIType)):
         return joined
 
     def normalize(self) -> None:
-        """Normalize the URI to make it comparable.
+        """
+        Normalize the URI to make it comparable.
 
         .. seealso:: :rfc:`3986#section-6`
         """
@@ -116,7 +118,8 @@ class URI(with_metaclass(URIType)):
             self.path = '/%s' % (self.path, )
 
     def abspath(self) -> None:
-        """Clear out any '..' and excessive slashes from the path.
+        """
+        Clear out any '..' and excessive slashes from the path.
 
         >>> dangerous = (u'/./', u'/../', u'./', u'/.', u'../', u'/..', u'//')
         >>> uris = (URI(b'/foo/./bar/../baz//blah/.'), )
@@ -180,7 +183,8 @@ class URI(with_metaclass(URIType)):
          self.port, self.path, self.query_string, self.fragment) = tuple_
 
     def parse(self, uri: bytes) -> None:
-        r"""Parses a well formed absolute or relative URI.
+        r"""
+        Parses a well formed absolute or relative URI.
 
         foo://example.com:8042/over/there?name=ferret#nose
         \_/   \______________/\_________/ \_________/ \__/
@@ -333,7 +337,8 @@ class URI(with_metaclass(URIType)):
         return Percent.quote(Unicode(data).encode(self.encoding), charset)
 
     def __eq__(self, other: Any) -> bool:
-        """Compares the URI with another string or URI.
+        """
+        Compares the URI with another string or URI.
 
         .. seealso:: :rfc:`2616#section-3.2.3`
 

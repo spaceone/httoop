@@ -20,7 +20,8 @@ NOT_RECEIVED_YET = True
 
 
 class StateMachine(object):
-    """A protocol state machine which supports pipelining and
+    """
+    A protocol state machine which supports pipelining and
     parses HTTP messages by turning them into appropriate objects.
     """
 
@@ -78,7 +79,8 @@ class StateMachine(object):
         return message
 
     def parse(self, data: bytes) -> Union[Tuple[Tuple[Request, Response]], Tuple[Tuple[Request, Response], Tuple[Request, Response]], Tuple[()], Tuple[Response]]:
-        """Appends the given data to the internal buffer
+        """
+        Appends the given data to the internal buffer
         and parses it as HTTP Request-Messages.
 
         :param data:

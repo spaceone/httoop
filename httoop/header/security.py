@@ -10,7 +10,8 @@ from httoop.util import integer
 
 
 class ContentSecurityPolicy(HeaderElement):
-    """Content security policy (CSP).
+    """
+    Content security policy (CSP).
 
     Prevent content injection vulnerabilities e.g. Cross Site Scripting.
 
@@ -33,7 +34,8 @@ class ContentSecurityPolicyReportOnly(ContentSecurityPolicy):
 
 
 class StrictTransportSecurity(HeaderElement):
-    """HTTP strict transport security (HSTS).
+    """
+    HTTP strict transport security (HSTS).
 
     Enforce secure connection.
 
@@ -53,7 +55,8 @@ class StrictTransportSecurity(HeaderElement):
 
 
 class ContentTypeOptions(HeaderElement):
-    """Content Type options.
+    """
+    Content Type options.
 
     "nosniff" forces user agents to strictly evaluate the Content-Type response header.
     """
@@ -67,7 +70,8 @@ class ContentTypeOptions(HeaderElement):
 
 
 class FrameOptions(HeaderElement):
-    """Frame Options.
+    """
+    Frame Options.
 
     (Dis)allow to display the resource in a HTML frameset/iframe.
     Prevents clickjacking attacks.
@@ -108,7 +112,8 @@ class PublicKeyPins(HeaderElement):
 
 
 class XSSProtection(HeaderElement):
-    """Cross site scripting (XSS) protection.
+    """
+    Cross site scripting (XSS) protection.
 
     Enable cross site scripting filter in the user agent.
     """

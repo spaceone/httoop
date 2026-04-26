@@ -1,4 +1,5 @@
-"""HTTP request and response messages.
+"""
+HTTP request and response messages.
 
 .. seealso:: :rfc:`2616#section-4`
 """
@@ -12,7 +13,8 @@ __all__ = ('Response', )
 
 
 class Response(Message):
-    """A HTTP response message.
+    """
+    A HTTP response message.
 
     .. seealso:: :rfc:`2616#section-6`
     """
@@ -28,7 +30,8 @@ class Response(Message):
         self.__status.set(status)
 
     def __init__(self, status: None = None, headers: None = None, body: None = None, protocol: None = None) -> None:
-        """Creates a new Response object to hold information about the response.
+        """
+        Creates a new Response object to hold information about the response.
 
         :param status:
         A HTTP status, default is 200

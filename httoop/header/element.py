@@ -12,12 +12,13 @@ from __future__ import annotations
 import re
 from binascii import b2a_base64
 from email.errors import HeaderParseError
+from email.header import decode_header
 from typing import Any, Iterator
 
 from httoop.exceptions import InvalidHeader
 from httoop.six import with_metaclass
 from httoop.uri.percent_encoding import Percent
-from httoop.util import ByteUnicodeDict, CaseInsensitiveDict, _, decode_header, integer, iteritems, sanitize_encoding
+from httoop.util import ByteUnicodeDict, CaseInsensitiveDict, _, integer, sanitize_encoding
 
 
 __all__ = ['HEADER', 'HeaderElement']
@@ -77,7 +78,7 @@ class HeaderElement(with_metaclass(HeaderType)):
         return self.decode_rfc2047(bytes(self))
 
     def compose(self) -> bytes:
-        params = [b'; %s' % self.formatparam(k, v) for k, v in iteritems(self.params)]
+        params = [b'; %s' % self.formatparam(k, v) for k, v in self.params.items()]
         return b'%s%s' % (self.encode_rfc2047(self.value), b''.join(params))
 
     @classmethod
@@ -157,7 +158,7 @@ class HeaderElement(with_metaclass(HeaderType)):
                 value = value.decode('ISO8859-1')
             yield key, value
 
-        for key, lines in iteritems(continuations):
+        for key, lines in continuations.items():
             value = ''
             for i in range(len(lines)):
                 try:
@@ -168,7 +169,7 @@ class HeaderElement(with_metaclass(HeaderType)):
                 raise InvalidHeader(_('...'))
             if value:
                 yield key, value
-            for k, v in iteritems(lines):
+            for k, v in lines.items():
                 yield b'%s*%d' % (key, k), v
 
     @classmethod

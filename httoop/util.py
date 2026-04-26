@@ -3,45 +3,14 @@
 from __future__ import annotations
 
 import codecs
-import sys
-from email.generator import _make_boundary as make_boundary
-from functools import partial
 from typing import Any, Callable
 
-
-try:
-    from email.utils import parsedate_tz as parsedate
-except ImportError:  # pragma: no cover
-    from rfc822 import parsedate_tz as parsedate
-
-try:
-    from email.Header import decode_header
-except ImportError:  # pragma: no cover
-    from email.header import decode_header
-
-try:
-    from itertools import izip
-except ImportError:  # pragma: no cover
-    izip = zip
-
-try:
-    from base64 import decodebytes as decode_base64, encodebytes as encode_base64
-except ImportError:  # pragma: no cover
-    from base64 import decodestring as decode_base64, encodestring as encode_base64
 
 def _(x: str) -> str:
     return x
 
 
-__all__ = [
-    'iteritems',
-    'to_unicode', 'decode_header',
-    'IFile', 'partial', 'parsedate', 'izip',
-    'CaseInsensitiveDict',
-    'sanitize_encoding', 'make_boundary', '_',
-    'encode_base64', 'decode_base64',
-    'integer',
-]
+__all__ = ['to_unicode', 'IFile', 'CaseInsensitiveDict', 'sanitize_encoding', '_', 'integer']
 
 KNOWN_ENCODINGS = {
     'cp1254', 'cp949', 'cp865', 'cp1257', 'euc_jp', 'cp1250', 'mac-cyrillic', 'mac-latin2', 'cp866', 'cp857',
@@ -60,14 +29,10 @@ def sanitize_encoding(encoding: str) -> str | None:
     try:
         name = codecs.lookup(encoding).name
         if name not in KNOWN_ENCODINGS:
-            raise LookupError
+            return None
     except LookupError:
-        return
+        return None
     return name
-
-
-def iteritems(d, **kw):
-    return d.items(**kw)
 
 
 def to_unicode(string: bytes | str | None) -> str:
@@ -106,7 +71,7 @@ def integer(number: int | str | bytes, *args) -> int:
 class IFile:
     """The file interface."""
 
-    __slots__ = ('fd')
+    __slots__ = ('fd',)
 
     @property
     def name(self) -> None:
@@ -173,7 +138,7 @@ class CaseInsensitiveDict(dict):
 
     def __init__(self, *args, **kwargs) -> None:
         d = dict(*args, **kwargs)
-        for key, value in iteritems(d):
+        for key, value in d.items():
             dict.__setitem__(self, self.formatkey(key), self.formatvalue(value))
         dict.__init__(self)
 

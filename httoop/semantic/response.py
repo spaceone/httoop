@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from email.generator import _make_boundary as make_boundary
 from typing import Any, Iterator
 
 from httoop.date import Date
@@ -7,7 +8,6 @@ from httoop.exceptions import InvalidHeader
 from httoop.messages.body import Body
 from httoop.semantic.message import ComposedMessage
 from httoop.status import STATUSES
-from httoop.util import izip, make_boundary
 
 
 class ComposedResponse(ComposedMessage):
@@ -106,7 +106,7 @@ class ComposedResponse(ComposedMessage):
         return True
 
     def multipart_byteranges(self, range_body: Iterator[Any], range_: Range, content_length: str, content_type: str) -> Iterator[Body]:
-        for content, byterange in izip(range_body, range_.ranges):
+        for content, byterange in zip(range_body, range_.ranges):
             body = Body(content)
             body.headers['Content-Type'] = content_type
             body.headers.set_element('Content-Range', 'bytes', byterange, content_length)

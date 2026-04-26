@@ -7,7 +7,7 @@ from httoop.exceptions import InvalidHeader
 from httoop.header.element import HEADER, HeaderElement
 from httoop.meta import HTTPSemantic
 from httoop.six import with_metaclass
-from httoop.util import CaseInsensitiveDict, _, iteritems, to_unicode
+from httoop.util import CaseInsensitiveDict, _, to_unicode
 
 
 class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
@@ -95,7 +95,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
         _value = self.formatvalue(_value)
         if params:
             Element = HEADER.get(_name, HeaderElement)
-            parts = [_value or b''] + [Element.formatparam(k.encode(), v) for k, v in iteritems(params)]
+            parts = [_value or b''] + [Element.formatparam(k.encode(), v) for k, v in params.items()]
             _value = b'; '.join(parts)
 
         if _name not in self or not self[_name]:
@@ -154,7 +154,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
         return sorted(self.__encoded_items(), key=lambda x: HEADER.get(x[0], HeaderElement).priority or x[0])
 
     def __encoded_items(self):
-        for key, values in iteritems(self):
+        for key, values in self.items():
             Element = HEADER.get(key, HeaderElement)
             if Element is not HeaderElement:
                 key = Element.__name__

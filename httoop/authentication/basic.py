@@ -1,11 +1,11 @@
-
 from __future__ import annotations
 
+import base64
 from binascii import Error as Base64Error
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
-from httoop.util import ByteUnicodeDict, _, decode_base64, encode_base64
+from httoop.util import ByteUnicodeDict, _
 
 
 class BasicAuthRequestScheme:
@@ -18,7 +18,7 @@ class BasicAuthRequestScheme:
         #    raise InvalidHeader(_(u'Invalid base64 in basic authentication'))
 
         try:
-            username, password = decode_base64(authinfo.strip()).split(b':')
+            username, password = base64.b64decode(authinfo.strip()).split(b':')
         except Base64Error:
             raise InvalidHeader(_('Basic authentication contains invalid base64'))
         except ValueError:
@@ -38,7 +38,7 @@ class BasicAuthRequestScheme:
         password = authinfo['password']
         # username = username.encode('ISO8859-1')
         # password = password.encode('ISO8859-1')
-        return encode_base64(b'%s:%s' % (username, password)).strip()
+        return base64.b64encode(b'%s:%s' % (username, password))
 
 
 class BasicAuthResponseScheme:

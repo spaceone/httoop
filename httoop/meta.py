@@ -43,7 +43,7 @@ class Semantic:
     def __le__(self, other: int | tuple[int, int]) -> bool:
         return self == other or self < other
 
-    def __format__(self, format_spec):
+    def __format__(self, format_spec) -> str:
         return format(str(self), format_spec)
 
     def __repr__(self) -> str:

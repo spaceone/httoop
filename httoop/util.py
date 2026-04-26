@@ -242,7 +242,7 @@ class _Translateable:
     def __unicode__(self) -> str:
         return self.translate()
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return Unicode(self).encode('unicode_escape')
 
     __str__ = __unicode__ if PY3 else __bytes__

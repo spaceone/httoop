@@ -78,7 +78,7 @@ class AuthRequestElement(AuthElement):
         return self.params.get('username').decode(self.encoding)
 
     @username.setter
-    def username(self, username):
+    def username(self, username) -> None:
         self.params['username'] = username.encode(self.encoding)
 
     @property
@@ -87,7 +87,7 @@ class AuthRequestElement(AuthElement):
             return self.params.get('password').decode(self.encoding)
 
     @password.setter
-    def password(self, password):
+    def password(self, password) -> None:
         if self.scheme == 'basic':
             self.params['password'] = password.encode(self.encoding)
 
@@ -112,7 +112,7 @@ class AuthResponseElement(AuthElement):
         return self.params[b'realm'].decode('ASCII')
 
     @realm.setter
-    def realm(self, realm):
+    def realm(self, realm) -> None:
         self.params['realm'] = realm.replace('"', '').encode('ASCII', 'ignore')
 
 

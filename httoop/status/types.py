@@ -58,7 +58,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
         return self._body
 
     @body.setter
-    def body(self, value):
+    def body(self, value) -> None:
         self.body.set(value)
 
     header_to_remove = ()
@@ -74,7 +74,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
         return self._traceback
 
     @traceback.setter
-    def traceback(self, tb):
+    def traceback(self, tb) -> None:
         if self.server_error:
             self._traceback = tb
 

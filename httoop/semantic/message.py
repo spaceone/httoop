@@ -16,7 +16,7 @@ class ComposedMessage:
         return self.message.headers.elements('Transfer-Encoding')
 
     @transfer_encoding.setter
-    def transfer_encoding(self, transfer_encoding):
+    def transfer_encoding(self, transfer_encoding) -> None:
         if transfer_encoding:
             self.message.headers['Transfer-Encoding'] = bytes(transfer_encoding)
         #    self.message.transfer_codec = None  #self.message.transfer_encoding.iterdecode()
@@ -29,7 +29,7 @@ class ComposedMessage:
         return 'chunked' in self.message.headers.elements('Transfer-Encoding')
 
     @chunked.setter
-    def chunked(self, chunked):
+    def chunked(self, chunked) -> None:
         self.message.body.chunked = chunked
         if chunked:
             self.message.headers.pop('Content-Length', None)

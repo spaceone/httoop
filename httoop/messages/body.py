@@ -53,7 +53,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
         return self.mimetype.charset or 'UTF-8'
 
     @encoding.setter
-    def encoding(self, charset):
+    def encoding(self, charset) -> None:
         mimetype = self.mimetype
         mimetype.charset = charset
         self.mimetype = mimetype
@@ -64,7 +64,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
         return self.headers.element('Content-Type')
 
     @mimetype.setter
-    def mimetype(self, mimetype):
+    def mimetype(self, mimetype) -> None:
         self.headers['Content-Type'] = mimetype.decode('ASCII') if isinstance(mimetype, bytes) else mimetype
 
     @property
@@ -72,7 +72,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
         return self.headers.element('Content-Encoding')
 
     @content_encoding.setter
-    def content_encoding(self, value):
+    def content_encoding(self, value) -> None:
         if value:
             self.headers['Content-Encoding'] = value.decode('ASCII') if isinstance(value, bytes) else value
             self.content_codec = self.content_encoding.codec
@@ -85,7 +85,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
         return self.headers.element('Transfer-Encoding')
 
     @transfer_encoding.setter
-    def transfer_encoding(self, transfer_encoding):
+    def transfer_encoding(self, transfer_encoding) -> None:
         if transfer_encoding:
             self.headers['Transfer-Encoding'] = transfer_encoding.decode('ASCII') if isinstance(transfer_encoding, bytes) else transfer_encoding
             self.transfer_codec = self.transfer_encoding.codec
@@ -100,7 +100,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
         return 'chunked' == self.transfer_encoding.value
 
     @chunked.setter
-    def chunked(self, chunked):
+    def chunked(self, chunked) -> None:
         self.transfer_encoding = 'chunked' if chunked else None
 
     def __init__(self, content: bytes | list[bytes] | str | None = None, mimetype: str | None = None) -> None:

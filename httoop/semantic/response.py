@@ -128,7 +128,7 @@ class ComposedResponse(ComposedMessage):
         yield response.protocol < (1, 1)
 
     @close.setter
-    def close(self, close):
+    def close(self, close) -> None:
         response = self.response
         if close:
             if response.protocol >= (1, 1):

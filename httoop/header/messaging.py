@@ -195,7 +195,7 @@ class ContentType(HeaderElement, MimeType, CodecElement):
         return self.params.get('charset', '')
 
     @charset.setter
-    def charset(self, charset):
+    def charset(self, charset) -> None:
         self.params['charset'] = charset
 
     VALID_BOUNDARY = re.compile('^[ -~]{0,200}[!-~]$')
@@ -215,7 +215,7 @@ class ContentType(HeaderElement, MimeType, CodecElement):
         return self.params.get('boundary')
 
     @boundary.setter
-    def boundary(self, boundary):
+    def boundary(self, boundary) -> None:
         self.params['boundary'] = boundary
 
 

@@ -29,7 +29,7 @@ class Message(with_metaclass(HTTPSemantic)):
         return self.__protocol
 
     @protocol.setter
-    def protocol(self, protocol):
+    def protocol(self, protocol) -> None:
         self.__protocol.set(protocol)
 
     @property
@@ -37,7 +37,7 @@ class Message(with_metaclass(HTTPSemantic)):
         return self.__headers
 
     @headers.setter
-    def headers(self, headers):
+    def headers(self, headers) -> None:
         self.__headers.set(headers)
 
     @property
@@ -45,7 +45,7 @@ class Message(with_metaclass(HTTPSemantic)):
         return self.__body
 
     @body.setter
-    def body(self, body):
+    def body(self, body) -> None:
         self.__body.set(body)
 
     @property

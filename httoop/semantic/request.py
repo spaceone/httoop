@@ -49,7 +49,7 @@ class ComposedRequest(ComposedMessage):
         return self.message.headers.get('Connection') == 'close'
 
     @close.setter
-    def close(self, close):
+    def close(self, close) -> None:
         if close:
             self.message.headers['Connection'] = 'close'
         else:

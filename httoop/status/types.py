@@ -78,7 +78,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 
 	code = 0
 
-	def __init__(self, description: Optional[str]=None, reason: None=None, headers: Optional[Dict[str, str]]=None, traceback: Optional[str]=None) -> None:
+	def __init__(self, description: Optional[str] = None, reason: None = None, headers: Optional[Dict[str, str]] = None, traceback: Optional[str] = None) -> None:
 		u"""
 		:param description:
 		a description of the error which happened

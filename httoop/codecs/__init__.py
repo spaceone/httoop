@@ -19,7 +19,7 @@ __all__ = [
 ]
 
 
-def lookup(encoding: str, raise_errors: bool=True) -> Any:
+def lookup(encoding: str, raise_errors: bool = True) -> Any:
 	type_ = '%s/*' % (encoding.split('/', 1)[0], )
 	return CODECS.get(encoding) or CODECS.get(type_) or (raise_errors and CODECS[encoding]) or None
 

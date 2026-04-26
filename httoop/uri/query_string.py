@@ -14,7 +14,7 @@ class QueryString(FormURLEncoded):
 	UNQUOTED = Percent.QUERY.replace(b'+', b'').replace(b'=', b'').replace(b'&', b'')
 
 	@classmethod
-	def decode(cls, data: bytes, charset: Optional[str]=None) -> Union[Tuple[()], Tuple[Tuple[str, str]], Tuple[Tuple[str, str], Tuple[str, str], Tuple[str, str]], Tuple[Tuple[str, str], Tuple[str, str]]]:
+	def decode(cls, data: bytes, charset: Optional[str] = None) -> Union[Tuple[()], Tuple[Tuple[str, str]], Tuple[Tuple[str, str], Tuple[str, str], Tuple[str, str]], Tuple[Tuple[str, str], Tuple[str, str]]]:
 		if any(in_table(x) for x in cls.unquote(data, 'ISO8859-1') for in_table in cls.INVALID):
 			raise DecodeError(_(u'Invalid query string: contains invalid token'))
 		data = super(QueryString, cls).decode(data, charset)

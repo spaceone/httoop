@@ -34,7 +34,7 @@ class Protocol(with_metaclass(HTTPSemantic)):
 
 	PROTOCOL_RE = re.compile(br"^(HTTP)/(\d+)\.(\d+)\Z")
 
-	def __init__(self, protocol: Union[bytes, "Protocol", Tuple[int, int], int, str]=(1, 1)) -> None:
+	def __init__(self, protocol: Union[bytes, "Protocol", Tuple[int, int], int, str] = (1, 1)) -> None:
 		self.__protocol = protocol
 		self.name = b'HTTP'
 		self.set(protocol)

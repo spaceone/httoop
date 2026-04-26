@@ -30,7 +30,7 @@ class WSGIBody(Body):
 class WSGI(object):
 	u"""A mixin class which implements the WSGI interface."""
 
-	def __init__(self, environ: Optional[Dict[str, str]]=None, use_path_info: bool=False, *args, **kwargs) -> None:
+	def __init__(self, environ: Optional[Dict[str, str]] = None, use_path_info: bool = False, *args, **kwargs) -> None:
 		self.use_path_info = use_path_info
 		super(WSGI, self).__init__()
 		self.exc_info = None

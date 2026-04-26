@@ -69,7 +69,7 @@ class Status(with_metaclass(HTTPSemantic)):
 
 	STATUS_RE = re.compile(br"^([1-5]\d{2})(?:\s+([\s\w]*))\Z")
 
-	def __init__(self, code: Optional[int]=None, reason: Optional[bytes]=None) -> None:
+	def __init__(self, code: Optional[int] = None, reason: Optional[bytes] = None) -> None:
 		"""
 		:param code:
 		the HTTP Statuscode

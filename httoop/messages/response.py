@@ -12,7 +12,7 @@ __all__ = ('Response', )
 
 
 class Response(Message):
-    u"""A HTTP response message.
+    """A HTTP response message.
 
     .. seealso:: :rfc:`2616#section-6`
     """
@@ -40,12 +40,12 @@ class Response(Message):
         self.__status = Status(status or 200)
 
     def parse(self, line: bytes) -> None:
-        u"""parses the response line."""
+        """parses the response line."""
         bits = line.strip().split(None, 1)
         try:
             version, status = bits
         except ValueError:
-            raise InvalidLine(_(u'Invalid response line: %r'), line.decode('ISO8859-1'))
+            raise InvalidLine(_('Invalid response line: %r'), line.decode('ISO8859-1'))
 
         # version
         super(Response, self).parse(version)
@@ -54,7 +54,7 @@ class Response(Message):
         self.status.parse(status)
 
     def compose(self) -> bytes:
-        u"""composes the response line."""
+        """composes the response line."""
         return b'%s %s\r\n' % (bytes(self.protocol), bytes(self.status))
 
     def __repr__(self) -> str:

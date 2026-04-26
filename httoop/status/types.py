@@ -38,7 +38,7 @@ class StatusType(HTTPSemantic):
 
 
 class StatusException(with_metaclass(StatusType, Status, Exception)):
-    u"""This class represents a small HTTP Response message
+    """This class represents a small HTTP Response message
     for error handling purposes
     .
     """
@@ -60,7 +60,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
         self.body.set(value)
 
     header_to_remove = ()
-    u"""a tuple of header field names which should be
+    """a tuple of header field names which should be
         removed when responding with this error"""
 
     description = ''
@@ -79,7 +79,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
     code = 0
 
     def __init__(self, description: Optional[str] = None, reason: None = None, headers: Optional[Dict[str, str]] = None, traceback: Optional[str] = None) -> None:
-        u"""
+        """
         :param description:
         a description of the error which happened
         :type description: str
@@ -118,7 +118,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
     __str__ = __repr__
 
     def to_dict(self) -> Dict[str, Union[int, str, Dict[str, str]]]:
-        u"""the default body arguments."""
+        """the default body arguments."""
         return dict(
             status=self.status,
             reason=self.reason,

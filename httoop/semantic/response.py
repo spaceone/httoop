@@ -17,7 +17,7 @@ class ComposedResponse(ComposedMessage):
         self.response = self.message = response
 
     def prepare(self) -> None:
-        u"""prepares the response for being ready for transmitting."""
+        """prepares the response for being ready for transmitting."""
         response = self.response
 
         status = int(response.status)
@@ -56,10 +56,10 @@ class ComposedResponse(ComposedMessage):
         if response.status == 416:
             response.headers.set_element('Content-Range', 'bytes', None, response.headers.get('Content-Length'))
 
-        if self.request.method == u'TRACE':
+        if self.request.method == 'TRACE':
             response.headers.pop('Set-Cookie', None)
 
-        if self.request.method == u'HEAD':
+        if self.request.method == 'HEAD':
             response.body = None  # RFC 2616 Section 9.4
 
     def prepare_ranges(self) -> bool:
@@ -80,7 +80,7 @@ class ComposedResponse(ComposedMessage):
         yield self.request.protocol >= (1, 1)
         yield response.status == 200
         yield 'Range' in self.request.headers
-        yield self.request.method in (u'GET', )
+        yield self.request.method in ('GET', )
         yield response.headers.element('Accept-Ranges') == 'bytes'
         yield not self.chunked
         yield response.body

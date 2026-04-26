@@ -20,7 +20,7 @@ __all__ = ['Date']
 
 
 class Date(with_metaclass(HTTPSemantic)):
-    u"""A HTTP Date string.
+    """A HTTP Date string.
 
     It provides a API to multiple time representations:
 
@@ -39,7 +39,7 @@ class Date(with_metaclass(HTTPSemantic)):
     __slots__ = ('__composed', '__timestamp', '__datetime', '__time_struct')
 
     def __init__(self, timeval: Optional[Any] = None) -> None:
-        u"""
+        """
         :param timeval:
         :type  timeval:
         either seconds since epoch in float
@@ -99,7 +99,7 @@ class Date(with_metaclass(HTTPSemantic)):
 
     @classmethod
     def parse(cls, timestr: Optional[bytes] = None) -> 'Date':
-        u"""parses a HTTP date string and returns a :class:`Date` object.
+        """parses a HTTP date string and returns a :class:`Date` object.
 
         :param timestr: the time string in one of the http formats
         :type  timestr: str
@@ -136,7 +136,7 @@ class Date(with_metaclass(HTTPSemantic)):
         finally:
             locale.setlocale(locale.LC_TIME, old)
 
-        raise InvalidDate(_(u'Invalid date: %r'), timestr)
+        raise InvalidDate(_('Invalid date: %r'), timestr)
 
     def __int__(self) -> int:
         return int(float(self))

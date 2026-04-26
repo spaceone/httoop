@@ -9,7 +9,7 @@ def test_basic_www_authenticate(headers):
     www_auth = WWWAuthenticate('Basic', {'realm': 'simple'})
     assert bytes(www_auth) in (b'Basic realm="simple"', b'Basic realm=simple')
     headers.parse(b'WWW-Authenticate: %s' % www_auth)
-    assert headers.elements('WWW-Authenticate')[0].realm == u'simple'
+    assert headers.elements('WWW-Authenticate')[0].realm == 'simple'
 
 
 def test_basic_authorization(headers):
@@ -20,7 +20,7 @@ def test_basic_authorization(headers):
     assert headers.element('Authorization').params['password'] == b'12345'
 
 
-@pytest.mark.parametrize('invalid', (b'foo', b'Zm9v', u'föo'.encode('latin1')))
+@pytest.mark.parametrize('invalid', (b'foo', b'Zm9v', 'föo'.encode('latin1')))
 def test_invalid_headers(headers, invalid):
     headers.parse(b'Authorization: Basic %s' % (invalid,))
     with pytest.raises(InvalidHeader):

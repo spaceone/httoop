@@ -200,7 +200,7 @@ def test_required_parameter(params, headers):
         headers.elements('Authorization')
     assert 'Missing parameter' in str(excinfo)
 
-    element = Authorization(u'Digest', dict((p, pvars[p].decode('ascii')) for p in params))
+    element = Authorization('Digest', dict((p, pvars[p].decode('ascii')) for p in params))
     with pytest.raises(InvalidHeader) as excinfo:
         bytes(element)
     assert 'Missing parameter' in str(excinfo)

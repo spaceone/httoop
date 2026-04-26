@@ -38,7 +38,7 @@ class ContentRange(HeaderElement):
         try:
             value, content_range = elementstr.split(None, 1)
             if value != b'bytes':
-                raise InvalidHeader(_(u'Only "bytes" Content-Range supported'))
+                raise InvalidHeader(_('Only "bytes" Content-Range supported'))
             byte_range, complete_length = content_range.split(b'/')
             if complete_length != b'*':
                 complete_length = integer(complete_length)
@@ -54,7 +54,7 @@ class ContentRange(HeaderElement):
             if complete_length is None and start is None:
                 raise ValueError()
         except ValueError:
-            raise InvalidHeader(_(u'Content-Range: %r'), elementstr)
+            raise InvalidHeader(_('Content-Range: %r'), elementstr)
         return cls(value.decode('ISO8859-1'), (start, end), complete_length)
 
 
@@ -83,18 +83,18 @@ class Range(HeaderElement):
         for brange in byteranges:
             start, __, stop = (x.strip() for x in brange.partition(b'-'))
             if (not start and not stop) or not __:
-                raise InvalidHeader(_(u'no range start/stop.'))
+                raise InvalidHeader(_('no range start/stop.'))
             try:
                 start = integer(start) if start else None
                 stop = integer(stop) if stop else None
                 if start and start < 0 or stop and stop < 0:
                     raise ValueError()
             except ValueError:
-                raise InvalidHeader(_(u'no range number.'))
+                raise InvalidHeader(_('no range number.'))
             if start is not None and stop is not None and stop <= start:
-                raise InvalidHeader(_(u'range start must be smaller than end.'))
+                raise InvalidHeader(_('range start must be smaller than end.'))
             if not start and not stop:
-                raise InvalidHeader(_(u'full range requested.'))
+                raise InvalidHeader(_('full range requested.'))
             ranges.add((start, stop))
         return cls(bytesunit.decode('ISO8859-1'), list(sorted(ranges, key=lambda x: x[0] if x[0] is not None else -1)))
 
@@ -104,12 +104,12 @@ class Range(HeaderElement):
 
     def prevent_denial_of_service(self) -> None:
         if len([x for x in self.ranges if x[0] is None]) > 1 or len([x for x in self.ranges if x[1] is None]) > 1:
-            raise InvalidHeader(_(u'too many overlapping ranges.'))
+            raise InvalidHeader(_('too many overlapping ranges.'))
         byterange = set()
         for start, stop in ((x or 0, y or max((m[1] or 0) + 1 for m in self.ranges)) for x, y in self.ranges):
             range_ = set(range(start, stop))
             if any(x in byterange for x in range_):
-                raise InvalidHeader(_(u'duplicated range.'))
+                raise InvalidHeader(_('duplicated range.'))
             byterange.update(range_)
 
         if self.stddev([(x[1] or float('inf')) - (x[0] or 0) for x in self.ranges]) > 2.0:

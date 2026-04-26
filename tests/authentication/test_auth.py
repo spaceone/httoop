@@ -10,8 +10,8 @@ from httoop.header import Authorization, ProxyAuthenticate, ProxyAuthorization, 
 @pytest.mark.parametrize('scheme', ['Basic', 'Digest'])
 def test_realm_replaces_quote(scheme):
     w = WWWAuthenticate(scheme)
-    w.realm = u'My "Realm"'
-    assert w.realm == u'My Realm'
+    w.realm = 'My "Realm"'
+    assert w.realm == 'My Realm'
 
 
 @pytest.mark.parametrize('name,invalid', chain(*([
@@ -26,14 +26,14 @@ def test_parse_invalid_header(name, invalid, headers):
 
 
 @pytest.mark.parametrize('clazz,value', [
-    (WWWAuthenticate, u''),
-    (WWWAuthenticate, u'foo'),
-    (ProxyAuthenticate, u''),
-    (ProxyAuthenticate, u'foo'),
-    (Authorization, u''),
-    (Authorization, u'foo'),
-    (ProxyAuthorization, u''),
-    (ProxyAuthorization, u'foo'),
+    (WWWAuthenticate, ''),
+    (WWWAuthenticate, 'foo'),
+    (ProxyAuthenticate, ''),
+    (ProxyAuthenticate, 'foo'),
+    (Authorization, ''),
+    (Authorization, 'foo'),
+    (ProxyAuthorization, ''),
+    (ProxyAuthorization, 'foo'),
 ])
 def test_compose_invalid_header(clazz, value):
     h = clazz(value)
@@ -44,7 +44,7 @@ def test_compose_invalid_header(clazz, value):
 def test_order(headers):
     headers.parse(b'WWW-Authenticate: basic realm="foo"')
     headers.parse(b'WWW-Authenticate: digest realm="bar", nonce=foo, opaque=foo, algorithm=MD5, qop=auth')
-    assert headers.elements(u'WWW-Authenticate') == [u'Digest', u'Basic']
+    assert headers.elements('WWW-Authenticate') == ['Digest', 'Basic']
 
 
 def test_no_realm(headers):

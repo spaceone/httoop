@@ -7,7 +7,7 @@ from httoop.uri import URI
 
 
 class RedirectStatus(StatusException):
-    u"""REDIRECTIONS = 3xx
+    """REDIRECTIONS = 3xx
     A redirection to other URI(s) which are set in the Location-header.
     """
 
@@ -28,7 +28,7 @@ class RedirectStatus(StatusException):
 
 
 class MULTIPLE_CHOICES(RedirectStatus):
-    u"""The server has multiple representations of the requested resource.
+    """The server has multiple representations of the requested resource.
     And the client e.g. did not specify the Accept-header or
     the requested representation does not exists.
     """
@@ -37,7 +37,7 @@ class MULTIPLE_CHOICES(RedirectStatus):
 
 
 class MOVED_PERMANENTLY(RedirectStatus):
-    u"""The the server knows the target resource but the URI
+    """The the server knows the target resource but the URI
     is incorrect (wrong domain, trailing slash, etc.).
     It can also be send if a resource have moved or
     renamed to prevent broken links.
@@ -54,7 +54,7 @@ class FOUND(RedirectStatus):
 
 
 class SEE_OTHER(RedirectStatus):
-    u"""The request has been processed but instead of serving a
+    """The request has been processed but instead of serving a
     representation of the result or resource it links to another
     document which contains a static status message, etc. so
     the client is not forced to download the data.
@@ -68,7 +68,7 @@ class SEE_OTHER(RedirectStatus):
 
 
 class NOT_MODIFIED(RedirectStatus):
-    u"""The client already has the data which is provided through the
+    """The client already has the data which is provided through the
     information in the Etag or If-Modified-Since-header.
     The Date-header is required, the ETag-header and
     Content-Location-header are useful.
@@ -99,7 +99,7 @@ class USE_PROXY(RedirectStatus):
 
 
 class TEMPORARY_REDIRECT(RedirectStatus):
-    u"""The request has not processed because the requested
+    """The request has not processed because the requested
     resource is located at a different URI.
     The client should resent the request to the URI given in the Location-header.
     for GET this is the same as 303 but for POST, PUT and DELETE it is

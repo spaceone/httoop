@@ -1,4 +1,4 @@
-u"""Implements a state machine for the parsing process."""
+"""Implements a state machine for the parsing process."""
 # TODO: translation API
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ NOT_RECEIVED_YET = True
 
 
 class StateMachine(object):
-    u"""A protocol state machine which supports pipelining and
+    """A protocol state machine which supports pipelining and
     parses HTTP messages by turning them into appropriate objects.
     """
 
@@ -78,7 +78,7 @@ class StateMachine(object):
         return message
 
     def parse(self, data: bytes) -> Union[Tuple[Tuple[Request, Response]], Tuple[Tuple[Request, Response], Tuple[Request, Response]], Tuple[()], Tuple[Response]]:
-        u"""Appends the given data to the internal buffer
+        """Appends the given data to the internal buffer
         and parses it as HTTP Request-Messages.
 
         :param data:
@@ -186,7 +186,7 @@ class StateMachine(object):
             te = message.headers['Transfer-Encoding'].lower()
             self.chunked = 'chunked' == te
             if not self.chunked:
-                raise NOT_IMPLEMENTED(u'Unknown HTTP/1.1 Transfer-Encoding: %r' % te)
+                raise NOT_IMPLEMENTED('Unknown HTTP/1.1 Transfer-Encoding: %r' % te)
         else:
             # Content-Length header defines the length of the message body
             try:
@@ -195,7 +195,7 @@ class StateMachine(object):
                     self.message_length = None
                     raise ValueError()
             except ValueError:
-                raise BAD_REQUEST(_(u'Invalid Content-Length header.'))
+                raise BAD_REQUEST(_('Invalid Content-Length header.'))
 
     def parse_body_with_message_length(self) -> Optional[bool]:
         body, self.buffer = self.buffer[:self.message_length], self.buffer[self.message_length:]
@@ -231,7 +231,7 @@ class StateMachine(object):
             return self.parse_trailers()
 
         if not rest_chunk.startswith(self.line_end):
-            raise InvalidBody(_(u'Invalid chunk terminator: %r'), rest_chunk[:2].decode('ISO8859-1'))
+            raise InvalidBody(_('Invalid chunk terminator: %r'), rest_chunk[:2].decode('ISO8859-1'))
         self.buffer = self.buffer[len(self.line_end):]
 
         # next chunk
@@ -245,7 +245,7 @@ class StateMachine(object):
             if chunk_size < 0:
                 raise ValueError()
         except (ValueError, OverflowError):
-            exc = InvalidHeader(_(u'Invalid chunk size: %r'), _chunk_size.decode('ISO8859-1'))
+            exc = InvalidHeader(_('Invalid chunk size: %r'), _chunk_size.decode('ISO8859-1'))
             raise BAD_REQUEST(Unicode(exc))
         else:
             return chunk_size, rest_chunk
@@ -267,7 +267,7 @@ class StateMachine(object):
         try:
             self.trailers.parse(bytes(trailers))
         except InvalidHeader as exc:
-            exc = InvalidHeader(_(u'Invalid trailers: %r'), Unicode(exc))
+            exc = InvalidHeader(_('Invalid trailers: %r'), Unicode(exc))
             raise BAD_REQUEST(Unicode(exc))
 
         self.merge_trailer_into_header()
@@ -280,8 +280,8 @@ class StateMachine(object):
             if value is not None:
                 message.headers.append(name, value)
         if self.trailers:
-            msg_trailers = u'" ,"'.join(self.trailers.keys())
-            raise BAD_REQUEST(u'untold trailers: "%s"' % msg_trailers)
+            msg_trailers = '" ,"'.join(self.trailers.keys())
+            raise BAD_REQUEST('untold trailers: "%s"' % msg_trailers)
         del self.trailers
 
     def set_body_content_encoding(self) -> None:

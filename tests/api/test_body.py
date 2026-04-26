@@ -13,16 +13,16 @@ except NameError:
 
 
 def test_body_set_unicode(request_):
-    request_.body = u'foobar'
+    request_.body = 'foobar'
     assert bytes(request_.body) == b'foobar'
-    assert unicode(request_.body) == u'foobar'
+    assert unicode(request_.body) == 'foobar'
     assert request_.body.fileable
 
 
 def test_body_set_bytes(request_):
     request_.body = b'foobar'
     assert bytes(request_.body) == b'foobar'
-    assert unicode(request_.body) == u'foobar'
+    assert unicode(request_.body) == 'foobar'
     assert request_.body.fileable
 
 
@@ -30,15 +30,15 @@ def test_body_set_bytesio(request_):
     b = BytesIO(b'ThisIsABytesIOBody')
     request_.body = b
     assert bytes(request_.body) == b'ThisIsABytesIOBody'
-    assert unicode(request_.body) == u'ThisIsABytesIOBody'
+    assert unicode(request_.body) == 'ThisIsABytesIOBody'
     assert request_.body.fileable
 
 
 def test_body_set_stringio(request_):
-    s = StringIO(u'ThisIsAStringIOBody')
+    s = StringIO('ThisIsAStringIOBody')
     request_.body = s
     assert bytes(request_.body) == b'ThisIsAStringIOBody'
-    assert unicode(request_.body) == u'ThisIsAStringIOBody'
+    assert unicode(request_.body) == 'ThisIsAStringIOBody'
     assert request_.body.fileable
 
 
@@ -60,7 +60,7 @@ def test_body_set_bytearray(request_):
 
 
 def test_body_set_list(request_):
-    ls = [u'This ', 'is', b'\nsome', None, u'list\t', 'content', '']
+    ls = ['This ', 'is', b'\nsome', None, 'list\t', 'content', '']
     request_.body = ls
     assert bytes(request_.body) == b'This is\nsomelist\tcontent'
 
@@ -83,7 +83,7 @@ def test_body_set_generator(request_):
     request_.body = g()
     assert request_.body.generator
     assert bytes(request_.body) == b'This is A\tGenerator'
-    assert unicode(request_.body) == u'This is A\tGenerator'
+    assert unicode(request_.body) == 'This is A\tGenerator'
     assert bytes(request_.body) == b'This is A\tGenerator'
     assert len(request_.body) == 19
 

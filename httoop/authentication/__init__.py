@@ -26,16 +26,16 @@ class AuthElement(HeaderElement):
         try:
             scheme, authinfo = elementstr.split(b' ', 1)
         except ValueError:
-            raise InvalidHeader(_(u'Authorization headers must contain authentication scheme'))
+            raise InvalidHeader(_('Authorization headers must contain authentication scheme'))
         try:
             parser = cls.schemes[scheme.decode('ISO8859-1').lower()]
         except KeyError:
-            raise InvalidHeader(_(u'Unsupported authentication scheme: %r'), scheme)
+            raise InvalidHeader(_('Unsupported authentication scheme: %r'), scheme)
 
         try:
             authinfo = parser.parse(authinfo)
         except KeyError as key:
-            raise InvalidHeader(_(u'Missing parameter %r for authentication scheme %r'), str(key), scheme)
+            raise InvalidHeader(_('Missing parameter %r for authentication scheme %r'), str(key), scheme)
 
         return scheme.title(), authinfo
 
@@ -43,12 +43,12 @@ class AuthElement(HeaderElement):
         try:
             scheme = self.schemes[self.value.lower()]
         except KeyError:
-            raise InvalidHeader(_(u'Unsupported authentication scheme: %r'), self.value)
+            raise InvalidHeader(_('Unsupported authentication scheme: %r'), self.value)
 
         try:
             authinfo = scheme.compose(self.params)
         except KeyError as key:
-            raise InvalidHeader(_(u'Missing parameter %r for authentication scheme %r'), str(key), self.value)
+            raise InvalidHeader(_('Missing parameter %r for authentication scheme %r'), str(key), self.value)
 
         return b'%s %s' % (self.value.encode('ASCII').title(), authinfo)
 
@@ -100,7 +100,7 @@ class AuthResponseElement(AuthElement):
 
     @classmethod
     def sorted(cls, elements: List[Union['WWWAuthenticate', Any]]) -> List[Union['WWWAuthenticate', Any]]:
-        return list(sorted(elements, key=lambda e: {'basic': u'\xff'}.get(e.value.lower(), e.value)))
+        return list(sorted(elements, key=lambda e: {'basic': '\xff'}.get(e.value.lower(), e.value)))
 
     @classmethod
     def join(cls, values: List[bytes]) -> bytes:
@@ -112,7 +112,7 @@ class AuthResponseElement(AuthElement):
 
     @realm.setter
     def realm(self, realm):
-        self.params['realm'] = realm.replace(u'"', u'').encode('ASCII', 'ignore')
+        self.params['realm'] = realm.replace('"', '').encode('ASCII', 'ignore')
 
 
 class AuthInfoElement(HeaderElement):

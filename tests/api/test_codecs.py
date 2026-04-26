@@ -77,9 +77,9 @@ def test_body_invalid_plain_text():
     with pytest.raises(DecodeError):
         lookup('text/plain').decode(b'\xff')
     with pytest.raises(EncodeError):
-        lookup('text/plain').encode(u'→', 'ISO8859-1')
+        lookup('text/plain').encode('→', 'ISO8859-1')
 
 
 def test_application_x_ww_form_urlencoded():
     codec = lookup('application/x-www-form-urlencoded')
-    assert codec.encode({u'value': u''.join(chr(i) for i in range(128))}) == b'value=%0%1%2%3%4%5%6%7%8%9%A%B%C%D%E%F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F+%21%22%23%24%25%26%27%28%29%2A%2B%2C-.%2F0123456789%3A%3B%3C%3D%3E%3F%40ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F'
+    assert codec.encode({'value': ''.join(chr(i) for i in range(128))}) == b'value=%0%1%2%3%4%5%6%7%8%9%A%B%C%D%E%F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F+%21%22%23%24%25%26%27%28%29%2A%2B%2C-.%2F0123456789%3A%3B%3C%3D%3E%3F%40ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F'

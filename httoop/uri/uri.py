@@ -18,7 +18,7 @@ from httoop.util import Unicode, _, integer
 
 
 class URI(with_metaclass(URIType)):
-    u"""Uniform Resource Identifier."""
+    """Uniform Resource Identifier."""
 
     __slots__ = ('scheme', 'username', 'password', 'host', '_port', 'path', 'query_string', 'fragment')
     slots = __slots__
@@ -38,18 +38,18 @@ class URI(with_metaclass(URIType)):
 
     @property
     def path_segments(self):
-        return [Unicode.replace(p, u'%2f', u'/') for p in self.path.split(u'/')]
+        return [Unicode.replace(p, '%2f', '/') for p in self.path.split('/')]
 
     @path_segments.setter
     def path_segments(self, path):
-        self.path = u'/'.join(seq.replace(u'/', u'%2f') for seq in path)
+        self.path = '/'.join(seq.replace('/', '%2f') for seq in path)
 
     @property
     def hostname(self) -> str:
         host = self.host
-        if host.startswith(u'[v') and host.endswith(u']') and u'.' in host and host[2:-1].split(u'.', 1)[0].isdigit():
-            return host[2:-1].split(u'.', 1)[1]
-        return host.rstrip(u']').lstrip(u'[').lower()
+        if host.startswith('[v') and host.endswith(']') and '.' in host and host[2:-1].split('.', 1)[0].isdigit():
+            return host[2:-1].split('.', 1)[1]
+        return host.rstrip(']').lstrip('[').lower()
 
     @property
     def port(self):
@@ -64,14 +64,14 @@ class URI(with_metaclass(URIType)):
                 if not 0 < integer(port) <= 65535:
                     raise ValueError
             except ValueError:
-                raise InvalidURI(_(u'Invalid port: %r'), port)  # TODO: TypeError
+                raise InvalidURI(_('Invalid port: %r'), port)  # TODO: TypeError
         self._port = port
 
     def __init__(self, uri: Optional[Any] = None, *args, **kwargs) -> None:
         self.set(kwargs or args or uri or b'')
 
     def join(self, other: Optional[bytes] = None, *args, **kwargs) -> Union['HTTP', 'SvnSSH', 'URI']:
-        u"""Join a URI with another absolute or relative URI."""
+        """Join a URI with another absolute or relative URI."""
         relative = URI(other or args or kwargs)
         joined = URI()
         current = URI(self)
@@ -89,8 +89,8 @@ class URI(with_metaclass(URIType)):
         if relative.path:
             current = relative
         joined.path = current.path
-        if relative.path and not relative.path.startswith(u'/'):
-            joined.path = u'%s%s%s' % (self.path, u'' if self.path.endswith(u'/') else u'/../', relative.path)
+        if relative.path and not relative.path.startswith('/'):
+            joined.path = '%s%s%s' % (self.path, '' if self.path.endswith('/') else '/../', relative.path)
         if relative.query_string:
             current = relative
         joined.query_string = current.query_string
@@ -101,7 +101,7 @@ class URI(with_metaclass(URIType)):
         return joined
 
     def normalize(self) -> None:
-        u"""Normalize the URI to make it comparable.
+        """Normalize the URI to make it comparable.
 
         .. seealso:: :rfc:`3986#section-6`
         """
@@ -112,8 +112,8 @@ class URI(with_metaclass(URIType)):
             self.port = self.PORT
 
         self.abspath()
-        if not self.path.startswith(u'/') and self.host and self.scheme and self.path:
-            self.path = u'/%s' % (self.path, )
+        if not self.path.startswith('/') and self.host and self.scheme and self.path:
+            self.path = '/%s' % (self.path, )
 
     def abspath(self) -> None:
         """Clear out any '..' and excessive slashes from the path.
@@ -126,23 +126,23 @@ class URI(with_metaclass(URIType)):
         >>> u = URI(b'/foo/../bar/.'); u.abspath(); u.path == u'/bar/'
         True
         """
-        path = re.sub(u'\\/{2,}', u'/', self.path)  # remove //
+        path = re.sub('\\/{2,}', '/', self.path)  # remove //
         if not path:
             return
         unsplit = []
         directory = False
-        for part in path.split(u'/'):
-            if part == u'..' and (not unsplit or unsplit.pop() is not None):
+        for part in path.split('/'):
+            if part == '..' and (not unsplit or unsplit.pop() is not None):
                 directory = True
-            elif part != u'.':
+            elif part != '.':
                 unsplit.append(part)
                 directory = False
             else:
                 directory = True
 
         if directory:
-            unsplit.append(u'')
-        self.path = u'/'.join(unsplit) or u'/'
+            unsplit.append('')
+        self.path = '/'.join(unsplit) or '/'
 
     def set(self, uri: Any) -> None:
         if isinstance(uri, Unicode):
@@ -168,7 +168,7 @@ class URI(with_metaclass(URIType)):
     def dict(self, uri):
         for key in self.slots:
             key = key.lstrip('_')
-            setattr(self, key, uri.get(key, u''))
+            setattr(self, key, uri.get(key, ''))
 
     @property
     def tuple(self):
@@ -200,7 +200,7 @@ class URI(with_metaclass(URIType)):
                 return self.parse(uri)
 
         if uri and uri.strip(b'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'):
-            raise InvalidURI(_(u'Invalid URI: must consist of printable ASCII characters without whitespace.'))
+            raise InvalidURI(_('Invalid URI: must consist of printable ASCII characters without whitespace.'))
 
         uri, __, fragment = uri.partition(b'#')
         uri, __, query_string = uri.partition(b'?')
@@ -222,15 +222,15 @@ class URI(with_metaclass(URIType)):
             host, port = hostport, b''
 
         unquote = self.unquote
-        path = u'/'.join([unquote(seq).replace(u'/', u'%2f') for seq in path.split(b'/')])
+        path = '/'.join([unquote(seq).replace('/', '%2f') for seq in path.split(b'/')])
 
         try:
             scheme = scheme.decode('ascii').lower()
         except UnicodeDecodeError:  # pragma: no cover
-            raise InvalidURI(_(u'Invalid scheme: must be ASCII.'))
+            raise InvalidURI(_('Invalid scheme: must be ASCII.'))
 
-        if scheme and scheme.strip(u'abcdefghijklmnopqrstuvwxyz0123456789.-+'):
-            raise InvalidURI(_(u'Invalid scheme: must only contain alphanumeric letters or plus, dash, dot.'))
+        if scheme and scheme.strip('abcdefghijklmnopqrstuvwxyz0123456789.-+'):
+            raise InvalidURI(_('Invalid scheme: must only contain alphanumeric letters or plus, dash, dot.'))
 
         if query_string:
             query_string = QueryString.encode(QueryString.decode(query_string, self.encoding), self.encoding)
@@ -254,12 +254,12 @@ class URI(with_metaclass(URIType)):
                 host = inet_ntop(AF_INET6, inet_pton(AF_INET6, host.decode('ascii')))
                 if isinstance(host, bytes):  # Python 2
                     host = host.decode('ascii')
-                return u'[%s]' % (host, )
+                return '[%s]' % (host, )
             except (SocketError, UnicodeDecodeError):
                 # IPvFuture
                 if host.startswith(b'v') and b'.' in host and host[1:].split(b'.', 1)[0].isdigit():
                     try:
-                        return u'[%s]' % host.decode('ascii')
+                        return '[%s]' % host.decode('ascii')
                     except UnicodeDecodeError:  # pragma: no cover
                         raise InvalidURI(_('Invalid IPvFuture address: must be ASCII.'))
                 raise InvalidURI(_('Invalid IP address in URI.'))
@@ -287,7 +287,7 @@ class URI(with_metaclass(URIType)):
         return b''.join(self._compose_absolute_iter())
 
     def _compose_absolute_iter(self) -> Iterator[bytes]:
-        u"""composes the whole URI."""
+        """composes the whole URI."""
         scheme, username, password, host, port, path, _, fragment = self.tuple
         if scheme:
             yield self.quote(scheme, Percent.SCHEME)
@@ -313,12 +313,12 @@ class URI(with_metaclass(URIType)):
             yield b':%d' % integer(port)
 
     def _compose_relative_iter(self) -> Iterator[bytes]:
-        u"""Composes the relative URI beginning with the path."""
+        """Composes the relative URI beginning with the path."""
         scheme, path, query_string, quote, fragment = self.scheme, self.path, self.query_string, self.quote, self.fragment
         PATH = Percent.PATH
-        if not scheme and not path.startswith(u'/'):
+        if not scheme and not path.startswith('/'):
             PATH = b''.join({int2byte(c) for c in iterbytes(PATH)} - {b':', b'@'})
-        yield b'/'.join(quote(x, PATH) for x in path.split(u'/'))
+        yield b'/'.join(quote(x, PATH) for x in path.split('/'))
         if query_string:
             yield b'?'
             yield query_string.encode(self.encoding)
@@ -333,7 +333,7 @@ class URI(with_metaclass(URIType)):
         return Percent.quote(Unicode(data).encode(self.encoding), charset)
 
     def __eq__(self, other: Any) -> bool:
-        u"""Compares the URI with another string or URI.
+        """Compares the URI with another string or URI.
 
         .. seealso:: :rfc:`2616#section-3.2.3`
 

@@ -14,8 +14,8 @@ except NameError:
 
 def test_json(body):
     body.mimetype = 'application/json'
-    assert body.decode(b'{"foo": "bar"}') == {u'foo': u'bar'}
-    body.encode({u'bar': u'foo'})
+    assert body.decode(b'{"foo": "bar"}') == {'foo': 'bar'}
+    body.encode({'bar': 'foo'})
     assert bytes(body) == b'{"bar": "foo"}'
     # TODO: non-utf8
 
@@ -29,7 +29,7 @@ def test_invalid_json(body):
 def test_form_urlencoded(body):
     body.mimetype = 'application/x-www-form-urlencoded'
     body.set(b'foo=bar&bar=bar1&bar=bar2&baz')
-    assert body.decode() == ((u'foo', u'bar'), (u'bar', u'bar1'), (u'bar', u'bar2'), (u'baz', u''))
+    assert body.decode() == (('foo', 'bar'), ('bar', 'bar1'), ('bar', 'bar2'), ('baz', ''))
     # TODO: percent encoded
 
 
@@ -56,12 +56,12 @@ def test_parse_multipart_form_data(body):
     foo, bar = parts
     assert bytes(foo) == b'foocontent'
     assert bytes(bar) == b'barcontent'
-    assert foo.headers.element('Content-Disposition') == u'form-data'
-    assert bar.headers.element('Content-Disposition') == u'form-data'
-    assert foo.headers.element('Content-Disposition').params[u'name'] == u'foo'
-    assert bar.headers.element('Content-Disposition').params[u'name'] == u'bar'
-    assert u'filename' not in foo.headers.element('Content-Disposition').params
-    assert bar.headers.element(u'Content-Disposition').params[u'filename'] == u'test.txt'
+    assert foo.headers.element('Content-Disposition') == 'form-data'
+    assert bar.headers.element('Content-Disposition') == 'form-data'
+    assert foo.headers.element('Content-Disposition').params['name'] == 'foo'
+    assert bar.headers.element('Content-Disposition').params['name'] == 'bar'
+    assert 'filename' not in foo.headers.element('Content-Disposition').params
+    assert bar.headers.element('Content-Disposition').params['filename'] == 'test.txt'
 
 
 def test_compose_multipart_form_data(body):
@@ -95,9 +95,9 @@ def test_plain_text_utf8(body):
     body.mimetype = 'text/plain'
     body.encoding = 'UTF-8'
     check_encoding_dict(body, {
-        b'foo': u'foo',
-        b'b\xc3\xa4r': u'b\xe4r',
-        b'\xe2\x86\x92': u'\u2192'
+        b'foo': 'foo',
+        b'b\xc3\xa4r': 'b\xe4r',
+        b'\xe2\x86\x92': '\u2192'
     })
     check_raises(body, [b'\xe4'], unicode, UnicodeDecodeError)
 
@@ -106,21 +106,21 @@ def test_plain_text_latin1(body):
     body.mimetype = 'text/plain'
     body.encoding = 'ISO8859-1'
     check_encoding_dict(body, {
-        b'foo': u'foo',
-        b'b\xe4r': u'b\xe4r',
-        b'\xe2\x86\x92': u'\xe2\x86\x92'
+        b'foo': 'foo',
+        b'b\xe4r': 'b\xe4r',
+        b'\xe2\x86\x92': '\xe2\x86\x92'
     })
-    check_raises(body, (u'\u2192',), bytes, UnicodeEncodeError)
+    check_raises(body, ('\u2192',), bytes, UnicodeEncodeError)
 
 
 def test_plain_text_ascii(body):
     body.mimetype = 'text/plain'
     body.encoding = 'ascii'
     check_encoding_dict(body, {
-        b'foo': u'foo',
-        b'bar': u'bar',
+        b'foo': 'foo',
+        b'bar': 'bar',
     })
-    check_raises(body, (u'b\xe4r', u'\u2192'), bytes, UnicodeEncodeError)
+    check_raises(body, ('b\xe4r', '\u2192'), bytes, UnicodeEncodeError)
     check_raises(body, (b'b\xc3\xa4r', b'\xe2\x86\x92', b'\xe4'), unicode, UnicodeDecodeError)
 
 
@@ -128,18 +128,18 @@ def test_hal_json(body):
     body.mimetype = 'application/hal+json'
     hal_doc = b"""{"_embedded": {"orders": [{"status": "shipped", "currency": "USD", "total": 30.0, "_links": {"basket": {"href": "/baskets/98712"}, "customer": {"href": "/customers/7809"}, "self": {"profile": null, "deprecation": false, "name": null, "hreflang": null, "href": "/orders/123", "templated": false, "type": null}}}, {"status": "processing", "currency": "USD", "total": 20.0, "_links": {"basket": {"href": "/baskets/97213"}, "customer": {"href": "/customers/12369"}, "self": {"href": "/orders/124"}}}]}, "currentlyProcessing": 14, "_links": {"curie": [{"profile": null, "deprecation": false, "name": "acme", "hreflang": null, "href": "http://docs.acme.com/relations/{rel}", "templated": true, "type": null}], "self": {"profile": null, "deprecation": false, "name": null, "hreflang": null, "href": "/orders", "templated": false, "type": null}, "find": {"href": "/orders{?id}", "templated": true}, "next": {"href": "/orders?page=2"}}, "shippedToday": 20}"""
     resource = body.decode(hal_doc)
-    assert set(resource.get_relations()) == set([u'orders', u'curie', u'self', u'find', u'next'])
-    assert resource.get_link('next') == {'profile': None, 'deprecation': False, 'name': None, 'hreflang': None, 'href': u'/orders?page=2', 'templated': False, 'type': None}
-    assert resource.self == u'/orders'
-    assert resource.get_curie('acme:widgets') == u'http://docs.acme.com/relations/widgets'
-    assert resource.get_resource('orders').self == u'/orders/123'
+    assert set(resource.get_relations()) == set(['orders', 'curie', 'self', 'find', 'next'])
+    assert resource.get_link('next') == {'profile': None, 'deprecation': False, 'name': None, 'hreflang': None, 'href': '/orders?page=2', 'templated': False, 'type': None}
+    assert resource.self == '/orders'
+    assert resource.get_curie('acme:widgets') == 'http://docs.acme.com/relations/widgets'
+    assert resource.get_resource('orders').self == '/orders/123'
     assert resource.get_link('not-existing') is None
     assert resource.get_resource('not-existing') is None
     assert resource.get_curie('acme') == 'acme'
     resource.add_link('find', {'href': 'bar', 'name': 'xx'})
     resource.add_link('relation', {'href': 'bar', 'name': 'xx'})
     resource.add_link('relation', {'href': 'foo', 'templated': 'true', 'name': 'name', 'deprecation': 'true'})
-    assert resource.get_link('relation', 'name') == {'deprecation': False, 'href': u'foo', 'hreflang': None, 'name': 'name', 'templated': False, 'type': None, 'profile': None}
+    assert resource.get_link('relation', 'name') == {'deprecation': False, 'href': 'foo', 'hreflang': None, 'name': 'name', 'templated': False, 'type': None, 'profile': None}
     resource.add_resource('relation', {})
     assert resource.get_resource('relation') == {'_embedded': {}, '_links': {}}
 

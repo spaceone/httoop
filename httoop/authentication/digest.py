@@ -25,7 +25,7 @@ class DigestAuthScheme(object):
         try:
             return cls.algorithms[algorithm.decode('ASCII', 'ignore') if isinstance(algorithm, bytes) else algorithm]
         except KeyError:
-            raise InvalidHeader(_(u'Unknown digest authentication algorithm: %r'), algorithm)
+            raise InvalidHeader(_('Unknown digest authentication algorithm: %r'), algorithm)
 
     @classmethod
     def generate_nonce(cls, authinfo: ByteUnicodeDict) -> bytes:
@@ -88,7 +88,7 @@ class DigestAuthResponseScheme(DigestAuthScheme):  # WWW-Authenticate
     def parse(cls, authinfo: bytes) -> Dict[str, Union[bytes, List[bytes], bool]]:
         params = super(cls, cls).parse(authinfo)
         if b'"' in params['nonce']:
-            raise InvalidHeader(_(u'Nonce must not contain double quote'))
+            raise InvalidHeader(_('Nonce must not contain double quote'))
         stale = params.get('stale')
         if stale:
             stale = {b'false': False, b'true': True}.get(stale.lower())
@@ -170,7 +170,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
         algorithm = authinfo.get('algorithm', b'MD5').decode('ASCII', 'replace')
         H = cls.get_algorithm(algorithm)
 
-        if algorithm == u'MD5-sess' and authinfo.get('A1'):
+        if algorithm == 'MD5-sess' and authinfo.get('A1'):
             secret = H(authinfo['A1'])
         else:
             secret = H(cls.A1(authinfo))

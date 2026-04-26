@@ -95,7 +95,7 @@ class ServerStateMachine(StateMachine):
     def _check_uri_max_length(self, uri: Union[bytearray, bytes]) -> None:
         if len(uri) > self.MAX_URI_LENGTH:
             raise URI_TOO_LONG(
-                u'The maximum length of the request is %d' % self.MAX_URI_LENGTH
+                'The maximum length of the request is %d' % self.MAX_URI_LENGTH
             )
 
     def sanitize_request_uri_path(self) -> None:
@@ -107,7 +107,7 @@ class ServerStateMachine(StateMachine):
     def validate_request_uri_scheme(self) -> None:
         if self.message.uri.scheme:
             if self.message.uri.scheme not in ('http', 'https'):  # pragma: no cover
-                exc = InvalidURI(_(u'Invalid URL: wrong scheme'))
+                exc = InvalidURI(_('Invalid URL: wrong scheme'))
                 raise BAD_REQUEST(Unicode(exc))
         else:
             self.message.uri.scheme = self._default_scheme
@@ -131,10 +131,10 @@ class ServerStateMachine(StateMachine):
     def check_message_without_body_containing_data(self) -> None:
         if self.buffer and 'Content-Length' not in self.message.headers and not self.chunked:
             # request without Content-Length header but body
-            raise LENGTH_REQUIRED(u'Missing Content-Length header.')
+            raise LENGTH_REQUIRED('Missing Content-Length header.')
 
     def check_methods_without_body(self) -> None:
-        if self.message.method in (u'HEAD', u'GET', u'TRACE') and self.message.body:
+        if self.message.method in ('HEAD', 'GET', 'TRACE') and self.message.body:
             raise BAD_REQUEST('A %s request is considered as safe and MUST NOT contain a request body.' % self.message.method)
 
     def check_http2_upgrade(self) -> None:

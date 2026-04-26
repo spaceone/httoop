@@ -1,4 +1,4 @@
-u"""Utilities for python2/3 compatibility."""
+"""Utilities for python2/3 compatibility."""
 
 from __future__ import annotations
 
@@ -79,7 +79,7 @@ def iteritems(d, **kw):
 
 def to_unicode(string: Optional[Union[bytes, str]]) -> str:
     if string is None:
-        return u''
+        return ''
     if isinstance(string, bytes):
         try:
             return string.decode('UTF-8')
@@ -110,7 +110,7 @@ def integer(number: Union[int, str, bytes], *args) -> int:
 
 
 class IFile(object):
-    u"""The file interface."""
+    """The file interface."""
 
     __slots__ = ('fd')
 

@@ -16,7 +16,7 @@ from httoop.util import IFile, Unicode
 
 
 class Body(with_metaclass(HTTPSemantic, IFile)):
-    u"""A HTTP message body.
+    """A HTTP message body.
 
     This class is capable of handling HTTP Transfer-Encoding
     and Content-Encoding as defined in RFC 2616.
@@ -39,7 +39,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 
     @property
     def fileable(self) -> bool:
-        u"""Flag whether the set content provides the file interface."""
+        """Flag whether the set content provides the file interface."""
         return all(hasattr(self.fd, method) for method in ('read', 'write', 'close'))
 
     @property
@@ -58,7 +58,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 
     @property
     def mimetype(self):
-        u"""Represents the MIME media type of the content."""
+        """Represents the MIME media type of the content."""
         return self.headers.element('Content-Type')
 
     @mimetype.setter
@@ -114,7 +114,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
         self.set(content)
 
     def encode(self, *data) -> None:
-        u"""Encode the object in :attr:`data` if a codec for the mimetype exists."""
+        """Encode the object in :attr:`data` if a codec for the mimetype exists."""
         codec = self.mimetype.codec
         if codec:
             if self.data is None and not data:
@@ -133,7 +133,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
             self.data = data
 
     def decode(self, *data) -> Any:
-        u"""Decodes the body content if a codec for the mimetype exists.
+        """Decodes the body content if a codec for the mimetype exists.
         Stores the decoded object in :attr:`data`.
         """
         codec = self.mimetype.codec
@@ -144,14 +144,14 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
             return self.data
 
     def compress(self) -> None:
-        u"""Applies the Content-Encoding codec to the content."""
+        """Applies the Content-Encoding codec to the content."""
         codec = self.content_codec
         if codec:
             self.set(codec.encode(self.__content_bytes()))
             self.content_encoding = None
 
     def decompress(self) -> None:
-        u"""Applies the Content-Encoding codec to the content."""
+        """Applies the Content-Encoding codec to the content."""
         codec = self.content_codec
         if codec:
             self.set(codec.decode(self.__content_bytes()))
@@ -204,7 +204,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
         return self.__content_bytes().decode(self.encoding)
 
     def __iter__(self) -> Iterator[Any]:
-        u"""Iterates over the content applying Content-Encoding and Transfer-Encoding."""
+        """Iterates over the content applying Content-Encoding and Transfer-Encoding."""
         data = self.__content_iter()
         for codec in (self.content_codec, self.transfer_codec):
             if codec:

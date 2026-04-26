@@ -5,13 +5,13 @@ import pytest
 
 def test_safe_methods(request_):
     all_methods = (
-        (u'GET', True, True),
-        (u'HEAD', True, True),
-        (u'PUT', False, True),
-        (u'POST', False, False),
-        (u'DELETE', False, True),
-        (u'OPTIONS', False, True),
-        (u'TRACE', False, True),
+        ('GET', True, True),
+        ('HEAD', True, True),
+        ('PUT', False, True),
+        ('POST', False, False),
+        ('DELETE', False, True),
+        ('OPTIONS', False, True),
+        ('TRACE', False, True),
     )
     for method, safe, idempotent in all_methods:
         request_.method = method
@@ -22,11 +22,11 @@ def test_safe_methods(request_):
 @pytest.mark.xfail(reason='hash changing + fixed references')
 def test_hashable_methods(request_):
     methods = {}
-    request_.method = u'GET'
+    request_.method = 'GET'
     methods[request_.method] = 1
     assert b'GET' in methods
     assert b'POST' not in methods
-    request_.method = u'POST'
+    request_.method = 'POST'
     assert b'POST' not in methods
     methods[request_.method] = 1
     assert b'POST' in methods

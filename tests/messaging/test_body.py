@@ -106,11 +106,11 @@ def test_chunked_body_with_forbidden_trailer():
 
 def test_chunked_body_without_mentioned_trailer(statemachine):
     statemachine.parse(b'POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nTrailer: Foo, bar, foo\r\nAccept: */*\r\nUser-Agent: httoop/0.0\r\nHost: localhost\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n')
-    assert statemachine.parse(b'11\r\nand seems to work\r\n0\r\nfoo: test\r\n\r\n')[0][0].trailer == {u'Foo': b'test'}
+    assert statemachine.parse(b'11\r\nand seems to work\r\n0\r\nfoo: test\r\n\r\n')[0][0].trailer == {'Foo': b'test'}
 
 
 def test_body_gzip_compressed(request_, response, clientstatemachine):
-    response.body = u'this is a test'
+    response.body = 'this is a test'
     response.headers['Content-Encoding'] = 'gzip'
     c = ComposedResponse(response, request_)
     c.prepare()
@@ -125,7 +125,7 @@ def test_body_gzip_compressed(request_, response, clientstatemachine):
 
 
 def test_body_deflate_compressed(request_, response, clientstatemachine):
-    response.body = u'this is a test'
+    response.body = 'this is a test'
     response.headers['Content-Encoding'] = 'deflate'
     c = ComposedResponse(response, request_)
     c.prepare()

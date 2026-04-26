@@ -1,14 +1,22 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    from xml.etree.ElementTree import Element
+
 
 # TODO: http://docs.python.org/2/library/xml.html#xml-vulnerabilities
 # TODO: https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
 try:
-    from defusedxml.ElementTree import Element, ParseError, fromstring, tostring
+    from defusedxml.ElementTree import ParseError, fromstring, tostring
 except ImportError:  # pragma: no cover
     # TODO: emit a warning
-    from xml.etree.ElementTree import Element, ParseError, tostring  # nosec
+    from xml.etree.ElementTree import ParseError, tostring
 
     def fromstring(data):
         raise ParseError('Will not parse without defusedxml!')

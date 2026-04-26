@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 from httoop.util import Unicode
 
@@ -20,11 +20,9 @@ class Codec(object):
         return data
 
     @classmethod
-    def iterencode(cls, data: Dict[Any, Any], charset: Optional[str] = None, mimetype: Optional["ContentType"] = None) -> None:  # pragma: no cover
-        for part in data:
-            yield cls.encode(part, charset, mimetype)
+    def iterencode(cls, data: Any, charset: str | None = None, mimetype: ContentType | None = None) -> None:  # pragma: no cover
+        yield cls.encode(data, charset, mimetype)
 
     @classmethod
-    def iterdecode(cls, data, charset=None, mimetype=None):  # pragma: no cover
-        for part in data:
-            yield cls.decode(part, charset, mimetype)
+    def iterdecode(cls, data: Any, charset=None, mimetype=None):  # pragma: no cover
+        yield cls.decode(data, charset, mimetype)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 u"""Utilities for python2/3 compatibility."""
 
 from __future__ import absolute_import

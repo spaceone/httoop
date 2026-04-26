@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from httoop.codecs.application.gzip import GZip
 from httoop.codecs.application.hal_json import HAL
 from httoop.codecs.application.json import JSON

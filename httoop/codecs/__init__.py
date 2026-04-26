@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 u"""Module containing various codecs which are
 common used in combination with HTTP.
 """

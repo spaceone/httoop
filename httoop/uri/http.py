@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """HTTP URLs
 .. seealso:: :rfc:`2616#section-3.2`.
 

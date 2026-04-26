@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """httoop CLI tool.
 
 Examples

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """JSON Hypertext Application Language (application/hal+json) codec."""
 
 from __future__ import absolute_import

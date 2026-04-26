@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 u"""Implements a state machine for the parsing process."""
 # TODO: translation API
 

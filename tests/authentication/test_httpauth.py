@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Implement test cases from:
 http://test.greenbytes.de/tech/tc/httpauth/
 """

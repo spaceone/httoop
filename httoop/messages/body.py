@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """HTTP request and response body.
 
 .. seealso:: :rfc:`2616#section-4.3`

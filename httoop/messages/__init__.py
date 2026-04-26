@@ -11,4 +11,5 @@ from httoop.messages.protocol import Protocol
 from httoop.messages.request import Request
 from httoop.messages.response import Response
 
+
 __all__ = ['Message', 'Request', 'Response', 'Protocol', 'Body', 'Method']

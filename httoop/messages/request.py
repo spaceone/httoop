@@ -10,6 +10,7 @@ from httoop.messages.method import Method
 from httoop.uri import HTTP as URI
 from httoop.util import _
 
+
 __all__ = ('Request', )
 
 

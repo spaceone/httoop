@@ -13,6 +13,7 @@ from httoop.meta import HTTPSemantic
 from httoop.six import with_metaclass
 from httoop.util import Unicode, _
 
+
 __all__ = ('Protocol', )
 
 

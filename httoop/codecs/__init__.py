@@ -10,6 +10,7 @@ from typing import Any, Type
 from httoop.codecs import application, audio, example, image, message, model, multipart, text, video
 from httoop.codecs.codec import Codec
 
+
 CODECS = dict()
 types = (application, audio, example, image, message, model, multipart, text, video)
 

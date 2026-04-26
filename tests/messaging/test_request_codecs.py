@@ -6,6 +6,7 @@ import pytest
 from httoop import Body
 from httoop.exceptions import InvalidHeader
 
+
 try:
     unicode
 except NameError:

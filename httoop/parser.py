@@ -13,6 +13,7 @@ from httoop.messages.response import Response
 from httoop.status import BAD_REQUEST, NOT_IMPLEMENTED
 from httoop.util import Unicode, _, integer
 
+
 CR = b'\r'
 LF = b'\n'
 CRLF = CR + LF

@@ -5,9 +5,7 @@ from typing import Any, List, Optional
 
 from httoop.codecs import lookup
 from httoop.exceptions import InvalidDate, InvalidHeader
-from httoop.header.element import (
-    HeaderElement, MimeType, _AcceptElement, _CookieElement, _HopByHopElement, _ListElement,
-)
+from httoop.header.element import HeaderElement, MimeType, _AcceptElement, _CookieElement, _HopByHopElement, _ListElement
 from httoop.util import Unicode, _, integer
 
 

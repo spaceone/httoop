@@ -5,4 +5,5 @@ from httoop.codecs.application.x_www_form_urlencoded import FormURLEncoded
 from httoop.codecs.application.xml import XML
 from httoop.codecs.application.zlib import Deflate
 
+
 __all__ = ['FormURLEncoded', 'JSON', 'GZip', 'Deflate', 'XML', 'HAL']

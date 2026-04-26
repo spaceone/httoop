@@ -3,7 +3,6 @@
 .. seealso:: :rfc:`2616#section-3.3`
 """
 
-from __future__ import absolute_import
 from __future__ import annotations
 
 import locale

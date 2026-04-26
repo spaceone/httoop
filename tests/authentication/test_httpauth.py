@@ -1,7 +1,6 @@
 """Implement test cases from:
 http://test.greenbytes.de/tech/tc/httpauth/
 """
-from __future__ import unicode_literals
 
 import pytest
 

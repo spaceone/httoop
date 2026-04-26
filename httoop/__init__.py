@@ -3,7 +3,6 @@
 .. seealso:: :rfc:`2616`
 """
 
-from __future__ import absolute_import
 
 from httoop import cache
 from httoop.client import ClientStateMachine

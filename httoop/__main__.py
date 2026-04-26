@@ -6,7 +6,6 @@ python3 -m httoop compose request -H 'Host: www.example.net'  | python3 -m httoo
 python3 -m httoop compose response  | python3 -m httoop parse response
 """
 
-from __future__ import print_function
 
 import sys
 from argparse import ArgumentParser, FileType

@@ -17,7 +17,7 @@ class WSGIClient(WSGI):
         super(WSGIClient, self).__init__(*args, **kwargs)
 
 
-OK = b'200 OK'
+OK = '200 OK'
 output = b'Hello World!'
 response_headers = [(b'Content-type', b'text/plain'), (b'Content-Length', str(len(output)).encode('ascii'))]
 
@@ -135,7 +135,7 @@ def application15(environ, start_response):
     try:
         raise ValueError(result)
     except ValueError:
-        start_response(b'200 OK', {}, sys.exc_info())
+        start_response(OK, {}, sys.exc_info())
     return []
 
 

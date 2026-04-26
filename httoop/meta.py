@@ -1,6 +1,5 @@
 """MetaClasses for HTTOOP types."""
 
-from __future__ import absolute_import
 from __future__ import annotations
 
 from typing import Any, Dict, Tuple, Type, Union

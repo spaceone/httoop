@@ -55,7 +55,7 @@ def test_utf8_in_headers(headers):
     assert bytes(e) == b"bar; param*=utf-8''%E2%86%92"
 
 
-#def test_latin1_in_headers(headers):
+# def test_latin1_in_headers(headers):
 #    headers['foo'] = u'ä'
 #    assert bytes(headers) == b'Foo: =?ISO8859-1?b?...?=\r\n\r\n'
 

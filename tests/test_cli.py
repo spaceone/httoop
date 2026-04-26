@@ -9,7 +9,7 @@ def test_cli_compose():
     assert b'PUT /foo HTTP/1.1\r\nHost: foo\r\n\r\n' == subprocess.check_output([sys.executable, '-m', 'httoop', 'compose', 'request', '-m', 'PUT', '-u', '/foo', '-H', 'Host: foo'])
     assert b'HTTP/1.1 400 Evil Request\r\n\r\n' == subprocess.check_output([sys.executable, '-m', 'httoop', 'compose', 'response', '-s', '400', '--reason', 'Evil Request'])
     assert b'GET / HTTP/1.0\r\n\r\n' == subprocess.check_output([sys.executable, '-m', 'httoop', 'compose', 'request', '--protocol', '1.0'])
-    #assert b'GET / HTTP/1.0\r\n\r\n' == subprocess.check_output([sys.executable, '-m', 'httoop', 'compose', 'request', '--protocol', 'HTTP/1.0'])
+    # assert b'GET / HTTP/1.0\r\n\r\n' == subprocess.check_output([sys.executable, '-m', 'httoop', 'compose', 'request', '--protocol', 'HTTP/1.0'])
     p = subprocess.Popen([sys.executable, '-m', 'httoop', 'compose', 'request', '-b', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     stdout, stderr = p.communicate(b'test')
     assert b'GET / HTTP/1.1\r\n\r\ntest' == stdout

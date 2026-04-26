@@ -205,7 +205,7 @@ class I_AM_A_TEAPOT(ClientErrorStatus):
     code = 418
 
 
-#class ENHANCE_YOUR_CALM(ClientErrorStatus):
+# class ENHANCE_YOUR_CALM(ClientErrorStatus):
 #
 #    code = 420
 
@@ -255,16 +255,16 @@ class REQUEST_HEADER_FIELDS_TOO_LARGE(ClientErrorStatus):
     code = 431
 
 
-#class NO_RESPONSE(ClientErrorStatus):
+# class NO_RESPONSE(ClientErrorStatus):
 #
 #    code = 444
 #
 #
-#class UNAVAILABLE_FOR_LEGAL_REASONS(ClientErrorStatus):
+# class UNAVAILABLE_FOR_LEGAL_REASONS(ClientErrorStatus):
 #
 #    code = 451
 #
 #
-#class CLIENT_CLOSED_REQUEST(ClientErrorStatus):
+# class CLIENT_CLOSED_REQUEST(ClientErrorStatus):
 #
 #    code = 499

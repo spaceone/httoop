@@ -12,9 +12,9 @@ class BasicAuthRequestScheme(object):
 
     @staticmethod
     def parse(authinfo: bytes) -> Dict[str, bytes]:
-        #try:
+        # try:
         #    authinfo = authinfo.encode('ascii')
-        #except ValueError:
+        # except ValueError:
         #    raise InvalidHeader(_(u'Invalid base64 in basic authentication'))
 
         try:
@@ -25,8 +25,8 @@ class BasicAuthRequestScheme(object):
             raise InvalidHeader(_('No username:password provided'))
 
         authinfo = {
-            #'username': username.decode('ISO8859-1'),
-            #'password': password.decode('ISO8859-1')
+            # 'username': username.decode('ISO8859-1'),
+            # 'password': password.decode('ISO8859-1')
             'username': username,
             'password': password,
         }
@@ -36,8 +36,8 @@ class BasicAuthRequestScheme(object):
     def compose(authinfo: ByteUnicodeDict) -> bytes:
         username = authinfo['username']
         password = authinfo['password']
-        #username = username.encode('ISO8859-1')
-        #password = password.encode('ISO8859-1')
+        # username = username.encode('ISO8859-1')
+        # password = password.encode('ISO8859-1')
         return encode_base64(b'%s:%s' % (username, password)).strip()
 
 

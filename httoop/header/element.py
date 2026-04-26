@@ -73,7 +73,7 @@ class HeaderElement(with_metaclass(HeaderType)):
         return self.compose()
 
     def __unicode__(self) -> str:
-        #return bytes(self).decode('ISO8859-1')
+        # return bytes(self).decode('ISO8859-1')
         return self.decode_rfc2047(bytes(self))
 
     if str is bytes:
@@ -378,7 +378,7 @@ class _AcceptElement(HeaderElement):
 
 class _CookieElement(HeaderElement):
 
-    #RE_TSPECIALS = re.compile(br'[ \(\)<>@,;:\\"\[\]\?=]')
+    # RE_TSPECIALS = re.compile(br'[ \(\)<>@,;:\\"\[\]\?=]')
     RE_TSPECIALS = re.compile(b'(?!)')
 
     def __init__(self, cookie_name: str, cookie_value: str, params: Optional[Dict[bytes, str]] = None) -> None:

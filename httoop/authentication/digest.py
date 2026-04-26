@@ -15,8 +15,8 @@ class DigestAuthScheme(object):
         'MD5-sess': lambda val: md5(val).hexdigest().encode('ASCII'),  # nosec
         'SHA-256': lambda val: sha256(val).hexdigest().encode('ASCII'),
         'SHA-256-sess': lambda val: sha256(val).hexdigest().encode('ASCII'),
-        #'SHA-512-256': lambda val: sha256(val).hexdigest().encode('ASCII'), TODO: ??
-        #'SHA-512-256-sess': lambda val: sha256(val).hexdigest().encode('ASCII'), TODO: ??
+        # 'SHA-512-256': lambda val: sha256(val).hexdigest().encode('ASCII'), TODO: ??
+        # 'SHA-512-256-sess': lambda val: sha256(val).hexdigest().encode('ASCII'), TODO: ??
     }
     qops = (b'auth', b'auth-int')  # quality of protection
 

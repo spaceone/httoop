@@ -204,7 +204,7 @@ class CaseInsensitiveDict(dict):
         for key in E.keys():
             self[self.formatkey(key)] = self.formatvalue(E[key])
 
-    #def setdefault(self, key: str, x: Optional[Union[UserAgent, Server, str, bytes]]=None) -> bytes:
+    # def setdefault(self, key: str, x: Optional[Union[UserAgent, Server, str, bytes]]=None) -> bytes:
     def setdefault(self, key: str, x: Optional[Union[str, bytes]] = None) -> bytes:
         key = self.formatkey(key)
         try:

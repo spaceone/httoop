@@ -9,7 +9,6 @@ from typing import Any, Callable, Iterator
 
 from httoop.messages import Body
 from httoop.six import reraise
-from httoop.util import iteritems
 
 
 __all__ = ('WSGI', )
@@ -124,7 +123,7 @@ class WSGI:
         environ.update(dict(self.environ.items()))
         environ.update(dict([
             ('HTTP_%s' % name.upper().replace('-', '_'), value)
-            for name, value in iteritems(self.request.headers)
+            for name, value in self.request.headers.items()
             if name.lower() not in ('content-type', 'content-length')
         ]))
         environ.update({

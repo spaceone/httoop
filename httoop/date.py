@@ -11,12 +11,13 @@ import time
 
 # import calendar
 from datetime import datetime
+from email.utils import parsedate_tz
 from typing import Any
 
 from httoop.exceptions import InvalidDate
 from httoop.meta import HTTPSemantic
 from httoop.six import with_metaclass
-from httoop.util import _, parsedate
+from httoop.util import _
 
 
 __all__ = ['Date']
@@ -116,7 +117,7 @@ class Date(with_metaclass(HTTPSemantic)):
         timestr = timestr.decode('ISO8859-1')
 
         # parse the most common HTTP Date format (RFC 2822)
-        date = parsedate(timestr)
+        date = parsedate_tz(timestr)
         if date is not None:
             return cls(date[:9])
 

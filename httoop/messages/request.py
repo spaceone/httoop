@@ -46,7 +46,7 @@ class Request(Message):
         :type  uri: str or :class:`URI`
 
         """
-        super(Request, self).__init__(protocol, headers, body)
+        super().__init__(protocol, headers, body)
         self.__method = Method(method or 'GET')
         self.__uri = URI(uri or '/')
 
@@ -62,7 +62,7 @@ class Request(Message):
             raise InvalidLine(_('Invalid request line: %r'), line.decode('ISO8859-1'))
 
         # protocol version
-        super(Request, self).parse(version)
+        super().parse(version)
 
         # method
         self.method.parse(method)

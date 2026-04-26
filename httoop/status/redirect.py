@@ -18,10 +18,10 @@ class RedirectStatus(StatusException):
             location = [location]
         if location is not None:
             kwargs.setdefault('headers', {})['Location'] = ', '.join(str(URI(uri)) for uri in location)
-        super(RedirectStatus, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def to_dict(self) -> Dict[str, Union[int, str, Dict[str, str]]]:
-        dct = super(RedirectStatus, self).to_dict()
+        dct = super().to_dict()
         if self.headers.get('Location'):
             dct.update(dict(Location=self.headers['Location']))
         return dct
@@ -84,7 +84,7 @@ class NOT_MODIFIED(RedirectStatus):
 
     def __init__(self, *args, **kwargs) -> None:
         # don't set location
-        super(NOT_MODIFIED, self).__init__(None, *args, **kwargs)
+        super().__init__(None, *args, **kwargs)
 
     header_to_remove = (
         'Allow', 'Content-Encoding', 'Content-Language',

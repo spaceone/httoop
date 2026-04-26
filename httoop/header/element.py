@@ -30,7 +30,7 @@ class HeaderType(type):
     def __new__(cls: Type, name: str, bases: Any, dict_: Dict[str, Any]) -> Any:
         __all__.append(name)
         name = dict_.get('__name__', name)
-        return super(HeaderType, cls).__new__(cls, name, bases, dict_)
+        return super().__new__(cls, name, bases, dict_)
 
 
 class HeaderElement(with_metaclass(HeaderType)):
@@ -331,7 +331,7 @@ class _AcceptElement(HeaderElement):
             return float(val)
 
     def sanitize(self) -> None:
-        super(_AcceptElement, self).sanitize()
+        super().sanitize()
         try:
             self.quality
         except ValueError:
@@ -382,7 +382,7 @@ class _CookieElement(HeaderElement):
     def __init__(self, cookie_name: str, cookie_value: str, params: Optional[Dict[bytes, str]] = None) -> None:
         self.cookie_name = cookie_name
         self.cookie_value = cookie_value
-        super(_CookieElement, self).__init__(self.value, params)
+        super().__init__(self.value, params)
 
     @classmethod
     def parse(cls, elementstr: bytes) -> 'HeaderElement':

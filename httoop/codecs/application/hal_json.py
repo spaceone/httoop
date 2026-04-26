@@ -23,7 +23,7 @@ class Resource(dict):
     """A JSON Hypertext Application Language resource."""
 
     def __init__(self, *args, **kwargs) -> None:
-        super(Resource, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.setdefault('_links', {})
         self.setdefault('_embedded', {})
         if not isinstance(self['_links'], dict):
@@ -121,7 +121,7 @@ class HAL(JSON):
 
     @classmethod
     def decode(cls, data: bytes, charset: Optional[str] = None, mimetype: Optional['ContentType'] = None) -> 'Resource':
-        data = super(HAL, cls).decode(data)
+        data = super().decode(data)
         if not isinstance(data, dict):
             raise DecodeError('HAL documents must be JSON objects.')
         return Resource(data)
@@ -136,4 +136,4 @@ class HAL(JSON):
         except DecodeError as exc:
             raise EncodeError(str(exc))
 
-        return super(HAL, cls).encode(data)
+        return super().encode(data)

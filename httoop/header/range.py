@@ -25,7 +25,7 @@ class ContentRange(HeaderElement):
             end = end or integer(length)
             self.range = (start, end)
         self.length = length if length is None else integer(length)
-        super(ContentRange, self).__init__(value)
+        super().__init__(value)
 
     def compose(self) -> bytes:
         length = b'*' if self.length is None else self.length
@@ -69,7 +69,7 @@ class Range(HeaderElement):
 
     def __init__(self, value: str, ranges: List[Union[Tuple[None, int], Tuple[int, int], Tuple[int, None]]], params: None = None) -> None:
         self.ranges = ranges
-        super(Range, self).__init__(value, params)
+        super().__init__(value, params)
 
     @classmethod
     def split(cls, fieldvalue: bytes) -> List[bytes]:
@@ -78,7 +78,7 @@ class Range(HeaderElement):
     @classmethod
     def parse(cls, elementstr: bytes) -> 'Range':
         bytesunit, __, byteranges = elementstr.partition(b'=')
-        byteranges = super(Range, cls).split(byteranges)
+        byteranges = super().split(byteranges)
         ranges = set()
         for brange in byteranges:
             start, __, stop = (x.strip() for x in brange.partition(b'-'))
@@ -99,7 +99,7 @@ class Range(HeaderElement):
         return cls(bytesunit.decode('ISO8859-1'), list(sorted(ranges, key=lambda x: x[0] if x[0] is not None else -1)))
 
     def sanitize(self) -> None:
-        super(Range, self).sanitize()
+        super().sanitize()
         self.prevent_denial_of_service()
 
     def prevent_denial_of_service(self) -> None:

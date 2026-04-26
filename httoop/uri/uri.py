@@ -354,7 +354,7 @@ class URI(with_metaclass(URIType)):
 
     def __setattr__(self, name: str, value: Any) -> None:
         if name.startswith('_'):
-            return super(URI, self).__setattr__(name, value)
+            return super().__setattr__(name, value)
 
         if name == 'scheme' and value:
             self.__class__ = self.SCHEMES.get(value if isinstance(value, bytes) else value.encode(), URI)
@@ -370,7 +370,7 @@ class URI(with_metaclass(URIType)):
             elif not isinstance(value, Unicode):
                 raise TypeError('%r must be string, not %s' % (name, type(value).__name__))
 
-        super(URI, self).__setattr__(name, value)
+        super().__setattr__(name, value)
 
     def __repr__(self) -> str:
         return '<URI(%s)>' % bytes(self)

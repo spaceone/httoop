@@ -196,7 +196,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 
     def close(self) -> None:
         fileable = self.fileable
-        super(Body, self).close()
+        super().close()
         if fileable:
             self.set('')
 

@@ -11,7 +11,7 @@ class _DateComparable(object):
     Date = Date
 
     def sanitize(self) -> None:
-        super(_DateComparable, self).sanitize()
+        super().sanitize()
         self.value = self.Date.parse(self.value.encode('ASCII', 'replace'))
 
     def __eq__(self, other: Any) -> bool:

@@ -13,7 +13,7 @@ class ServerErrorStatus(StatusException):
     """
 
     def to_dict(self) -> Dict[str, Union[str, int]]:
-        dct = super(ServerErrorStatus, self).to_dict()
+        dct = super().to_dict()
         dct.update(dict(traceback=self.traceback or ''))
         return dct
 

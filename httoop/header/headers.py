@@ -24,18 +24,18 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 
     def __getitem__(self, key: str) -> str:
         Element = HEADER.get(key, HeaderElement)
-        return Element.decode_rfc2047(super(Headers, self).__getitem__(key))
+        return Element.decode_rfc2047(super().__getitem__(key))
 
     def get(self, key: str, default: Optional[Union[bytes, str]] = None) -> Optional[Union[bytes, str]]:
         Element = HEADER.get(key, HeaderElement)
         try:
-            return Element.decode_rfc2047(super(Headers, self).__getitem__(key))
+            return Element.decode_rfc2047(super().__getitem__(key))
         except KeyError:
             return default
 
     def getbytes(self, key: Union[bytes, str], default: None = None) -> Optional[bytes]:
         try:
-            return super(Headers, self).__getitem__(key)
+            return super().__getitem__(key)
         except KeyError:
             return default
 
@@ -64,7 +64,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
         """Treat the field as single element."""
         if fieldname in self:
             Element = HEADER.get(fieldname, HeaderElement)
-            return Element.parse(super(Headers, self).__getitem__(fieldname))
+            return Element.parse(super().__getitem__(fieldname))
         return default
 
     def get_element(self, fieldname: str, which: Optional[str] = None, default: Optional[object] = None) -> Any:
@@ -85,7 +85,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 
     def values(self, *key) -> List[Union[Any, str]]:
         if not key:
-            return super(Headers, self).values()
+            return super().values()
         # if key is set return a ordered list of element values
         return [e.value for e in self.elements(*key)]
 
@@ -100,7 +100,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
             self[_name] = _value
         else:
             Element = HEADER.get(_name, HeaderElement)
-            self[_name] = Element.join([super(Headers, self).__getitem__(_name), _value])
+            self[_name] = Element.join([super().__getitem__(_name), _value])
 
     def merge(self, other: 'Headers') -> None:
         other = self.__class__(other)
@@ -141,8 +141,8 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
             name = name.decode('ascii')
 
             if name in self:
-                value = Element.join([super(Headers, self).__getitem__(name), value])
-            super(Headers, self).__setitem__(name, value)
+                value = Element.join([super().__getitem__(name), value])
+            super().__setitem__(name, value)
 
     def compose(self) -> bytes:
         return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, v) for k, v in self.__items())

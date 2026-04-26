@@ -57,7 +57,7 @@ class ComposedRequest(ComposedMessage):
 
     @contextmanager
     def _composing(self) -> Iterator[None]:
-        with self.relative_uri(), super(ComposedRequest, self)._composing():
+        with self.relative_uri(), super()._composing():
             yield
 
     @contextmanager

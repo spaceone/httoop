@@ -37,10 +37,10 @@ class UNAUTHORIZED(ClientErrorStatus):
 
     def __init__(self, authenticate: str, *args, **kwargs) -> None:
         kwargs.setdefault('headers', {})['WWW-Authenticate'] = authenticate
-        super(UNAUTHORIZED, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def to_dict(self) -> Dict[str, Union[int, str, Dict[str, str]]]:
-        dct = super(UNAUTHORIZED, self).to_dict()
+        dct = super().to_dict()
         dct.update(dict({'WWW-Authenticate': self.headers['WWW-Authenticate']}))
         return dct
 
@@ -67,7 +67,7 @@ class NOT_FOUND(ClientErrorStatus):
     def __init__(self, path: str, **kwargs) -> None:
         self.path = path
         kwargs.update(dict(description='The requested resource "%s" was not found on this server.' % (path, )))
-        super(NOT_FOUND, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
 
 class METHOD_NOT_ALLOWED(ClientErrorStatus):
@@ -79,10 +79,10 @@ class METHOD_NOT_ALLOWED(ClientErrorStatus):
 
     def __init__(self, allow: str, *args, **kwargs) -> None:
         kwargs.setdefault('headers', {})['Allow'] = allow
-        super(METHOD_NOT_ALLOWED, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def to_dict(self) -> Dict[str, Union[int, str, Dict[str, str]]]:
-        dct = super(METHOD_NOT_ALLOWED, self).to_dict()
+        dct = super().to_dict()
         dct.update(dict(Allow=self.headers['Allow']))
         return dct
 
@@ -111,7 +111,7 @@ class REQUEST_TIMEOUT(ClientErrorStatus):
 
     def __init__(self, *args, **kwargs) -> None:
         kwargs.setdefault('headers', {})['Connection'] = 'close'
-        super(REQUEST_TIMEOUT, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class CONFLICT(ClientErrorStatus):
@@ -224,7 +224,7 @@ class UPGRADE_REQUIRED(ClientErrorStatus):
     def __init__(self, upgrade: str, *args, **kwargs) -> None:
         kwargs.setdefault('headers', {})['Upgrade'] = upgrade
         kwargs['headers']['Connection'] = 'Upgrade'
-        super(UPGRADE_REQUIRED, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class PRECONDITION_REQUIRED(ClientErrorStatus):

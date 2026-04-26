@@ -12,7 +12,7 @@ from httoop.util import izip, make_boundary
 class ComposedResponse(ComposedMessage):
 
     def __init__(self, response: 'Response', request: 'Request') -> None:
-        super(ComposedResponse, self).__init__()
+        super().__init__()
         self.request = request
         self.response = self.message = response
 

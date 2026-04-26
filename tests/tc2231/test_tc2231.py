@@ -65,7 +65,7 @@ def test_attonlyquoted(content_disposition):
 @pytest.mark.xfail(reason=AssertionError('Cannot test here'))
 def test_attonly403(content_disposition):
     h = content_disposition(b'Content-Disposition: attachment')
-    assert False, 'Cannot test here'
+    raise AssertionError('Cannot test here')
     assert h
 
 
@@ -343,7 +343,7 @@ def test_attabspath(content_disposition):
     h = content_disposition(b'Content-Disposition: attachment; filename="/foo.html"')
     assert h.attachment
     assert h.filename == '/foo.html'
-    assert False, 'Cannot test here'
+    raise AssertionError('Cannot test here')
 
 
 def test_attabspathwin(content_disposition):

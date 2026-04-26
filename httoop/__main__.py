@@ -76,7 +76,7 @@ class CLI:
 
     def parse_request(self) -> None:
         server = ServerStateMachine(self.arguments.scheme, self.arguments.host, self.arguments.port)
-        for request, response in server.parse(self.arguments.file.read()):
+        for _request, response in server.parse(self.arguments.file.read()):
             print(repr(response))
             print(repr(response.headers))
             print(repr(response.body))

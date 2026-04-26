@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Iterator, List, Optional
+from typing import Any, Iterator
 
 
 try:
     from uritemplate import expand
 except ImportError:
     # TODO: emit a warning
-    def expand(href: str, templates: Dict[str, str]) -> str:
+    def expand(href: str, templates: dict[str, str]) -> str:
         for templ, value in templates.items():
             href = href.replace('{%s}' % (templ, ), value)
         return href
@@ -36,7 +36,7 @@ class Resource(dict):
     def self(self) -> str:
         return self.expand(self.get_link('self')['href'])
 
-    def get_links(self, relation: str, name: None = None) -> Iterator[Dict[str, None | bool | str]]:
+    def get_links(self, relation: str, name: None = None) -> Iterator[dict[str, None | bool | str]]:
         links = self['_links'].get(relation)
         if links is None:
             return
@@ -66,13 +66,13 @@ class Resource(dict):
                 link['deprecation'] = False
             yield link
 
-    def get_link(self, relation: str, name: str | None = None) -> Dict[str, bool | str | None] | None:
+    def get_link(self, relation: str, name: str | None = None) -> dict[str, bool | str | None] | None:
         try:
             return next(self.get_links(relation, name))
         except StopIteration:
             pass
 
-    def get_relations(self) -> List[str]:
+    def get_relations(self) -> list[str]:
         return list(set(self['_links'].keys()) | set(self['_embedded'].keys()))
 
     def get_resources(self, relation: str) -> None:
@@ -103,7 +103,7 @@ class Resource(dict):
                 return self.expand(link['href'], rel=rel)
         return relation
 
-    def add_link(self, relation: str, link: Dict[str, str]) -> None:
+    def add_link(self, relation: str, link: dict[str, str]) -> None:
         links = self['_links'].setdefault(relation, [])
         if not isinstance(links, list):
             links = [links]
@@ -111,7 +111,7 @@ class Resource(dict):
         self['_links'][relation] = links
         self['_links'][relation] = list(self.get_links(relation))
 
-    def add_resource(self, relation: str, resource: Dict[Any, Any]) -> None:
+    def add_resource(self, relation: str, resource: dict[Any, Any]) -> None:
         resources = list(self.get_resources(relation))
         resources.append(resource)
         self['_embedded'][relation] = resources
@@ -128,7 +128,7 @@ class HAL(JSON):
         return Resource(data)
 
     @classmethod
-    def encode(cls, data: Dict[str, None] | Resource, charset: str | None = None, mimetype: ContentType | None = None) -> bytes:
+    def encode(cls, data: dict[str, None] | Resource, charset: str | None = None, mimetype: ContentType | None = None) -> bytes:
         if not isinstance(data, dict):
             raise EncodeError('HAL documents must be JSON objects.')
 

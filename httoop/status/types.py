@@ -5,7 +5,7 @@ HTTP status codes.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Type
+from typing import Any
 
 from httoop.meta import HTTPSemantic
 from httoop.six import with_metaclass
@@ -14,7 +14,7 @@ from httoop.status.status import REASONS, Status
 
 class StatusType(HTTPSemantic):
 
-    def __new__(cls: Type, name: str, bases: Any, dict_: Dict[str, Any]) -> Any:
+    def __new__(cls: type, name: str, bases: Any, dict_: dict[str, Any]) -> Any:
         code = int(dict_.get('code', 0))
         if 99 < code < 200:
             scls = 'InformationalStatus'
@@ -46,7 +46,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
     """
 
     @property
-    def headers(self) -> Dict[str, str]:
+    def headers(self) -> dict[str, str]:
         return self._headers
 
     @property
@@ -80,7 +80,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 
     code = 0
 
-    def __init__(self, description: str | None = None, reason: None = None, headers: Dict[str, str] | None = None, traceback: str | None = None) -> None:
+    def __init__(self, description: str | None = None, reason: None = None, headers: dict[str, str] | None = None, traceback: str | None = None) -> None:
         """
         :param description:
         a description of the error which happened
@@ -119,7 +119,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 
     __str__ = __repr__
 
-    def to_dict(self) -> Dict[str, int | str | Dict[str, str]]:
+    def to_dict(self) -> dict[str, int | str | dict[str, str]]:
         """the default body arguments."""
         return dict(
             status=self.status,

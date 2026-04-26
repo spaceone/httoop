@@ -1,6 +1,7 @@
 from __future__ import annotations
+
 import re
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 from httoop.authentication.basic import BasicAuthRequestScheme, BasicAuthResponseScheme
 from httoop.authentication.digest import DigestAuthRequestScheme, DigestAuthResponseScheme
@@ -22,7 +23,7 @@ class AuthElement(HeaderElement):
                 self.params[key] = type(value)(x.encode('UTF-8') if not isinstance(x, bytes) and isinstance(x, str) else x for x in value)
 
     @classmethod
-    def parseparams(cls, elementstr: bytes) -> Tuple[bytes, Dict[bytes, str]] | Tuple[bytes, Dict[str, bytes]] | Tuple[bytes, Dict[str, bytes | List[bytes] | bool]] | Tuple[bytes, Dict[str, bytes | List[bytes]]] | Tuple[bytes, Dict[bytes, str | bytes]]:
+    def parseparams(cls, elementstr: bytes) -> tuple[bytes, dict[bytes, str]] | tuple[bytes, dict[str, bytes]] | tuple[bytes, dict[str, bytes | list[bytes] | bool]] | tuple[bytes, dict[str, bytes | list[bytes]]] | tuple[bytes, dict[bytes, str | bytes]]:
         try:
             scheme, authinfo = elementstr.split(b' ', 1)
         except ValueError:
@@ -53,7 +54,7 @@ class AuthElement(HeaderElement):
         return b'%s %s' % (self.value.encode('ASCII').title(), authinfo)
 
     @classmethod
-    def split(cls, value: bytes) -> List[bytes | Any]:
+    def split(cls, value: bytes) -> list[bytes | Any]:
         value = cls.RE_SPACE_SPLIT.split(value)
         indexes = [i for i, val in enumerate(value) if val != b',' and b'=' not in val]
         return [b' '.join(value[a:b]) for a, b in zip(indexes, indexes[1:] + [None])]
@@ -99,11 +100,11 @@ class AuthResponseElement(AuthElement):
     }
 
     @classmethod
-    def sorted(cls, elements: List[WWWAuthenticate | Any]) -> List[WWWAuthenticate | Any]:
+    def sorted(cls, elements: list[WWWAuthenticate | Any]) -> list[WWWAuthenticate | Any]:
         return list(sorted(elements, key=lambda e: {'basic': '\xff'}.get(e.value.lower(), e.value)))
 
     @classmethod
-    def join(cls, values: List[bytes]) -> bytes:
+    def join(cls, values: list[bytes]) -> bytes:
         return b' '.join(values)
 
     @property

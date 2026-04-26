@@ -8,7 +8,7 @@ from __future__ import annotations
 from io import BytesIO
 from os import fstat
 from types import GeneratorType
-from typing import Any, Iterator, List, Optional
+from typing import Any, Iterator
 
 from httoop.header import Headers
 from httoop.meta import HTTPSemantic
@@ -103,7 +103,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
     def chunked(self, chunked):
         self.transfer_encoding = 'chunked' if chunked else None
 
-    def __init__(self, content: bytes | List[bytes] | str | None = None, mimetype: str | None = None) -> None:
+    def __init__(self, content: bytes | list[bytes] | str | None = None, mimetype: str | None = None) -> None:
         self.data = None
         self.__iter = None
         self.fd = BytesIO()

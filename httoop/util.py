@@ -6,7 +6,7 @@ import codecs
 import sys
 from email.generator import _make_boundary as make_boundary
 from functools import partial
-from typing import Any, Callable, Dict, Optional, Tuple
+from typing import Any, Callable
 
 
 try:
@@ -200,7 +200,7 @@ class CaseInsensitiveDict(dict):
     def get(self, key: bytes | str, default: Any | None = None) -> Any:
         return dict.get(self, self.formatkey(key), default)
 
-    def update(self, E: Dict[str, str]) -> None:
+    def update(self, E: dict[str, str]) -> None:
         for key in E.keys():
             self[self.formatkey(key)] = self.formatvalue(E[key])
 
@@ -217,7 +217,7 @@ class CaseInsensitiveDict(dict):
         return dict.pop(self, self.formatkey(key), default)
 
     @classmethod
-    def fromkeys(cls, seq: Tuple[str, str, str], value: str | None = None) -> Headers:
+    def fromkeys(cls, seq: tuple[str, str, str], value: str | None = None) -> Headers:
         return cls(dict((key, value) for key in seq))
 
 

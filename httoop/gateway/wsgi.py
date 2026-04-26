@@ -5,7 +5,7 @@ Web Server Gateway Interface.
 """
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, Iterator, Optional, Tuple
+from typing import Any, Callable, Iterator
 
 from httoop.messages import Body
 from httoop.six import PY2, reraise
@@ -32,7 +32,7 @@ class WSGIBody(Body):
 class WSGI:
     """A mixin class which implements the WSGI interface."""
 
-    def __init__(self, environ: Dict[str, str] | None = None, use_path_info: bool = False, *args, **kwargs) -> None:
+    def __init__(self, environ: dict[str, str] | None = None, use_path_info: bool = False, *args, **kwargs) -> None:
         self.use_path_info = use_path_info
         super().__init__()
         self.exc_info = None
@@ -119,7 +119,7 @@ class WSGI:
         self.response.body = buffered(data)
         return raw_result
 
-    def get_environ(self) -> Dict[str, str | Tuple[int, int] | WSGIBody | bool | None]:
+    def get_environ(self) -> dict[str, str | tuple[int, int] | WSGIBody | bool | None]:
         environ = {}
         environ.update(dict(self.environ.items()))
         environ.update(dict([
@@ -150,7 +150,7 @@ class WSGI:
             environ = dict((key, value.decode('ISO8859-1') if isinstance(value, bytes) else value) for key, value in environ.items())
         return environ
 
-    def set_environ(self, environ: Dict[str, str]) -> None:
+    def set_environ(self, environ: dict[str, str]) -> None:
         environ = environ.copy()
 
         for name, value in list(environ.items()):

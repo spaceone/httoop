@@ -1,7 +1,7 @@
 
 from __future__ import annotations
+
 from binascii import Error as Base64Error
-from typing import Dict
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
@@ -11,7 +11,7 @@ from httoop.util import ByteUnicodeDict, _, decode_base64, encode_base64
 class BasicAuthRequestScheme:
 
     @staticmethod
-    def parse(authinfo: bytes) -> Dict[str, bytes]:
+    def parse(authinfo: bytes) -> dict[str, bytes]:
         # try:
         #    authinfo = authinfo.encode('ascii')
         # except ValueError:
@@ -44,7 +44,7 @@ class BasicAuthRequestScheme:
 class BasicAuthResponseScheme:
 
     @staticmethod
-    def parse(authinfo: bytes) -> Dict[bytes, str | bytes]:
+    def parse(authinfo: bytes) -> dict[bytes, str | bytes]:
         params = HeaderElement.parseparams(b'X;%s' % authinfo)[1]
         params.setdefault(b'realm', b'')
         return params

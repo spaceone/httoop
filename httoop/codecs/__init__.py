@@ -5,7 +5,7 @@ common used in combination with HTTP.
 from __future__ import annotations
 
 import inspect
-from typing import Any, Type
+from typing import Any
 
 from httoop.codecs import application, audio, example, image, message, model, multipart, text, video
 from httoop.codecs.codec import Codec
@@ -26,7 +26,7 @@ def lookup(encoding: str, raise_errors: bool = True) -> Any:
     return CODECS.get(encoding) or CODECS.get(type_) or (raise_errors and CODECS[encoding]) or None
 
 
-def register(encoding: str, codec: Type[Codec]) -> None:
+def register(encoding: str, codec: type[Codec]) -> None:
     CODECS[encoding] = codec
 
 

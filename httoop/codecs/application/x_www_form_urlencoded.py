@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Any, List, Optional, Tuple, Union
+
+from typing import Any
 
 from httoop.codecs.codec import Codec
 from httoop.uri.percent_encoding import Percent
@@ -14,7 +15,7 @@ class FormURLEncoded(Codec):
     UNQUOTED = Percent.UNRESERVED
 
     @classmethod
-    def decode(cls, data: bytes, charset: str | None = None, mimetype: ContentType | None = None) -> Tuple[Tuple[str, str], Tuple[str, str]] | Tuple[Tuple[str, str]] | Tuple[Tuple[str, str], Tuple[str, str], Tuple[str, str]] | Tuple[Tuple[str, str], Tuple[str, str], Tuple[str, str], Tuple[str, str]] | Tuple[()]:
+    def decode(cls, data: bytes, charset: str | None = None, mimetype: ContentType | None = None) -> tuple[tuple[str, str], tuple[str, str]] | tuple[tuple[str, str]] | tuple[tuple[str, str], tuple[str, str], tuple[str, str]] | tuple[tuple[str, str], tuple[str, str], tuple[str, str], tuple[str, str]] | tuple[()]:
         if not data:
             return ()
         data = data.replace(b'+', b' ').strip(b'&').split(b'&')
@@ -36,6 +37,6 @@ class FormURLEncoded(Codec):
         return Percent.unquote(data).decode(charset or 'ISO8859-1')
 
     @classmethod
-    def quote(cls, data: str | List[int], charset: str | None = None) -> bytes:
+    def quote(cls, data: str | list[int], charset: str | None = None) -> bytes:
         data = data.encode(charset or 'ISO8859-1')
         return Percent.quote(data, cls.UNQUOTED)

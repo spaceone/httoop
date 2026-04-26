@@ -1,6 +1,5 @@
 
 from __future__ import annotations
-from typing import List, Optional
 
 from httoop.codecs.codec import Codec
 from httoop.exceptions import DecodeError
@@ -13,7 +12,7 @@ class Multipart(Codec):
     default_content_type = 'text/plain; charset=US-ASCII'
 
     @classmethod
-    def encode(cls, data: List[Body], charset: str | None = None, mimetype: ContentType | None = None) -> bytes:
+    def encode(cls, data: list[Body], charset: str | None = None, mimetype: ContentType | None = None) -> bytes:
         boundary = mimetype.boundary.encode('ISO8859-1')
         multipart = b''
         for body in data:
@@ -22,7 +21,7 @@ class Multipart(Codec):
         return multipart
 
     @classmethod
-    def decode(cls, data: bytes, charset: str | None = None, mimetype: ContentType | None = None) -> List[Body]:
+    def decode(cls, data: bytes, charset: str | None = None, mimetype: ContentType | None = None) -> list[Body]:
         boundary = mimetype.boundary.encode('ISO8859-1')
         parts = data.split(b'--%s' % (boundary, ))
         part = parts.pop(0)

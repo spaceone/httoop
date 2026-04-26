@@ -7,7 +7,7 @@ HTTP status codes.
 from __future__ import annotations
 
 import re
-from typing import Any, Optional
+from typing import Any
 
 from httoop.exceptions import InvalidLine
 from httoop.meta import HTTPSemantic

@@ -1,7 +1,8 @@
 
 from __future__ import annotations
+
 from hashlib import md5, sha256
-from typing import Callable, Dict, List, Tuple
+from typing import Callable
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
@@ -56,7 +57,7 @@ class DigestAuthScheme:
 class DigestAuthResponseScheme(DigestAuthScheme):  # WWW-Authenticate
 
     @classmethod
-    def _compose(cls, authinfo: ByteUnicodeDict) -> List[Tuple[str, bytes]]:
+    def _compose(cls, authinfo: ByteUnicodeDict) -> list[tuple[str, bytes]]:
         realm = authinfo['realm']
         algorithm = authinfo.get('algorithm', b'MD5')
         domain = authinfo.get('domain')
@@ -85,7 +86,7 @@ class DigestAuthResponseScheme(DigestAuthScheme):  # WWW-Authenticate
         return [(k, v) for k, v in params if v is not None]
 
     @classmethod
-    def parse(cls, authinfo: bytes) -> Dict[str, bytes | List[bytes] | bool]:
+    def parse(cls, authinfo: bytes) -> dict[str, bytes | list[bytes] | bool]:
         params = super(cls, cls).parse(authinfo)
         if b'"' in params['nonce']:
             raise InvalidHeader(_('Nonce must not contain double quote'))
@@ -107,7 +108,7 @@ class DigestAuthResponseScheme(DigestAuthScheme):  # WWW-Authenticate
 class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
 
     @classmethod
-    def _compose(cls, authinfo: ByteUnicodeDict) -> List[Tuple[str, bytes]]:
+    def _compose(cls, authinfo: ByteUnicodeDict) -> list[tuple[str, bytes]]:
         username = authinfo['username']
         realm = authinfo['realm']
         digest_uri = authinfo['uri']
@@ -136,7 +137,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
         return [(k, v) for k, v in params if v is not None]
 
     @classmethod
-    def parse(cls, authinfo: bytes) -> Dict[str, bytes]:
+    def parse(cls, authinfo: bytes) -> dict[str, bytes]:
         params = super(cls, cls).parse(authinfo)
         message_qop = params.get('qop')
         cnonce = None

@@ -1,6 +1,5 @@
 
 from __future__ import annotations
-from typing import Dict, Union
 
 from httoop.status.types import StatusException
 
@@ -42,7 +41,7 @@ class UNAUTHORIZED(ClientErrorStatus):
         kwargs.setdefault('headers', {})['WWW-Authenticate'] = authenticate
         super().__init__(*args, **kwargs)
 
-    def to_dict(self) -> Dict[str, int | str | Dict[str, str]]:
+    def to_dict(self) -> dict[str, int | str | dict[str, str]]:
         dct = super().to_dict()
         dct.update(dict({'WWW-Authenticate': self.headers['WWW-Authenticate']}))
         return dct
@@ -86,7 +85,7 @@ class METHOD_NOT_ALLOWED(ClientErrorStatus):
         kwargs.setdefault('headers', {})['Allow'] = allow
         super().__init__(*args, **kwargs)
 
-    def to_dict(self) -> Dict[str, int | str | Dict[str, str]]:
+    def to_dict(self) -> dict[str, int | str | dict[str, str]]:
         dct = super().to_dict()
         dct.update(dict(Allow=self.headers['Allow']))
         return dct

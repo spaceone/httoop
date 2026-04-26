@@ -99,7 +99,7 @@ class AuthResponseElement(AuthElement):
     }
 
     @classmethod
-    def sorted(cls, elements: List[Union['WWWAuthenticate', Any]]) -> List[Union['WWWAuthenticate', Any]]:
+    def sorted(cls, elements: List[Union[WWWAuthenticate, Any]]) -> List[Union[WWWAuthenticate, Any]]:
         return list(sorted(elements, key=lambda e: {'basic': '\xff'}.get(e.value.lower(), e.value)))
 
     @classmethod

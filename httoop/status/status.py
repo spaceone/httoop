@@ -119,10 +119,10 @@ class Status(with_metaclass(HTTPSemantic)):
             return self.__code == other.code
         return super().__eq__(other)
 
-    def __lt__(self, other: Union[int, 'Status']) -> bool:
+    def __lt__(self, other: Union[int, Status]) -> bool:
         return self.__code < other
 
-    def __gt__(self, other: Union[int, 'Status']) -> bool:
+    def __gt__(self, other: Union[int, Status]) -> bool:
         return self.__code > other
 
     def set(self, status: Any) -> None:

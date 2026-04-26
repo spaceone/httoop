@@ -1,7 +1,7 @@
 
 from __future__ import annotations
 from hashlib import md5, sha256
-from typing import Callable, Dict, List, Tuple, Union
+from typing import Callable, Dict, List, Tuple
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
@@ -21,7 +21,7 @@ class DigestAuthScheme:
     qops = (b'auth', b'auth-int')  # quality of protection
 
     @classmethod
-    def get_algorithm(cls, algorithm: Union[bytes, str]) -> Callable:
+    def get_algorithm(cls, algorithm: bytes | str) -> Callable:
         try:
             return cls.algorithms[algorithm.decode('ASCII', 'ignore') if isinstance(algorithm, bytes) else algorithm]
         except KeyError:
@@ -85,7 +85,7 @@ class DigestAuthResponseScheme(DigestAuthScheme):  # WWW-Authenticate
         return [(k, v) for k, v in params if v is not None]
 
     @classmethod
-    def parse(cls, authinfo: bytes) -> Dict[str, Union[bytes, List[bytes], bool]]:
+    def parse(cls, authinfo: bytes) -> Dict[str, bytes | List[bytes] | bool]:
         params = super(cls, cls).parse(authinfo)
         if b'"' in params['nonce']:
             raise InvalidHeader(_('Nonce must not contain double quote'))

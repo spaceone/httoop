@@ -13,7 +13,7 @@ class ServerErrorStatus(StatusException):
     it knows that the problem is temporary.
     """
 
-    def to_dict(self) -> Dict[str, Union[str, int]]:
+    def to_dict(self) -> Dict[str, str | int]:
         dct = super().to_dict()
         dct.update(dict(traceback=self.traceback or ''))
         return dct

@@ -3,7 +3,7 @@ from __future__ import annotations
 from io import BytesIO
 from math import sqrt
 from os import SEEK_END, SEEK_SET
-from typing import Iterator, List, Optional, Tuple, Union
+from typing import Iterator, List, Optional, Tuple
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
@@ -18,7 +18,7 @@ class ContentRange(HeaderElement):
     __name__ = 'Content-Range'
     is_response_header = True
 
-    def __init__(self, value: str, range_: Optional[Union[Tuple[int, None], Tuple[int, int]]], length: Optional[Union[int, str]]) -> None:
+    def __init__(self, value: str, range_: Optional[Tuple[int, None] | Tuple[int, int]], length: Optional[int | str]) -> None:
         self.range = range_
         if self.range:
             start, end = self.range
@@ -68,7 +68,7 @@ class Range(HeaderElement):
 
     is_request_header = True
 
-    def __init__(self, value: str, ranges: List[Union[Tuple[None, int], Tuple[int, int], Tuple[int, None]]], params: None = None) -> None:
+    def __init__(self, value: str, ranges: List[Tuple[None, int] | Tuple[int, int] | Tuple[int, None]], params: None = None) -> None:
         self.ranges = ranges
         super().__init__(value, params)
 
@@ -116,7 +116,7 @@ class Range(HeaderElement):
         if self.stddev([(x[1] or float('inf')) - (x[0] or 0) for x in self.ranges]) > 2.0:
             raise InvalidHeader(_('ranges exceeding high standard deviation'))
 
-    def stddev(self, xs: List[Union[int, float]]) -> float:
+    def stddev(self, xs: List[int | float]) -> float:
         def average(xs):
             return sum(xs) * 1.0 / len(xs)
 
@@ -127,7 +127,7 @@ class Range(HeaderElement):
         return sqrt(average(variance(xs)))
 
     @property
-    def positions(self) -> Iterator[Union[Tuple[int, int, int], Tuple[int, int, None]]]:
+    def positions(self) -> Iterator[Tuple[int, int, int] | Tuple[int, int, None]]:
         for start, end in self.ranges:
             if start is None:
                 yield -end, SEEK_END, None

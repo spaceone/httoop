@@ -89,7 +89,7 @@ class ServerStateMachine(StateMachine):
         # set appropriate response protocol version
         self.response.protocol = min(self.message.protocol, ServerProtocol)
 
-    def _check_uri_max_length(self, uri: Union[bytearray, bytes]) -> None:
+    def _check_uri_max_length(self, uri: bytearray | bytes) -> None:
         if len(uri) > self.MAX_URI_LENGTH:
             raise URI_TOO_LONG(
                 'The maximum length of the request is %d' % self.MAX_URI_LENGTH

@@ -14,14 +14,14 @@ class RedirectStatus(StatusException):
 
     location = None
 
-    def __init__(self, location: Optional[Union[bytes, Tuple[str, str], str]], *args, **kwargs) -> None:
+    def __init__(self, location: Optional[bytes | Tuple[str, str] | str], *args, **kwargs) -> None:
         if not isinstance(location, (type(None), list, tuple)):
             location = [location]
         if location is not None:
             kwargs.setdefault('headers', {})['Location'] = ', '.join(str(URI(uri)) for uri in location)
         super().__init__(*args, **kwargs)
 
-    def to_dict(self) -> Dict[str, Union[int, str, Dict[str, str]]]:
+    def to_dict(self) -> Dict[str, int | str | Dict[str, str]]:
         dct = super().to_dict()
         if self.headers.get('Location'):
             dct.update(dict(Location=self.headers['Location']))

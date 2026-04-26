@@ -7,7 +7,7 @@ HTTP status codes.
 from __future__ import annotations
 
 import re
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from httoop.exceptions import InvalidLine
 from httoop.meta import HTTPSemantic
@@ -119,10 +119,10 @@ class Status(with_metaclass(HTTPSemantic)):
             return self.__code == other.code
         return super().__eq__(other)
 
-    def __lt__(self, other: Union[int, Status]) -> bool:
+    def __lt__(self, other: int | Status) -> bool:
         return self.__code < other
 
-    def __gt__(self, other: Union[int, Status]) -> bool:
+    def __gt__(self, other: int | Status) -> bool:
         return self.__code > other
 
     def set(self, status: Any) -> None:

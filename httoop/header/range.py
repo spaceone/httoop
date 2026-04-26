@@ -9,6 +9,7 @@ from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
 from httoop.util import _, integer
 
+
 __all__ = ('ContentRange', 'IfRange', 'Range')
 
 

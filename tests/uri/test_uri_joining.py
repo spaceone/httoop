@@ -3,6 +3,7 @@ import pytest
 
 from httoop import URI
 
+
 RFC1808_BASE = b'http://a/b/c/d;p?q#f'
 RFC2396_BASE = b'http://a/b/c/d;p?q'
 RFC3986_BASE = b'http://a/b/c/d;p?q'

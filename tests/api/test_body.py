@@ -6,6 +6,7 @@ import pytest
 
 from httoop import Body
 
+
 try:
     unicode
 except NameError:

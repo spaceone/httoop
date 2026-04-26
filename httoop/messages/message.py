@@ -11,6 +11,7 @@ from httoop.messages.protocol import Protocol
 from httoop.meta import HTTPSemantic
 from httoop.six import with_metaclass
 
+
 __all__ = ('Message')
 
 

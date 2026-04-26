@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Iterator, List, Optional, Union
 
+
 try:
     from uritemplate import expand
 except ImportError:

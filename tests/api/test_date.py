@@ -5,6 +5,7 @@ import pytest
 
 from httoop import Date, InvalidDate
 
+
 dates = [{
     'datetime': datetime.datetime(1994, 11, 6, 8, 49, 37),
     'timestamp': 784111777.0,

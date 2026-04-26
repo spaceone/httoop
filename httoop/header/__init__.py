@@ -13,11 +13,19 @@ HTTP headers.
 
 import inspect
 
-from httoop.header import range  # pylint: disable=W0622
-from httoop.header import auth, cache, conditional, messaging, security, semantics
+from httoop.header import (
+    auth,
+    cache,
+    conditional,
+    messaging,
+    range,  # pylint: disable=W0622
+    security,
+    semantics,
+)
 from httoop.header.element import HEADER, HeaderElement, HeaderType
 from httoop.header.headers import Headers
 from httoop.header.messaging import Server, UserAgent
+
 
 __all__ = ['Headers', 'Server', 'UserAgent']
 

@@ -3,6 +3,7 @@ import pytest
 
 from httoop import URI, InvalidURI
 
+
 absolute_uris = [
     (b'http://localhost:8090/foo/bar/?x=y#blub', ('http', '', '', 'localhost', 8090, '/foo/bar/', 'x=y', 'blub')),
     (b'http://localhost:8090/foo/bar/?x=y#blub', ('http', '', '', 'localhost', 8090, '/foo/bar/', 'x=y', 'blub')),

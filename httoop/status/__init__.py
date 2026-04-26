@@ -11,6 +11,7 @@ from httoop.status import client_error, informational, redirect, server_error, s
 from httoop.status.status import REASONS, Status
 from httoop.status.types import StatusException, StatusType
 
+
 __all__ = ['Status', 'REASONS', 'StatusType', 'StatusException']
 
 # mapping of status -> Class

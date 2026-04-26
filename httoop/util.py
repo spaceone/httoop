@@ -8,6 +8,7 @@ from email.generator import _make_boundary as make_boundary
 from functools import partial
 from typing import Any, Callable, Dict, Optional, Tuple, Union
 
+
 try:
     from email.utils import parsedate_tz as parsedate
 except ImportError:  # pragma: no cover

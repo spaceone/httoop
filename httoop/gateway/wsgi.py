@@ -11,6 +11,7 @@ from httoop.messages import Body
 from httoop.six import PY2, reraise
 from httoop.util import iteritems
 
+
 __all__ = ('WSGI', )
 
 

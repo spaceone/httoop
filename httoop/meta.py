@@ -6,6 +6,7 @@ from typing import Any, Dict, Tuple, Type, Union
 
 from httoop.util import PY3, Unicode
 
+
 __all__ = ['HTTPSemantic']
 
 

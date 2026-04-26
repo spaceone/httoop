@@ -17,9 +17,8 @@ from typing import Any, Dict, Iterator, List, Optional, Tuple, Type, Union
 from httoop.exceptions import InvalidHeader
 from httoop.six import with_metaclass
 from httoop.uri.percent_encoding import Percent
-from httoop.util import (
-    ByteUnicodeDict, CaseInsensitiveDict, _, decode_header, integer, iteritems, sanitize_encoding,
-)
+from httoop.util import ByteUnicodeDict, CaseInsensitiveDict, _, decode_header, integer, iteritems, sanitize_encoding
+
 
 __all__ = ['HEADER', 'HeaderElement']
 # a mapping of all headers to HeaderElement classes

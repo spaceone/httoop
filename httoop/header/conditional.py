@@ -1,5 +1,5 @@
 
-from typing import Any, Union
+from typing import Any
 
 from httoop.date import Date
 from httoop.exceptions import InvalidDate

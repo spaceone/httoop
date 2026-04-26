@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from httoop.codecs.codec import Codec
 
 

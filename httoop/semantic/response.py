@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Any, Iterator, Union
+
+from typing import Any, Iterator
 
 from httoop.date import Date
 from httoop.exceptions import InvalidHeader

@@ -1,7 +1,8 @@
 # TODO: Via, Server, User-Agent can contain comments → parse them
 from __future__ import annotations
+
 import re
-from typing import Any, List, Optional
+from typing import Any
 
 from httoop.codecs import lookup
 from httoop.exceptions import InvalidDate, InvalidHeader
@@ -226,7 +227,7 @@ class Cookie(_CookieElement):
     # TODO: prohibit that multiple Cookie lines are parsed as valid
 
     @classmethod
-    def join(cls, values: List[bytes]) -> bytes:
+    def join(cls, values: list[bytes]) -> bytes:
         return b'; '.join(values)
 
 
@@ -374,7 +375,7 @@ class SetCookie(_ListElement, _CookieElement):
     from httoop.date import Date
 
     @classmethod
-    def split(cls, fieldvalue: bytes) -> List[bytes]:
+    def split(cls, fieldvalue: bytes) -> list[bytes]:
         fieldvalue = re.sub(b'(expires)=([^"][^;]+)', b'\\1="\\2"', fieldvalue, flags=re.I)
         return super().split(fieldvalue)
 

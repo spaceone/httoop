@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Tuple, Type
+from typing import Any
 
 from httoop.util import PY3, Unicode
 
@@ -37,10 +37,10 @@ class Semantic:
     def __ne__(self, other: Any) -> bool:
         return not self == other
 
-    def __ge__(self, other: int | Tuple[int, int]) -> bool:
+    def __ge__(self, other: int | tuple[int, int]) -> bool:
         return self == other or self > other
 
-    def __le__(self, other: int | Tuple[int, int]) -> bool:
+    def __le__(self, other: int | tuple[int, int]) -> bool:
         return self == other or self < other
 
     def __format__(self, format_spec):
@@ -53,7 +53,7 @@ class Semantic:
 class HTTPSemantic(type):
     """Implements the HTTP Semantic interface."""
 
-    def __new__(mcs: Type, name: str, bases: Any, dict_: Dict[str, Any]) -> Any:
+    def __new__(mcs: type, name: str, bases: Any, dict_: dict[str, Any]) -> Any:
         bases = list(bases)
         if object in bases:
             bases.remove(object)

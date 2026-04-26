@@ -12,7 +12,7 @@ from __future__ import annotations
 import re
 from binascii import b2a_base64
 from email.errors import HeaderParseError
-from typing import Any, Dict, Iterator, List, Optional, Tuple, Type
+from typing import Any, Iterator
 
 from httoop.exceptions import InvalidHeader
 from httoop.six import with_metaclass
@@ -27,7 +27,7 @@ HEADER = CaseInsensitiveDict()
 
 class HeaderType(type):
 
-    def __new__(cls: Type, name: str, bases: Any, dict_: Dict[str, Any]) -> Any:
+    def __new__(cls: type, name: str, bases: Any, dict_: dict[str, Any]) -> Any:
         __all__.append(name)
         name = dict_.get('__name__', name)
         return super().__new__(cls, name, bases, dict_)
@@ -86,7 +86,7 @@ class HeaderElement(with_metaclass(HeaderType)):
         return b'%s%s' % (self.encode_rfc2047(self.value), b''.join(params))
 
     @classmethod
-    def parseparams(cls, elementstr: bytes) -> Tuple[bytes, Dict[bytes, str]] | Tuple[bytes, Dict[Any, Any]]:
+    def parseparams(cls, elementstr: bytes) -> tuple[bytes, dict[bytes, str]] | tuple[bytes, dict[Any, Any]]:
         """Transform 'token;key=val' to ('token', {'key': 'val'})."""
         # Split the element into a value and parameters. The 'value' may
         # be of the form, "token=token", but we don't split that here.
@@ -100,7 +100,7 @@ class HeaderElement(with_metaclass(HeaderType)):
         return value, dict(params)
 
     @classmethod
-    def parseparam(cls, atom: bytes) -> Tuple[bytes, bytes, bool]:
+    def parseparam(cls, atom: bytes) -> tuple[bytes, bytes, bool]:
         key, __, val = atom.partition(b'=')
         try:
             val, quoted = cls.unescape_param(val.strip())
@@ -113,7 +113,7 @@ class HeaderElement(with_metaclass(HeaderType)):
         return key.strip().lower()
 
     @classmethod
-    def unescape_param(cls, value: bytes) -> Tuple[bytes, bool]:
+    def unescape_param(cls, value: bytes) -> tuple[bytes, bool]:
         quoted = value.startswith(b'"') and value.endswith(b'"')
         if quoted:
             value = re.sub(b'\\\\(?!\\\\)', b'', value[1:-1])
@@ -130,7 +130,7 @@ class HeaderElement(with_metaclass(HeaderType)):
         return encoding
 
     @classmethod
-    def _rfc2231_and_continuation_params(cls, params: Iterator[Any]) -> Iterator[Tuple[bytes, str]]:  # TODO: complexity
+    def _rfc2231_and_continuation_params(cls, params: Iterator[Any]) -> Iterator[tuple[bytes, str]]:  # TODO: complexity
         count = set()
         continuations = dict()
         for key, value, quoted in params:
@@ -184,19 +184,19 @@ class HeaderElement(with_metaclass(HeaderType)):
         return cls(ival.decode(encoding), params)
 
     @classmethod
-    def split(cls, fieldvalue: bytes) -> List[bytes]:
+    def split(cls, fieldvalue: bytes) -> list[bytes]:
         return [x.strip() for x in cls.RE_SPLIT.split(fieldvalue)]
 
     @classmethod
-    def join(cls, values: List[bytes]) -> bytes:
+    def join(cls, values: list[bytes]) -> bytes:
         return b', '.join(values)
 
     @classmethod
-    def sorted(cls, elements: List[HeaderElement]) -> List[HeaderElement]:
+    def sorted(cls, elements: list[HeaderElement]) -> list[HeaderElement]:
         return elements
 
     @classmethod
-    def merge(cls, elements: List, others: List) -> bytes:
+    def merge(cls, elements: list, others: list) -> bytes:
         return cls.join([bytes(x) for x in cls.sorted(elements + others)])
 
     @classmethod
@@ -228,7 +228,7 @@ class HeaderElement(with_metaclass(HeaderType)):
         return cls.decode_rfc2047_charset(value)[0]
 
     @classmethod
-    def decode_rfc2047_charset(cls, value: bytes) -> Tuple[str, str]:
+    def decode_rfc2047_charset(cls, value: bytes) -> tuple[str, str]:
         if b'=?' in value and b'"=?' not in value and b'==?' not in value:
             # FIXME: must not parse encoded_words in unquoted ('Content-Type', 'Content-Disposition') header params
             try:
@@ -359,7 +359,7 @@ class _AcceptElement(HeaderElement):
         return cls(media_type.decode(encoding), params)
 
     @classmethod
-    def sorted(cls, elements: List) -> List:
+    def sorted(cls, elements: list) -> list:
         return list(sorted(elements, reverse=True))
 
     def __eq__(self, other: str) -> bool:
@@ -381,7 +381,7 @@ class _CookieElement(HeaderElement):
     # RE_TSPECIALS = re.compile(br'[ \(\)<>@,;:\\"\[\]\?=]')
     RE_TSPECIALS = re.compile(b'(?!)')
 
-    def __init__(self, cookie_name: str, cookie_value: str, params: Dict[bytes, str] | None = None) -> None:
+    def __init__(self, cookie_name: str, cookie_value: str, params: dict[bytes, str] | None = None) -> None:
         self.cookie_name = cookie_name
         self.cookie_value = cookie_value
         super().__init__(self.value, params)

@@ -1,12 +1,13 @@
 from __future__ import annotations
-from typing import Any, Dict, Tuple, Type, Union
+
+from typing import Any
 
 from httoop.meta import HTTPSemantic
 
 
 class URIType(HTTPSemantic):
 
-    def __new__(mcs: Type, name: str, bases: Tuple[Type], dict_: Dict[str, str | Tuple[()] | bytes | int]) -> Any:
+    def __new__(mcs: type, name: str, bases: tuple[type], dict_: dict[str, str | tuple[()] | bytes | int]) -> Any:
         cls = super().__new__(mcs, name, tuple(bases), dict_)
         if dict_.get('SCHEME'):
             for base in bases:

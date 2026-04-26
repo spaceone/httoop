@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from typing import Iterator, Optional, Tuple
+from typing import Iterator
 
 from httoop.exceptions import Invalid, InvalidBody, InvalidHeader, InvalidLine, InvalidURI
 from httoop.header import Headers
@@ -79,7 +79,7 @@ class StateMachine:
         self.message = None
         return message
 
-    def parse(self, data: bytes) -> Tuple[Tuple[Request, Response]] | Tuple[Tuple[Request, Response], Tuple[Request, Response]] | Tuple[()] | Tuple[Response]:
+    def parse(self, data: bytes) -> tuple[tuple[Request, Response]] | tuple[tuple[Request, Response], tuple[Request, Response]] | tuple[()] | tuple[Response]:
         """
         Appends the given data to the internal buffer
         and parses it as HTTP Request-Messages.
@@ -94,7 +94,7 @@ class StateMachine:
         except (InvalidHeader, InvalidLine, InvalidURI, InvalidBody) as exc:
             raise BAD_REQUEST(Unicode(exc))
 
-    def _parse(self) -> Iterator[None | Response | Tuple[Request, Response]]:
+    def _parse(self) -> Iterator[None | Response | tuple[Request, Response]]:
         while self.buffer:
             if self.message is None:
                 yield self.on_message_started()

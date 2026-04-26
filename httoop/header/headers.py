@@ -1,6 +1,7 @@
 from __future__ import annotations
+
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HEADER, HeaderElement
@@ -49,7 +50,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
         except KeyError:
             return key
 
-    def elements(self, fieldname: bytes | str) -> List[Any]:
+    def elements(self, fieldname: bytes | str) -> list[Any]:
         """
         Return a sorted list of HeaderElements from
         the given comma-separated header string.
@@ -84,7 +85,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
         Element = HEADER.get(fieldname, HeaderElement)
         return Element(*args, **kwargs)
 
-    def values(self, *key) -> List[Any | str]:
+    def values(self, *key) -> list[Any | str]:
         if not key:
             return super().values()
         # if key is set return a ordered list of element values
@@ -109,7 +110,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
             Element = HEADER.get(key, HeaderElement)
             self[key] = Element.merge(self.elements(key), other.elements(key))
 
-    def set(self, headers: Dict[str, str]) -> None:
+    def set(self, headers: dict[str, str]) -> None:
         self.clear()
         self.update(headers)
 

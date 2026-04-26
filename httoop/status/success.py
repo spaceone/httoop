@@ -1,6 +1,5 @@
 
 from __future__ import annotations
-from typing import Dict, Union
 
 from httoop.status.types import StatusException
 
@@ -39,7 +38,7 @@ class CREATED(SuccessStatus):
         kwargs.setdefault('headers', {})['Location'] = location
         super().__init__(*args, **kwargs)
 
-    def to_dict(self) -> Dict[str, int | str | Dict[str, str]]:
+    def to_dict(self) -> dict[str, int | str | dict[str, str]]:
         dct = super().to_dict()
         dct.update(dict(Location=self.headers['Location']))
         return dct

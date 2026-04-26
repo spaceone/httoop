@@ -6,9 +6,10 @@ Uniform Resource Identifier.
 # TODO: parse HTTP/1.0-';'-params?
 
 from __future__ import annotations
+
 import re
 from socket import AF_INET, AF_INET6, error as SocketError, inet_ntop, inet_pton
-from typing import Any, Iterator, Optional
+from typing import Any, Iterator
 
 from httoop.exceptions import InvalidURI
 from httoop.six import int2byte, iterbytes, with_metaclass

@@ -11,7 +11,7 @@ import time
 
 # import calendar
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from httoop.exceptions import InvalidDate
 from httoop.meta import HTTPSemantic

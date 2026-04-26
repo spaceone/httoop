@@ -6,7 +6,6 @@ HTTP request and response messages.
 from __future__ import annotations
 
 import re
-from typing import Optional
 
 from httoop.exceptions import InvalidLine
 from httoop.meta import HTTPSemantic

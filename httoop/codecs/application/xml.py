@@ -19,7 +19,6 @@ except ImportError:  # pragma: no cover
         raise ParseError('Will not parse without defusedxml!')
 
 
-from typing import Optional
 
 from httoop.codecs.codec import Codec
 from httoop.exceptions import DecodeError

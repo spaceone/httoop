@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import re
-from typing import List
 
 from httoop.header.element import HeaderElement
 from httoop.uri.http import HTTPS
@@ -93,7 +92,7 @@ class FrameOptions(HeaderElement):
         return self.value.upper() == 'SAMEORIGIN'
 
     @property
-    def allow_from(self) -> List[HTTPS]:
+    def allow_from(self) -> list[HTTPS]:
         if self.value.upper() == 'ALLOW-FROM':
             from httoop.uri import URI
             return [URI(uri) for uri in self.params.keys()]

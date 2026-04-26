@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Optional, Tuple, Union
 
 import httoop.messages.request
 import httoop.messages.response
@@ -34,7 +33,7 @@ class ServerStateMachine(StateMachine):
             uri=False
         ))
 
-    def on_message_complete(self) -> Tuple[httoop.messages.request.Request, httoop.messages.response.Response]:
+    def on_message_complete(self) -> tuple[httoop.messages.request.Request, httoop.messages.response.Response]:
         request = super().on_message_complete()
         response = self.response
         self.request = None

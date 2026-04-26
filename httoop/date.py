@@ -92,7 +92,7 @@ class Date(with_metaclass(HTTPSemantic)):
             self.__composed = self.__compose()
         return self.__composed
 
-    def __compose(self):
+    def __compose(self) -> bytes:
         d = self.gmtime
         return b'%s, %02d %s %04d %02d:%02d:%02d GMT' % (
             (b'Mon', b'Tue', b'Wed', b'Thu', b'Fri', b'Sat', b'Sun')[d.tm_wday],

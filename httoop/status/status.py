@@ -58,7 +58,7 @@ class Status(with_metaclass(HTTPSemantic)):
         return self.__code
 
     @code.setter
-    def code(self, code):
+    def code(self, code) -> None:
         self.set((code, self.__reason))
 
     @property
@@ -66,7 +66,7 @@ class Status(with_metaclass(HTTPSemantic)):
         return self.__reason
 
     @reason.setter
-    def reason(self, reason):
+    def reason(self, reason) -> None:
         self.set((self.__code, reason))
 
     STATUS_RE = re.compile(br'^([1-5]\d{2})(?:\s+([\s\w]*))\Z')

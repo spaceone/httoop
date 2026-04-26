@@ -27,7 +27,7 @@ class CLI:
         self.add_subparsers()
         self.parse_arguments()
 
-    def add_subparsers(self):
+    def add_subparsers(self) -> None:
         action_subparsers = self.parser.add_subparsers(title='action', dest='action', required=True)
         parse_parser = action_subparsers.add_parser('parse', parents=[self.parent_parser])
         compose_parser = action_subparsers.add_parser('compose', parents=[self.parent_parser])
@@ -61,7 +61,7 @@ class CLI:
         response.set_defaults(func=self.parse_response)
         add('--file', default='-', type=FileType('rb'))
 
-    def parse_arguments(self):
+    def parse_arguments(self) -> None:
         self.arguments = self.parser.parse_args()
 
         if self.arguments.action == 'parse' and hasattr(self.arguments.file, 'buffer'):
@@ -74,14 +74,14 @@ class CLI:
         add('-H', '--header', action='append', default=[])
         add('-b', '--body', default='')
 
-    def parse_request(self):
+    def parse_request(self) -> None:
         server = ServerStateMachine(self.arguments.scheme, self.arguments.host, self.arguments.port)
         for request, response in server.parse(self.arguments.file.read()):
             print(repr(response))
             print(repr(response.headers))
             print(repr(response.body))
 
-    def parse_response(self):
+    def parse_response(self) -> None:
         client = ClientStateMachine()
         client.request = Request()
         for response in client.parse(self.arguments.file.read()):
@@ -96,7 +96,7 @@ class CLI:
             print(repr(client.message.body))
             print(repr(client.buffer))
 
-    def compose_request(self):
+    def compose_request(self) -> None:
         self.message = Request()
         if self.arguments.method:
             self.message.method = self.arguments.method
@@ -104,7 +104,7 @@ class CLI:
             self.message.uri = self.arguments.uri
         self.common()
 
-    def compose_response(self):
+    def compose_response(self) -> None:
         self.message = Response()
         status = self.message.status.code
         if self.arguments.status:
@@ -114,7 +114,7 @@ class CLI:
         self.message.status = status
         self.common()
 
-    def common(self):
+    def common(self) -> None:
         if self.arguments.protocol:
             protocol = self.arguments.protocol
             try:

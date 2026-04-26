@@ -27,7 +27,7 @@ class Response(Message):
         return self.__status
 
     @status.setter
-    def status(self, status):
+    def status(self, status) -> None:
         self.__status.set(status)
 
     def __init__(self, status: None = None, headers: None = None, body: None = None, protocol: None = None) -> None:

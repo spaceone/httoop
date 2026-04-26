@@ -273,7 +273,7 @@ class MimeType:
         return self.value.split('/', 1)[0]
 
     @type.setter
-    def type(self, type_):
+    def type(self, type_) -> None:
         self.value = '%s/%s' % (type_, self.subtype)
 
     @property
@@ -281,7 +281,7 @@ class MimeType:
         return (self.value.split('/', 1) + [''])[1]
 
     @subtype.setter
-    def subtype(self, subtype):
+    def subtype(self, subtype) -> None:
         self.value = '%s/%s' % (self.type, subtype)
 
     # TODO: official name
@@ -290,7 +290,7 @@ class MimeType:
         return self.subtype.split('+', 1).pop()
 
     @subtype_wo_vendor.setter
-    def subtype_wo_vendor(self, subtype_wo_vendor):
+    def subtype_wo_vendor(self, subtype_wo_vendor) -> None:
         self.subtype = '%s+%s' % (self.vendor, subtype_wo_vendor)
 
     @property
@@ -300,7 +300,7 @@ class MimeType:
         return ''
 
     @vendor.setter
-    def vendor(self, vendor):
+    def vendor(self, vendor) -> None:
         self.subtype = '%s+%s' % (vendor, self.subtype_wo_vendor)
 
     @property
@@ -308,7 +308,7 @@ class MimeType:
         return self.params.get('version', '')
 
     @version.setter
-    def version(self, version):
+    def version(self, version) -> None:
         self.params['version'] = str(version)
 
 
@@ -401,11 +401,11 @@ class _CookieElement(HeaderElement):
         return key
 
     @property
-    def value(self):
+    def value(self) -> str:
         return '%s=%s' % (self.cookie_name, self.cookie_value)
 
     @value.setter
-    def value(self, value):
+    def value(self, value) -> None:
         self.cookie_name, self.cookie_value, __ = self.parseparam(value.encode('ISO8859-1'))
         self.cookie_name, self.cookie_value = self.cookie_name.decode('ISO8859-1'), self.cookie_value.decode('ISO8859-1')
 

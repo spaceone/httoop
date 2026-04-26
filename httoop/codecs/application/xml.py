@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NoReturn
 
 
 if TYPE_CHECKING:
@@ -15,7 +15,7 @@ except ImportError:  # pragma: no cover
     # TODO: emit a warning
     from xml.etree.ElementTree import ParseError, tostring
 
-    def fromstring(data):
+    def fromstring(data) -> NoReturn:
         raise ParseError('Will not parse without defusedxml!')
 
 

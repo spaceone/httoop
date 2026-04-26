@@ -35,7 +35,7 @@ class URI(with_metaclass(URIType)):
         return tuple(QueryString.decode(self.query_string.encode(self.encoding), self.encoding))
 
     @query.setter
-    def query(self, query):
+    def query(self, query) -> None:
         self.query_string = QueryString.encode(query, self.encoding).decode(self.encoding)
 
     @property
@@ -43,7 +43,7 @@ class URI(with_metaclass(URIType)):
         return [Unicode.replace(p, '%2f', '/') for p in self.path.split('/')]
 
     @path_segments.setter
-    def path_segments(self, path):
+    def path_segments(self, path) -> None:
         self.path = '/'.join(seq.replace('/', '%2f') for seq in path)
 
     @property
@@ -58,7 +58,7 @@ class URI(with_metaclass(URIType)):
         return self._port or self.PORT
 
     @port.setter
-    def port(self, port):
+    def port(self, port) -> None:
         port = port or self.PORT
         if port:
             try:
@@ -169,7 +169,7 @@ class URI(with_metaclass(URIType)):
         return dict((key, getattr(self, key)) for key in slots)
 
     @dict.setter
-    def dict(self, uri):
+    def dict(self, uri) -> None:
         for key in self.slots:
             key = key.lstrip('_')
             setattr(self, key, uri.get(key, ''))
@@ -179,7 +179,7 @@ class URI(with_metaclass(URIType)):
         return tuple(getattr(self, key) for key in self.slots)
 
     @tuple.setter
-    def tuple(self, tuple_):
+    def tuple(self, tuple_) -> None:
         (self.scheme, self.username, self.password, self.host,
          self.port, self.path, self.query_string, self.fragment) = tuple_
 

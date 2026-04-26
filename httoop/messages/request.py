@@ -28,7 +28,7 @@ class Request(Message):
         return self.__method
 
     @method.setter
-    def method(self, method):
+    def method(self, method) -> None:
         self.__method.set(method)
 
     @property
@@ -36,7 +36,7 @@ class Request(Message):
         return self.__uri
 
     @uri.setter
-    def uri(self, uri):
+    def uri(self, uri) -> None:
         self.__uri.set(uri)
 
     def __init__(self, method: None = None, uri: None = None, headers: None = None, body: None = None, protocol: None = None) -> None:  # pylint: disable=R0913

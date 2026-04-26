@@ -1,4 +1,5 @@
-"""HTTP status codes.
+"""
+HTTP status codes.
 
 .. seealso:: :rfc:`2616#section-10`
 """
@@ -38,7 +39,8 @@ class StatusType(HTTPSemantic):
 
 
 class StatusException(with_metaclass(StatusType, Status, Exception)):
-    """This class represents a small HTTP Response message
+    """
+    This class represents a small HTTP Response message
     for error handling purposes
     .
     """

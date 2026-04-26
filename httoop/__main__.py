@@ -1,4 +1,5 @@
-"""httoop CLI tool.
+"""
+httoop CLI tool.
 
 Examples
 --------

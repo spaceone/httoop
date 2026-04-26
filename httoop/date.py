@@ -1,4 +1,5 @@
-"""HTTP Date.
+"""
+HTTP Date.
 
 .. seealso:: :rfc:`2616#section-3.3`
 """
@@ -20,7 +21,8 @@ __all__ = ['Date']
 
 
 class Date(with_metaclass(HTTPSemantic)):
-    """A HTTP Date string.
+    """
+    A HTTP Date string.
 
     It provides a API to multiple time representations:
 
@@ -99,7 +101,8 @@ class Date(with_metaclass(HTTPSemantic)):
 
     @classmethod
     def parse(cls, timestr: Optional[bytes] = None) -> 'Date':
-        """parses a HTTP date string and returns a :class:`Date` object.
+        """
+        parses a HTTP date string and returns a :class:`Date` object.
 
         :param timestr: the time string in one of the http formats
         :type  timestr: str

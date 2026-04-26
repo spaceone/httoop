@@ -50,7 +50,8 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
             return key
 
     def elements(self, fieldname: Union[bytes, str]) -> List[Any]:
-        """Return a sorted list of HeaderElements from
+        """
+        Return a sorted list of HeaderElements from
         the given comma-separated header string.
         """
         fieldvalue = self.getbytes(fieldname)
@@ -113,7 +114,8 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
         self.update(headers)
 
     def parse(self, data: bytes) -> None:
-        r"""parses HTTP headers.
+        r"""
+        parses HTTP headers.
 
         :param data:
         the header string containing headers separated by "\r\n"

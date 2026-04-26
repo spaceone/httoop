@@ -1,4 +1,5 @@
-"""HTTP request and response messages.
+"""
+HTTP request and response messages.
 
 .. seealso:: :rfc:`2616#section-4`
 """
@@ -13,7 +14,8 @@ __all__ = ('Request', )
 
 
 class Request(Message):
-    """A HTTP request message.
+    """
+    A HTTP request message.
 
     .. seealso:: :rfc:`2616#section-5`
     """
@@ -37,7 +39,8 @@ class Request(Message):
         self.__uri.set(uri)
 
     def __init__(self, method: None = None, uri: None = None, headers: None = None, body: None = None, protocol: None = None) -> None:  # pylint: disable=R0913
-        """Creates a new Request object to hold information about a request.
+        """
+        Creates a new Request object to hold information about a request.
 
         :param method: the requested method
         :type  method: str
@@ -51,7 +54,8 @@ class Request(Message):
         self.__uri = URI(uri or '/')
 
     def parse(self, line: bytes) -> None:
-        """parses the request line and sets method, uri and protocol version
+        """
+        parses the request line and sets method, uri and protocol version
         :param line: the request line
         :type  line: bytes.
         """

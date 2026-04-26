@@ -1,4 +1,5 @@
-"""HTTP request and response body.
+"""
+HTTP request and response body.
 
 .. seealso:: :rfc:`2616#section-4.3`
 """
@@ -16,7 +17,8 @@ from httoop.util import IFile, Unicode
 
 
 class Body(with_metaclass(HTTPSemantic, IFile)):
-    """A HTTP message body.
+    """
+    A HTTP message body.
 
     This class is capable of handling HTTP Transfer-Encoding
     and Content-Encoding as defined in RFC 2616.
@@ -133,7 +135,8 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
             self.data = data
 
     def decode(self, *data) -> Any:
-        """Decodes the body content if a codec for the mimetype exists.
+        """
+        Decodes the body content if a codec for the mimetype exists.
         Stores the decoded object in :attr:`data`.
         """
         codec = self.mimetype.codec

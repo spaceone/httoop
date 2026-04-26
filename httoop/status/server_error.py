@@ -6,7 +6,8 @@ from httoop.status.types import StatusException
 
 
 class ServerErrorStatus(StatusException):
-    """SERVER_ERRORS = 5xx
+    """
+    SERVER_ERRORS = 5xx
     Indicates that something gone wrong on the server side.
     The server can send the Retry-After header if
     it knows that the problem is temporary.
@@ -19,7 +20,8 @@ class ServerErrorStatus(StatusException):
 
 
 class INTERNAL_SERVER_ERROR(ServerErrorStatus):
-    """The generic status code.
+    """
+    The generic status code.
     Mostly used when an exception in the request handler occurs.
     """
 
@@ -28,7 +30,8 @@ class INTERNAL_SERVER_ERROR(ServerErrorStatus):
 
 
 class NOT_IMPLEMENTED(ServerErrorStatus):
-    """The client tried to use a HTTP feature which the server does not support.
+    """
+    The client tried to use a HTTP feature which the server does not support.
     Used if the server does not know the request method.
     """
 
@@ -43,7 +46,8 @@ class BAD_GATEWAY(ServerErrorStatus):
 
 
 class SERVICE_UNAVAILABLE(ServerErrorStatus):
-    """There is currently a problem with the server.
+    """
+    There is currently a problem with the server.
     Probably too many requests at once.
     """
 
@@ -59,7 +63,8 @@ class GATEWAY_TIMEOUT(ServerErrorStatus):
 
 
 class HTTP_VERSION_NOT_SUPPORTED(ServerErrorStatus):
-    """The clients http version is not supported.
+    """
+    The clients http version is not supported.
     This should not happen since HTTP 1.1 is backward compatible.
     The entity-body should contain a list of supported protocols.
     """

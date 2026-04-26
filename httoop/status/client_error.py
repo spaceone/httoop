@@ -6,7 +6,8 @@ from httoop.status.types import StatusException
 
 
 class ClientErrorStatus(StatusException):
-    """CLIENT_ERRORS = 4xx
+    """
+    CLIENT_ERRORS = 4xx
     Something is wrong with the client: e.g. authentication,
     format of wanted representation, or error in the clients http library.
     """
@@ -15,7 +16,8 @@ class ClientErrorStatus(StatusException):
 
 
 class BAD_REQUEST(ClientErrorStatus):
-    """The generic response code for client side errors.
+    """
+    The generic response code for client side errors.
     The response entity-body should contain information
     about what is wrong with the request.
     """
@@ -25,7 +27,8 @@ class BAD_REQUEST(ClientErrorStatus):
 
 
 class UNAUTHORIZED(ClientErrorStatus):
-    """The requested resource is protected and no or wrong
+    """
+    The requested resource is protected and no or wrong
     authentication credentials were given.
     The WWW-Authenticate-header contains information about
     the accepted authentication method.
@@ -51,7 +54,8 @@ class PAYMENT_REQUIRED(ClientErrorStatus):
 
 
 class FORBIDDEN(ClientErrorStatus):
-    """The resource can only be served for specific users, at a specific time
+    """
+    The resource can only be served for specific users, at a specific time
     or from a certain IP address, etc.
     """
 
@@ -71,7 +75,8 @@ class NOT_FOUND(ClientErrorStatus):
 
 
 class METHOD_NOT_ALLOWED(ClientErrorStatus):
-    """The client tried to use a HTTP Method which is not allowed.
+    """
+    The client tried to use a HTTP Method which is not allowed.
     The Allow-header has to contain the allowed methods for this resource.
     """
 
@@ -88,7 +93,8 @@ class METHOD_NOT_ALLOWED(ClientErrorStatus):
 
 
 class NOT_ACCEPTABLE(ClientErrorStatus):
-    r"""The clients Accept-\*-header wants a representation of
+    r"""
+    The clients Accept-\*-header wants a representation of
     the resource which the server can not deliver.
     The entity body should contain a list of links with
     acceptable representations (similar to 300).
@@ -103,7 +109,8 @@ class PROXY_AUTHENTICATION_REQUIRED(ClientErrorStatus):
 
 
 class REQUEST_TIMEOUT(ClientErrorStatus):
-    """The client opens a connection to a server without sending a
+    """
+    The client opens a connection to a server without sending a
     request after a specific amount of time.
     """
 
@@ -115,7 +122,8 @@ class REQUEST_TIMEOUT(ClientErrorStatus):
 
 
 class CONFLICT(ClientErrorStatus):
-    """If the request would cause to leave the resource in an inconsequent
+    """
+    If the request would cause to leave the resource in an inconsequent
     state this status is send.
     Examples: DELETE of a non empty bucket, changing a username to
     a already taken username.
@@ -134,7 +142,8 @@ class GONE(ClientErrorStatus):
 
 
 class LENGTH_REQUIRED(ClientErrorStatus):
-    """If a request representation is given but no Content-Length-header
+    """
+    If a request representation is given but no Content-Length-header
     the HTTP server can decide to respond with this status code.
     """
 
@@ -142,7 +151,8 @@ class LENGTH_REQUIRED(ClientErrorStatus):
 
 
 class PRECONDITION_FAILED(ClientErrorStatus):
-    r"""If a condition from any of the If-\*-headers except for conditional
+    r"""
+    If a condition from any of the If-\*-headers except for conditional
     GET fails this status code is the respond.
     """
 
@@ -150,7 +160,8 @@ class PRECONDITION_FAILED(ClientErrorStatus):
 
 
 class PAYLOAD_TOO_LARGE(ClientErrorStatus):
-    """The HTTP server can deny too large representations.
+    """
+    The HTTP server can deny too large representations.
     A LBYL request can be useful.
     If the server can only not handle the request e.g. because of
     full disk space it can send the Retry-After-header.
@@ -166,7 +177,8 @@ class URI_TOO_LONG(ClientErrorStatus):
 
 
 class UNSUPPORTED_MEDIA_TYPE(ClientErrorStatus):
-    """This status code is sent when the server does not know
+    """
+    This status code is sent when the server does not know
     the representation media type given in Content-Type-header.
     If the representation is just broken use 400 or 422.
     """
@@ -180,7 +192,8 @@ class RANGE_NOT_SATISFIABLE(ClientErrorStatus):
 
 
 class EXPECTATION_FAILED(ClientErrorStatus):
-    """This is the response code if a LBYL request (Expect-header) fails.
+    """
+    This is the response code if a LBYL request (Expect-header) fails.
     It is the flip side of 100 Continue.
     """
 

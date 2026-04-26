@@ -1,4 +1,5 @@
-"""HTTP URLs
+"""
+HTTP URLs
 .. seealso:: :rfc:`2616#section-3.2`.
 
 .. seealso:: :rfc:`2616#section-3.2.2`

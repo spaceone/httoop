@@ -1,4 +1,5 @@
-"""Implement test cases from:
+"""
+Implement test cases from:
 http://test.greenbytes.de/tech/tc/httpauth/
 """
 

@@ -1,4 +1,5 @@
-"""HTTP headers.
+"""
+HTTP headers.
 
 .. seealso:: :rfc:`2616#section-2.2`
 

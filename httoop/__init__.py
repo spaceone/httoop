@@ -1,4 +1,5 @@
-"""HTTPOOP - an OOP model of the HTTP protocol.
+"""
+HTTPOOP - an OOP model of the HTTP protocol.
 
 .. seealso:: :rfc:`2616`
 """

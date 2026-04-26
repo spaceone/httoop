@@ -24,12 +24,12 @@ class XML(Codec):
 	mimetype = 'application/xml'
 
 	@classmethod
-	def decode(cls, data: bytes, charset: Optional[str]=None, mimetype: Optional["ContentType"]=None) -> Element:
+	def decode(cls, data: bytes, charset: Optional[str] = None, mimetype: Optional["ContentType"] = None) -> Element:
 		try:
 			return fromstring(data)
 		except ParseError as exc:
 			raise DecodeError(u'Could not decode as %s: %s' % (mimetype, exc,))
 
 	@classmethod
-	def encode(cls, root: Element, charset: Optional[str]=None, mimetype: Optional["ContentType"]=None) -> bytes:
+	def encode(cls, root: Element, charset: Optional[str] = None, mimetype: Optional["ContentType"] = None) -> bytes:
 		return tostring(root, charset)

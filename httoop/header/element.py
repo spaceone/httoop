@@ -49,7 +49,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 	RE_SPLIT = re.compile(b',(?=(?:[^"]*"[^"]*")*[^"]*$)')
 	RE_PARAMS = re.compile(b';(?=(?:[^"]*"[^"]*")*[^"]*$)')
 
-	def __init__(self, value: str, params: Optional[Any]=None) -> None:
+	def __init__(self, value: str, params: Optional[Any] = None) -> None:
 		self.value = value
 		self.params = ByteUnicodeDict(params or {})
 		self.sanitize()
@@ -200,7 +200,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 		return cls.join([bytes(x) for x in cls.sorted(elements + others)])
 
 	@classmethod
-	def formatparam(cls, param: bytes, value: Optional[Union[bytes, str]]=None, quote: bool=False) -> bytes:
+	def formatparam(cls, param: bytes, value: Optional[Union[bytes, str]] = None, quote: bool = False) -> bytes:
 		"""Convenience function to format and return a key=value pair.
 
 		This will quote the value if needed or if quote is true.
@@ -379,7 +379,7 @@ class _CookieElement(HeaderElement):
 	#RE_TSPECIALS = re.compile(br'[ \(\)<>@,;:\\"\[\]\?=]')
 	RE_TSPECIALS = re.compile(b'(?!)')
 
-	def __init__(self, cookie_name: str, cookie_value: str, params: Optional[Dict[bytes, str]]=None) -> None:
+	def __init__(self, cookie_name: str, cookie_value: str, params: Optional[Dict[bytes, str]] = None) -> None:
 		self.cookie_name = cookie_name
 		self.cookie_value = cookie_value
 		super(_CookieElement, self).__init__(self.value, params)

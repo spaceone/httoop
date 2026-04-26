@@ -26,14 +26,14 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 		Element = HEADER.get(key, HeaderElement)
 		return Element.decode_rfc2047(super(Headers, self).__getitem__(key))
 
-	def get(self, key: str, default: Optional[Union[bytes, str]]=None) -> Optional[Union[bytes, str]]:
+	def get(self, key: str, default: Optional[Union[bytes, str]] = None) -> Optional[Union[bytes, str]]:
 		Element = HEADER.get(key, HeaderElement)
 		try:
 			return Element.decode_rfc2047(super(Headers, self).__getitem__(key))
 		except KeyError:
 			return default
 
-	def getbytes(self, key: Union[bytes, str], default: None=None) -> Optional[bytes]:
+	def getbytes(self, key: Union[bytes, str], default: None = None) -> Optional[bytes]:
 		try:
 			return super(Headers, self).__getitem__(key)
 		except KeyError:
@@ -60,14 +60,14 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 		Element = HEADER.get(fieldname, HeaderElement)
 		return Element.sorted([Element.parse(element) for element in Element.split(fieldvalue)])
 
-	def element(self, fieldname: Union[bytes, str], default: None=None) -> Any:
+	def element(self, fieldname: Union[bytes, str], default: None = None) -> Any:
 		u"""Treat the field as single element."""
 		if fieldname in self:
 			Element = HEADER.get(fieldname, HeaderElement)
 			return Element.parse(super(Headers, self).__getitem__(fieldname))
 		return default
 
-	def get_element(self, fieldname: str, which: Optional[str]=None, default: Optional[object]=None) -> Any:
+	def get_element(self, fieldname: str, which: Optional[str] = None, default: Optional[object] = None) -> Any:
 		for element in self.elements(fieldname):
 			if which is None or element == which:
 				return element

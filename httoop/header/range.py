@@ -67,7 +67,7 @@ class Range(HeaderElement):
 
 	is_request_header = True
 
-	def __init__(self, value: str, ranges: List[Union[Tuple[None, int], Tuple[int, int], Tuple[int, None]]], params: None=None) -> None:
+	def __init__(self, value: str, ranges: List[Union[Tuple[None, int], Tuple[int, int], Tuple[int, None]]], params: None = None) -> None:
 		self.ranges = ranges
 		super(Range, self).__init__(value, params)
 

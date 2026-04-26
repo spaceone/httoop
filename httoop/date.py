@@ -39,7 +39,7 @@ class Date(with_metaclass(HTTPSemantic)):
 
 	__slots__ = ('__composed', '__timestamp', '__datetime', '__time_struct')
 
-	def __init__(self, timeval: Optional[Any]=None) -> None:
+	def __init__(self, timeval: Optional[Any] = None) -> None:
 		u"""
 		:param timeval:
 		:type  timeval:
@@ -79,7 +79,7 @@ class Date(with_metaclass(HTTPSemantic)):
 		return self.__datetime
 
 	@property
-	def gmtime(self) -> 	time.struct_time:
+	def gmtime(self) -> time.struct_time:
 		if self.__time_struct is None:
 			self.__time_struct = time.gmtime(int(self))
 		return self.__time_struct
@@ -99,7 +99,7 @@ class Date(with_metaclass(HTTPSemantic)):
 		)
 
 	@classmethod
-	def parse(cls, timestr: Optional[bytes]=None) -> "Date":
+	def parse(cls, timestr: Optional[bytes] = None) -> "Date":
 		u"""parses a HTTP date string and returns a :class:`Date` object.
 
 		:param timestr: the time string in one of the http formats

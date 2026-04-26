@@ -47,7 +47,7 @@ class Message(with_metaclass(HTTPSemantic)):
 		self.__body.set(body)
 
 	@property
-	def trailer(self) -> 	httoop.header.headers.Headers:
+	def trailer(self) -> httoop.header.headers.Headers:
 		return Headers((key, self.headers[key]) for key in self.headers.values('Trailer') if key in self.headers)
 
 	# @trailer.setter
@@ -60,7 +60,7 @@ class Message(with_metaclass(HTTPSemantic)):
 	# 		self.headers.elements('Trailer')  # sanitize
 	# 		self.headers.merge(trailer)
 
-	def __init__(self, protocol: None=None, headers: None=None, body: None=None) -> None:
+	def __init__(self, protocol: None = None, headers: None = None, body: None = None) -> None:
 		u"""Initiates a new Message to hold information about the message.
 
 		:param protocol: the requested protocol

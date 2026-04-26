@@ -148,7 +148,7 @@ class IFile(object):
 		return self.fd.writelines(sequence_of_strings)
 
 	@if_has
-	def seek(self, offset, whence: int=0):
+	def seek(self, offset, whence: int = 0):
 		return self.fd.seek(offset, whence)
 
 	@if_has
@@ -195,7 +195,7 @@ class CaseInsensitiveDict(dict):
 	def __contains__(self, key: Union[bytes, str]) -> bool:
 		return dict.__contains__(self, self.formatkey(key))
 
-	def get(self, key: Union[bytes, str], default: Optional[Any]=None) -> Any:
+	def get(self, key: Union[bytes, str], default: Optional[Any] = None) -> Any:
 		return dict.get(self, self.formatkey(key), default)
 
 	def update(self, E: Dict[str, str]) -> None:
@@ -203,7 +203,7 @@ class CaseInsensitiveDict(dict):
 			self[self.formatkey(key)] = self.formatvalue(E[key])
 
 	#def setdefault(self, key: str, x: Optional[Union[UserAgent, Server, str, bytes]]=None) -> bytes:
-	def setdefault(self, key: str, x: Optional[Union[str, bytes]]=None) -> bytes:
+	def setdefault(self, key: str, x: Optional[Union[str, bytes]] = None) -> bytes:
 		key = self.formatkey(key)
 		try:
 			return dict.__getitem__(self, key)
@@ -211,11 +211,11 @@ class CaseInsensitiveDict(dict):
 			self[key] = self.formatvalue(x)
 			return dict.__getitem__(self, key)
 
-	def pop(self, key: str, default: None=None) -> Optional[bytes]:
+	def pop(self, key: str, default: None = None) -> Optional[bytes]:
 		return dict.pop(self, self.formatkey(key), default)
 
 	@classmethod
-	def fromkeys(cls, seq: Tuple[str, str, str], value: Optional[str]=None) -> "Headers":
+	def fromkeys(cls, seq: Tuple[str, str, str], value: Optional[str] = None) -> "Headers":
 		return cls(dict((key, value) for key in seq))
 
 

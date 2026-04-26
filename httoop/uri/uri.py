@@ -67,10 +67,10 @@ class URI(with_metaclass(URIType)):
 				raise InvalidURI(_(u'Invalid port: %r'), port)  # TODO: TypeError
 		self._port = port
 
-	def __init__(self, uri: Optional[Any]=None, *args, **kwargs) -> None:
+	def __init__(self, uri: Optional[Any] = None, *args, **kwargs) -> None:
 		self.set(kwargs or args or uri or b'')
 
-	def join(self, other: Optional[bytes]=None, *args, **kwargs) -> Union["HTTP", "SvnSSH", "URI"]:
+	def join(self, other: Optional[bytes] = None, *args, **kwargs) -> Union["HTTP", "SvnSSH", "URI"]:
 		u"""Join a URI with another absolute or relative URI."""
 		relative = URI(other or args or kwargs)
 		joined = URI()

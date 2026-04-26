@@ -1,6 +1,6 @@
 from __future__ import annotations
 import re
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HEADER, HeaderElement
@@ -26,21 +26,21 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
         Element = HEADER.get(key, HeaderElement)
         return Element.decode_rfc2047(super().__getitem__(key))
 
-    def get(self, key: str, default: Optional[Union[bytes, str]] = None) -> Optional[Union[bytes, str]]:
+    def get(self, key: str, default: Optional[bytes | str] = None) -> Optional[bytes | str]:
         Element = HEADER.get(key, HeaderElement)
         try:
             return Element.decode_rfc2047(super().__getitem__(key))
         except KeyError:
             return default
 
-    def getbytes(self, key: Union[bytes, str], default: None = None) -> Optional[bytes]:
+    def getbytes(self, key: bytes | str, default: None = None) -> Optional[bytes]:
         try:
             return super().__getitem__(key)
         except KeyError:
             return default
 
     @classmethod
-    def formatkey(cls, key: Union[bytes, str]) -> str:
+    def formatkey(cls, key: bytes | str) -> str:
         key = CaseInsensitiveDict.formatkey(key)
         if cls.HEADER_RE.search(key.encode('utf-8')):
             raise InvalidHeader(_('Invalid header name: %r'), key)
@@ -49,7 +49,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
         except KeyError:
             return key
 
-    def elements(self, fieldname: Union[bytes, str]) -> List[Any]:
+    def elements(self, fieldname: bytes | str) -> List[Any]:
         """
         Return a sorted list of HeaderElements from
         the given comma-separated header string.
@@ -61,7 +61,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
         Element = HEADER.get(fieldname, HeaderElement)
         return Element.sorted([Element.parse(element) for element in Element.split(fieldvalue)])
 
-    def element(self, fieldname: Union[bytes, str], default: None = None) -> Any:
+    def element(self, fieldname: bytes | str, default: None = None) -> Any:
         """Treat the field as single element."""
         if fieldname in self:
             Element = HEADER.get(fieldname, HeaderElement)
@@ -84,13 +84,13 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
         Element = HEADER.get(fieldname, HeaderElement)
         return Element(*args, **kwargs)
 
-    def values(self, *key) -> List[Union[Any, str]]:
+    def values(self, *key) -> List[Any | str]:
         if not key:
             return super().values()
         # if key is set return a ordered list of element values
         return [e.value for e in self.elements(*key)]
 
-    def append(self, _name: str, _value: Union[bytes, str], **params) -> None:
+    def append(self, _name: str, _value: bytes | str, **params) -> None:
         _value = self.formatvalue(_value)
         if params:
             Element = HEADER.get(_name, HeaderElement)

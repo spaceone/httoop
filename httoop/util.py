@@ -6,7 +6,7 @@ import codecs
 import sys
 from email.generator import _make_boundary as make_boundary
 from functools import partial
-from typing import Any, Callable, Dict, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Optional, Tuple
 
 
 try:
@@ -78,7 +78,7 @@ def iteritems(d, **kw):
     return iter(getattr(d, 'items' if PY3 else 'iteritems')(**kw))
 
 
-def to_unicode(string: Optional[Union[bytes, str]]) -> str:
+def to_unicode(string: Optional[bytes | str]) -> str:
     if string is None:
         return ''
     if isinstance(string, bytes):
@@ -97,7 +97,7 @@ def if_has(func: Callable) -> Callable:
     return _decorated
 
 
-def integer(number: Union[int, str, bytes], *args) -> int:
+def integer(number: int | str | bytes, *args) -> int:
     """
     In Python 3 int() is broken.
     >>> int(bytearray(b'1_0'))
@@ -172,7 +172,7 @@ class CaseInsensitiveDict(dict):
     __slots__ = ()
 
     @staticmethod
-    def formatkey(key: Union[bytes, str]) -> str:
+    def formatkey(key: bytes | str) -> str:
         return to_unicode(key).title()
 
     @staticmethod
@@ -185,19 +185,19 @@ class CaseInsensitiveDict(dict):
             dict.__setitem__(self, self.formatkey(key), self.formatvalue(value))
         dict.__init__(self)
 
-    def __getitem__(self, key: Union[bytes, str]) -> Any:
+    def __getitem__(self, key: bytes | str) -> Any:
         return dict.__getitem__(self, self.formatkey(key))
 
-    def __setitem__(self, key: Union[bytes, str], value: Any) -> None:
+    def __setitem__(self, key: bytes | str, value: Any) -> None:
         dict.__setitem__(self, self.formatkey(key), self.formatvalue(value))
 
     def __delitem__(self, key: str) -> None:
         dict.__delitem__(self, self.formatkey(key))
 
-    def __contains__(self, key: Union[bytes, str]) -> bool:
+    def __contains__(self, key: bytes | str) -> bool:
         return dict.__contains__(self, self.formatkey(key))
 
-    def get(self, key: Union[bytes, str], default: Optional[Any] = None) -> Any:
+    def get(self, key: bytes | str, default: Optional[Any] = None) -> Any:
         return dict.get(self, self.formatkey(key), default)
 
     def update(self, E: Dict[str, str]) -> None:
@@ -205,7 +205,7 @@ class CaseInsensitiveDict(dict):
             self[self.formatkey(key)] = self.formatvalue(E[key])
 
     # def setdefault(self, key: str, x: Optional[Union[UserAgent, Server, str, bytes]]=None) -> bytes:
-    def setdefault(self, key: str, x: Optional[Union[str, bytes]] = None) -> bytes:
+    def setdefault(self, key: str, x: Optional[str | bytes] = None) -> bytes:
         key = self.formatkey(key)
         try:
             return dict.__getitem__(self, key)
@@ -224,7 +224,7 @@ class CaseInsensitiveDict(dict):
 class ByteUnicodeDict(CaseInsensitiveDict):
 
     @staticmethod
-    def formatkey(key: Union[bytes, str]) -> bytes:
+    def formatkey(key: bytes | str) -> bytes:
         return key if isinstance(key, bytes) else key.encode('UTF-8')
 
 

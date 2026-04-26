@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Iterator, List, Optional, Union
+from typing import Any, Dict, Iterator, List, Optional
 
 
 try:
@@ -36,7 +36,7 @@ class Resource(dict):
     def self(self) -> str:
         return self.expand(self.get_link('self')['href'])
 
-    def get_links(self, relation: str, name: None = None) -> Iterator[Dict[str, Union[None, bool, str]]]:
+    def get_links(self, relation: str, name: None = None) -> Iterator[Dict[str, None | bool | str]]:
         links = self['_links'].get(relation)
         if links is None:
             return
@@ -66,7 +66,7 @@ class Resource(dict):
                 link['deprecation'] = False
             yield link
 
-    def get_link(self, relation: str, name: Optional[str] = None) -> Optional[Dict[str, Optional[Union[bool, str]]]]:
+    def get_link(self, relation: str, name: Optional[str] = None) -> Optional[Dict[str, Optional[bool | str]]]:
         try:
             return next(self.get_links(relation, name))
         except StopIteration:
@@ -128,7 +128,7 @@ class HAL(JSON):
         return Resource(data)
 
     @classmethod
-    def encode(cls, data: Union[Dict[str, None], Resource], charset: Optional[str] = None, mimetype: Optional[ContentType] = None) -> bytes:
+    def encode(cls, data: Dict[str, None] | Resource, charset: Optional[str] = None, mimetype: Optional[ContentType] = None) -> bytes:
         if not isinstance(data, dict):
             raise EncodeError('HAL documents must be JSON objects.')
 

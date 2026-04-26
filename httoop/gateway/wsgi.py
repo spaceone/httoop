@@ -5,7 +5,7 @@ Web Server Gateway Interface.
 """
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, Iterator, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterator, Optional, Tuple
 
 from httoop.messages import Body
 from httoop.six import PY2, reraise
@@ -119,7 +119,7 @@ class WSGI:
         self.response.body = buffered(data)
         return raw_result
 
-    def get_environ(self) -> Dict[str, Optional[Union[str, Tuple[int, int], WSGIBody, bool]]]:
+    def get_environ(self) -> Dict[str, Optional[str | Tuple[int, int] | WSGIBody | bool]]:
         environ = {}
         environ.update(dict(self.environ.items()))
         environ.update(dict([

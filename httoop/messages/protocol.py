@@ -6,7 +6,7 @@ HTTP request and response messages.
 from __future__ import annotations
 
 import re
-from typing import Any, Tuple, Union
+from typing import Any, Tuple
 
 from httoop.exceptions import InvalidLine
 from httoop.meta import HTTPSemantic
@@ -36,12 +36,12 @@ class Protocol(with_metaclass(HTTPSemantic)):
 
     PROTOCOL_RE = re.compile(br'^(HTTP)/(\d+)\.(\d+)\Z')
 
-    def __init__(self, protocol: Union[bytes, Protocol, Tuple[int, int], int, str] = (1, 1)) -> None:
+    def __init__(self, protocol: bytes | Protocol | Tuple[int, int] | int | str = (1, 1)) -> None:
         self.__protocol = protocol
         self.name = b'HTTP'
         self.set(protocol)
 
-    def set(self, protocol: Union[bytes, Protocol, Tuple[int, int], int, str]) -> None:
+    def set(self, protocol: bytes | Protocol | Tuple[int, int] | int | str) -> None:
         if isinstance(protocol, (bytes, Unicode)):
             if isinstance(protocol, Unicode):
                 protocol = protocol.encode('ascii', 'replace')
@@ -75,7 +75,7 @@ class Protocol(with_metaclass(HTTPSemantic)):
             return False
         return self.version == other.version
 
-    def __lt__(self, other: Union[int, Tuple[int, int], Protocol]) -> bool:
+    def __lt__(self, other: int | Tuple[int, int] | Protocol) -> bool:
         try:
             other = Protocol(other)
         except (TypeError, InvalidLine):
@@ -84,7 +84,7 @@ class Protocol(with_metaclass(HTTPSemantic)):
             raise  # pragma: no cover
         return self.version < other.version
 
-    def __gt__(self, other: Union[int, Tuple[int, int], Protocol]) -> bool:
+    def __gt__(self, other: int | Tuple[int, int] | Protocol) -> bool:
         try:
             other = Protocol(other)
         except (TypeError, InvalidLine):

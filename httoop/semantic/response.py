@@ -74,7 +74,7 @@ class ComposedResponse(ComposedMessage):
         else:
             return self.prepare_range(range_)
 
-    def range_conditions(self) -> Iterator[Union[bool, Body]]:
+    def range_conditions(self) -> Iterator[bool | Body]:
         response = self.response
         yield response.protocol >= (1, 1)
         yield self.request.protocol >= (1, 1)

@@ -5,7 +5,7 @@ HTTP status codes.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Type, Union
+from typing import Any, Dict, Optional, Type
 
 from httoop.meta import HTTPSemantic
 from httoop.six import with_metaclass
@@ -119,7 +119,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 
     __str__ = __repr__
 
-    def to_dict(self) -> Dict[str, Union[int, str, Dict[str, str]]]:
+    def to_dict(self) -> Dict[str, int | str | Dict[str, str]]:
         """the default body arguments."""
         return dict(
             status=self.status,

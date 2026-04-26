@@ -11,7 +11,7 @@ import time
 
 # import calendar
 from datetime import datetime
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from httoop.exceptions import InvalidDate
 from httoop.meta import HTTPSemantic
@@ -155,13 +155,13 @@ class Date(with_metaclass(HTTPSemantic)):
         except NotImplementedError:  # pragma: no cover
             return NotImplemented
 
-    def __gt__(self, other: Optional[Union[Date, str]]) -> bool:
+    def __gt__(self, other: Optional[Date | str]) -> bool:
         try:
             return int(self) > int(self.__other(other))
         except NotImplementedError:  # pragma: no cover
             return NotImplemented
 
-    def __lt__(self, other: Optional[Union[Date, str]]) -> bool:
+    def __lt__(self, other: Optional[Date | str]) -> bool:
         try:
             return int(self) < int(self.__other(other))
         except NotImplementedError:  # pragma: no cover

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Tuple, Type, Union
+from typing import Any, Dict, Tuple, Type
 
 from httoop.util import PY3, Unicode
 
@@ -37,10 +37,10 @@ class Semantic:
     def __ne__(self, other: Any) -> bool:
         return not self == other
 
-    def __ge__(self, other: Union[int, Tuple[int, int]]) -> bool:
+    def __ge__(self, other: int | Tuple[int, int]) -> bool:
         return self == other or self > other
 
-    def __le__(self, other: Union[int, Tuple[int, int]]) -> bool:
+    def __le__(self, other: int | Tuple[int, int]) -> bool:
         return self == other or self < other
 
     def __format__(self, format_spec):

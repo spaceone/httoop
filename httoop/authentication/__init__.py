@@ -1,6 +1,6 @@
 from __future__ import annotations
 import re
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple
 
 from httoop.authentication.basic import BasicAuthRequestScheme, BasicAuthResponseScheme
 from httoop.authentication.digest import DigestAuthRequestScheme, DigestAuthResponseScheme
@@ -22,7 +22,7 @@ class AuthElement(HeaderElement):
                 self.params[key] = type(value)(x.encode('UTF-8') if not isinstance(x, bytes) and isinstance(x, str) else x for x in value)
 
     @classmethod
-    def parseparams(cls, elementstr: bytes) -> Union[Tuple[bytes, Dict[bytes, str]], Tuple[bytes, Dict[str, bytes]], Tuple[bytes, Dict[str, Union[bytes, List[bytes], bool]]], Tuple[bytes, Dict[str, Union[bytes, List[bytes]]]], Tuple[bytes, Dict[bytes, Union[str, bytes]]]]:
+    def parseparams(cls, elementstr: bytes) -> Tuple[bytes, Dict[bytes, str]] | Tuple[bytes, Dict[str, bytes]] | Tuple[bytes, Dict[str, bytes | List[bytes] | bool]] | Tuple[bytes, Dict[str, bytes | List[bytes]]] | Tuple[bytes, Dict[bytes, str | bytes]]:
         try:
             scheme, authinfo = elementstr.split(b' ', 1)
         except ValueError:
@@ -53,7 +53,7 @@ class AuthElement(HeaderElement):
         return b'%s %s' % (self.value.encode('ASCII').title(), authinfo)
 
     @classmethod
-    def split(cls, value: bytes) -> List[Union[bytes, Any]]:
+    def split(cls, value: bytes) -> List[bytes | Any]:
         value = cls.RE_SPACE_SPLIT.split(value)
         indexes = [i for i, val in enumerate(value) if val != b',' and b'=' not in val]
         return [b' '.join(value[a:b]) for a, b in zip(indexes, indexes[1:] + [None])]
@@ -99,7 +99,7 @@ class AuthResponseElement(AuthElement):
     }
 
     @classmethod
-    def sorted(cls, elements: List[Union[WWWAuthenticate, Any]]) -> List[Union[WWWAuthenticate, Any]]:
+    def sorted(cls, elements: List[WWWAuthenticate | Any]) -> List[WWWAuthenticate | Any]:
         return list(sorted(elements, key=lambda e: {'basic': '\xff'}.get(e.value.lower(), e.value)))
 
     @classmethod

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from json import dumps as json_encode, loads as json_decode
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 
 from httoop.codecs.codec import Codec
 
@@ -10,7 +10,7 @@ class JSON(Codec):
     mimetype = 'application/json'
 
     @classmethod
-    def encode(cls, data: Union[Dict[str, str], Resource], charset: Optional[str] = None, mimetype: Optional[ContentType] = None) -> bytes:
+    def encode(cls, data: Dict[str, str] | Resource, charset: Optional[str] = None, mimetype: Optional[ContentType] = None) -> bytes:
         data = json_encode(data)
         if not isinstance(data, bytes):  # python3
             data = data.encode(charset or 'UTF-8')

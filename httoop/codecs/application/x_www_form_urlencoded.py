@@ -14,7 +14,7 @@ class FormURLEncoded(Codec):
     UNQUOTED = Percent.UNRESERVED
 
     @classmethod
-    def decode(cls, data: bytes, charset: Optional[str] = None, mimetype: Optional[ContentType] = None) -> Union[Tuple[Tuple[str, str], Tuple[str, str]], Tuple[Tuple[str, str]], Tuple[Tuple[str, str], Tuple[str, str], Tuple[str, str]], Tuple[Tuple[str, str], Tuple[str, str], Tuple[str, str], Tuple[str, str]], Tuple[()]]:
+    def decode(cls, data: bytes, charset: Optional[str] = None, mimetype: Optional[ContentType] = None) -> Tuple[Tuple[str, str], Tuple[str, str]] | Tuple[Tuple[str, str]] | Tuple[Tuple[str, str], Tuple[str, str], Tuple[str, str]] | Tuple[Tuple[str, str], Tuple[str, str], Tuple[str, str], Tuple[str, str]] | Tuple[()]:
         if not data:
             return ()
         data = data.replace(b'+', b' ').strip(b'&').split(b'&')
@@ -36,6 +36,6 @@ class FormURLEncoded(Codec):
         return Percent.unquote(data).decode(charset or 'ISO8859-1')
 
     @classmethod
-    def quote(cls, data: Union[str, List[int]], charset: Optional[str] = None) -> bytes:
+    def quote(cls, data: str | List[int], charset: Optional[str] = None) -> bytes:
         data = data.encode(charset or 'ISO8859-1')
         return Percent.quote(data, cls.UNQUOTED)

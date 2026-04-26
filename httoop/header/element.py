@@ -12,7 +12,7 @@ from __future__ import annotations
 import re
 from binascii import b2a_base64
 from email.errors import HeaderParseError
-from typing import Any, Dict, Iterator, List, Optional, Tuple, Type, Union
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Type
 
 from httoop.exceptions import InvalidHeader
 from httoop.six import with_metaclass
@@ -57,10 +57,10 @@ class HeaderElement(with_metaclass(HeaderType)):
     def sanitize(self) -> None:
         pass
 
-    def __lt__(self, other: Union[str]) -> bool:
+    def __lt__(self, other: str) -> bool:
         return self.value < getattr(other, 'value', other)
 
-    def __gt__(self, other: Union[str]) -> bool:
+    def __gt__(self, other: str) -> bool:
         return self.value > getattr(other, 'value', other)
 
     def __eq__(self, other: Any) -> bool:
@@ -86,7 +86,7 @@ class HeaderElement(with_metaclass(HeaderType)):
         return b'%s%s' % (self.encode_rfc2047(self.value), b''.join(params))
 
     @classmethod
-    def parseparams(cls, elementstr: bytes) -> Union[Tuple[bytes, Dict[bytes, str]], Tuple[bytes, Dict[Any, Any]]]:
+    def parseparams(cls, elementstr: bytes) -> Tuple[bytes, Dict[bytes, str]] | Tuple[bytes, Dict[Any, Any]]:
         """Transform 'token;key=val' to ('token', {'key': 'val'})."""
         # Split the element into a value and parameters. The 'value' may
         # be of the form, "token=token", but we don't split that here.
@@ -200,7 +200,7 @@ class HeaderElement(with_metaclass(HeaderType)):
         return cls.join([bytes(x) for x in cls.sorted(elements + others)])
 
     @classmethod
-    def formatparam(cls, param: bytes, value: Optional[Union[bytes, str]] = None, quote: bool = False) -> bytes:
+    def formatparam(cls, param: bytes, value: Optional[bytes | str] = None, quote: bool = False) -> bytes:
         """
         Convenience function to format and return a key=value pair.
 
@@ -367,7 +367,7 @@ class _AcceptElement(HeaderElement):
             other = _AcceptElement(other)
         return other.value == self.value and other.quality == self.quality
 
-    def __lt__(self, other: Union[str]) -> bool:
+    def __lt__(self, other: str) -> bool:
         if not isinstance(other, _AcceptElement):
             other = _AcceptElement(other)
         if self.quality == other.quality:

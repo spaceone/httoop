@@ -19,7 +19,7 @@ from httoop.server import ServerStateMachine
 class CLI:
     """httoop CLI tool."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.message = None
         self.parser = ArgumentParser(name, description=self.__doc__, epilog='https://github.com/spaceone/httoop/')
         self.parent_parser = ArgumentParser(add_help=False)

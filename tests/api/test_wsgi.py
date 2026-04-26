@@ -9,7 +9,7 @@ from httoop.gateway.wsgi import WSGI
 
 class WSGIClient(WSGI):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         self.request = Request()
         self.response = Response()
         super().__init__(*args, **kwargs)

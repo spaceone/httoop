@@ -1,6 +1,6 @@
 class CLI:
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.modes = {
             'request': self.request,
             'response': self.response,

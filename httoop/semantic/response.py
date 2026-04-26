@@ -11,7 +11,7 @@ from httoop.util import izip, make_boundary
 
 class ComposedResponse(ComposedMessage):
 
-    def __init__(self, response: "Response", request: "Request") -> None:
+    def __init__(self, response: 'Response', request: 'Request') -> None:
         super(ComposedResponse, self).__init__()
         self.request = request
         self.response = self.message = response
@@ -86,7 +86,7 @@ class ComposedResponse(ComposedMessage):
         yield response.body
         yield response.body.fileable
 
-    def prepare_range(self, range_: "Range") -> bool:
+    def prepare_range(self, range_: 'Range') -> bool:
         response = self.response
         content_length = response.headers.get('Content-Length')
         response.status = 206
@@ -104,7 +104,7 @@ class ComposedResponse(ComposedMessage):
         response.headers['Content-Length'] = str(len(response.body)).encode('ASCII')  # FIXME: len(response.body) causes the whole body to be generated
         return True
 
-    def multipart_byteranges(self, range_body: Iterator[Any], range_: "Range", content_length: str, content_type: str) -> Iterator[Body]:
+    def multipart_byteranges(self, range_body: Iterator[Any], range_: 'Range', content_length: str, content_type: str) -> Iterator[Body]:
         for content, byterange in izip(range_body, range_.ranges):
             body = Body(content)
             body.headers['Content-Type'] = content_type

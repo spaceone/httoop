@@ -118,12 +118,12 @@ class ContentDisposition(HeaderElement):
         return self.value == 'inline'
 
     @property
-    def creation_date(self) -> Optional["Date"]:
+    def creation_date(self) -> Optional['Date']:
         if 'creation-date' in self.params:
             return self.Date(self.params['creation-date'])
 
     @property
-    def modification_date(self) -> Optional["Date"]:
+    def modification_date(self) -> Optional['Date']:
         if 'modification-date' in self.params:
             return self.Date(self.params['modification-date'])
 
@@ -272,7 +272,7 @@ class Forwarded(HeaderElement):
         return self.params.get('proto')
 
     @classmethod
-    def parse(cls, elementstr: bytes) -> "Forwarded":
+    def parse(cls, elementstr: bytes) -> 'Forwarded':
         return super(Forwarded, cls).parse(b'x; %s' % (elementstr, ))
 
 

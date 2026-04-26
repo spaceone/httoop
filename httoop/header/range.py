@@ -33,7 +33,7 @@ class ContentRange(HeaderElement):
         return b'%s %s/%s' % (self.value.encode('ISO8859-1'), byte_range, str(length).encode('ASCII') if isinstance(length, int) else length)
 
     @classmethod
-    def parse(cls, elementstr: bytes) -> "ContentRange":
+    def parse(cls, elementstr: bytes) -> 'ContentRange':
         value, start, end, complete_length = None, None, None, None
         try:
             value, content_range = elementstr.split(None, 1)
@@ -76,7 +76,7 @@ class Range(HeaderElement):
         return [fieldvalue]
 
     @classmethod
-    def parse(cls, elementstr: bytes) -> "Range":
+    def parse(cls, elementstr: bytes) -> 'Range':
         bytesunit, __, byteranges = elementstr.partition(b'=')
         byteranges = super(Range, cls).split(byteranges)
         ranges = set()

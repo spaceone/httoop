@@ -15,17 +15,17 @@ def importable(module):
 
 
 def main():
-    cmd = ["py.test", "-r", "fsxX", "--durations=1", "--ignore=tmp", '--color=yes', '--continue-on-collection-errors']
+    cmd = ['py.test', '-r', 'fsxX', '--durations=1', '--ignore=tmp', '--color=yes', '--continue-on-collection-errors']
 
-    if importable("pytest_cov"):
-        cmd.append("--cov=httoop")
+    if importable('pytest_cov'):
+        cmd.append('--cov=httoop')
 #        cmd.append("--no-cov-on-fail")
-        cmd.append("--cov-report=html")
+        cmd.append('--cov-report=html')
 
     cmd.append(dirname(abspath(__file__)))
 
     raise SystemExit(Popen(cmd, stdout=sys.stdout, stderr=STDOUT).wait())
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

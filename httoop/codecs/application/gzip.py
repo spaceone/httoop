@@ -19,7 +19,7 @@ class GZip(Codec):
     def encode(cls, data: bytes, charset: None = None, mimetype: None = None) -> bytes:
         try:
             out = io.BytesIO()
-            with gzip.GzipFile(fileobj=out, mode="w", compresslevel=cls.compression_level) as fd:
+            with gzip.GzipFile(fileobj=out, mode='w', compresslevel=cls.compression_level) as fd:
                 fd.write(Codec.encode(data, charset))
             return out.getvalue()
         except zlib.error:  # pragma: no cover
@@ -38,7 +38,7 @@ class GZip(Codec):
     def iterencode(cls, data, charset=None, mimetype=None):
         try:
             out = io.BytesIO()
-            with gzip.GzipFile(fileobj=out, mode="w", compresslevel=cls.compression_level) as fd:
+            with gzip.GzipFile(fileobj=out, mode='w', compresslevel=cls.compression_level) as fd:
                 for part in data:
                     fd.write(Codec.encode(part, charset))
                     yield out.getvalue()

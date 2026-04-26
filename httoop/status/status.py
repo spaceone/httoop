@@ -67,7 +67,7 @@ class Status(with_metaclass(HTTPSemantic)):
     def reason(self, reason):
         self.set((self.__code, reason))
 
-    STATUS_RE = re.compile(br"^([1-5]\d{2})(?:\s+([\s\w]*))\Z")
+    STATUS_RE = re.compile(br'^([1-5]\d{2})(?:\s+([\s\w]*))\Z')
 
     def __init__(self, code: Optional[int] = None, reason: Optional[bytes] = None) -> None:
         """
@@ -94,7 +94,7 @@ class Status(with_metaclass(HTTPSemantic)):
         """
         match = self.STATUS_RE.match(status)
         if match is None:
-            raise InvalidLine(_(u"Invalid status %r"), status.decode('ISO8859-1'))
+            raise InvalidLine(_(u'Invalid status %r'), status.decode('ISO8859-1'))
 
         self.set((int(match.group(1)), match.group(2).decode('ascii'),))
 
@@ -116,10 +116,10 @@ class Status(with_metaclass(HTTPSemantic)):
             return self.__code == other.code
         return super(Status, self).__eq__(other)
 
-    def __lt__(self, other: Union[int, "Status"]) -> bool:
+    def __lt__(self, other: Union[int, 'Status']) -> bool:
         return self.__code < other
 
-    def __gt__(self, other: Union[int, "Status"]) -> bool:
+    def __gt__(self, other: Union[int, 'Status']) -> bool:
         return self.__code > other
 
     def set(self, status: Any) -> None:

@@ -99,7 +99,7 @@ class Date(with_metaclass(HTTPSemantic)):
         )
 
     @classmethod
-    def parse(cls, timestr: Optional[bytes] = None) -> "Date":
+    def parse(cls, timestr: Optional[bytes] = None) -> 'Date':
         u"""parses a HTTP date string and returns a :class:`Date` object.
 
         :param timestr: the time string in one of the http formats
@@ -151,13 +151,13 @@ class Date(with_metaclass(HTTPSemantic)):
         except NotImplementedError:  # pragma: no cover
             return NotImplemented
 
-    def __gt__(self, other: Optional[Union["Date", str]]) -> bool:
+    def __gt__(self, other: Optional[Union['Date', str]]) -> bool:
         try:
             return int(self) > int(self.__other(other))
         except NotImplementedError:  # pragma: no cover
             return NotImplemented
 
-    def __lt__(self, other: Optional[Union["Date", str]]) -> bool:
+    def __lt__(self, other: Optional[Union['Date', str]]) -> bool:
         try:
             return int(self) < int(self.__other(other))
         except NotImplementedError:  # pragma: no cover

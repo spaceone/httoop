@@ -36,8 +36,8 @@ def test_query_string_parse(query_string, query):
     (b'a=b&b=c&d=f', ((u'a', u'b'), (u'b', u'c'), (u'd', u'f'))),
     (b'a=a+b&b=b+c', ((u'a', u'a b'), (u'b', u'b c'))),
     (b'a=1&a=2', ((u'a', u'1'), (u'a', u'2'))),
-    (b"a=some+value", {'a': 'some value'}),
-    (b"a=some+value/another", {'a': 'some value/another'}),
+    (b'a=some+value', {'a': 'some value'}),
+    (b'a=some+value/another', {'a': 'some value/another'}),
     (b'x=b%3Da%26r', {'x': 'b=a&r'}),
 ])
 def test_query_string_compose(query_string, query):
@@ -48,10 +48,10 @@ def test_query_string_compose(query_string, query):
 
 @pytest.mark.xfail(reason='API not yet implemented.')
 @pytest.mark.parametrize('query_string,encoding,query', [
-    (b"key=\u0141%E9", "latin-1", [(u'key', u'\u0141\xE9')]),
-    (b"key=\u0141%C3%A9", "utf-8", [(u'key', u'\u0141\xE9')]),
-    (b"key=\u0141%C3%A9", "ascii", [(u'key', u'\u0141\ufffd\ufffd')]),
-    (b"key=\u0141%E9-", "ascii", [(u'key', u'\u0141\ufffd-')]),
+    (b'key=\u0141%E9', 'latin-1', [(u'key', u'\u0141\xE9')]),
+    (b'key=\u0141%C3%A9', 'utf-8', [(u'key', u'\u0141\xE9')]),
+    (b'key=\u0141%C3%A9', 'ascii', [(u'key', u'\u0141\ufffd\ufffd')]),
+    (b'key=\u0141%E9-', 'ascii', [(u'key', u'\u0141\ufffd-')]),
 ])
 def test_parse_encodings(query_string, encoding, query):
     u = URI()

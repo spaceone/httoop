@@ -26,7 +26,7 @@ class ComposedMessage(object):
 
     @property
     def chunked(self):
-        return 'chunked' in self.message.headers.elements("Transfer-Encoding")
+        return 'chunked' in self.message.headers.elements('Transfer-Encoding')
 
     @chunked.setter
     def chunked(self, chunked):

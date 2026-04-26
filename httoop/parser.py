@@ -191,7 +191,7 @@ class StateMachine(object):
         else:
             # Content-Length header defines the length of the message body
             try:
-                self.message_length = integer(message.headers.get("Content-Length", "0"))
+                self.message_length = integer(message.headers.get('Content-Length', '0'))
                 if self.message_length < 0:
                     self.message_length = None
                     raise ValueError()
@@ -240,7 +240,7 @@ class StateMachine(object):
 
     def __parse_chunk_size(self):
         line, rest_chunk = self.buffer.split(self.line_end, 1)
-        _chunk_size = line.split(b";", 1)[0].strip()
+        _chunk_size = line.split(b';', 1)[0].strip()
         try:
             chunk_size = integer(bytes(_chunk_size), 16)
             if chunk_size < 0:

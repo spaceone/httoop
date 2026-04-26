@@ -91,7 +91,7 @@ class Request(Message):
     def compose(self) -> bytes:
         u"""composes the request line."""
         self.validate_request_uri()
-        return b"%s %s %s\r\n" % (bytes(self.__method), bytes(self.__uri) or b'/', bytes(self.protocol))
+        return b'%s %s %s\r\n' % (bytes(self.__method), bytes(self.__uri) or b'/', bytes(self.protocol))
 
     def __repr__(self) -> str:
-        return "<HTTP Request(%s %s %s)>" % (self.__method, self.__uri.path, self.protocol)
+        return '<HTTP Request(%s %s %s)>' % (self.__method, self.__uri.path, self.protocol)

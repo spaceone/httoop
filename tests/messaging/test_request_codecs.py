@@ -15,8 +15,8 @@ except NameError:
 
 def test_json(body):
     body.mimetype = 'application/json'
-    assert body.decode(b'{"foo": "bar"}') == {u"foo": u"bar"}
-    body.encode({u"bar": u"foo"})
+    assert body.decode(b'{"foo": "bar"}') == {u'foo': u'bar'}
+    body.encode({u'bar': u'foo'})
     assert bytes(body) == b'{"bar": "foo"}'
     # TODO: non-utf8
 
@@ -39,9 +39,9 @@ def test_percent_encoding(body):
 
 
 multipart_string = (
-    b'''--------------------------409e1d7f8fe3763a\r\nContent-Disposition: form-data; name="foo"\r\n\r\nfoocontent\r\n'''
-    b'''--------------------------409e1d7f8fe3763a\r\nContent-Disposition: form-data; name="bar"; filename="test.txt"\r\n'''
-    b'''Content-Type: text/plain\r\n\r\nbarcontent\r\n--------------------------409e1d7f8fe3763a--\r\n'''
+    b"""--------------------------409e1d7f8fe3763a\r\nContent-Disposition: form-data; name="foo"\r\n\r\nfoocontent\r\n"""
+    b"""--------------------------409e1d7f8fe3763a\r\nContent-Disposition: form-data; name="bar"; filename="test.txt"\r\n"""
+    b"""Content-Type: text/plain\r\n\r\nbarcontent\r\n--------------------------409e1d7f8fe3763a--\r\n"""
 )
 
 
@@ -127,7 +127,7 @@ def test_plain_text_ascii(body):
 
 def test_hal_json(body):
     body.mimetype = 'application/hal+json'
-    hal_doc = b'''{"_embedded": {"orders": [{"status": "shipped", "currency": "USD", "total": 30.0, "_links": {"basket": {"href": "/baskets/98712"}, "customer": {"href": "/customers/7809"}, "self": {"profile": null, "deprecation": false, "name": null, "hreflang": null, "href": "/orders/123", "templated": false, "type": null}}}, {"status": "processing", "currency": "USD", "total": 20.0, "_links": {"basket": {"href": "/baskets/97213"}, "customer": {"href": "/customers/12369"}, "self": {"href": "/orders/124"}}}]}, "currentlyProcessing": 14, "_links": {"curie": [{"profile": null, "deprecation": false, "name": "acme", "hreflang": null, "href": "http://docs.acme.com/relations/{rel}", "templated": true, "type": null}], "self": {"profile": null, "deprecation": false, "name": null, "hreflang": null, "href": "/orders", "templated": false, "type": null}, "find": {"href": "/orders{?id}", "templated": true}, "next": {"href": "/orders?page=2"}}, "shippedToday": 20}'''
+    hal_doc = b"""{"_embedded": {"orders": [{"status": "shipped", "currency": "USD", "total": 30.0, "_links": {"basket": {"href": "/baskets/98712"}, "customer": {"href": "/customers/7809"}, "self": {"profile": null, "deprecation": false, "name": null, "hreflang": null, "href": "/orders/123", "templated": false, "type": null}}}, {"status": "processing", "currency": "USD", "total": 20.0, "_links": {"basket": {"href": "/baskets/97213"}, "customer": {"href": "/customers/12369"}, "self": {"href": "/orders/124"}}}]}, "currentlyProcessing": 14, "_links": {"curie": [{"profile": null, "deprecation": false, "name": "acme", "hreflang": null, "href": "http://docs.acme.com/relations/{rel}", "templated": true, "type": null}], "self": {"profile": null, "deprecation": false, "name": null, "hreflang": null, "href": "/orders", "templated": false, "type": null}, "find": {"href": "/orders{?id}", "templated": true}, "next": {"href": "/orders?page=2"}}, "shippedToday": 20}"""
     resource = body.decode(hal_doc)
     assert set(resource.get_relations()) == set([u'orders', u'curie', u'self', u'find', u'next'])
     assert resource.get_link('next') == {'profile': None, 'deprecation': False, 'name': None, 'hreflang': None, 'href': u'/orders?page=2', 'templated': False, 'type': None}
@@ -145,7 +145,7 @@ def test_hal_json(body):
     assert resource.get_resource('relation') == {'_embedded': {}, '_links': {}}
 
     body.encode(resource)
-    assert {"_embedded": {"relation": [{}], "orders": [{"status": "shipped", "currency": "USD", "total": 30.0, "_links": {"basket": {"href": "/baskets/98712"}, "customer": {"href": "/customers/7809"}, "self": {"profile": None, "deprecation": False, "name": None, "hreflang": None, "href": "/orders/123", "templated": False, "type": None}}}, {"status": "processing", "currency": "USD", "total": 20.0, "_links": {"basket": {"href": "/baskets/97213"}, "customer": {"href": "/customers/12369"}, "self": {"href": "/orders/124"}}}]}, "currentlyProcessing": 14, "_links": {"curie": [{"profile": None, "deprecation": False, "name": "acme", "hreflang": None, "href": "http://docs.acme.com/relations/{rel}", "templated": True, "type": None}], "self": {"profile": None, "deprecation": False, "name": None, "hreflang": None, "href": "/orders", "templated": False, "type": None}, "relation": [{"profile": None, "deprecation": False, "name": "xx", "hreflang": None, "href": "bar", "templated": False, "type": None}, {"profile": None, "deprecation": False, "name": "name", "hreflang": None, "href": "foo", "templated": False, "type": None}], "find": [{"href": "/orders{?id}", "templated": True, "profile": None, "deprecation": False, "hreflang": None, "type": None, "name": None}, {'href': 'bar', 'name': 'xx', "profile": None, "deprecation": False, "hreflang": None, "templated": False, "type": None}], "next": {"profile": None, "deprecation": False, "name": None, "hreflang": None, "href": "/orders?page=2", "templated": False, "type": None}}, "shippedToday": 20} == json.loads(bytes(body).decode('ASCII'))
+    assert {'_embedded': {'relation': [{}], 'orders': [{'status': 'shipped', 'currency': 'USD', 'total': 30.0, '_links': {'basket': {'href': '/baskets/98712'}, 'customer': {'href': '/customers/7809'}, 'self': {'profile': None, 'deprecation': False, 'name': None, 'hreflang': None, 'href': '/orders/123', 'templated': False, 'type': None}}}, {'status': 'processing', 'currency': 'USD', 'total': 20.0, '_links': {'basket': {'href': '/baskets/97213'}, 'customer': {'href': '/customers/12369'}, 'self': {'href': '/orders/124'}}}]}, 'currentlyProcessing': 14, '_links': {'curie': [{'profile': None, 'deprecation': False, 'name': 'acme', 'hreflang': None, 'href': 'http://docs.acme.com/relations/{rel}', 'templated': True, 'type': None}], 'self': {'profile': None, 'deprecation': False, 'name': None, 'hreflang': None, 'href': '/orders', 'templated': False, 'type': None}, 'relation': [{'profile': None, 'deprecation': False, 'name': 'xx', 'hreflang': None, 'href': 'bar', 'templated': False, 'type': None}, {'profile': None, 'deprecation': False, 'name': 'name', 'hreflang': None, 'href': 'foo', 'templated': False, 'type': None}], 'find': [{'href': '/orders{?id}', 'templated': True, 'profile': None, 'deprecation': False, 'hreflang': None, 'type': None, 'name': None}, {'href': 'bar', 'name': 'xx', 'profile': None, 'deprecation': False, 'hreflang': None, 'templated': False, 'type': None}], 'next': {'profile': None, 'deprecation': False, 'name': None, 'hreflang': None, 'href': '/orders?page=2', 'templated': False, 'type': None}}, 'shippedToday': 20} == json.loads(bytes(body).decode('ASCII'))
 
 
 def check_encoding_dict(body, data):

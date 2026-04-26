@@ -14,7 +14,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
     __slots__ = ()
 
     # disallowed bytes for HTTP header field names
-    HEADER_RE = re.compile(br"[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]")
+    HEADER_RE = re.compile(br'[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]')
 
     @staticmethod
     def formatvalue(value: Any) -> bytes:
@@ -43,7 +43,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
     def formatkey(cls, key: Union[bytes, str]) -> str:
         key = CaseInsensitiveDict.formatkey(key)
         if cls.HEADER_RE.search(key.encode('utf-8')):
-            raise InvalidHeader(_(u"Invalid header name: %r"), key)
+            raise InvalidHeader(_(u'Invalid header name: %r'), key)
         try:
             return to_unicode(HEADER[key].__name__)
         except KeyError:
@@ -79,7 +79,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
     def append_element(self, fieldname: str, *args, **kwargs) -> None:
         self.append(fieldname, bytes(self.create_element(fieldname, *args, **kwargs)))
 
-    def create_element(self, fieldname: str, *args, **kwargs) -> "HeaderElement":
+    def create_element(self, fieldname: str, *args, **kwargs) -> 'HeaderElement':
         Element = HEADER.get(fieldname, HeaderElement)
         return Element(*args, **kwargs)
 
@@ -102,7 +102,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
             Element = HEADER.get(_name, HeaderElement)
             self[_name] = Element.join([super(Headers, self).__getitem__(_name), _value])
 
-    def merge(self, other: "Headers") -> None:
+    def merge(self, other: 'Headers') -> None:
         other = self.__class__(other)
         for key in other:
             Element = HEADER.get(key, HeaderElement)
@@ -126,10 +126,10 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
             curr = lines.pop(0)
             name, __, value = curr.partition(b':')
             if __ != b':':
-                raise InvalidHeader(_(u"Invalid header line: %r"), curr.decode('ISO8859-1'))
+                raise InvalidHeader(_(u'Invalid header line: %r'), curr.decode('ISO8859-1'))
 
             if self.HEADER_RE.search(name):
-                raise InvalidHeader(_(u"Invalid header name: %r"), name.decode('ISO8859-1'))
+                raise InvalidHeader(_(u'Invalid header name: %r'), name.decode('ISO8859-1'))
 
             name, value = name.strip(), [value.lstrip()]
 
@@ -163,4 +163,4 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
                 yield key, values
 
     def __repr__(self) -> str:
-        return "<HTTP Headers(%s)>" % repr(list(self.items()))
+        return '<HTTP Headers(%s)>' % repr(list(self.items()))

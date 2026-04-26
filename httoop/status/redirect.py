@@ -87,9 +87,9 @@ class NOT_MODIFIED(RedirectStatus):
         super(NOT_MODIFIED, self).__init__(None, *args, **kwargs)
 
     header_to_remove = (
-        "Allow", "Content-Encoding", "Content-Language",
-        "Content-Length", "Content-MD5", "Content-Range",
-        "Content-Type", "Expires", "Location"
+        'Allow', 'Content-Encoding', 'Content-Language',
+        'Content-Length', 'Content-MD5', 'Content-Range',
+        'Content-Type', 'Expires', 'Location'
     )
 
 

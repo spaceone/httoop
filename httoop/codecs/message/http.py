@@ -11,11 +11,11 @@ class HTTP(Codec):
     mimetype = 'message/http'
 
     @classmethod
-    def encode(cls, data: Union["Request", "Response"], charset: Optional[str] = None, mimetype: Optional["ContentType"] = None) -> bytes:
+    def encode(cls, data: Union['Request', 'Response'], charset: Optional[str] = None, mimetype: Optional['ContentType'] = None) -> bytes:
         return bytes(data) + bytes(data.headers) + bytes(data.body)
 
     @classmethod
-    def decode(cls, data: bytes, charset: Optional[str] = None, mimetype: Optional["ContentType"] = None) -> Union["Request", "Response"]:
+    def decode(cls, data: bytes, charset: Optional[str] = None, mimetype: Optional['ContentType'] = None) -> Union['Request', 'Response']:
         from httoop.messages import Request, Response
         line, data = data.split(b'\r\n', 1)
         message = Request()

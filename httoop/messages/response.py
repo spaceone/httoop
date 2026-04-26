@@ -55,7 +55,7 @@ class Response(Message):
 
     def compose(self) -> bytes:
         u"""composes the response line."""
-        return b"%s %s\r\n" % (bytes(self.protocol), bytes(self.status))
+        return b'%s %s\r\n' % (bytes(self.protocol), bytes(self.status))
 
     def __repr__(self) -> str:
-        return "<HTTP Response(%d %s)>" % (self.status, self.body.mimetype)
+        return '<HTTP Response(%d %s)>' % (self.status, self.body.mimetype)

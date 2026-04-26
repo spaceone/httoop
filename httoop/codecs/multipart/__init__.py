@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from httoop.codecs.multipart.multipart import Multipart
 
 __all__ = ['MultipartMixed', 'MultipartMixedReplace', 'MultipartFormData', 'MultipartAlternative', 'MultipartDigest', 'MultipartParallel', 'MultipartByteranges']

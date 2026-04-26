@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 from httoop.status.types import StatusException
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Exception classes."""
 
 from httoop.util import _Translateable

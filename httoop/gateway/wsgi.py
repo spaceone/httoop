@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Web Server Gateway Interface.
 
 .. seealso:: `PEP 333 <http://www.python.org/dev/peps/pep-0333/>`_

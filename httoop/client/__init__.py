@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from httoop.messages import Response
 from httoop.parser import StateMachine
 

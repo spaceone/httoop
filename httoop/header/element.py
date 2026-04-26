@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """HTTP header elements.
 
 .. seealso:: :rfc:`2616#section-2.2`

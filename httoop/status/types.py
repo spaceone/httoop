@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """HTTP status codes.
 
 .. seealso:: :rfc:`2616#section-10`

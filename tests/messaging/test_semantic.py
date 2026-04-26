@@ -104,9 +104,10 @@ def test_invalid_byte_ranges(request_, response):
     response.body = 'foobarbaz'
     c = ComposedResponse(response, request_)
     c.prepare()
+    assert response.status == 416
     assert response.headers['Accept-Ranges'] == 'bytes'
     assert bytes(response.body) == b'foobarbaz'
-    assert 'Content-Range' not in response.headers
+    assert response.headers['Content-Range'] == 'bytes */9'
 
 
 def test_multipart_byte_ranges(request_, response):

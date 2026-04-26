@@ -49,7 +49,7 @@ class StrictTransportSecurity(HeaderElement):
 
     @property
     def max_age(self) -> int:
-        return integer(self.value.split(u'=', 1)[1])  # TODO: more generic parsing
+        return integer(self.value.split('=', 1)[1])  # TODO: more generic parsing
 
 
 class ContentTypeOptions(HeaderElement):

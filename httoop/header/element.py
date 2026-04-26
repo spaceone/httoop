@@ -34,7 +34,7 @@ class HeaderType(type):
 
 
 class HeaderElement(with_metaclass(HeaderType)):
-    u"""An element (with parameters) from an HTTP header's element list."""
+    """An element (with parameters) from an HTTP header's element list."""
 
     priority = None
     is_request_header = False
@@ -105,7 +105,7 @@ class HeaderElement(with_metaclass(HeaderType)):
         try:
             val, quoted = cls.unescape_param(val.strip())
         except InvalidHeader:
-            raise InvalidHeader(_(u'Unquoted parameter %r in %r containing TSPECIALS: %r'), key, cls.__name__, val)
+            raise InvalidHeader(_('Unquoted parameter %r in %r containing TSPECIALS: %r'), key, cls.__name__, val)
         return cls.unescape_key(key), val, quoted
 
     @classmethod
@@ -119,14 +119,14 @@ class HeaderElement(with_metaclass(HeaderType)):
             value = re.sub(b'\\\\(?!\\\\)', b'', value[1:-1])
         else:
             if cls.RE_TSPECIALS.search(value):
-                raise InvalidHeader(_(u'Unquoted parameter in %r containing TSPECIALS: %r'), cls.__name__, value)
+                raise InvalidHeader(_('Unquoted parameter in %r containing TSPECIALS: %r'), cls.__name__, value)
         return value, quoted
 
     @classmethod
     def _sanitize_encoding(cls, charset: str) -> str:
         encoding = sanitize_encoding(charset)
         if encoding is None:
-            raise InvalidHeader(_(u'Unknown encoding: %r'), charset)
+            raise InvalidHeader(_('Unknown encoding: %r'), charset)
         return encoding
 
     @classmethod
@@ -135,7 +135,7 @@ class HeaderElement(with_metaclass(HeaderType)):
         continuations = dict()
         for key, value, quoted in params:
             if key in count:
-                raise InvalidHeader(_(u'Parameter given twice: %r'), key.decode('ISO8859-1'))
+                raise InvalidHeader(_('Parameter given twice: %r'), key.decode('ISO8859-1'))
             count.add(key)
             if b'*' in key:
                 if key.endswith(b'*') and not quoted and not value.startswith(b"'") and value.count(b"'") >= 2:
@@ -144,7 +144,7 @@ class HeaderElement(with_metaclass(HeaderType)):
                     try:
                         key, value = key[:-1], Percent.unquote(value_).decode(encoding)
                     except UnicodeDecodeError as exc:
-                        raise InvalidHeader(_(u'%s') % (exc, ))
+                        raise InvalidHeader(_('%s') % (exc, ))
                 else:
                     value = value.decode('ISO8859-1')
                 key_, asterisk, num = key.rpartition(b'*')
@@ -163,14 +163,14 @@ class HeaderElement(with_metaclass(HeaderType)):
             yield key, value
 
         for key, lines in iteritems(continuations):
-            value = u''
+            value = ''
             for i in range(len(lines)):
                 try:
                     value += lines.pop(i)
                 except KeyError:
                     break
             if not key:  # pragma: no cover
-                raise InvalidHeader(_(u'...'))
+                raise InvalidHeader(_('...'))
             if value:
                 yield key, value
             for k, v in iteritems(lines):
@@ -231,7 +231,7 @@ class HeaderElement(with_metaclass(HeaderType)):
         if b'=?' in value and b'"=?' not in value and b'==?' not in value:
             # FIXME: must not parse encoded_words in unquoted ('Content-Type', 'Content-Disposition') header params
             try:
-                return u''.join(atom.decode(cls._sanitize_encoding(charset or 'ISO8859-1')) for atom, charset in decode_header(value.decode('ISO8859-1'))), 'UTF-8'
+                return ''.join(atom.decode(cls._sanitize_encoding(charset or 'ISO8859-1')) for atom, charset in decode_header(value.decode('ISO8859-1'))), 'UTF-8'
             except (UnicodeDecodeError, HeaderParseError) as exc:
                 raise InvalidHeader(str(exc))
         try:
@@ -257,7 +257,7 @@ class HeaderElement(with_metaclass(HeaderType)):
 
 
 class MimeType(object):
-    u"""
+    """
     .. seealso:: rfc:`2046`.
 
     .. seealso:: rfc:`3023`
@@ -265,46 +265,46 @@ class MimeType(object):
 
     @property
     def mimetype(self) -> str:
-        return u'%s/%s' % (self.type, self.subtype_wo_vendor)
+        return '%s/%s' % (self.type, self.subtype_wo_vendor)
 
     @property
     def type(self):
-        return self.value.split(u'/', 1)[0]
+        return self.value.split('/', 1)[0]
 
     @type.setter
     def type(self, type_):
-        self.value = u'%s/%s' % (type_, self.subtype)
+        self.value = '%s/%s' % (type_, self.subtype)
 
     @property
     def subtype(self):
-        return (self.value.split(u'/', 1) + [u''])[1]
+        return (self.value.split('/', 1) + [''])[1]
 
     @subtype.setter
     def subtype(self, subtype):
-        self.value = u'%s/%s' % (self.type, subtype)
+        self.value = '%s/%s' % (self.type, subtype)
 
     # TODO: official name
     @property
     def subtype_wo_vendor(self):
-        return self.subtype.split(u'+', 1).pop()
+        return self.subtype.split('+', 1).pop()
 
     @subtype_wo_vendor.setter
     def subtype_wo_vendor(self, subtype_wo_vendor):
-        self.subtype = u'%s+%s' % (self.vendor, subtype_wo_vendor)
+        self.subtype = '%s+%s' % (self.vendor, subtype_wo_vendor)
 
     @property
     def vendor(self):
-        if u'+' in self.subtype:
-            return self.subtype.split(u'+', 1)[0]
-        return u''
+        if '+' in self.subtype:
+            return self.subtype.split('+', 1)[0]
+        return ''
 
     @vendor.setter
     def vendor(self, vendor):
-        self.subtype = u'%s+%s' % (vendor, self.subtype_wo_vendor)
+        self.subtype = '%s+%s' % (vendor, self.subtype_wo_vendor)
 
     @property
     def version(self):
-        return self.params.get('version', u'')
+        return self.params.get('version', '')
 
     @version.setter
     def version(self, version):
@@ -335,7 +335,7 @@ class _AcceptElement(HeaderElement):
         try:
             self.quality
         except ValueError:
-            raise InvalidHeader(_(u'Quality value must be float.'))
+            raise InvalidHeader(_('Quality value must be float.'))
 
     @classmethod
     def parse(cls, elementstr: bytes) -> 'HeaderElement':
@@ -400,7 +400,7 @@ class _CookieElement(HeaderElement):
 
     @property
     def value(self):
-        return u'%s=%s' % (self.cookie_name, self.cookie_value)
+        return '%s=%s' % (self.cookie_name, self.cookie_value)
 
     @value.setter
     def value(self, value):

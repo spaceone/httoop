@@ -20,7 +20,7 @@ class CodecElement(object):
     def sanitize(self) -> None:
         super(CodecElement, self).sanitize()
         if self.value and self.codec is None and self.raise_on_missing_codec:
-            raise InvalidHeader(_(u'Unknown %s: %r'), self.__name__, self.value)
+            raise InvalidHeader(_('Unknown %s: %r'), self.__name__, self.value)
 
     @property
     def codec(self) -> Any:
@@ -87,11 +87,11 @@ class Connection(_HopByHopElement, HeaderElement):
 
     @property
     def close(self) -> bool:
-        return self.value.lower() == u'close'
+        return self.value.lower() == 'close'
 
     @property
     def upgrade(self) -> bool:
-        return self.value.lower() == u'upgrade'
+        return self.value.lower() == 'upgrade'
 
 
 class ContentDisposition(HeaderElement):
@@ -131,15 +131,15 @@ class ContentDisposition(HeaderElement):
         self.value = self.value.lower()
         if self.attachment:
             if b'inline' in self.params:
-                raise InvalidHeader(_(u'Mixed Content-Disposition'))
+                raise InvalidHeader(_('Mixed Content-Disposition'))
         elif self.inline:
             if b'attachment' in self.params:
-                raise InvalidHeader(_(u'Mixed Content-Disposition'))
+                raise InvalidHeader(_('Mixed Content-Disposition'))
         elif self.form_data:
             if b'form-data' in self.params:
-                raise InvalidHeader(_(u'Mixed Content-Disposition'))
+                raise InvalidHeader(_('Mixed Content-Disposition'))
         else:
-            raise InvalidHeader(_(u'Unknown Content-Disposition: %r'), self.value,)
+            raise InvalidHeader(_('Unknown Content-Disposition: %r'), self.value,)
 
 
 class ContentEncoding(CodecElement, HeaderElement):
@@ -193,13 +193,13 @@ class ContentType(HeaderElement, MimeType, CodecElement):
 
     @property
     def charset(self):
-        return self.params.get('charset', u'')
+        return self.params.get('charset', '')
 
     @charset.setter
     def charset(self, charset):
         self.params['charset'] = charset
 
-    VALID_BOUNDARY = re.compile(u'^[ -~]{0,200}[!-~]$')
+    VALID_BOUNDARY = re.compile('^[ -~]{0,200}[!-~]$')
 
     def sanitize(self) -> None:
         super(ContentType, self).sanitize()
@@ -207,9 +207,9 @@ class ContentType(HeaderElement, MimeType, CodecElement):
             self.sanitize_boundary()
 
     def sanitize_boundary(self) -> None:
-        boundary = self.params['boundary'] = self.params['boundary'].strip(u'"')
+        boundary = self.params['boundary'] = self.params['boundary'].strip('"')
         if not self.VALID_BOUNDARY.match(boundary):
-            raise InvalidHeader(_(u'Invalid boundary in multipart form: %r'), boundary)
+            raise InvalidHeader(_('Invalid boundary in multipart form: %r'), boundary)
 
     @property
     def boundary(self):
@@ -244,7 +244,7 @@ class Expect(HeaderElement):
 
     @property
     def is_100_continue(self) -> bool:
-        return self.value.lower() == u'100-continue'
+        return self.value.lower() == '100-continue'
 
 
 class From(HeaderElement):
@@ -334,7 +334,7 @@ class Host(HeaderElement):
         if self.port:
             self.port = integer(self.port)
         if not self.hostname:
-            raise InvalidHeader(_(u'Invalid Host header: %s'), self.value)
+            raise InvalidHeader(_('Invalid Host header: %s'), self.value)
 
 
 class XForwardedHost(Host):
@@ -406,7 +406,7 @@ class SetCookie(_ListElement, _CookieElement):
             try:
                 return integer(self.params['max-age'])
             except ValueError:
-                raise InvalidHeader(_(u'Cookie: max-age is not a number: %r'), self.params['max-age'])
+                raise InvalidHeader(_('Cookie: max-age is not a number: %r'), self.params['max-age'])
 
     @property
     def expires(self) -> Date:
@@ -414,7 +414,7 @@ class SetCookie(_ListElement, _CookieElement):
             try:
                 return self.Date(self.params['expires'])
             except InvalidDate:
-                raise InvalidHeader(_(u'Cookie: expires is not a valid date: %r'), self.params['expires'])
+                raise InvalidHeader(_('Cookie: expires is not a valid date: %r'), self.params['expires'])
 
 
 class TE(_HopByHopElement, _AcceptElement):
@@ -431,7 +431,7 @@ class Trailer(_HopByHopElement, HeaderElement):
 
     def sanitize(self) -> None:
         if self.value.title() in self.forbidden_headers:
-            raise InvalidHeader(_(u'A Trailer header MUST NOT contain %r field'), self.value.title())
+            raise InvalidHeader(_('A Trailer header MUST NOT contain %r field'), self.value.title())
 
 
 class TransferEncoding(_HopByHopElement, CodecElement, HeaderElement):
@@ -456,7 +456,7 @@ class Upgrade(_HopByHopElement, HeaderElement):
 
     @property
     def websocket(self) -> bool:
-        return self.value.lower() == u'websocket'
+        return self.value.lower() == 'websocket'
 
 
 class UserAgent(HeaderElement):

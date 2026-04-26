@@ -6,13 +6,13 @@ from httoop.status.types import StatusException
 
 
 class SuccessStatus(StatusException):
-    u"""SUCCESS = 2xx
+    """SUCCESS = 2xx
     indicates that an operation was successful.
     """
 
 
 class OK(SuccessStatus):
-    u"""The request was successful.
+    """The request was successful.
     On GET requests the entity body will be a
     representation of the requested resource.
     For other methods the entity body contains a representation of
@@ -24,7 +24,7 @@ class OK(SuccessStatus):
 
 
 class CREATED(SuccessStatus):
-    u"""A new resource was created.
+    """A new resource was created.
     This should only be send on POST and PUT requests.
     The Location-Header should contain the URI to the created resource.
     The entity-body should describe and link to the created resource.
@@ -43,7 +43,7 @@ class CREATED(SuccessStatus):
 
 
 class ACCEPTED(SuccessStatus):
-    u"""The request looks valid but will be procecced later.
+    """The request looks valid but will be procecced later.
     It is an asynchronous action.
     The Location-Header should contain a URI where
     the status of processing can be found.
@@ -55,7 +55,7 @@ class ACCEPTED(SuccessStatus):
 
 
 class NON_AUTHORITATIVE_INFORMATION(SuccessStatus):
-    u"""Everything is OK but the response headers
+    """Everything is OK but the response headers
     may be altered by a third party.
     """
 
@@ -64,7 +64,7 @@ class NON_AUTHORITATIVE_INFORMATION(SuccessStatus):
 
 
 class NO_CONTENT(SuccessStatus):
-    u"""GET: The representation of the resource is empty.
+    """GET: The representation of the resource is empty.
     other request methods: the status message or representation is not needed.
     This is useful for ajax requests.
     It is also useful for making series of edits
@@ -77,7 +77,7 @@ class NO_CONTENT(SuccessStatus):
 
 
 class RESET_CONTENT(SuccessStatus):
-    u"""The same as 204 but this indicated that the client should
+    """The same as 204 but this indicated that the client should
     reset the view of its data structure.
     This is useful for entering a series of records
     in succession (a HTML POST form).
@@ -88,7 +88,7 @@ class RESET_CONTENT(SuccessStatus):
 
 
 class PARTIAL_CONTENT(SuccessStatus):
-    u"""Partial GET:
+    """Partial GET:
     The response does not contain the full representation of a resource
     but only the bytes requested in the Content-Range-header.
     It is often use to resume an interrupted download.

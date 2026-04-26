@@ -48,10 +48,10 @@ def test_string_type(headers):
 
 
 def test_utf8_in_headers(headers):
-    headers['foo'] = u'→'
+    headers['foo'] = '→'
     assert bytes(headers) == b'Foo: =?utf-8?b?4oaS?=\r\n\r\n'
 
-    e = headers.create_element('foo', 'bar', dict(param=u'→'))
+    e = headers.create_element('foo', 'bar', dict(param='→'))
     assert bytes(e) == b"bar; param*=utf-8''%E2%86%92"
 
 
@@ -75,8 +75,8 @@ def test_pop_header(headers):
 
 
 def test_util_to_unicode():
-    assert to_unicode(None) == u''
-    assert to_unicode(b'\xff') == u'\xff'
+    assert to_unicode(None) == ''
+    assert to_unicode(b'\xff') == '\xff'
 
 
 def test_fromkeys():

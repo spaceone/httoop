@@ -6,6 +6,6 @@ def test_content_security_policy(headers):
 
 
 def test_content_security_policy_element(headers):  # TODO(FIXME: very bad API design
-    headers.append_element('Content-Security-Policy', u'default-src', {b"'self'": None})
-    headers.append_element('Content-Security-Policy', u'font-src', {b"'none'": None})
+    headers.append_element('Content-Security-Policy', 'default-src', {b"'self'": None})
+    headers.append_element('Content-Security-Policy', 'font-src', {b"'none'": None})
     assert bytes(headers) == b"Content-Security-Policy: default-src 'self'; , font-src 'none'; \r\n\r\n"

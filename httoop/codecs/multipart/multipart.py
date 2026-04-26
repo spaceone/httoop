@@ -27,22 +27,22 @@ class Multipart(Codec):
         parts = data.split(b'--%s' % (boundary, ))
         part = parts.pop(0)
         if part:
-            raise DecodeError(_(u'Data before boundary: %r'), part.decode('ISO8859-1'))
+            raise DecodeError(_('Data before boundary: %r'), part.decode('ISO8859-1'))
         part = parts.pop()
         if part not in (b'--', b'--\r\n'):
-            raise DecodeError(_(u'Invalid multipart end: %r'), part.decode('ISO8859-1'))
+            raise DecodeError(_('Invalid multipart end: %r'), part.decode('ISO8859-1'))
 
         from httoop.messages.body import Body
         multiparts = []
         for part in parts:
             if not part.startswith(b'\r\n'):
-                raise DecodeError(_(u'Invalid boundary end: %r'), part[:2].decode('ISO8859-1'))
+                raise DecodeError(_('Invalid boundary end: %r'), part[:2].decode('ISO8859-1'))
             part = part[2:]
             headers, separator, content = part.partition(b'\r\n\r\n')
             if not separator:
-                raise DecodeError(_(u'Multipart does not contain CRLF header separator'))
+                raise DecodeError(_('Multipart does not contain CRLF header separator'))
             if not content.endswith(b'\r\n'):
-                raise DecodeError(_(u'Multipart does not end with CRLF: %r'), content[-2:].decode('ISO8859-1'))
+                raise DecodeError(_('Multipart does not end with CRLF: %r'), content[-2:].decode('ISO8859-1'))
             content = content[:-2]
             body = Body()
             body.headers.clear()

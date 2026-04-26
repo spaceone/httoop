@@ -32,11 +32,11 @@ def test_uri_set_dict(request_):
 
 def test_set_invalid_uri_nonascii(request_):
     with pytest.raises(InvalidURI):
-        request_.uri = u'/fooäbar'
+        request_.uri = '/fooäbar'
     with pytest.raises(InvalidURI):
-        request_.uri = u'/fooäbar'.encode('latin-1')
+        request_.uri = '/fooäbar'.encode('latin-1')
     with pytest.raises(InvalidURI):
-        request_.uri = u'/fooäbar'.encode('utf-8')
+        request_.uri = '/fooäbar'.encode('utf-8')
 
 
 def test_set_invalid_uri(request_):
@@ -54,6 +54,6 @@ def test_set_latin1_bytes_uri_path(request_):  # just for code coverage... behva
 @pytest.mark.xfail()
 def test_uri_path_segments(request_):
     request_.uri.parse(b'/fo%2fbar/baz%2Fblub')
-    assert request_.uri.path_segments == [u'', u'fo/bar', u'baz/blub']
-    request_.uri.path_segments = [u'', u'my/path', u'segments']
+    assert request_.uri.path_segments == ['', 'fo/bar', 'baz/blub']
+    request_.uri.path_segments = ['', 'my/path', 'segments']
     assert bytes(request_.uri) == b'/my%2fpath/segments'

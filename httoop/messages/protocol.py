@@ -16,7 +16,7 @@ __all__ = ('Protocol', )
 
 
 class Protocol(with_metaclass(HTTPSemantic)):
-    u"""The HTTP protocol version."""
+    """The HTTP protocol version."""
 
     __slots__ = ('name', '__protocol')
 
@@ -51,7 +51,7 @@ class Protocol(with_metaclass(HTTPSemantic)):
     def parse(self, protocol: bytes) -> None:
         match = self.PROTOCOL_RE.match(protocol)
         if match is None:
-            raise InvalidLine(_(u'Invalid HTTP protocol: %r'), protocol.decode('ISO8859-1'))
+            raise InvalidLine(_('Invalid HTTP protocol: %r'), protocol.decode('ISO8859-1'))
         self.__protocol = (int(match.group(2)), int(match.group(3)))
         self.name = match.group(1)
 

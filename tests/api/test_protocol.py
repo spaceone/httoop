@@ -32,11 +32,11 @@ def test_set_protocol_to_protocol(request_, response):
 
 
 @pytest.mark.parametrize('invalid', [
-    u'HTTP/111',
-    u'HTTP/2',
-    u'HTTP/3',
-    u'HTTP→1.1',
-    u'HTTÖ/1.1',
+    'HTTP/111',
+    'HTTP/2',
+    'HTTP/3',
+    'HTTP→1.1',
+    'HTTÖ/1.1',
 ])
 def test_invalid_protocol(request_, invalid):
     with pytest.raises(InvalidLine):

@@ -50,7 +50,7 @@ class Semantic(object):
 
 
 class HTTPSemantic(type):
-    u"""Implements the HTTP Semantic interface."""
+    """Implements the HTTP Semantic interface."""
 
     def __new__(mcs: Type, name: str, bases: Any, dict_: Dict[str, Any]) -> Any:
         bases = list(bases)

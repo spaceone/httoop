@@ -27,9 +27,9 @@ class Resource(dict):
         self.setdefault('_links', {})
         self.setdefault('_embedded', {})
         if not isinstance(self['_links'], dict):
-            raise DecodeError(u'HAL links must be JSON objects.')
+            raise DecodeError('HAL links must be JSON objects.')
         if not isinstance(self['_embedded'], dict):
-            raise DecodeError(u'HAL embedded must be JSON objects.')
+            raise DecodeError('HAL embedded must be JSON objects.')
 
     @property
     def self(self) -> str:
@@ -42,12 +42,12 @@ class Resource(dict):
         if isinstance(links, dict):
             links = [links]
         if not isinstance(links, (list, tuple)):
-            raise DecodeError(u'HAL links must be arrays or objects')
+            raise DecodeError('HAL links must be arrays or objects')
         for link in links:
             if not isinstance(link, dict):
-                raise DecodeError(u'HAL link must be object')
+                raise DecodeError('HAL link must be object')
             if not isinstance(link.get('href'), string_types):
-                raise DecodeError(u'HAL links must contain href')
+                raise DecodeError('HAL links must contain href')
             if name is not None and link.get('name') != name:
                 continue
             link.setdefault('templated', False)
@@ -82,7 +82,7 @@ class Resource(dict):
             embedded = [embedded]
         for resource in embedded:
             if not isinstance(resource, dict):
-                raise DecodeError(u'HAL resources must be objects')
+                raise DecodeError('HAL resources must be objects')
             yield Resource(resource.copy())
 
     def get_resource(self, relation: str) -> Optional['Resource']:
@@ -123,13 +123,13 @@ class HAL(JSON):
     def decode(cls, data: bytes, charset: Optional[str] = None, mimetype: Optional['ContentType'] = None) -> 'Resource':
         data = super(HAL, cls).decode(data)
         if not isinstance(data, dict):
-            raise DecodeError(u'HAL documents must be JSON objects.')
+            raise DecodeError('HAL documents must be JSON objects.')
         return Resource(data)
 
     @classmethod
     def encode(cls, data: Union[Dict[str, None], Resource], charset: Optional[str] = None, mimetype: Optional['ContentType'] = None) -> bytes:
         if not isinstance(data, dict):
-            raise EncodeError(u'HAL documents must be JSON objects.')
+            raise EncodeError('HAL documents must be JSON objects.')
 
         try:
             Resource(data.copy())

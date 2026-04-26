@@ -16,7 +16,7 @@ __all__ = ('Method', )
 
 
 class Method(with_metaclass(HTTPSemantic)):
-    u"""A HTTP request method."""
+    """A HTTP request method."""
 
     __slots__ = ('__method')
 
@@ -28,12 +28,12 @@ class Method(with_metaclass(HTTPSemantic)):
     def idempotent(self) -> bool:
         return self in self.idempotent_methods
 
-    safe_methods = (u'GET', u'HEAD', u'SEARCH')
-    idempotent_methods = (u'GET', u'HEAD', u'PUT', u'DELETE', u'OPTIONS', u'TRACE', u'SEARCH')
+    safe_methods = ('GET', 'HEAD', 'SEARCH')
+    idempotent_methods = ('GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE', 'SEARCH')
     METHOD_RE = re.compile(br'^[A-Z0-9$-_.]{1,20}\Z', re.IGNORECASE)
 
     def __init__(self, method: Optional[str] = None) -> None:
-        self.set(method or u'GET')
+        self.set(method or 'GET')
 
     def __hash__(self) -> int:
         return hash(bytes(self))
@@ -45,7 +45,7 @@ class Method(with_metaclass(HTTPSemantic)):
 
     def parse(self, method: bytes) -> None:
         if not self.METHOD_RE.match(method):
-            raise InvalidLine(_(u'Invalid method: %r'), method.decode('ISO8859-1'))
+            raise InvalidLine(_('Invalid method: %r'), method.decode('ISO8859-1'))
         self.__method = method
 
     def compose(self) -> bytes:

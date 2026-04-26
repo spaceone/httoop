@@ -8,17 +8,17 @@ from httoop import URI, InvalidURI
     (b'', ()),
     (b'&', ()),
     (b'&&', ()),
-    pytest.param(b'=', ((u'', u''),), marks=pytest.mark.skipif(True, reason='Dunno')),
-    pytest.param(b'=a', ((u'', u'a'),), marks=pytest.mark.skipif(True, reason='Dunno')),
-    (b'a', ((u'a', u''),)),
-    (b'a=', ((u'a', u''),)),
-    (b'&a=b', ((u'a', u'b'),)),
-    (b'&&a=b&&b=c&d=f&', ((u'a', u'b'), (u'b', u'c'), (u'd', u'f'))),
-    (b'a=a+b&b=b+c', ((u'a', u'a b'), (u'b', u'b c'))),
-    (b'a=a%20b&b=b%20c', ((u'a', u'a b'), (u'b', u'b c'))),
-    (b'a=a+b&b=b%20c', ((u'a', u'a b'), (u'b', u'b c'))),
-    (b'a=1&a=2', ((u'a', u'1'), (u'a', u'2'))),
-    (b'x=b%3Da%26r', ((u'x', u'b=a&r'),)),
+    pytest.param(b'=', (('', ''),), marks=pytest.mark.skipif(True, reason='Dunno')),
+    pytest.param(b'=a', (('', 'a'),), marks=pytest.mark.skipif(True, reason='Dunno')),
+    (b'a', (('a', ''),)),
+    (b'a=', (('a', ''),)),
+    (b'&a=b', (('a', 'b'),)),
+    (b'&&a=b&&b=c&d=f&', (('a', 'b'), ('b', 'c'), ('d', 'f'))),
+    (b'a=a+b&b=b+c', (('a', 'a b'), ('b', 'b c'))),
+    (b'a=a%20b&b=b%20c', (('a', 'a b'), ('b', 'b c'))),
+    (b'a=a+b&b=b%20c', (('a', 'a b'), ('b', 'b c'))),
+    (b'a=1&a=2', (('a', '1'), ('a', '2'))),
+    (b'x=b%3Da%26r', (('x', 'b=a&r'),)),
 ])
 def test_query_string_parse(query_string, query):
     uri = URI(b'http://example.com/?%s' % (query_string,))
@@ -27,14 +27,14 @@ def test_query_string_parse(query_string, query):
 
 @pytest.mark.parametrize('query_string,query', [
     (b'', ()),
-    pytest.param(b'=', ((u'', u''),), marks=pytest.mark.skipif(True, reason='Dunno')),
-    pytest.param(b'=a', ((u'', u'a'),), marks=pytest.mark.skipif(True, reason='Dunno')),
-    (b'a', ((u'a', u''),)),
-    pytest.param(b'a=', ((u'a', u''),), marks=pytest.mark.skipif(True, reason='Dunno')),
-    (b'a=b', ((u'a', u'b'),)),
-    (b'a=b&b=c&d=f', ((u'a', u'b'), (u'b', u'c'), (u'd', u'f'))),
-    (b'a=a+b&b=b+c', ((u'a', u'a b'), (u'b', u'b c'))),
-    (b'a=1&a=2', ((u'a', u'1'), (u'a', u'2'))),
+    pytest.param(b'=', (('', ''),), marks=pytest.mark.skipif(True, reason='Dunno')),
+    pytest.param(b'=a', (('', 'a'),), marks=pytest.mark.skipif(True, reason='Dunno')),
+    (b'a', (('a', ''),)),
+    pytest.param(b'a=', (('a', ''),), marks=pytest.mark.skipif(True, reason='Dunno')),
+    (b'a=b', (('a', 'b'),)),
+    (b'a=b&b=c&d=f', (('a', 'b'), ('b', 'c'), ('d', 'f'))),
+    (b'a=a+b&b=b+c', (('a', 'a b'), ('b', 'b c'))),
+    (b'a=1&a=2', (('a', '1'), ('a', '2'))),
     (b'a=some+value', {'a': 'some value'}),
     (b'a=some+value/another', {'a': 'some value/another'}),
     (b'x=b%3Da%26r', {'x': 'b=a&r'}),
@@ -47,10 +47,10 @@ def test_query_string_compose(query_string, query):
 
 @pytest.mark.xfail(reason='API not yet implemented.')
 @pytest.mark.parametrize('query_string,encoding,query', [
-    (b'key=\u0141%E9', 'latin-1', [(u'key', u'\u0141\xE9')]),
-    (b'key=\u0141%C3%A9', 'utf-8', [(u'key', u'\u0141\xE9')]),
-    (b'key=\u0141%C3%A9', 'ascii', [(u'key', u'\u0141\ufffd\ufffd')]),
-    (b'key=\u0141%E9-', 'ascii', [(u'key', u'\u0141\ufffd-')]),
+    (b'key=\u0141%E9', 'latin-1', [('key', '\u0141\xE9')]),
+    (b'key=\u0141%C3%A9', 'utf-8', [('key', '\u0141\xE9')]),
+    (b'key=\u0141%C3%A9', 'ascii', [('key', '\u0141\ufffd\ufffd')]),
+    (b'key=\u0141%E9-', 'ascii', [('key', '\u0141\ufffd-')]),
 ])
 def test_parse_encodings(query_string, encoding, query):
     u = URI()
@@ -73,13 +73,13 @@ def test_urlencode_object():
             return 'trivial'
 
         def __unicode__(self):
-            return u'trivial'
+            return 'trivial'
 
         def __bytes__(self):
             return b'trivial'
 
     u = URI()
-    u.query = {u'a': Trivial()}
+    u.query = {'a': Trivial()}
     assert u.query_string == b'a=trivial'
 
 

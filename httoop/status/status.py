@@ -15,7 +15,7 @@ from httoop.util import Unicode, _, integer
 
 
 class Status(with_metaclass(HTTPSemantic)):
-    u"""A HTTP Status.
+    """A HTTP Status.
 
     :rfc:`2616#section-6.2`
     """
@@ -81,7 +81,7 @@ class Status(with_metaclass(HTTPSemantic)):
         """
         self.__code = 0
         self.__reason = ''
-        reason = reason or u''
+        reason = reason or ''
         reason = reason or reason or REASONS.get(code, ('', ''))[0]
         if code:
             self.set((code, reason,))
@@ -94,7 +94,7 @@ class Status(with_metaclass(HTTPSemantic)):
         """
         match = self.STATUS_RE.match(status)
         if match is None:
-            raise InvalidLine(_(u'Invalid status %r'), status.decode('ISO8859-1'))
+            raise InvalidLine(_('Invalid status %r'), status.decode('ISO8859-1'))
 
         self.set((int(match.group(1)), match.group(2).decode('ascii'),))
 
@@ -105,11 +105,11 @@ class Status(with_metaclass(HTTPSemantic)):
         return self.compose().decode('ascii')
 
     def __int__(self) -> int:
-        u"""Returns this status as number."""
+        """Returns this status as number."""
         return self.__code
 
     def __eq__(self, other: Any) -> bool:
-        u"""Compares a status with another :class:`Status` or :class:`int`."""
+        """Compares a status with another :class:`Status` or :class:`int`."""
         if isinstance(other, int):
             return self.__code == other
         if isinstance(other, Status):
@@ -123,7 +123,7 @@ class Status(with_metaclass(HTTPSemantic)):
         return self.__code > other
 
     def set(self, status: Any) -> None:
-        u"""sets reason and status.
+        """sets reason and status.
 
         :param status:
         A HTTP Status, e.g.: 200, (200, 'OK'), '200 OK'
@@ -131,7 +131,7 @@ class Status(with_metaclass(HTTPSemantic)):
         int or tuple or bytes or Status
         """
         if isinstance(status, int) and 99 < status < 600:
-            self.__code, self.__reason = status, REASONS.get(status, (u'', u''))[0]
+            self.__code, self.__reason = status, REASONS.get(status, ('', ''))[0]
         elif isinstance(status, tuple):
             code, reason = status
             if isinstance(reason, bytes):

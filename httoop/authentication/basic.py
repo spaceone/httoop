@@ -20,9 +20,9 @@ class BasicAuthRequestScheme(object):
         try:
             username, password = decode_base64(authinfo.strip()).split(b':')
         except Base64Error:
-            raise InvalidHeader(_(u'Basic authentication contains invalid base64'))
+            raise InvalidHeader(_('Basic authentication contains invalid base64'))
         except ValueError:
-            raise InvalidHeader(_(u'No username:password provided'))
+            raise InvalidHeader(_('No username:password provided'))
 
         authinfo = {
             #'username': username.decode('ISO8859-1'),

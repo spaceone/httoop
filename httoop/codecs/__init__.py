@@ -1,4 +1,4 @@
-u"""Module containing various codecs which are
+"""Module containing various codecs which are
 common used in combination with HTTP.
 """
 from __future__ import annotations

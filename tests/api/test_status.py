@@ -31,8 +31,8 @@ def test_staus_comparision(response):
     assert not response.status < 203
     assert not response.status > 205
 
-    assert response.status != u'foo'
-    assert not response.status == u'foo'
+    assert response.status != 'foo'
+    assert not response.status == 'foo'
     assert response.status != b'foo'
     assert not response.status == b'foo'
 
@@ -66,29 +66,29 @@ def test_stats_int(response):
 def test_status_tuple(response):
     response.status = 200
     assert response.status.code == 200
-    assert response.status.reason == u'OK'
-    response.status = (299, u'MyReason')
+    assert response.status.reason == 'OK'
+    response.status = (299, 'MyReason')
     assert response.status == 299
-    assert response.status.reason == u'MyReason'
+    assert response.status.reason == 'MyReason'
 
 
 def test_status_string(response):
-    response.status = u'299 Yes'
+    response.status = '299 Yes'
     assert response.status == 299
-    assert unicode(response.status) == u'299 Yes'
+    assert unicode(response.status) == '299 Yes'
     assert bytes(response.status) == b'299 Yes'
     response.status = b'298 Yep'
     assert response.status == 298
-    assert response.status.reason == u'Yep'
+    assert response.status.reason == 'Yep'
     assert bytes(response.status) == b'298 Yep'
-    assert unicode(response.status) == u'298 Yep'
+    assert unicode(response.status) == '298 Yep'
 
 
 def test_set_status_status(response):
     status = Status(203, b'Foobar')
     response.status = status
     assert response.status.code == 203
-    assert response.status.reason == u'Foobar'
+    assert response.status.reason == 'Foobar'
     assert response.status == b'203 Foobar'
 
 
@@ -108,7 +108,7 @@ def test_status_aliases(response):
 def test_status_parse(response):
     response.status.parse(b'400 bad request')
     assert response.status == 400
-    assert response.status.reason == u'bad request'
+    assert response.status.reason == 'bad request'
 
     response.status.parse(b'401 ')
     assert response.status == 401
@@ -175,9 +175,9 @@ def test_invalid_status_subclasses():
 
 def test_created_location():
     with pytest.raises(CREATED) as exc:
-        raise CREATED(u'http://example.com')
-    assert exc.value.to_dict()['Location'] == u'http://example.com'
-    assert exc.value.body.data == {'status': 201, 'headers': {'Location': u'http://example.com'}, 'reason': 'Created', 'description': 'Document created, URL follows', 'Location': u'http://example.com'}
+        raise CREATED('http://example.com')
+    assert exc.value.to_dict()['Location'] == 'http://example.com'
+    assert exc.value.body.data == {'status': 201, 'headers': {'Location': 'http://example.com'}, 'reason': 'Created', 'description': 'Document created, URL follows', 'Location': 'http://example.com'}
     exc.value.body = None
     assert exc.value.body.data is None
 
@@ -189,7 +189,7 @@ def test_repr():
 def test_internal_server_error_traceback():
     with pytest.raises(INTERNAL_SERVER_ERROR) as exc:
         raise INTERNAL_SERVER_ERROR(traceback='Traceback (most recent call last):')
-    assert exc.value.to_dict()['traceback'] == u'Traceback (most recent call last):'
+    assert exc.value.to_dict()['traceback'] == 'Traceback (most recent call last):'
 
 
 def test_redirection_mulitple():

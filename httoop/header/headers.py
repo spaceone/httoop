@@ -43,14 +43,14 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
     def formatkey(cls, key: Union[bytes, str]) -> str:
         key = CaseInsensitiveDict.formatkey(key)
         if cls.HEADER_RE.search(key.encode('utf-8')):
-            raise InvalidHeader(_(u'Invalid header name: %r'), key)
+            raise InvalidHeader(_('Invalid header name: %r'), key)
         try:
             return to_unicode(HEADER[key].__name__)
         except KeyError:
             return key
 
     def elements(self, fieldname: Union[bytes, str]) -> List[Any]:
-        u"""Return a sorted list of HeaderElements from
+        """Return a sorted list of HeaderElements from
         the given comma-separated header string.
         """
         fieldvalue = self.getbytes(fieldname)
@@ -61,7 +61,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
         return Element.sorted([Element.parse(element) for element in Element.split(fieldvalue)])
 
     def element(self, fieldname: Union[bytes, str], default: None = None) -> Any:
-        u"""Treat the field as single element."""
+        """Treat the field as single element."""
         if fieldname in self:
             Element = HEADER.get(fieldname, HeaderElement)
             return Element.parse(super(Headers, self).__getitem__(fieldname))
@@ -126,10 +126,10 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
             curr = lines.pop(0)
             name, __, value = curr.partition(b':')
             if __ != b':':
-                raise InvalidHeader(_(u'Invalid header line: %r'), curr.decode('ISO8859-1'))
+                raise InvalidHeader(_('Invalid header line: %r'), curr.decode('ISO8859-1'))
 
             if self.HEADER_RE.search(name):
-                raise InvalidHeader(_(u'Invalid header name: %r'), name.decode('ISO8859-1'))
+                raise InvalidHeader(_('Invalid header name: %r'), name.decode('ISO8859-1'))
 
             name, value = name.strip(), [value.lstrip()]
 

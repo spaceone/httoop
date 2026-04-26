@@ -6,7 +6,7 @@ from httoop.status.types import StatusException
 
 
 class ServerErrorStatus(StatusException):
-    u"""SERVER_ERRORS = 5xx
+    """SERVER_ERRORS = 5xx
     Indicates that something gone wrong on the server side.
     The server can send the Retry-After header if
     it knows that the problem is temporary.
@@ -19,7 +19,7 @@ class ServerErrorStatus(StatusException):
 
 
 class INTERNAL_SERVER_ERROR(ServerErrorStatus):
-    u"""The generic status code.
+    """The generic status code.
     Mostly used when an exception in the request handler occurs.
     """
 
@@ -28,7 +28,7 @@ class INTERNAL_SERVER_ERROR(ServerErrorStatus):
 
 
 class NOT_IMPLEMENTED(ServerErrorStatus):
-    u"""The client tried to use a HTTP feature which the server does not support.
+    """The client tried to use a HTTP feature which the server does not support.
     Used if the server does not know the request method.
     """
 
@@ -36,14 +36,14 @@ class NOT_IMPLEMENTED(ServerErrorStatus):
 
 
 class BAD_GATEWAY(ServerErrorStatus):
-    u"""Problem with the proxy server."""
+    """Problem with the proxy server."""
 
     code = 502
     cacheable = True
 
 
 class SERVICE_UNAVAILABLE(ServerErrorStatus):
-    u"""There is currently a problem with the server.
+    """There is currently a problem with the server.
     Probably too many requests at once.
     """
 
@@ -52,14 +52,14 @@ class SERVICE_UNAVAILABLE(ServerErrorStatus):
 
 
 class GATEWAY_TIMEOUT(ServerErrorStatus):
-    u"""The proxy could not connect to the upstream server."""
+    """The proxy could not connect to the upstream server."""
 
     code = 504
     cacheable = True
 
 
 class HTTP_VERSION_NOT_SUPPORTED(ServerErrorStatus):
-    u"""The clients http version is not supported.
+    """The clients http version is not supported.
     This should not happen since HTTP 1.1 is backward compatible.
     The entity-body should contain a list of supported protocols.
     """

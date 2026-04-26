@@ -14,7 +14,7 @@ __all__ = ('Message')
 
 
 class Message(with_metaclass(HTTPSemantic)):
-    u"""A HTTP message.
+    """A HTTP message.
 
     .. seealso:: :rfc:`2616#section-4`
     """
@@ -60,7 +60,7 @@ class Message(with_metaclass(HTTPSemantic)):
     #         self.headers.merge(trailer)
 
     def __init__(self, protocol: None = None, headers: None = None, body: None = None) -> None:
-        u"""Initiates a new Message to hold information about the message.
+        """Initiates a new Message to hold information about the message.
 
         :param protocol: the requested protocol
         :type  protocol: str|tuple
@@ -76,7 +76,7 @@ class Message(with_metaclass(HTTPSemantic)):
         self.__body = Body(body or b'')
 
     def parse(self, protocol: bytes) -> None:
-        u"""parses the HTTP protocol version.
+        """parses the HTTP protocol version.
 
         :param protocol: the protocol version string
         :type  protocol: bytes

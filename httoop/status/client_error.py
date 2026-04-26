@@ -6,7 +6,7 @@ from httoop.status.types import StatusException
 
 
 class ClientErrorStatus(StatusException):
-    u"""CLIENT_ERRORS = 4xx
+    """CLIENT_ERRORS = 4xx
     Something is wrong with the client: e.g. authentication,
     format of wanted representation, or error in the clients http library.
     """
@@ -15,7 +15,7 @@ class ClientErrorStatus(StatusException):
 
 
 class BAD_REQUEST(ClientErrorStatus):
-    u"""The generic response code for client side errors.
+    """The generic response code for client side errors.
     The response entity-body should contain information
     about what is wrong with the request.
     """
@@ -25,7 +25,7 @@ class BAD_REQUEST(ClientErrorStatus):
 
 
 class UNAUTHORIZED(ClientErrorStatus):
-    u"""The requested resource is protected and no or wrong
+    """The requested resource is protected and no or wrong
     authentication credentials were given.
     The WWW-Authenticate-header contains information about
     the accepted authentication method.
@@ -51,7 +51,7 @@ class PAYMENT_REQUIRED(ClientErrorStatus):
 
 
 class FORBIDDEN(ClientErrorStatus):
-    u"""The resource can only be served for specific users, at a specific time
+    """The resource can only be served for specific users, at a specific time
     or from a certain IP address, etc.
     """
 
@@ -59,7 +59,7 @@ class FORBIDDEN(ClientErrorStatus):
 
 
 class NOT_FOUND(ClientErrorStatus):
-    u"""No resource could be found at the given URI."""
+    """No resource could be found at the given URI."""
 
     code = 404
     cacheable = True
@@ -71,7 +71,7 @@ class NOT_FOUND(ClientErrorStatus):
 
 
 class METHOD_NOT_ALLOWED(ClientErrorStatus):
-    u"""The client tried to use a HTTP Method which is not allowed.
+    """The client tried to use a HTTP Method which is not allowed.
     The Allow-header has to contain the allowed methods for this resource.
     """
 
@@ -103,7 +103,7 @@ class PROXY_AUTHENTICATION_REQUIRED(ClientErrorStatus):
 
 
 class REQUEST_TIMEOUT(ClientErrorStatus):
-    u"""The client opens a connection to a server without sending a
+    """The client opens a connection to a server without sending a
     request after a specific amount of time.
     """
 
@@ -115,7 +115,7 @@ class REQUEST_TIMEOUT(ClientErrorStatus):
 
 
 class CONFLICT(ClientErrorStatus):
-    u"""If the request would cause to leave the resource in an inconsequent
+    """If the request would cause to leave the resource in an inconsequent
     state this status is send.
     Examples: DELETE of a non empty bucket, changing a username to
     a already taken username.
@@ -127,14 +127,14 @@ class CONFLICT(ClientErrorStatus):
 
 
 class GONE(ClientErrorStatus):
-    u"""The resource exists but is not anymore available (propably DELETEd)."""
+    """The resource exists but is not anymore available (propably DELETEd)."""
 
     code = 410
     cacheable = True
 
 
 class LENGTH_REQUIRED(ClientErrorStatus):
-    u"""If a request representation is given but no Content-Length-header
+    """If a request representation is given but no Content-Length-header
     the HTTP server can decide to respond with this status code.
     """
 
@@ -150,7 +150,7 @@ class PRECONDITION_FAILED(ClientErrorStatus):
 
 
 class PAYLOAD_TOO_LARGE(ClientErrorStatus):
-    u"""The HTTP server can deny too large representations.
+    """The HTTP server can deny too large representations.
     A LBYL request can be useful.
     If the server can only not handle the request e.g. because of
     full disk space it can send the Retry-After-header.
@@ -160,13 +160,13 @@ class PAYLOAD_TOO_LARGE(ClientErrorStatus):
 
 
 class URI_TOO_LONG(ClientErrorStatus):
-    u"""Raised if the given URI is too long for the server."""
+    """Raised if the given URI is too long for the server."""
 
     code = 414
 
 
 class UNSUPPORTED_MEDIA_TYPE(ClientErrorStatus):
-    u"""This status code is sent when the server does not know
+    """This status code is sent when the server does not know
     the representation media type given in Content-Type-header.
     If the representation is just broken use 400 or 422.
     """
@@ -180,7 +180,7 @@ class RANGE_NOT_SATISFIABLE(ClientErrorStatus):
 
 
 class EXPECTATION_FAILED(ClientErrorStatus):
-    u"""This is the response code if a LBYL request (Expect-header) fails.
+    """This is the response code if a LBYL request (Expect-header) fails.
     It is the flip side of 100 Continue.
     """
 

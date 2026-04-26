@@ -1,18 +1,18 @@
 def test_head_request_():
-	pass
+    pass
 
 
 def test_status_smaller_100():
-	pass
+    pass
 
 
 def test_not_modified_304():
-	pass
+    pass
 
 
 def test_no_content_204():
-	pass
+    pass
 
 
 def test_reset_content_205():
-	pass
+    pass

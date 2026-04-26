@@ -6,35 +6,35 @@ __all__ = ['MultipartMixed', 'MultipartMixedReplace', 'MultipartFormData', 'Mult
 
 class MultipartMixed(Multipart):
 
-	mimetype = 'multipart/mixed'
+    mimetype = 'multipart/mixed'
 
 
 class MultipartMixedReplace(Multipart):
 
-	mimetype = 'multipart/x-mixed-replace'
+    mimetype = 'multipart/x-mixed-replace'
 
 
 class MultipartFormData(Multipart):
 
-	mimetype = 'multipart/form-data'
+    mimetype = 'multipart/form-data'
 
 
 class MultipartAlternative(Multipart):
 
-	mimetype = 'multipart/alternative'
+    mimetype = 'multipart/alternative'
 
 
 class MultipartDigest(Multipart):
 
-	mimetype = 'multipart/digest'
-	default_content_type = 'message/rfc822; charset=US-ASCII'
+    mimetype = 'multipart/digest'
+    default_content_type = 'message/rfc822; charset=US-ASCII'
 
 
 class MultipartParallel(Multipart):
 
-	mimetype = 'multipart/parallel'
+    mimetype = 'multipart/parallel'
 
 
 class MultipartByteranges(Multipart):
 
-	mimetype = 'multipart/byteranges'
+    mimetype = 'multipart/byteranges'

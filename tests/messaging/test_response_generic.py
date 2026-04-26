@@ -1,10 +1,10 @@
 def test_connection_close():
-	pass
+    pass
 
 
 def test_connection_keepalive():
-	pass
+    pass
 
 
 def test_connection_http1_0():
-	pass
+    pass

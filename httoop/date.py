@@ -16,7 +16,7 @@ from typing import Any
 from httoop.exceptions import InvalidDate
 from httoop.meta import HTTPSemantic
 from httoop.six import with_metaclass
-from httoop.util import Unicode, _, parsedate
+from httoop.util import _, parsedate
 
 
 __all__ = ['Date']
@@ -66,8 +66,8 @@ class Date(with_metaclass(HTTPSemantic)):
             self.__datetime = timeval
             # self.__timestamp = calendar.timegm(self.datetime.utctimetuple())
             self.__timestamp = time.mktime(self.datetime.utctimetuple()) - time.timezone
-        elif isinstance(timeval, (bytes, Unicode)):
-            if isinstance(timeval, Unicode):
+        elif isinstance(timeval, (bytes, str)):
+            if isinstance(timeval, str):
                 timeval = timeval.encode('ascii', 'ignore')
             self.__timestamp = float(Date.parse(timeval))
         elif isinstance(timeval, Date):

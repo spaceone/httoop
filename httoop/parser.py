@@ -11,7 +11,7 @@ from httoop.messages import Message
 from httoop.messages.request import Request
 from httoop.messages.response import Response
 from httoop.status import BAD_REQUEST, NOT_IMPLEMENTED
-from httoop.util import Unicode, _, integer
+from httoop.util import _, integer
 
 
 CR = b'\r'
@@ -92,7 +92,7 @@ class StateMachine:
         try:
             return tuple(x for x in self._parse() if x is not None)
         except (InvalidHeader, InvalidLine, InvalidURI, InvalidBody) as exc:
-            raise BAD_REQUEST(Unicode(exc))
+            raise BAD_REQUEST(str(exc))
 
     def _parse(self) -> Iterator[None | Response | tuple[Request, Response]]:
         while self.buffer:
@@ -131,7 +131,7 @@ class StateMachine:
         try:
             self.message.parse(bytes(requestline))
         except (InvalidLine, InvalidURI) as exc:
-            raise BAD_REQUEST(Unicode(exc))
+            raise BAD_REQUEST(str(exc))
 
     def parse_headers(self) -> bool | None:
         # empty headers?
@@ -165,7 +165,7 @@ class StateMachine:
             try:
                 self.message.headers.parse(bytes(headers))
             except InvalidHeader as exc:
-                raise BAD_REQUEST(Unicode(exc))
+                raise BAD_REQUEST(str(exc))
 
     def parse_body(self) -> bool | None:
         if self.message_length is None and not self.chunked:
@@ -249,7 +249,7 @@ class StateMachine:
                 raise ValueError()
         except (ValueError, OverflowError):
             exc = InvalidHeader(_('Invalid chunk size: %r'), _chunk_size.decode('ISO8859-1'))
-            raise BAD_REQUEST(Unicode(exc))
+            raise BAD_REQUEST(str(exc))
         else:
             return chunk_size, rest_chunk
 
@@ -270,8 +270,8 @@ class StateMachine:
         try:
             self.trailers.parse(bytes(trailers))
         except InvalidHeader as exc:
-            exc = InvalidHeader(_('Invalid trailers: %r'), Unicode(exc))
-            raise BAD_REQUEST(Unicode(exc))
+            exc = InvalidHeader(_('Invalid trailers: %r'), str(exc))
+            raise BAD_REQUEST(str(exc))
 
         self.merge_trailer_into_header()
         return False
@@ -293,7 +293,7 @@ class StateMachine:
                 self.message.body.content_encoding = self.message.headers.element('Content-Encoding')
                 self.message.body.content_encoding.codec  # pylint: disable=W0104
             except Invalid as exc:
-                raise NOT_IMPLEMENTED(Unicode(exc))
+                raise NOT_IMPLEMENTED(str(exc))
 
     def set_body_content_type(self) -> None:
         if 'Content-Type' in self.message.headers:

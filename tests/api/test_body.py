@@ -7,23 +7,17 @@ import pytest
 from httoop import Body
 
 
-try:
-    unicode
-except NameError:
-    unicode = str
-
-
 def test_body_set_unicode(request_):
     request_.body = 'foobar'
     assert bytes(request_.body) == b'foobar'
-    assert unicode(request_.body) == 'foobar'
+    assert str(request_.body) == 'foobar'
     assert request_.body.fileable
 
 
 def test_body_set_bytes(request_):
     request_.body = b'foobar'
     assert bytes(request_.body) == b'foobar'
-    assert unicode(request_.body) == 'foobar'
+    assert str(request_.body) == 'foobar'
     assert request_.body.fileable
 
 
@@ -31,7 +25,7 @@ def test_body_set_bytesio(request_):
     b = BytesIO(b'ThisIsABytesIOBody')
     request_.body = b
     assert bytes(request_.body) == b'ThisIsABytesIOBody'
-    assert unicode(request_.body) == 'ThisIsABytesIOBody'
+    assert str(request_.body) == 'ThisIsABytesIOBody'
     assert request_.body.fileable
 
 
@@ -39,7 +33,7 @@ def test_body_set_stringio(request_):
     s = StringIO('ThisIsAStringIOBody')
     request_.body = s
     assert bytes(request_.body) == b'ThisIsAStringIOBody'
-    assert unicode(request_.body) == 'ThisIsAStringIOBody'
+    assert str(request_.body) == 'ThisIsAStringIOBody'
     assert request_.body.fileable
 
 
@@ -84,7 +78,7 @@ def test_body_set_generator(request_):
     request_.body = g()
     assert request_.body.generator
     assert bytes(request_.body) == b'This is A\tGenerator'
-    assert unicode(request_.body) == 'This is A\tGenerator'
+    assert str(request_.body) == 'This is A\tGenerator'
     assert bytes(request_.body) == b'This is A\tGenerator'
     assert len(request_.body) == 19
 

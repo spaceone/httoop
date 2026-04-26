@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from httoop.util import Unicode
-
 
 class Codec:
 
@@ -15,7 +13,7 @@ class Codec:
 
     @classmethod
     def encode(cls, data: bytes, charset: None = None, mimetype: None = None) -> bytes:  # pragma: no cover
-        if isinstance(data, Unicode):
+        if isinstance(data, str):
             data = data.encode(charset or 'ascii')
         return data
 

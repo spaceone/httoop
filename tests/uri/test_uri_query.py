@@ -72,9 +72,6 @@ def test_urlencode_object():
         def __str__(self) -> str:
             return 'trivial'
 
-        def __unicode__(self):
-            return 'trivial'
-
         def __bytes__(self) -> bytes:
             return b'trivial'
 

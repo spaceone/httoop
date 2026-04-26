@@ -10,7 +10,7 @@ import re
 from httoop.exceptions import InvalidLine
 from httoop.meta import HTTPSemantic
 from httoop.six import with_metaclass
-from httoop.util import Unicode, _
+from httoop.util import _
 
 
 __all__ = ('Method', )
@@ -40,7 +40,7 @@ class Method(with_metaclass(HTTPSemantic)):
         return hash(bytes(self))
 
     def set(self, method: str) -> None:
-        if isinstance(method, Unicode):
+        if isinstance(method, str):
             method = method.encode('ASCII')
         self.parse(method)
 

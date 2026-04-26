@@ -29,20 +29,12 @@ try:
 except ImportError:  # pragma: no cover
     from base64 import decodestring as decode_base64, encodestring as encode_base64
 
-PY3 = sys.version_info[0] == 3
-
-try:
-    Unicode = unicode
-except NameError:  # pragma: no cover
-    Unicode = str
-
-
 def _(x: str) -> str:
     return x
 
 
 __all__ = [
-    'PY3', 'Unicode', 'iteritems',
+    'iteritems',
     'to_unicode', 'decode_header',
     'IFile', 'partial', 'parsedate', 'izip',
     'CaseInsensitiveDict',
@@ -75,7 +67,7 @@ def sanitize_encoding(encoding: str) -> str | None:
 
 
 def iteritems(d, **kw):
-    return iter(getattr(d, 'items' if PY3 else 'iteritems')(**kw))
+    return d.items(**kw)
 
 
 def to_unicode(string: bytes | str | None) -> str:
@@ -86,7 +78,7 @@ def to_unicode(string: bytes | str | None) -> str:
             return string.decode('UTF-8')
         except UnicodeDecodeError:
             return string.decode('ISO8859-1')
-    return Unicode(string)
+    return str(string)
 
 
 def if_has(func: Callable) -> Callable:
@@ -239,10 +231,8 @@ class _Translateable:
     def translate(self) -> str:
         return self.message % (self._kwargs or self._args)
 
-    def __unicode__(self) -> str:
+    def __str__(self) -> str:
         return self.translate()
 
     def __bytes__(self) -> bytes:
-        return Unicode(self).encode('unicode_escape')
-
-    __str__ = __unicode__ if PY3 else __bytes__
+        return str(self).encode('unicode_escape')

@@ -100,7 +100,7 @@ def test_simplebasicrealmsqc(authentication):
 
 def test_simplebasicrealmsqc2(authentication):
     """simple Basic auth, with realm using quoted string escapes"""
-    a = authentication(b'WWW-Authenticate: Basic realm="\"foo\""')
+    a = authentication(b'WWW-Authenticate: Basic realm=""foo""')
     assert a
 
 
@@ -169,7 +169,7 @@ def test_multibasicempty(authentication):
 @pytest.mark.xfail(reason='FIXME')
 def test_multibasicqs(authentication):
     """a header field containing two challenges, the first one for a new scheme and having a parameter using quoted-string syntax"""
-    a = authentication(b'WWW-Authenticate: Newauth realm="apps", type=1, title="Login to \"apps\"", Basic realm="simple" ')
+    a = authentication(b'WWW-Authenticate: Newauth realm="apps", type=1, title="Login to "apps"", Basic realm="simple" ')
     assert a
 
 

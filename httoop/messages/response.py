@@ -35,7 +35,7 @@ class Response(Message):
         :type status:
         int or str or :class:`Status`
         """
-        super(Response, self).__init__(protocol, headers, body)
+        super().__init__(protocol, headers, body)
 
         self.__status = Status(status or 200)
 
@@ -48,7 +48,7 @@ class Response(Message):
             raise InvalidLine(_('Invalid response line: %r'), line.decode('ISO8859-1'))
 
         # version
-        super(Response, self).parse(version)
+        super().parse(version)
 
         # status
         self.status.parse(status)

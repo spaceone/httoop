@@ -20,7 +20,7 @@ class ServerStateMachine(StateMachine):
     HTTP2 = None
 
     def __init__(self, scheme: str, host: str, port: int) -> None:
-        super(ServerStateMachine, self).__init__()
+        super().__init__()
         self.MAX_URI_LENGTH = float('inf')  # 8000
         self._default_scheme = scheme
         self._default_host = host
@@ -29,7 +29,7 @@ class ServerStateMachine(StateMachine):
         self.response = None
 
     def on_message_started(self) -> None:
-        super(ServerStateMachine, self).on_message_started()
+        super().on_message_started()
         self.response = Response()
         self.request = self.message
         self.state.update(dict(
@@ -38,14 +38,14 @@ class ServerStateMachine(StateMachine):
         ))
 
     def on_message_complete(self) -> Tuple[httoop.messages.request.Request, httoop.messages.response.Response]:
-        request = super(ServerStateMachine, self).on_message_complete()
+        request = super().on_message_complete()
         response = self.response
         self.request = None
         self.response = None
         return (request, response)
 
     def parse_startline(self) -> Optional[bool]:
-        state = super(ServerStateMachine, self).parse_startline()
+        state = super().parse_startline()
         if state is NOT_RECEIVED_YET:
             self._check_uri_max_length(self.buffer)
         return state
@@ -57,17 +57,17 @@ class ServerStateMachine(StateMachine):
         self.state['uri'] = True
         self.on_uri_complete()
 
-        super(ServerStateMachine, self).on_startline_complete()
+        super().on_startline_complete()
 
     def on_uri_complete(self) -> None:
-        super(ServerStateMachine, self).on_uri_complete()
+        super().on_uri_complete()
         self._check_uri_max_length(bytes(self.request.uri))
         self.sanitize_request_uri_path()
         self.validate_request_uri_scheme()
         self.set_server_response_header()
 
     def on_protocol_complete(self) -> None:
-        super(ServerStateMachine, self).on_protocol_complete()
+        super().on_protocol_complete()
         self.check_request_protocol()
         self.set_response_protocol()
 
@@ -75,11 +75,11 @@ class ServerStateMachine(StateMachine):
         self.check_host_header_exists()
         self.set_request_uri_host()
         self.check_http2_upgrade()
-        super(ServerStateMachine, self).on_headers_complete()
+        super().on_headers_complete()
 
     def on_body_complete(self) -> None:
         self.check_message_without_body_containing_data()
-        super(ServerStateMachine, self).on_body_complete()
+        super().on_body_complete()
         self.check_methods_without_body()
 
     def check_request_protocol(self) -> None:

@@ -21,10 +21,10 @@ class WSGIBody(Body):
     def write(self, bytes_):
         if not isinstance(bytes_, bytes):
             bytes_ = bytes_.encode(self.encoding)
-        return super(WSGIBody, self).write(bytes_)
+        return super().write(bytes_)
 
     def read(self, *size):
-        return super(WSGIBody, self).read(*size)
+        return super().read(*size)
 
 
 class WSGI(object):
@@ -32,7 +32,7 @@ class WSGI(object):
 
     def __init__(self, environ: Optional[Dict[str, str]] = None, use_path_info: bool = False, *args, **kwargs) -> None:
         self.use_path_info = use_path_info
-        super(WSGI, self).__init__()
+        super().__init__()
         self.exc_info = None
 
         # defaults which will be overriden by set_environ()!

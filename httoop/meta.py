@@ -63,4 +63,4 @@ class HTTPSemantic(type):
             dict_.setdefault('__bool__', dict_.get('__nonzero__'))
             dict_.setdefault('__nonzero__', dict_.get('__bool__'))
 
-        return super(HTTPSemantic, mcs).__new__(mcs, name, tuple(bases), dict_)
+        return super().__new__(mcs, name, tuple(bases), dict_)

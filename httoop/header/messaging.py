@@ -18,7 +18,7 @@ class CodecElement(object):
     raise_on_missing_codec = True
 
     def sanitize(self) -> None:
-        super(CodecElement, self).sanitize()
+        super().sanitize()
         if self.value and self.codec is None and self.raise_on_missing_codec:
             raise InvalidHeader(_('Unknown %s: %r'), self.__name__, self.value)
 
@@ -45,7 +45,7 @@ class Accept(_AcceptElement, MimeType):
     is_request_header = True
 
     def sanitize(self) -> None:
-        super(Accept, self).sanitize()
+        super().sanitize()
         if self.value == '*':
             self.value = '*/*'
 
@@ -202,7 +202,7 @@ class ContentType(HeaderElement, MimeType, CodecElement):
     VALID_BOUNDARY = re.compile('^[ -~]{0,200}[!-~]$')
 
     def sanitize(self) -> None:
-        super(ContentType, self).sanitize()
+        super().sanitize()
         if 'boundary' in self.params:
             self.sanitize_boundary()
 
@@ -273,7 +273,7 @@ class Forwarded(HeaderElement):
 
     @classmethod
     def parse(cls, elementstr: bytes) -> 'Forwarded':
-        return super(Forwarded, cls).parse(b'x; %s' % (elementstr, ))
+        return super().parse(b'x; %s' % (elementstr, ))
 
 
 # TODO: add case insensitive HeaderElement
@@ -378,7 +378,7 @@ class SetCookie(_ListElement, _CookieElement):
     @classmethod
     def split(cls, fieldvalue: bytes) -> List[bytes]:
         fieldvalue = re.sub(b'(expires)=([^"][^;]+)', b'\\1="\\2"', fieldvalue, flags=re.I)
-        return super(SetCookie, cls).split(fieldvalue)
+        return super().split(fieldvalue)
 
     @property
     def httponly(self) -> bool:

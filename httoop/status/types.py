@@ -34,7 +34,7 @@ class StatusType(HTTPSemantic):
         reason = REASONS.get(code, ('', ''))
         dict_.setdefault('reason', reason[0])
         dict_.setdefault('description', reason[1])
-        return super(StatusType, cls).__new__(cls, name, bases, dict_)
+        return super().__new__(cls, name, bases, dict_)
 
 
 class StatusException(with_metaclass(StatusType, Status, Exception)):

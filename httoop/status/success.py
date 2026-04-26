@@ -34,10 +34,10 @@ class CREATED(SuccessStatus):
 
     def __init__(self, location: str, *args, **kwargs) -> None:
         kwargs.setdefault('headers', {})['Location'] = location
-        super(CREATED, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def to_dict(self) -> Dict[str, Union[int, str, Dict[str, str]]]:
-        dct = super(CREATED, self).to_dict()
+        dct = super().to_dict()
         dct.update(dict(Location=self.headers['Location']))
         return dct
 

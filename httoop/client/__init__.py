@@ -7,7 +7,7 @@ class ClientStateMachine(StateMachine):
     Message = Response
 
     def on_headers_complete(self) -> None:
-        super(ClientStateMachine, self).on_headers_complete()
+        super().on_headers_complete()
         self.remove_invalid_headers()
 
     def remove_invalid_headers(self) -> None:

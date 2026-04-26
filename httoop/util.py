@@ -231,7 +231,7 @@ class _Translateable(object):
         self.message = message
         self._args = args
         self._kwargs = kwargs
-        super(_Translateable, self).__init__(message, args, kwargs)
+        super().__init__(message, args, kwargs)
 
     def translate(self) -> str:
         return self.message % (self._kwargs or self._args)

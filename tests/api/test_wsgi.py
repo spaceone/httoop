@@ -12,7 +12,7 @@ class WSGIClient(WSGI):
     def __init__(self, *args, **kwargs):
         self.request = Request()
         self.response = Response()
-        super(WSGIClient, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 OK = '200 OK'

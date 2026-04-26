@@ -114,7 +114,7 @@ class Status(with_metaclass(HTTPSemantic)):
             return self.__code == other
         if isinstance(other, Status):
             return self.__code == other.code
-        return super(Status, self).__eq__(other)
+        return super().__eq__(other)
 
     def __lt__(self, other: Union[int, 'Status']) -> bool:
         return self.__code < other

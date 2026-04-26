@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import annotations
 from hashlib import md5, sha256
 from typing import Callable, Dict, List, Tuple, Union
 

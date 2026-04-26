@@ -5,6 +5,7 @@
 """
 # TODO: parse HTTP/1.0-';'-params?
 
+from __future__ import annotations
 import re
 from socket import AF_INET, AF_INET6, error as SocketError, inet_ntop, inet_pton
 from typing import Any, Iterator, Optional, Union

@@ -7,6 +7,7 @@
 
 .. seealso:: :rfc:`2616#section-14`
 """
+from __future__ import annotations
 
 import re
 from binascii import b2a_base64

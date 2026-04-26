@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import annotations
 from typing import List, Optional
 
 from httoop.codecs.codec import Codec

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 from typing import Any, Dict, Tuple, Type, Union
 
 from httoop.meta import HTTPSemantic

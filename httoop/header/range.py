@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import annotations
 from io import BytesIO
 from math import sqrt
 from os import SEEK_END, SEEK_SET

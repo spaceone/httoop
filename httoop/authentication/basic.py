@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import annotations
 from binascii import Error as Base64Error
 from typing import Dict, Union
 

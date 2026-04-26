@@ -194,4 +194,4 @@ def test_uri_join_very_strict(base, relative, expected):
     assert bytes(uri) == bytes(expected)
 #@pytest.mark.parametrize('expected,got,relative', [(expected, bytes(URI(base).join(relative)), relative) for base, relative_expected in uri_join.items() for (relative, expected) in relative_expected])
 #def test_uri_join_very_strict(expected, got, relative):
-#	assert expected == got
+#    assert expected == got

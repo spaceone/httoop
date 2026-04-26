@@ -20,10 +20,10 @@ class ComposedMessage(object):
     def transfer_encoding(self, transfer_encoding):
         if transfer_encoding:
             self.message.headers['Transfer-Encoding'] = bytes(transfer_encoding)
-        #	self.message.transfer_codec = None  #self.message.transfer_encoding.iterdecode()
+        #    self.message.transfer_codec = None  #self.message.transfer_encoding.iterdecode()
         else:
             self.message.headers.pop('Transfer-Encoding', None)
-        #	self.message.transfer_codec = None
+        #    self.message.transfer_codec = None
 
     @property
     def chunked(self):

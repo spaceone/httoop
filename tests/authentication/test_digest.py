@@ -21,12 +21,12 @@ def test_digest_www_authentication(headers):
     )
     www_auth = WWWAuthenticate.parse(bytes(www_auth))
     www_auth_bytes = b'''WWW-Authenticate: Digest realm="testrealm@host.com",
-	nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
-	opaque="5ccc069c403ebaf9f0171e9517f40e41",
-	algorithm="MD5",
-	stale="true",
-	domain="www.example.com www.example.org",
-	qop="auth,auth-int"'''
+    nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
+    opaque="5ccc069c403ebaf9f0171e9517f40e41",
+    algorithm="MD5",
+    stale="true",
+    domain="www.example.com www.example.org",
+    qop="auth,auth-int"'''
     headers.parse(www_auth_bytes)
     assert www_auth.params == headers.elements('WWW-Authenticate')[0].params
 
@@ -46,14 +46,14 @@ def test_digest_authorization(headers):
     )
     auth = Authorization.parse(bytes(auth))
     auth_bytes = b'''Authorization: Digest username="Mufasa",
-	realm="testrealm@host.com",
-	nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
-	uri="/dir/index.html",
-	response="6629fae49393a05397450978507c4ef1",
-	cnonce="0a4f113b",
-	opaque="5ccc069c403ebaf9f0171e9517f40e41",
-	qop="auth",
-	nc="00000001"'''
+    realm="testrealm@host.com",
+    nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
+    uri="/dir/index.html",
+    response="6629fae49393a05397450978507c4ef1",
+    cnonce="0a4f113b",
+    opaque="5ccc069c403ebaf9f0171e9517f40e41",
+    qop="auth",
+    nc="00000001"'''
     headers.parse(auth_bytes)
     assert auth.params == headers.element('Authorization').params
 
@@ -69,10 +69,10 @@ def test_digest_authorization_no_qop(headers):
     )
     auth = Authorization.parse(bytes(auth))
     auth_bytes = b'''Authorization: Digest username="Mufasa",
-	realm="testrealm@host.com",
-	nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
-	uri="/dir/index.html",
-	response="670fd8c2df070c60b045671b8b24ff02"'''
+    realm="testrealm@host.com",
+    nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
+    uri="/dir/index.html",
+    response="670fd8c2df070c60b045671b8b24ff02"'''
     headers.parse(auth_bytes)
     assert auth.params == headers.element('Authorization').params
 
@@ -94,15 +94,15 @@ def test_digest_authorization_auth_int(headers):
     )
     auth = Authorization.parse(bytes(auth))
     auth_bytes = b'''Authorization: Digest username="Mufasa",
-	realm="testrealm@host.com",
-	algorithm="MD5-sess",
-	nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
-	uri="/dir/index.html",
-	response="4c187ba5e8ff03c06627fc4e3940fc97",
-	cnonce="0a4f113b",
-	opaque="5ccc069c403ebaf9f0171e9517f40e41",
-	qop="auth-int",
-	nc="00000001"'''
+    realm="testrealm@host.com",
+    algorithm="MD5-sess",
+    nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
+    uri="/dir/index.html",
+    response="4c187ba5e8ff03c06627fc4e3940fc97",
+    cnonce="0a4f113b",
+    opaque="5ccc069c403ebaf9f0171e9517f40e41",
+    qop="auth-int",
+    nc="00000001"'''
     headers.parse(auth_bytes)
     assert auth.params == headers.element('Authorization').params
 
@@ -125,15 +125,15 @@ def test_digest_authorization_md5_sess_a1(headers):
     )
     auth = Authorization.parse(bytes(auth))
     auth_bytes = b'''Authorization: Digest username="Mufasa",
-	realm="testrealm@host.com",
-	algorithm="MD5-sess",
-	nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
-	uri="/dir/index.html",
-	response="4c187ba5e8ff03c06627fc4e3940fc97",
-	cnonce="0a4f113b",
-	opaque="5ccc069c403ebaf9f0171e9517f40e41",
-	qop="auth-int",
-	nc="00000001"'''
+    realm="testrealm@host.com",
+    algorithm="MD5-sess",
+    nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
+    uri="/dir/index.html",
+    response="4c187ba5e8ff03c06627fc4e3940fc97",
+    cnonce="0a4f113b",
+    opaque="5ccc069c403ebaf9f0171e9517f40e41",
+    qop="auth-int",
+    nc="00000001"'''
     headers.parse(auth_bytes)
     assert auth.params == headers.element('Authorization').params
 
@@ -175,10 +175,10 @@ def test_unknown_algorithm(headers):
 
 def test_invalid_nonce(headers):
     www_auth_bytes = b'''WWW-Authenticate: Digest realm="testrealm@host.com",
-	nonce="dcd98b\\"7102dd2f0e8b11d0f600bfb0c093",
-	opaque="5ccc069c403ebaf9f0171e9517f40e41",
-	algorithm="MD5",
-	qop="auth,auth-int"'''
+    nonce="dcd98b\\"7102dd2f0e8b11d0f600bfb0c093",
+    opaque="5ccc069c403ebaf9f0171e9517f40e41",
+    algorithm="MD5",
+    qop="auth,auth-int"'''
     headers.parse(www_auth_bytes)
     with pytest.raises(InvalidHeader) as exc:
         headers.element('WWW-Authenticate')

@@ -23,7 +23,7 @@ class FormURLEncoded(Codec):
     @classmethod
     def encode(cls, data: Any, charset: Optional[str] = None, mimetype: None = None) -> bytes:
         #if isinstance(data, (Unicode, bytes)):
-        #	data = cls.decode(data, charset)
+        #    data = cls.decode(data, charset)
         if isinstance(data, dict):
             data = data.items()
         data = ((cls.quote(name, charset), cls.quote(value, charset)) for name, value in tuple(data))

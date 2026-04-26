@@ -194,7 +194,7 @@ class I_AM_A_TEAPOT(ClientErrorStatus):
 
 #class ENHANCE_YOUR_CALM(ClientErrorStatus):
 #
-#	code = 420
+#    code = 420
 
 
 class MISDIRECTED_REQUEST(ClientErrorStatus):
@@ -244,14 +244,14 @@ class REQUEST_HEADER_FIELDS_TOO_LARGE(ClientErrorStatus):
 
 #class NO_RESPONSE(ClientErrorStatus):
 #
-#	code = 444
+#    code = 444
 #
 #
 #class UNAVAILABLE_FOR_LEGAL_REASONS(ClientErrorStatus):
 #
-#	code = 451
+#    code = 451
 #
 #
 #class CLIENT_CLOSED_REQUEST(ClientErrorStatus):
 #
-#	code = 499
+#    code = 499

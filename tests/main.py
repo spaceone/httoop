@@ -19,7 +19,7 @@ def main():
 
     if importable("pytest_cov"):
         cmd.append("--cov=httoop")
-#		cmd.append("--no-cov-on-fail")
+#        cmd.append("--no-cov-on-fail")
         cmd.append("--cov-report=html")
 
     cmd.append(dirname(abspath(__file__)))

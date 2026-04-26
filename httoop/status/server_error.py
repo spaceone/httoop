@@ -89,7 +89,7 @@ class BANDWIDTH_LIMIT_EXCEEDET(ServerErrorStatus):
 
 #class NOT_EXTENDED(ServerErrorStatus):
 #
-#	code = 510
+#    code = 510
 
 
 class NETWORK_AUTHENTICATION_REQUIRED(ServerErrorStatus):
@@ -99,8 +99,8 @@ class NETWORK_AUTHENTICATION_REQUIRED(ServerErrorStatus):
 
 #class NETWORK_READ_TIMEOUT_ERROR(ServerErrorStatus):
 #
-#	code = 598
+#    code = 598
 
 #class NETWORK_CONNECT_TIMEOUT_ERROR(ServerErrorStatus):
 #
-#	code = 599
+#    code = 599

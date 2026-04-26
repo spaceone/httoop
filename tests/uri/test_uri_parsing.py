@@ -84,7 +84,7 @@ absolute_uris = [
     (b'http://localhost:8090/foo/bar/?x=b%3Da%26r', (u'http', u'', u'', u'localhost', 8090, u'/foo/bar/', u'x=b%3Da%26r', u'')),
 ]
 #absolute_uris.extend(
-#	(b'http://www.example.com:%d' % (port,), (u'http', u'', u'', u'www.example.com', port, u'', u'', u'')) for port in range(1, 65535)
+#    (b'http://www.example.com:%d' % (port,), (u'http', u'', u'', u'www.example.com', port, u'', u'', u'')) for port in range(1, 65535)
 #)
 
 

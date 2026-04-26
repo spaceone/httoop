@@ -58,8 +58,8 @@ def test_utf8_in_headers(headers):
 
 
 #def test_latin1_in_headers(headers):
-#	headers['foo'] = u'ä'
-#	assert bytes(headers) == b'Foo: =?ISO8859-1?b?...?=\r\n\r\n'
+#    headers['foo'] = u'ä'
+#    assert bytes(headers) == b'Foo: =?ISO8859-1?b?...?=\r\n\r\n'
 
 
 @pytest.mark.parametrize('headstring', [b'Foo: =?%s?b?4oaS?=', b"Foo: bar; param*=%s''%%E2%%86%%92"])

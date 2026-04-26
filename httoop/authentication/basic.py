@@ -13,9 +13,9 @@ class BasicAuthRequestScheme(object):
     @staticmethod
     def parse(authinfo: bytes) -> Dict[str, bytes]:
         #try:
-        #	authinfo = authinfo.encode('ascii')
+        #    authinfo = authinfo.encode('ascii')
         #except ValueError:
-        #	raise InvalidHeader(_(u'Invalid base64 in basic authentication'))
+        #    raise InvalidHeader(_(u'Invalid base64 in basic authentication'))
 
         try:
             username, password = decode_base64(authinfo.strip()).split(b':')

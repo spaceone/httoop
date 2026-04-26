@@ -187,7 +187,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
             data = self.transfer_codec.decode(data, self.encoding).encode(self.encoding)
 
         # if self.content_codec and data:
-        # 	data = self.content_codec.decode(data, self.encoding).encode(self.encode)
+        #     data = self.content_codec.decode(data, self.encoding).encode(self.encode)
 
         self.write(data)
 
@@ -272,12 +272,12 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
                 yield data
 
     # def __copy__(self):
-    # 	body = self.__class__(self.__content_bytes())
-    # 	body.mimetype = self.mimetype
-    # 	body.data = self.data
-    # 	body.transfer_encoding = self.transfer_encoding
-    # 	body.content_encoding = self.content_encoding
-    # 	return body
+    #     body = self.__class__(self.__content_bytes())
+    #     body.mimetype = self.mimetype
+    #     body.data = self.data
+    #     body.transfer_encoding = self.transfer_encoding
+    #     body.content_encoding = self.content_encoding
+    #     return body
 
     def __bool__(self) -> bool:
         return bool(len(self))

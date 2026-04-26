@@ -61,7 +61,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 
     header_to_remove = ()
     u"""a tuple of header field names which should be
-		removed when responding with this error"""
+        removed when responding with this error"""
 
     description = ''
 

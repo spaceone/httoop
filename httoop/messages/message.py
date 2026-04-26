@@ -52,13 +52,13 @@ class Message(with_metaclass(HTTPSemantic)):
 
     # @trailer.setter
     # def trailer(self, trailer):
-    # 	self.headers.pop('Trailer', None)
-    # 	if trailer:
-    # 		trailer = Headers(trailer)
-    # 		for key in trailer:
-    # 			self.headers.append('Trailer', key)
-    # 		self.headers.elements('Trailer')  # sanitize
-    # 		self.headers.merge(trailer)
+    #     self.headers.pop('Trailer', None)
+    #     if trailer:
+    #         trailer = Headers(trailer)
+    #         for key in trailer:
+    #             self.headers.append('Trailer', key)
+    #         self.headers.elements('Trailer')  # sanitize
+    #         self.headers.merge(trailer)
 
     def __init__(self, protocol: None = None, headers: None = None, body: None = None) -> None:
         u"""Initiates a new Message to hold information about the message.

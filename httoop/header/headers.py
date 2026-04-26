@@ -26,14 +26,14 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
         Element = HEADER.get(key, HeaderElement)
         return Element.decode_rfc2047(super().__getitem__(key))
 
-    def get(self, key: str, default: Optional[bytes | str] = None) -> Optional[bytes | str]:
+    def get(self, key: str, default: bytes | str | None = None) -> bytes | str | None:
         Element = HEADER.get(key, HeaderElement)
         try:
             return Element.decode_rfc2047(super().__getitem__(key))
         except KeyError:
             return default
 
-    def getbytes(self, key: bytes | str, default: None = None) -> Optional[bytes]:
+    def getbytes(self, key: bytes | str, default: None = None) -> bytes | None:
         try:
             return super().__getitem__(key)
         except KeyError:
@@ -68,7 +68,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
             return Element.parse(super().__getitem__(fieldname))
         return default
 
-    def get_element(self, fieldname: str, which: Optional[str] = None, default: Optional[object] = None) -> Any:
+    def get_element(self, fieldname: str, which: str | None = None, default: object | None = None) -> Any:
         for element in self.elements(fieldname):
             if which is None or element == which:
                 return element

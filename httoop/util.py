@@ -64,7 +64,7 @@ KNOWN_ENCODINGS = {
 }
 
 
-def sanitize_encoding(encoding: str) -> Optional[str]:
+def sanitize_encoding(encoding: str) -> str | None:
     try:
         name = codecs.lookup(encoding).name
         if name not in KNOWN_ENCODINGS:
@@ -78,7 +78,7 @@ def iteritems(d, **kw):
     return iter(getattr(d, 'items' if PY3 else 'iteritems')(**kw))
 
 
-def to_unicode(string: Optional[bytes | str]) -> str:
+def to_unicode(string: bytes | str | None) -> str:
     if string is None:
         return ''
     if isinstance(string, bytes):
@@ -197,7 +197,7 @@ class CaseInsensitiveDict(dict):
     def __contains__(self, key: bytes | str) -> bool:
         return dict.__contains__(self, self.formatkey(key))
 
-    def get(self, key: bytes | str, default: Optional[Any] = None) -> Any:
+    def get(self, key: bytes | str, default: Any | None = None) -> Any:
         return dict.get(self, self.formatkey(key), default)
 
     def update(self, E: Dict[str, str]) -> None:
@@ -205,7 +205,7 @@ class CaseInsensitiveDict(dict):
             self[self.formatkey(key)] = self.formatvalue(E[key])
 
     # def setdefault(self, key: str, x: Optional[Union[UserAgent, Server, str, bytes]]=None) -> bytes:
-    def setdefault(self, key: str, x: Optional[str | bytes] = None) -> bytes:
+    def setdefault(self, key: str, x: str | bytes | None = None) -> bytes:
         key = self.formatkey(key)
         try:
             return dict.__getitem__(self, key)
@@ -213,11 +213,11 @@ class CaseInsensitiveDict(dict):
             self[key] = self.formatvalue(x)
             return dict.__getitem__(self, key)
 
-    def pop(self, key: str, default: None = None) -> Optional[bytes]:
+    def pop(self, key: str, default: None = None) -> bytes | None:
         return dict.pop(self, self.formatkey(key), default)
 
     @classmethod
-    def fromkeys(cls, seq: Tuple[str, str, str], value: Optional[str] = None) -> Headers:
+    def fromkeys(cls, seq: Tuple[str, str, str], value: str | None = None) -> Headers:
         return cls(dict((key, value) for key in seq))
 
 

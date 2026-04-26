@@ -14,7 +14,7 @@ class RedirectStatus(StatusException):
 
     location = None
 
-    def __init__(self, location: Optional[bytes | Tuple[str, str] | str], *args, **kwargs) -> None:
+    def __init__(self, location: bytes | Tuple[str, str] | str | None, *args, **kwargs) -> None:
         if not isinstance(location, (type(None), list, tuple)):
             location = [location]
         if location is not None:

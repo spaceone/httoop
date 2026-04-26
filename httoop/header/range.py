@@ -18,7 +18,7 @@ class ContentRange(HeaderElement):
     __name__ = 'Content-Range'
     is_response_header = True
 
-    def __init__(self, value: str, range_: Optional[Tuple[int, None] | Tuple[int, int]], length: Optional[int | str]) -> None:
+    def __init__(self, value: str, range_: Tuple[int, None] | Tuple[int, int] | None, length: int | str | None) -> None:
         self.range = range_
         if self.range:
             start, end = self.range

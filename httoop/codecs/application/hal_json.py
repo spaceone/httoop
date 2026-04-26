@@ -66,7 +66,7 @@ class Resource(dict):
                 link['deprecation'] = False
             yield link
 
-    def get_link(self, relation: str, name: Optional[str] = None) -> Optional[Dict[str, Optional[bool | str]]]:
+    def get_link(self, relation: str, name: str | None = None) -> Dict[str, bool | str | None] | None:
         try:
             return next(self.get_links(relation, name))
         except StopIteration:
@@ -86,7 +86,7 @@ class Resource(dict):
                 raise DecodeError('HAL resources must be objects')
             yield Resource(resource.copy())
 
-    def get_resource(self, relation: str) -> Optional[Resource]:
+    def get_resource(self, relation: str) -> Resource | None:
         try:
             return next(self.get_resources(relation))
         except StopIteration:
@@ -121,14 +121,14 @@ class HAL(JSON):
     mimetype = 'application/hal+json'
 
     @classmethod
-    def decode(cls, data: bytes, charset: Optional[str] = None, mimetype: Optional[ContentType] = None) -> Resource:
+    def decode(cls, data: bytes, charset: str | None = None, mimetype: ContentType | None = None) -> Resource:
         data = super().decode(data)
         if not isinstance(data, dict):
             raise DecodeError('HAL documents must be JSON objects.')
         return Resource(data)
 
     @classmethod
-    def encode(cls, data: Dict[str, None] | Resource, charset: Optional[str] = None, mimetype: Optional[ContentType] = None) -> bytes:
+    def encode(cls, data: Dict[str, None] | Resource, charset: str | None = None, mimetype: ContentType | None = None) -> bytes:
         if not isinstance(data, dict):
             raise EncodeError('HAL documents must be JSON objects.')
 

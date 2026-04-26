@@ -80,7 +80,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 
     code = 0
 
-    def __init__(self, description: Optional[str] = None, reason: None = None, headers: Optional[Dict[str, str]] = None, traceback: Optional[str] = None) -> None:
+    def __init__(self, description: str | None = None, reason: None = None, headers: Dict[str, str] | None = None, traceback: str | None = None) -> None:
         """
         :param description:
         a description of the error which happened

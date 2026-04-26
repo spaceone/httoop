@@ -13,7 +13,7 @@ class Multipart(Codec):
     default_content_type = 'text/plain; charset=US-ASCII'
 
     @classmethod
-    def encode(cls, data: List[Body], charset: Optional[str] = None, mimetype: Optional[ContentType] = None) -> bytes:
+    def encode(cls, data: List[Body], charset: str | None = None, mimetype: ContentType | None = None) -> bytes:
         boundary = mimetype.boundary.encode('ISO8859-1')
         multipart = b''
         for body in data:
@@ -22,7 +22,7 @@ class Multipart(Codec):
         return multipart
 
     @classmethod
-    def decode(cls, data: bytes, charset: Optional[str] = None, mimetype: Optional[ContentType] = None) -> List[Body]:
+    def decode(cls, data: bytes, charset: str | None = None, mimetype: ContentType | None = None) -> List[Body]:
         boundary = mimetype.boundary.encode('ISO8859-1')
         parts = data.split(b'--%s' % (boundary, ))
         part = parts.pop(0)

@@ -41,7 +41,7 @@ class ServerStateMachine(StateMachine):
         self.response = None
         return (request, response)
 
-    def parse_startline(self) -> Optional[bool]:
+    def parse_startline(self) -> bool | None:
         state = super().parse_startline()
         if state is NOT_RECEIVED_YET:
             self._check_uri_max_length(self.buffer)

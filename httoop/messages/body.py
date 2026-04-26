@@ -103,7 +103,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
     def chunked(self, chunked):
         self.transfer_encoding = 'chunked' if chunked else None
 
-    def __init__(self, content: Optional[bytes | List[bytes] | str] = None, mimetype: Optional[str] = None) -> None:
+    def __init__(self, content: bytes | List[bytes] | str | None = None, mimetype: str | None = None) -> None:
         self.data = None
         self.__iter = None
         self.fd = BytesIO()

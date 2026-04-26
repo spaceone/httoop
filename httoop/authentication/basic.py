@@ -8,7 +8,7 @@ from httoop.header.element import HeaderElement
 from httoop.util import ByteUnicodeDict, _, decode_base64, encode_base64
 
 
-class BasicAuthRequestScheme(object):
+class BasicAuthRequestScheme:
 
     @staticmethod
     def parse(authinfo: bytes) -> Dict[str, bytes]:
@@ -41,7 +41,7 @@ class BasicAuthRequestScheme(object):
         return encode_base64(b'%s:%s' % (username, password)).strip()
 
 
-class BasicAuthResponseScheme(object):
+class BasicAuthResponseScheme:
 
     @staticmethod
     def parse(authinfo: bytes) -> Dict[bytes, Union[str, bytes]]:

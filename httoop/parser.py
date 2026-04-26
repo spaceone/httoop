@@ -20,7 +20,7 @@ CRLF = CR + LF
 NOT_RECEIVED_YET = True
 
 
-class StateMachine(object):
+class StateMachine:
     """
     A protocol state machine which supports pipelining and
     parses HTTP messages by turning them into appropriate objects.

@@ -111,7 +111,7 @@ def integer(number: Union[int, str, bytes], *args) -> int:
     return num
 
 
-class IFile(object):
+class IFile:
     """The file interface."""
 
     __slots__ = ('fd')
@@ -228,7 +228,7 @@ class ByteUnicodeDict(CaseInsensitiveDict):
         return key if isinstance(key, bytes) else key.encode('UTF-8')
 
 
-class _Translateable(object):
+class _Translateable:
 
     def __init__(self, message: str, *args, **kwargs) -> None:
         self.message = message

@@ -6,7 +6,7 @@ from httoop.exceptions import InvalidDate
 from httoop.header.element import HeaderElement
 
 
-class _DateComparable(object):
+class _DateComparable:
 
     Date = Date
 
@@ -28,7 +28,7 @@ class _DateComparable(object):
         return int(self.value)
 
 
-class _MatchElement(object):
+class _MatchElement:
 
     def matches(self, value):
         return self == value or self == '*'

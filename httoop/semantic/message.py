@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from typing import Iterator
 
 
-class ComposedMessage(object):
+class ComposedMessage:
 
     # FIXME: use it
     @property

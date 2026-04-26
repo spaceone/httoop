@@ -5,7 +5,7 @@ from typing import Any
 from httoop.util import Unicode
 
 
-class Codec(object):
+class Codec:
 
     @classmethod
     def decode(cls, data: bytes, charset: Optional[str] = None, mimetype: None = None) -> str:  # pragma: no cover

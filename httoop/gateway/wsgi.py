@@ -29,7 +29,7 @@ class WSGIBody(Body):
         return super().read(*size)
 
 
-class WSGI(object):
+class WSGI:
     """A mixin class which implements the WSGI interface."""
 
     def __init__(self, environ: Optional[Dict[str, str]] = None, use_path_info: bool = False, *args, **kwargs) -> None:

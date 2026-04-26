@@ -16,7 +16,7 @@ from httoop.client import ClientStateMachine
 from httoop.server import ServerStateMachine
 
 
-class CLI(object):
+class CLI:
     """httoop CLI tool."""
 
     def __init__(self):

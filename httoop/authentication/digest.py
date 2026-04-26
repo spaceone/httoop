@@ -8,7 +8,7 @@ from httoop.header.element import HeaderElement
 from httoop.util import ByteUnicodeDict, _
 
 
-class DigestAuthScheme(object):
+class DigestAuthScheme:
 
     algorithms = {
         'MD5': lambda val: md5(val).hexdigest().encode('ASCII'),  # nosec

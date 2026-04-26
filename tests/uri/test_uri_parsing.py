@@ -83,9 +83,9 @@ absolute_uris = [
 
     (b'http://localhost:8090/foo/bar/?x=b%3Da%26r', ('http', '', '', 'localhost', 8090, '/foo/bar/', 'x=b%3Da%26r', '')),
 ]
-#absolute_uris.extend(
+# absolute_uris.extend(
 #    (b'http://www.example.com:%d' % (port,), (u'http', u'', u'', u'www.example.com', port, u'', u'', u'')) for port in range(1, 65535)
-#)
+# )
 
 
 @pytest.mark.parametrize('url,expected', absolute_uris)
@@ -196,7 +196,7 @@ def test_invalid_uri_characters(char):
 
 
 @pytest.mark.parametrize('char', [
-    #b'\x00', b'\x01', b'\x02', b'\x03', b'\x04', b'\x05', b'\x06', b'\x07', b'\x08', b'\t', b'\n', b'\x0b', b'\x0c', b'\r', b'\x0e', b'\x0f', b'\x10', b'\x11', b'\x12', b'\x13', b'\x14', b'\x15', b'\x16', b'\x17', b'\x18', b'\x19', b'\x1a', b'\x1b', b'\x1c', b'\x1d', b'\x1e', b'\x1f', b' ',
+    # b'\x00', b'\x01', b'\x02', b'\x03', b'\x04', b'\x05', b'\x06', b'\x07', b'\x08', b'\t', b'\n', b'\x0b', b'\x0c', b'\r', b'\x0e', b'\x0f', b'\x10', b'\x11', b'\x12', b'\x13', b'\x14', b'\x15', b'\x16', b'\x17', b'\x18', b'\x19', b'\x1a', b'\x1b', b'\x1c', b'\x1d', b'\x1e', b'\x1f', b' ',
     b'!', b'"', b'$', b'%', b'&', b"'", b'(', b')', b'*', b',', b'/', b':', b';', b'<', b'=', b'>', b'@', b'[', b'\\', b']', b'^', b'_', b'`', b'{', b'|', b'}', b'~',
 ])
 def test_invalid_uri_scheme_characters(char):

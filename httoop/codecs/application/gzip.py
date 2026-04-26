@@ -53,12 +53,12 @@ class GZip(Codec):
             fd = io.BytesIO()
             with gzip.GzipFile(fileobj=fd) as gzfd:
                 # FIXME: the gzip module cannot handle partial data
-                #for part in data:
+                # for part in data:
                 #    fd.write(part)
                 #    fd.seek(fd.tell() - length)
                 #    fd.seek(fd.tell() - length)
                 #    yield Codec.decode(gzfd.read(), charset)
-                #yield Codec.decode(gzfd.read(), charset)
+                # yield Codec.decode(gzfd.read(), charset)
                 for part in data:
                     fd.write(part)
                 fd.seek(0)

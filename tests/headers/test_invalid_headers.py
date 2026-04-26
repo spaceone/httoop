@@ -21,8 +21,8 @@ def test_set_header_with_colon(request_):
         request_.headers['foo:bar'] = 'baz'
 
 
-#@pytest.mark.skip()
-#def test_set_invalid_characters(request_):
+# @pytest.mark.skip()
+# def test_set_invalid_characters(request_):
 #    for invalid in six.iterbytes(INVALID_HEADER_FIELD_NAMES):
 #        name = b'foo%sbar' % (six.int2byte(invalid),)
 #        request_.headers[name] = 'baz'

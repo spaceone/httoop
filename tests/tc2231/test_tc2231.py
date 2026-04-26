@@ -545,7 +545,7 @@ def test_attnewandfn(content_disposition):
     assert h.params['foobar'] == 'x'
 
 
-#@pytest.mark.xfail(reason='Generic parsing in Headers.parse(). Very complicated to implement.')
+# @pytest.mark.xfail(reason='Generic parsing in Headers.parse(). Very complicated to implement.')
 def test_attrfc2047token(content_disposition):
     with pytest.raises(InvalidHeader):
         content_disposition(b'Content-Disposition: attachment; filename==?ISO-8859-1?Q?foo-=E4.html?=')

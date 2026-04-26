@@ -5,7 +5,7 @@ from httoop.codecs.codec import Codec
 from httoop.uri.percent_encoding import Percent
 
 
-#from httoop.util import Unicode
+# from httoop.util import Unicode
 
 
 class FormURLEncoded(Codec):
@@ -23,7 +23,7 @@ class FormURLEncoded(Codec):
 
     @classmethod
     def encode(cls, data: Any, charset: Optional[str] = None, mimetype: None = None) -> bytes:
-        #if isinstance(data, (Unicode, bytes)):
+        # if isinstance(data, (Unicode, bytes)):
         #    data = cls.decode(data, charset)
         if isinstance(data, dict):
             data = data.items()

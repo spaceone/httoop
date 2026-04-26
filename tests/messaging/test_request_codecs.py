@@ -7,12 +7,6 @@ from httoop import Body
 from httoop.exceptions import InvalidHeader
 
 
-try:
-    unicode
-except NameError:
-    unicode = str
-
-
 def test_json(body):
     body.mimetype = 'application/json'
     assert body.decode(b'{"foo": "bar"}') == {'foo': 'bar'}
@@ -100,7 +94,7 @@ def test_plain_text_utf8(body):
         b'b\xc3\xa4r': 'b\xe4r',
         b'\xe2\x86\x92': '\u2192'
     })
-    check_raises(body, [b'\xe4'], unicode, UnicodeDecodeError)
+    check_raises(body, [b'\xe4'], str, UnicodeDecodeError)
 
 
 def test_plain_text_latin1(body):
@@ -122,7 +116,7 @@ def test_plain_text_ascii(body):
         b'bar': 'bar',
     })
     check_raises(body, ('b\xe4r', '\u2192'), bytes, UnicodeEncodeError)
-    check_raises(body, (b'b\xc3\xa4r', b'\xe2\x86\x92', b'\xe4'), unicode, UnicodeDecodeError)
+    check_raises(body, (b'b\xc3\xa4r', b'\xe2\x86\x92', b'\xe4'), str, UnicodeDecodeError)
 
 
 def test_hal_json(body):
@@ -151,14 +145,14 @@ def test_hal_json(body):
 def check_encoding_dict(body, data):
     for byte, string in data.items():
         body.set(byte)
-        assert unicode(body) == string
+        assert str(body) == string
         body.set(string)
         assert bytes(body) == byte
 
         # use the codec for text/plain explicit
         body.set(None)
         body.decode(byte)
-        assert unicode(body) == string
+        assert str(body) == string
         body.set(None)
         body.encode(string)
         assert bytes(body) == byte

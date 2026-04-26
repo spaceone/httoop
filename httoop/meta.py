@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from httoop.util import PY3, Unicode
-
 
 __all__ = ['HTTPSemantic']
 
@@ -15,9 +13,6 @@ class Semantic:
     __slots__ = ()
 
     def __str__(self) -> str:
-        return self.__unicode__() if PY3 else self.__bytes__()
-
-    def __unicode__(self) -> str:
         return bytes(self).decode(getattr(self, 'encoding', 'ISO8859-1'))
 
     def __bytes__(self) -> bytes:
@@ -30,8 +25,8 @@ class Semantic:
         raise NotImplementedError('%s.compose()' % (type(self).__name__, ))
 
     def __eq__(self, other: Any) -> bool:
-        if isinstance(other, Unicode):
-            return Unicode(self) == other
+        if isinstance(other, str):
+            return str(self) == other
         return bytes(self) == other
 
     def __ne__(self, other: Any) -> bool:

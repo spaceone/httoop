@@ -11,7 +11,7 @@ from typing import Any
 from httoop.exceptions import InvalidLine
 from httoop.meta import HTTPSemantic
 from httoop.six import with_metaclass
-from httoop.util import Unicode, _
+from httoop.util import _
 
 
 __all__ = ('Protocol', )
@@ -42,8 +42,8 @@ class Protocol(with_metaclass(HTTPSemantic)):
         self.set(protocol)
 
     def set(self, protocol: bytes | Protocol | tuple[int, int] | int | str) -> None:
-        if isinstance(protocol, (bytes, Unicode)):
-            if isinstance(protocol, Unicode):
+        if isinstance(protocol, (bytes, str)):
+            if isinstance(protocol, str):
                 protocol = protocol.encode('ascii', 'replace')
             protocol = self.parse(protocol)
         else:

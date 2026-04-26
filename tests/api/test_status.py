@@ -17,12 +17,6 @@ from httoop.status import (
 )
 
 
-try:
-    unicode
-except NameError:
-    unicode = str
-
-
 def test_staus_comparision(response):
     response.status = 204
     assert response.status == 204
@@ -85,13 +79,13 @@ def test_status_tuple(response):
 def test_status_string(response):
     response.status = '299 Yes'
     assert response.status == 299
-    assert unicode(response.status) == '299 Yes'
+    assert str(response.status) == '299 Yes'
     assert bytes(response.status) == b'299 Yes'
     response.status = b'298 Yep'
     assert response.status == 298
     assert response.status.reason == 'Yep'
     assert bytes(response.status) == b'298 Yep'
-    assert unicode(response.status) == '298 Yep'
+    assert str(response.status) == '298 Yep'
 
 
 def test_set_status_status(response):

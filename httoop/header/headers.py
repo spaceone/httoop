@@ -7,7 +7,7 @@ from httoop.exceptions import InvalidHeader
 from httoop.header.element import HEADER, HeaderElement
 from httoop.meta import HTTPSemantic
 from httoop.six import with_metaclass
-from httoop.util import CaseInsensitiveDict, Unicode, _, iteritems, to_unicode
+from httoop.util import CaseInsensitiveDict, _, iteritems, to_unicode
 
 
 class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
@@ -19,7 +19,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 
     @staticmethod
     def formatvalue(value: Any) -> bytes:
-        if isinstance(value, Unicode):
+        if isinstance(value, str):
             return HeaderElement.encode_rfc2047(value)
         return bytes(value)
 

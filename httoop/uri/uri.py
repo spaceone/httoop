@@ -16,7 +16,7 @@ from httoop.six import int2byte, iterbytes, with_metaclass
 from httoop.uri.percent_encoding import Percent
 from httoop.uri.query_string import QueryString
 from httoop.uri.type import URIType
-from httoop.util import Unicode, _, integer
+from httoop.util import _, integer
 
 
 class URI(with_metaclass(URIType)):
@@ -40,7 +40,7 @@ class URI(with_metaclass(URIType)):
 
     @property
     def path_segments(self):
-        return [Unicode.replace(p, '%2f', '/') for p in self.path.split('/')]
+        return [str.replace(p, '%2f', '/') for p in self.path.split('/')]
 
     @path_segments.setter
     def path_segments(self, path) -> None:
@@ -149,7 +149,7 @@ class URI(with_metaclass(URIType)):
         self.path = '/'.join(unsplit) or '/'
 
     def set(self, uri: Any) -> None:
-        if isinstance(uri, Unicode):
+        if isinstance(uri, str):
             uri = uri.encode(self.encoding)  # FIXME: remove?
 
         if isinstance(uri, bytes):
@@ -161,7 +161,7 @@ class URI(with_metaclass(URIType)):
         elif isinstance(uri, dict):
             self.dict = uri
         else:
-            raise TypeError('URI must be bytes/unicode/tuple/dict not %r' % (type(uri).__name__, ))
+            raise TypeError('URI must be bytes/str/tuple/dict not %r' % (type(uri).__name__, ))
 
     @property
     def dict(self):
@@ -335,7 +335,7 @@ class URI(with_metaclass(URIType)):
         return Percent.unquote(bytes(data)).decode(self.encoding)
 
     def quote(self, data: str, charset: bytes) -> bytes:
-        return Percent.quote(Unicode(data).encode(self.encoding), charset)
+        return Percent.quote(str(data).encode(self.encoding), charset)
 
     def __eq__(self, other: Any) -> bool:
         """
@@ -373,7 +373,7 @@ class URI(with_metaclass(URIType)):
                     value = value.decode('ISO8859-1')
             if value is None:
                 pass
-            elif not isinstance(value, Unicode):
+            elif not isinstance(value, str):
                 raise TypeError('%r must be string, not %s' % (name, type(value).__name__))
 
         super().__setattr__(name, value)

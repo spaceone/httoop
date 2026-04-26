@@ -12,7 +12,7 @@ from typing import Any
 from httoop.exceptions import InvalidLine
 from httoop.meta import HTTPSemantic
 from httoop.six import with_metaclass
-from httoop.util import Unicode, _, integer
+from httoop.util import _, integer
 
 
 class Status(with_metaclass(HTTPSemantic)):
@@ -73,13 +73,11 @@ class Status(with_metaclass(HTTPSemantic)):
 
     def __init__(self, code: int | None = None, reason: bytes | None = None) -> None:
         """
-        :param code:
-        the HTTP Statuscode
-        :type  code: int
+        :param code: the HTTP Statuscode
+        :type code: int
 
-        :param reason:
-        the HTTP Reason-Phrase
-        :type  reason: unicode
+        :param reason: the HTTP Reason-Phrase
+        :type reason: str
         """
         self.__code = 0
         self.__reason = ''
@@ -104,7 +102,7 @@ class Status(with_metaclass(HTTPSemantic)):
     def compose(self) -> bytes:
         return b'%d %s' % (self.__code, self.__reason.encode('ascii'))
 
-    def __unicode__(self) -> str:
+    def __str__(self) -> str:
         return self.compose().decode('ascii')
 
     def __int__(self) -> int:
@@ -141,7 +139,7 @@ class Status(with_metaclass(HTTPSemantic)):
             if isinstance(reason, bytes):
                 reason = reason.decode('ascii')
             self.__code, self.__reason = integer(code), reason
-        elif isinstance(status, (bytes, Unicode)):
+        elif isinstance(status, (bytes, str)):
             code, reason = status.split(None, 1)
             if isinstance(reason, bytes):
                 reason = reason.decode('ascii')

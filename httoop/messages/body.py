@@ -13,7 +13,7 @@ from typing import Any, Iterator
 from httoop.header import Headers
 from httoop.meta import HTTPSemantic
 from httoop.six import with_metaclass
-from httoop.util import IFile, Unicode
+from httoop.util import IFile
 
 
 class Body(with_metaclass(HTTPSemantic, IFile)):
@@ -175,7 +175,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
         elif isinstance(content, BytesIO) or (hasattr(content, 'read') and hasattr(content, 'fileno') and hasattr(content, 'closed')):
             if content.closed:
                 raise ValueError('I/O operation on closed file.')
-        elif isinstance(content, Unicode):
+        elif isinstance(content, str):
             content = BytesIO(content.encode(self.encoding))
         elif isinstance(content, bytes):
             content = BytesIO(content)
@@ -203,7 +203,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
         if fileable:
             self.set('')
 
-    def __unicode__(self) -> str:
+    def __str__(self) -> str:
         return self.__content_bytes().decode(self.encoding)
 
     def __iter__(self) -> Iterator[Any]:
@@ -239,7 +239,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
             for data in iterable:
                 if not data:
                     continue
-                if isinstance(data, Unicode):
+                if isinstance(data, str):
                     data = data.encode(self.encoding)
                 elif not isinstance(data, bytes):  # pragma: no cover
                     raise TypeError('Iterable contained non-bytes: %r' % (type(data).__name__, ))

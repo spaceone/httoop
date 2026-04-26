@@ -72,14 +72,9 @@ class HeaderElement(with_metaclass(HeaderType)):
     def __bytes__(self) -> bytes:
         return self.compose()
 
-    def __unicode__(self) -> str:
+    def __str__(self) -> str:
         # return bytes(self).decode('ISO8859-1')
         return self.decode_rfc2047(bytes(self))
-
-    if str is bytes:
-        __str__ = __bytes__
-    else:  # pragma: no cover
-        __str__ = __unicode__
 
     def compose(self) -> bytes:
         params = [b'; %s' % self.formatparam(k, v) for k, v in iteritems(self.params)]

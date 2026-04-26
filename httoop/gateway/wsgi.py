@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing import Any, Callable, Iterator
 
 from httoop.messages import Body
-from httoop.six import PY2, reraise
+from httoop.six import reraise
 from httoop.util import iteritems
 
 
@@ -128,26 +128,25 @@ class WSGI:
             if name.lower() not in ('content-type', 'content-length')
         ]))
         environ.update({
-            'REQUEST_METHOD': bytes(self.request.method),
-            'SCRIPT_NAME': b'',
-            'REQUEST_URI': self.request.uri.path.encode('ISO8859-1'),
-            'PATH_INFO': self.path_info or self.request.uri.path.encode('ISO8859-1'),
-            'QUERY_STRING': self.request.uri.query_string.encode('ISO8859-1'),
+            'REQUEST_METHOD': str(self.request.method),
+            'SCRIPT_NAME': '',
+            'REQUEST_URI': self.request.uri.path,
+            'PATH_INFO': self.path_info or self.request.uri.path,
+            'QUERY_STRING': self.request.uri.query_string,
             'CONTENT_TYPE': self.request.headers.get('Content-Type', b''),
             'CONTENT_LENGTH': self.request.headers.get('Content-Length', b''),
             'SERVER_NAME': self.server_name,
             'SERVER_PORT': self.server_port,
-            'SERVER_PROTOCOL': bytes(self.request.protocol),
+            'SERVER_PROTOCOL': str(self.request.protocol),
             'wsgi.version': self.wsgi_version,
-            'wsgi.url_scheme': self.request.uri.scheme.encode('ascii'),
+            'wsgi.url_scheme': self.request.uri.scheme,
             'wsgi.input': self.request.body,
             'wsgi.errors': self.errors,
             'wsgi.multithread': self.multithread,
             'wsgi.multiprocess': self.multiprocess,
             'wsgi.run_once': self.run_once,
         })
-        if not PY2:
-            environ = dict((key, value.decode('ISO8859-1') if isinstance(value, bytes) else value) for key, value in environ.items())
+        environ = dict((key, value.decode('ISO8859-1') if isinstance(value, bytes) else value) for key, value in environ.items())
         return environ
 
     def set_environ(self, environ: dict[str, str]) -> None:

@@ -7,7 +7,7 @@ from typing import Any
 from httoop.codecs import lookup
 from httoop.exceptions import InvalidDate, InvalidHeader
 from httoop.header.element import HeaderElement, MimeType, _AcceptElement, _CookieElement, _HopByHopElement, _ListElement
-from httoop.util import Unicode, _, integer
+from httoop.util import _, integer
 
 
 class CodecElement:
@@ -31,7 +31,7 @@ class CodecElement:
         for encoding in (self.value, mimetype):
             if self.CODECS is not None:
                 encoding = self.CODECS.get(encoding)
-                if not isinstance(encoding, (bytes, Unicode)):
+                if not isinstance(encoding, (bytes, str)):
                     return encoding
             try:
                 return lookup(encoding.lower())

@@ -119,7 +119,7 @@ class StateMachine:
 
             yield self.on_message_complete()
 
-    def parse_startline(self) -> Optional[bool]:
+    def parse_startline(self) -> bool | None:
         if CRLF not in self.buffer:
             if LF not in self.buffer:
                 return NOT_RECEIVED_YET
@@ -133,7 +133,7 @@ class StateMachine:
         except (InvalidLine, InvalidURI) as exc:
             raise BAD_REQUEST(Unicode(exc))
 
-    def parse_headers(self) -> Optional[bool]:
+    def parse_headers(self) -> bool | None:
         # empty headers?
         if self.buffer.startswith(self.line_end):
             self.buffer = self.buffer[len(self.line_end):]
@@ -167,7 +167,7 @@ class StateMachine:
             except InvalidHeader as exc:
                 raise BAD_REQUEST(Unicode(exc))
 
-    def parse_body(self) -> Optional[bool]:
+    def parse_body(self) -> bool | None:
         if self.message_length is None and not self.chunked:
             self.determine_message_length()
 
@@ -200,7 +200,7 @@ class StateMachine:
             except ValueError:
                 raise BAD_REQUEST(_('Invalid Content-Length header.'))
 
-    def parse_body_with_message_length(self) -> Optional[bool]:
+    def parse_body_with_message_length(self) -> bool | None:
         body, self.buffer = self.buffer[:self.message_length], self.buffer[self.message_length:]
         self.message.body.parse(bytes(body))
 

@@ -32,7 +32,7 @@ class WSGIBody(Body):
 class WSGI:
     """A mixin class which implements the WSGI interface."""
 
-    def __init__(self, environ: Optional[Dict[str, str]] = None, use_path_info: bool = False, *args, **kwargs) -> None:
+    def __init__(self, environ: Dict[str, str] | None = None, use_path_info: bool = False, *args, **kwargs) -> None:
         self.use_path_info = use_path_info
         super().__init__()
         self.exc_info = None
@@ -119,7 +119,7 @@ class WSGI:
         self.response.body = buffered(data)
         return raw_result
 
-    def get_environ(self) -> Dict[str, Optional[str | Tuple[int, int] | WSGIBody | bool]]:
+    def get_environ(self) -> Dict[str, str | Tuple[int, int] | WSGIBody | bool | None]:
         environ = {}
         environ.update(dict(self.environ.items()))
         environ.update(dict([

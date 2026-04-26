@@ -34,7 +34,7 @@ class Method(with_metaclass(HTTPSemantic)):
     idempotent_methods = ('GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE', 'SEARCH')
     METHOD_RE = re.compile(br'^[A-Z0-9$-_.]{1,20}\Z', re.IGNORECASE)
 
-    def __init__(self, method: Optional[str] = None) -> None:
+    def __init__(self, method: str | None = None) -> None:
         self.set(method or 'GET')
 
     def __hash__(self) -> int:

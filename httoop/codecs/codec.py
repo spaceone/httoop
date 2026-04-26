@@ -8,7 +8,7 @@ from httoop.util import Unicode
 class Codec:
 
     @classmethod
-    def decode(cls, data: bytes, charset: Optional[str] = None, mimetype: None = None) -> str:  # pragma: no cover
+    def decode(cls, data: bytes, charset: str | None = None, mimetype: None = None) -> str:  # pragma: no cover
         if isinstance(data, bytes):
             data = data.decode(charset or 'ascii')
         return data

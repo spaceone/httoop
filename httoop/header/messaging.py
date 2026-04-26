@@ -100,7 +100,7 @@ class ContentDisposition(HeaderElement):
     from httoop.date import Date
 
     @property
-    def filename(self) -> Optional[str]:
+    def filename(self) -> str | None:
         return self.params.get('filename')
 
     @property
@@ -116,12 +116,12 @@ class ContentDisposition(HeaderElement):
         return self.value == 'inline'
 
     @property
-    def creation_date(self) -> Optional[Date]:
+    def creation_date(self) -> Date | None:
         if 'creation-date' in self.params:
             return self.Date(self.params['creation-date'])
 
     @property
-    def modification_date(self) -> Optional[Date]:
+    def modification_date(self) -> Date | None:
         if 'modification-date' in self.params:
             return self.Date(self.params['modification-date'])
 
@@ -258,15 +258,15 @@ class Forwarded(HeaderElement):
         return self.params.get('for')
 
     @property
-    def by(self) -> Optional[str]:
+    def by(self) -> str | None:
         return self.params.get('by')
 
     @property
-    def host(self) -> Optional[str]:
+    def host(self) -> str | None:
         return self.params.get('host')
 
     @property
-    def proto(self) -> Optional[str]:
+    def proto(self) -> str | None:
         return self.params.get('proto')
 
     @classmethod
@@ -306,21 +306,21 @@ class Host(HeaderElement):
         return not self.is_ip4 and not self.is_ip6 and self.RE_HOSTNAME.match(self.host) is not None
 
     @property
-    def fqdn(self) -> Optional[str]:
+    def fqdn(self) -> str | None:
         if self.is_fqdn:
             return self.host
 
     @property
-    def hostname(self) -> Optional[str]:
+    def hostname(self) -> str | None:
         return self.ip6address or self.ip4address or self.fqdn
 
     @property
-    def ip6address(self) -> Optional[str]:
+    def ip6address(self) -> str | None:
         if self.is_ip6:
             return self.host
 
     @property
-    def ip4address(self) -> Optional[str]:
+    def ip4address(self) -> str | None:
         if self.is_ip4:
             return self.host
 

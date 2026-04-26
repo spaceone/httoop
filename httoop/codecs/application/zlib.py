@@ -20,7 +20,7 @@ class Deflate(Codec):
             raise EncodeError(_('Invalid zlib/deflate data.'))
 
     @classmethod
-    def decode(cls, data: bytes, charset: Optional[str] = None, mimetype: None = None) -> str:
+    def decode(cls, data: bytes, charset: str | None = None, mimetype: None = None) -> str:
         try:
             data = zlib.decompress(data)
         except zlib.error:

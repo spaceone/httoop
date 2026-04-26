@@ -42,7 +42,7 @@ class Date(with_metaclass(HTTPSemantic)):
 
     __slots__ = ('__composed', '__timestamp', '__datetime', '__time_struct')
 
-    def __init__(self, timeval: Optional[Any] = None) -> None:
+    def __init__(self, timeval: Any | None = None) -> None:
         """
         :param timeval:
         :type  timeval:
@@ -102,7 +102,7 @@ class Date(with_metaclass(HTTPSemantic)):
         )
 
     @classmethod
-    def parse(cls, timestr: Optional[bytes] = None) -> Date:
+    def parse(cls, timestr: bytes | None = None) -> Date:
         """
         parses a HTTP date string and returns a :class:`Date` object.
 
@@ -155,13 +155,13 @@ class Date(with_metaclass(HTTPSemantic)):
         except NotImplementedError:  # pragma: no cover
             return NotImplemented
 
-    def __gt__(self, other: Optional[Date | str]) -> bool:
+    def __gt__(self, other: Date | str | None) -> bool:
         try:
             return int(self) > int(self.__other(other))
         except NotImplementedError:  # pragma: no cover
             return NotImplemented
 
-    def __lt__(self, other: Optional[Date | str]) -> bool:
+    def __lt__(self, other: Date | str | None) -> bool:
         try:
             return int(self) < int(self.__other(other))
         except NotImplementedError:  # pragma: no cover

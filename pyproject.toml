@@ -62,3 +62,102 @@ zip-safe = true
 
 [project.urls]
 Homepage = "https://github.com/spaceone/httoop"
+
+[tool.ruff]
+line-length = 180
+target-version = "py37"
+
+[tool.ruff.lint]
+preview = true
+select = ["E", "W", "F", "I", "D", "TD", "ALL"]
+ignore = [
+ "E501",  # line-too-long
+ "E203",  # whitespace-before-punctuation
+ "COM812",  # missing-trailing-comma
+ "D203",  # one-blank-line-before-class
+ "D212",  # multi-line-summary-first-line
+ "D400",  # ends-in-period
+ "D415",  # ends-in-punctuation
+ "D100",  # Missing docstring in public module
+ "D101",  # Missing docstring in public class
+ "D102",  # Missing docstring in public method
+ "D103",  # Missing docstring in public function
+ "D107",  # Missing docstring in `__init__`
+ "D205",  # 1 blank line required between summary line and description
+ "D105",  # Missing docstring in magic method
+ "D401",  # First line of docstring should be in imperative mood: "A shortcut to abspath, escape and lowercase."
+ "D402",  # First line should not be the function's signature
+ "D403",  # first-word-uncapitalized
+ "D404",  # First word of the docstring should not be "This"
+ "D104",  # Missing docstring in public package
+ "T201", "T203",  # print, p-print
+ "TD001",  # invalid-todo-tag
+ "TD002",  # missing-todo-author
+ "TD003",  # missing-todo-link
+ # "I", "S101", "Q000", "ANN", "ERA", "UP004", "ARG001", "ARG002",
+]
+
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+task-tags = ["TODO", "FIXME"]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"tests/*" = [
+ "ANN",
+ "S101",
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 40
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
+multiline-quotes = "double"
+inline-quotes = "single"
+
+[tool.ruff.lint.flake8-unused-arguments]
+ignore-variadic-names = true
+
+[tool.ruff.lint.flake8-pytest-style]
+parametrize-names-type = "csv"
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+#filter-files = true
+#force-grid-wrap = false
+known-first-party = ["httoop"]
+# https://github.com/astral-sh/ruff/issues/2600 :
+#multi-line-output = 5
+#include-trailing-comma = true
+lines-after-imports = 2
+split-on-trailing-comma = false
+
+# length-sort = true

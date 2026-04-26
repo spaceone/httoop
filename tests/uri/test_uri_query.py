@@ -68,7 +68,7 @@ def test_urlencode_sequences():
 
 @pytest.mark.xfail(reason='API not yet implemented.')
 def test_urlencode_object():
-    class Trivial(object):
+    class Trivial:
         def __str__(self):
             return 'trivial'
 

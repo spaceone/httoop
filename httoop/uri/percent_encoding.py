@@ -4,7 +4,7 @@ from typing import Iterator
 from httoop import six
 
 
-class Percent(object):
+class Percent:
     """
     Percentage encoding.
 

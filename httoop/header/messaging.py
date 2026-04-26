@@ -9,7 +9,7 @@ from httoop.header.element import HeaderElement, MimeType, _AcceptElement, _Cook
 from httoop.util import Unicode, _, integer
 
 
-class CodecElement(object):
+class CodecElement:
 
     CODECS = None
 

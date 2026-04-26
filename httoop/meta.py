@@ -10,7 +10,7 @@ from httoop.util import PY3, Unicode
 __all__ = ['HTTPSemantic']
 
 
-class Semantic(object):
+class Semantic:
 
     __slots__ = ()
 

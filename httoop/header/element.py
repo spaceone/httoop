@@ -257,7 +257,7 @@ class HeaderElement(with_metaclass(HeaderType)):
         return '<%s(%r%s)>' % (self.__class__.__name__, self.value, params)
 
 
-class MimeType(object):
+class MimeType:
     """
     .. seealso:: rfc:`2046`.
 
@@ -410,9 +410,9 @@ class _CookieElement(HeaderElement):
         self.cookie_name, self.cookie_value = self.cookie_name.decode('ISO8859-1'), self.cookie_value.decode('ISO8859-1')
 
 
-class _HopByHopElement(object):
+class _HopByHopElement:
     hop_by_hop = True
 
 
-class _ListElement(object):
+class _ListElement:
     list_element = True

@@ -1,4 +1,4 @@
-class CLI(object):
+class CLI:
 
     def __init__(self):
         self.modes = {

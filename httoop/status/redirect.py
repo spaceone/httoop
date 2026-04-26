@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import annotations
 from typing import Dict, Optional, Tuple, Union
 
 from httoop.status.types import StatusException

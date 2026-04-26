@@ -3,6 +3,7 @@
 
 .. seealso:: :rfc:`2616#section-4.3`
 """
+from __future__ import annotations
 
 from io import BytesIO
 from os import fstat

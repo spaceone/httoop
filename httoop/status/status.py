@@ -4,6 +4,7 @@
 .. seealso:: :rfc:`2616#section-6.2`
 .. seealso:: :rfc:`2616#section-10`
 """
+from __future__ import annotations
 
 import re
 from typing import Any, Optional, Union

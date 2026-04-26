@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+from __future__ import annotations
 
 from json import dumps as json_encode, loads as json_decode
 from typing import Any, Dict, Optional, Union

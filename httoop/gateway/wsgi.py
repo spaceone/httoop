@@ -3,6 +3,7 @@
 
 .. seealso:: `PEP 333 <http://www.python.org/dev/peps/pep-0333/>`_
 """
+from __future__ import annotations
 
 from typing import Any, Callable, Dict, Iterator, Optional, Tuple, Union
 

@@ -3,6 +3,7 @@ u"""Implements a state machine for the parsing process."""
 # TODO: translation API
 
 from __future__ import absolute_import
+from __future__ import annotations
 
 from typing import Iterator, Optional, Tuple, Union
 

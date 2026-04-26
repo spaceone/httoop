@@ -2,6 +2,7 @@
 u"""Utilities for python2/3 compatibility."""
 
 from __future__ import absolute_import
+from __future__ import annotations
 
 import codecs
 import sys

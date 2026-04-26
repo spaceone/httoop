@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # TODO: Via, Server, User-Agent can contain comments → parse them
+from __future__ import annotations
 import re
 from typing import Any, List, Optional
 

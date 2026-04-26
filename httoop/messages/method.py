@@ -3,6 +3,7 @@
 
 .. seealso:: :rfc:`2616#section-4`
 """
+from __future__ import annotations
 
 import re
 from typing import Optional

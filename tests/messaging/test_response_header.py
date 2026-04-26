@@ -1,6 +1,6 @@
 def test_response_contains_date_header():
-	pass
+    pass
 
 
 def test_response_contains_server_header():
-	pass
+    pass

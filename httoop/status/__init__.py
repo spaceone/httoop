@@ -18,7 +18,7 @@ STATUSES = dict()
 types = (informational, success, redirect, client_error, server_error)
 
 for _, member in (member for type_ in types for member in inspect.getmembers(type_, inspect.isclass)):
-	if isinstance(member, StatusType) and member is not StatusType:
-		STATUSES[member.code] = member
-		globals()[_] = member
-		__all__.append(_)
+    if isinstance(member, StatusType) and member is not StatusType:
+        STATUSES[member.code] = member
+        globals()[_] = member
+        __all__.append(_)

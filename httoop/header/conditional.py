@@ -9,62 +9,62 @@ from httoop.header.element import HeaderElement
 
 class _DateComparable(object):
 
-	Date = Date
+    Date = Date
 
-	def sanitize(self) -> None:
-		super(_DateComparable, self).sanitize()
-		self.value = self.Date.parse(self.value.encode('ASCII', 'replace'))
+    def sanitize(self) -> None:
+        super(_DateComparable, self).sanitize()
+        self.value = self.Date.parse(self.value.encode('ASCII', 'replace'))
 
-	def __eq__(self, other: Any) -> bool:
-		if not isinstance(other, Date):
-			if isinstance(other, _DateComparable):
-				other = int(other)
-			try:
-				other = Date(other)
-			except InvalidDate:
-				return False
-		return self.value == other
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Date):
+            if isinstance(other, _DateComparable):
+                other = int(other)
+            try:
+                other = Date(other)
+            except InvalidDate:
+                return False
+        return self.value == other
 
-	def __int__(self) -> int:
-		return int(self.value)
+    def __int__(self) -> int:
+        return int(self.value)
 
 
 class _MatchElement(object):
 
-	def matches(self, value):
-		return self == value or self == '*'
+    def matches(self, value):
+        return self == value or self == '*'
 
 
 class ETag(HeaderElement):
 
-	is_response_header = True
+    is_response_header = True
 
-	def __eq__(self, other: Any) -> bool:
-		if not isinstance(other, ETag):
-			other = self.__class__(other)
-		return other.value == self.value or other.value == '*'
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, ETag):
+            other = self.__class__(other)
+        return other.value == self.value or other.value == '*'
 
 
 class LastModified(_DateComparable, HeaderElement):
-	__name__ = 'Last-Modified'
-	is_response_header = True
+    __name__ = 'Last-Modified'
+    is_response_header = True
 
 
 class IfMatch(_MatchElement, HeaderElement):
-	__name__ = 'If-Match'
-	is_request_header = True
+    __name__ = 'If-Match'
+    is_request_header = True
 
 
 class IfModifiedSince(_DateComparable, HeaderElement):
-	__name__ = 'If-Modified-Since'
-	is_request_header = True
+    __name__ = 'If-Modified-Since'
+    is_request_header = True
 
 
 class IfNoneMatch(_MatchElement, HeaderElement):
-	__name__ = 'If-None-Match'
-	is_request_header = True
+    __name__ = 'If-None-Match'
+    is_request_header = True
 
 
 class IfUnmodifiedSince(_DateComparable, HeaderElement):
-	__name__ = 'If-Unmodified-Since'
-	is_request_header = True
+    __name__ = 'If-Unmodified-Since'
+    is_request_header = True

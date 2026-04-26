@@ -24,7 +24,7 @@ __all__ = ['Headers', 'Server', 'UserAgent']
 types = (semantics, messaging, conditional, range, cache, auth, security)
 
 for _, member in (member for type_ in types for member in inspect.getmembers(type_, inspect.isclass)):
-	if isinstance(member, HeaderType) and member is not HeaderElement and not _.startswith('_'):
-		HEADER[member.__name__] = member
-		globals()[_] = member
-		__all__.append(_)
+    if isinstance(member, HeaderType) and member is not HeaderElement and not _.startswith('_'):
+        HEADER[member.__name__] = member
+        globals()[_] = member
+        __all__.append(_)

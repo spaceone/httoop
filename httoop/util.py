@@ -215,7 +215,7 @@ class CaseInsensitiveDict(dict):
         return dict.pop(self, self.formatkey(key), default)
 
     @classmethod
-    def fromkeys(cls, seq: Tuple[str, str, str], value: Optional[str] = None) -> "Headers":
+    def fromkeys(cls, seq: Tuple[str, str, str], value: Optional[str] = None) -> 'Headers':
         return cls(dict((key, value) for key in seq))
 
 

@@ -28,27 +28,27 @@ class CLI(object):
         self.parse_arguments()
 
     def add_subparsers(self):
-        action_subparsers = self.parser.add_subparsers(title="action", dest="action", required=True)
-        parse_parser = action_subparsers.add_parser("parse", parents=[self.parent_parser])
-        compose_parser = action_subparsers.add_parser("compose", parents=[self.parent_parser])
+        action_subparsers = self.parser.add_subparsers(title='action', dest='action', required=True)
+        parse_parser = action_subparsers.add_parser('parse', parents=[self.parent_parser])
+        compose_parser = action_subparsers.add_parser('compose', parents=[self.parent_parser])
 
-        compose_message_subparsers = compose_parser.add_subparsers(title="message", dest="message")
-        request = compose_message_subparsers.add_parser("request", parents=[self.parent_parser])
+        compose_message_subparsers = compose_parser.add_subparsers(title='message', dest='message')
+        request = compose_message_subparsers.add_parser('request', parents=[self.parent_parser])
         request.set_defaults(func=self.compose_request)
         add = request.add_argument
         add('-m', '--method')
         add('-u', '--uri')
         self.add_common_arguments(add)
 
-        response = compose_message_subparsers.add_parser("response", parents=[self.parent_parser])
+        response = compose_message_subparsers.add_parser('response', parents=[self.parent_parser])
         response.set_defaults(func=self.compose_response)
         add = response.add_argument
         add('-s', '--status')
         add('--reason')
         self.add_common_arguments(add)
 
-        parse_message_subparsers = parse_parser.add_subparsers(title="message", dest="message")
-        request = parse_message_subparsers.add_parser("request", parents=[self.parent_parser])
+        parse_message_subparsers = parse_parser.add_subparsers(title='message', dest='message')
+        request = parse_message_subparsers.add_parser('request', parents=[self.parent_parser])
         request.set_defaults(func=self.parse_request)
         add = request.add_argument
         add('--file', default='-', type=FileType('rb'))
@@ -56,7 +56,7 @@ class CLI(object):
         add('--host', default='www.example.net')
         add('--port', default=80, type=int)
 
-        response = parse_message_subparsers.add_parser("response", parents=[self.parent_parser])
+        response = parse_message_subparsers.add_parser('response', parents=[self.parent_parser])
         add = response.add_argument
         response.set_defaults(func=self.parse_response)
         add('--file', default='-', type=FileType('rb'))

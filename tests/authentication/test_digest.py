@@ -144,7 +144,7 @@ def test_digest_authorization_md5_sess_a1(headers):
 def test_check(headers, realm, result):
     www_auth = WWWAuthenticate('Digest', {
         'realm': realm,
-        'response': "4c187ba5e8ff03c06627fc4e3940fc97"}
+        'response': '4c187ba5e8ff03c06627fc4e3940fc97'}
     )
     auth = Authorization('Digest', {
         'username': 'Mufasa',

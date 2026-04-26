@@ -217,11 +217,11 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
         for data in iterable:
             if not data:
                 continue
-            yield b"%x\r\n%s\r\n" % (len(data), data)
+            yield b'%x\r\n%s\r\n' % (len(data), data)
         if self.trailer:
-            yield b"0\r\n%s" % bytes(self.trailer)
+            yield b'0\r\n%s' % bytes(self.trailer)
         else:
-            yield b"0\r\n\r\n"
+            yield b'0\r\n\r\n'
 
     def __content_bytes(self):
         return b''.join(self.__content_iter())

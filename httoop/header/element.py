@@ -177,7 +177,7 @@ class HeaderElement(with_metaclass(HeaderType)):
                 yield b'%s*%d' % (key, k), v
 
     @classmethod
-    def parse(cls, elementstr: bytes) -> "HeaderElement":
+    def parse(cls, elementstr: bytes) -> 'HeaderElement':
         """Construct an instance from a string of the form 'token;key=val'."""
         elementstr, encoding = cls.decode_rfc2047_charset(elementstr)
         ival, params = cls.parseparams(elementstr.encode(encoding))
@@ -192,7 +192,7 @@ class HeaderElement(with_metaclass(HeaderType)):
         return b', '.join(values)
 
     @classmethod
-    def sorted(cls, elements: List["HeaderElement"]) -> List["HeaderElement"]:
+    def sorted(cls, elements: List['HeaderElement']) -> List['HeaderElement']:
         return elements
 
     @classmethod
@@ -324,7 +324,7 @@ class _AcceptElement(HeaderElement):
     @property
     def quality(self) -> float:
         """The quality of this value."""
-        val = self.params.get("q", "1")
+        val = self.params.get('q', '1')
         if isinstance(val, HeaderElement):  # pragma: no cover
             val = val.value
         if val:
@@ -338,7 +338,7 @@ class _AcceptElement(HeaderElement):
             raise InvalidHeader(_(u'Quality value must be float.'))
 
     @classmethod
-    def parse(cls, elementstr: bytes) -> "HeaderElement":
+    def parse(cls, elementstr: bytes) -> 'HeaderElement':
         elementstr, encoding = cls.decode_rfc2047_charset(elementstr)
         qvalue = None
         # The first "q" parameter (if any) separates the initial
@@ -352,7 +352,7 @@ class _AcceptElement(HeaderElement):
 
         media_type, params = cls.parseparams(media_range)
         if qvalue is not None:
-            params["q"] = bytes(qvalue)
+            params['q'] = bytes(qvalue)
 
         return cls(media_type.decode(encoding), params)
 
@@ -385,7 +385,7 @@ class _CookieElement(HeaderElement):
         super(_CookieElement, self).__init__(self.value, params)
 
     @classmethod
-    def parse(cls, elementstr: bytes) -> "HeaderElement":
+    def parse(cls, elementstr: bytes) -> 'HeaderElement':
         elementstr, encoding = cls.decode_rfc2047_charset(elementstr)
         value, params = cls.parseparams(elementstr.encode(encoding))
         cookie_name, cookie_value, __ = cls.parseparam(value)

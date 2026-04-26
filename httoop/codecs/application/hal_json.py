@@ -86,7 +86,7 @@ class Resource(dict):
                 raise DecodeError(u'HAL resources must be objects')
             yield Resource(resource.copy())
 
-    def get_resource(self, relation: str) -> Optional["Resource"]:
+    def get_resource(self, relation: str) -> Optional['Resource']:
         try:
             return next(self.get_resources(relation))
         except StopIteration:
@@ -121,14 +121,14 @@ class HAL(JSON):
     mimetype = 'application/hal+json'
 
     @classmethod
-    def decode(cls, data: bytes, charset: Optional[str] = None, mimetype: Optional["ContentType"] = None) -> "Resource":
+    def decode(cls, data: bytes, charset: Optional[str] = None, mimetype: Optional['ContentType'] = None) -> 'Resource':
         data = super(HAL, cls).decode(data)
         if not isinstance(data, dict):
             raise DecodeError(u'HAL documents must be JSON objects.')
         return Resource(data)
 
     @classmethod
-    def encode(cls, data: Union[Dict[str, None], Resource], charset: Optional[str] = None, mimetype: Optional["ContentType"] = None) -> bytes:
+    def encode(cls, data: Union[Dict[str, None], Resource], charset: Optional[str] = None, mimetype: Optional['ContentType'] = None) -> bytes:
         if not isinstance(data, dict):
             raise EncodeError(u'HAL documents must be JSON objects.')
 

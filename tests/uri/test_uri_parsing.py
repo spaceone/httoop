@@ -37,10 +37,10 @@ absolute_uris = [
     (b'http://www.python.org:80', (u'http', u'', u'', u'www.python.org', 80, u'', u'', u'')),
 
     (b'mailto:1337@example.org', (u'mailto', u'', u'', u'', None, u'1337@example.org', u'', u'')),
-    (b"s3://foo.com/stuff", (u's3', u'', u'', u'foo.com', None, u'/stuff', u'', u'')),
-    (b"x-newscheme://foo.com/stuff", (u'x-newscheme', u'', u'', u'foo.com', None, u'/stuff', u'', u'')),
-    (b"x-newscheme://foo.com/stuff?query#fragment", (u'x-newscheme', u'', u'', u'foo.com', None, u'/stuff', u'query', u'fragment')),
-    (b"x-newscheme://foo.com/stuff?query", (u'x-newscheme', u'', u'', u'foo.com', None, u'/stuff', u'query', u'')),
+    (b's3://foo.com/stuff', (u's3', u'', u'', u'foo.com', None, u'/stuff', u'', u'')),
+    (b'x-newscheme://foo.com/stuff', (u'x-newscheme', u'', u'', u'foo.com', None, u'/stuff', u'', u'')),
+    (b'x-newscheme://foo.com/stuff?query#fragment', (u'x-newscheme', u'', u'', u'foo.com', None, u'/stuff', u'query', u'fragment')),
+    (b'x-newscheme://foo.com/stuff?query', (u'x-newscheme', u'', u'', u'foo.com', None, u'/stuff', u'query', u'')),
 
     (b'tel:+31-641044153', (u'tel', u'', u'', u'', None, u'+31-641044153', u'', u'')),
 

@@ -16,7 +16,7 @@ class Percent(object):
     HEX_MAP = dict(((a + b).encode('ASCII'), six.int2byte(int(a + b, 16))) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef')
 
     # ABNF
-    GEN_DELIMS = b":/?#[]@"
+    GEN_DELIMS = b':/?#[]@'
     SUB_DELIMS = b"!$&'()*+,;="
 
     RESERVED = GEN_DELIMS + SUB_DELIMS + b'%'

@@ -63,7 +63,7 @@ class WSGI(object):
     def __call__(self, application: Callable) -> Iterator[Any]:
         def write(data):
             if not self.headers_set:
-                raise RuntimeError("write() before start_response()")
+                raise RuntimeError('write() before start_response()')
             elif not self.headers_sent:
                 self.start_response()
                 self.headers_sent = True
@@ -76,7 +76,7 @@ class WSGI(object):
                 finally:
                     exc_info = None  # avoid dangling circular ref
             elif self.headers_set:
-                raise RuntimeError("start_response() must be called only once!")
+                raise RuntimeError('start_response() must be called only once!')
             self.headers_set = True
             self.exc_info = exc_info
             self.response.status.parse(status.encode('ISO8859-1'))

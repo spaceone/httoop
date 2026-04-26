@@ -32,14 +32,14 @@ class Protocol(with_metaclass(HTTPSemantic)):
     def minor(self) -> int:
         return self[1]
 
-    PROTOCOL_RE = re.compile(br"^(HTTP)/(\d+)\.(\d+)\Z")
+    PROTOCOL_RE = re.compile(br'^(HTTP)/(\d+)\.(\d+)\Z')
 
-    def __init__(self, protocol: Union[bytes, "Protocol", Tuple[int, int], int, str] = (1, 1)) -> None:
+    def __init__(self, protocol: Union[bytes, 'Protocol', Tuple[int, int], int, str] = (1, 1)) -> None:
         self.__protocol = protocol
         self.name = b'HTTP'
         self.set(protocol)
 
-    def set(self, protocol: Union[bytes, "Protocol", Tuple[int, int], int, str]) -> None:
+    def set(self, protocol: Union[bytes, 'Protocol', Tuple[int, int], int, str]) -> None:
         if isinstance(protocol, (bytes, Unicode)):
             if isinstance(protocol, Unicode):
                 protocol = protocol.encode('ascii', 'replace')
@@ -51,7 +51,7 @@ class Protocol(with_metaclass(HTTPSemantic)):
     def parse(self, protocol: bytes) -> None:
         match = self.PROTOCOL_RE.match(protocol)
         if match is None:
-            raise InvalidLine(_(u"Invalid HTTP protocol: %r"), protocol.decode('ISO8859-1'))
+            raise InvalidLine(_(u'Invalid HTTP protocol: %r'), protocol.decode('ISO8859-1'))
         self.__protocol = (int(match.group(2)), int(match.group(3)))
         self.name = match.group(1)
 
@@ -73,7 +73,7 @@ class Protocol(with_metaclass(HTTPSemantic)):
             return False
         return self.version == other.version
 
-    def __lt__(self, other: Union[int, Tuple[int, int], "Protocol"]) -> bool:
+    def __lt__(self, other: Union[int, Tuple[int, int], 'Protocol']) -> bool:
         try:
             other = Protocol(other)
         except (TypeError, InvalidLine):
@@ -82,7 +82,7 @@ class Protocol(with_metaclass(HTTPSemantic)):
             raise  # pragma: no cover
         return self.version < other.version
 
-    def __gt__(self, other: Union[int, Tuple[int, int], "Protocol"]) -> bool:
+    def __gt__(self, other: Union[int, Tuple[int, int], 'Protocol']) -> bool:
         try:
             other = Protocol(other)
         except (TypeError, InvalidLine):

@@ -26,7 +26,7 @@ def lookup(encoding: str, raise_errors: bool = True) -> Any:
     return CODECS.get(encoding) or CODECS.get(type_) or (raise_errors and CODECS[encoding]) or None
 
 
-def register(encoding: str, codec: Type['Codec']) -> None:
+def register(encoding: str, codec: Type[Codec]) -> None:
     CODECS[encoding] = codec
 
 

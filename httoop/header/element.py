@@ -177,7 +177,7 @@ class HeaderElement(with_metaclass(HeaderType)):
                 yield b'%s*%d' % (key, k), v
 
     @classmethod
-    def parse(cls, elementstr: bytes) -> 'HeaderElement':
+    def parse(cls, elementstr: bytes) -> HeaderElement:
         """Construct an instance from a string of the form 'token;key=val'."""
         elementstr, encoding = cls.decode_rfc2047_charset(elementstr)
         ival, params = cls.parseparams(elementstr.encode(encoding))
@@ -192,7 +192,7 @@ class HeaderElement(with_metaclass(HeaderType)):
         return b', '.join(values)
 
     @classmethod
-    def sorted(cls, elements: List['HeaderElement']) -> List['HeaderElement']:
+    def sorted(cls, elements: List[HeaderElement]) -> List[HeaderElement]:
         return elements
 
     @classmethod
@@ -340,7 +340,7 @@ class _AcceptElement(HeaderElement):
             raise InvalidHeader(_('Quality value must be float.'))
 
     @classmethod
-    def parse(cls, elementstr: bytes) -> 'HeaderElement':
+    def parse(cls, elementstr: bytes) -> HeaderElement:
         elementstr, encoding = cls.decode_rfc2047_charset(elementstr)
         qvalue = None
         # The first "q" parameter (if any) separates the initial
@@ -387,7 +387,7 @@ class _CookieElement(HeaderElement):
         super().__init__(self.value, params)
 
     @classmethod
-    def parse(cls, elementstr: bytes) -> 'HeaderElement':
+    def parse(cls, elementstr: bytes) -> HeaderElement:
         elementstr, encoding = cls.decode_rfc2047_charset(elementstr)
         value, params = cls.parseparams(elementstr.encode(encoding))
         cookie_name, cookie_value, __ = cls.parseparam(value)

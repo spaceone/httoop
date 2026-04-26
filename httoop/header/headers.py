@@ -80,7 +80,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
     def append_element(self, fieldname: str, *args, **kwargs) -> None:
         self.append(fieldname, bytes(self.create_element(fieldname, *args, **kwargs)))
 
-    def create_element(self, fieldname: str, *args, **kwargs) -> 'HeaderElement':
+    def create_element(self, fieldname: str, *args, **kwargs) -> HeaderElement:
         Element = HEADER.get(fieldname, HeaderElement)
         return Element(*args, **kwargs)
 
@@ -103,7 +103,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
             Element = HEADER.get(_name, HeaderElement)
             self[_name] = Element.join([super().__getitem__(_name), _value])
 
-    def merge(self, other: 'Headers') -> None:
+    def merge(self, other: Headers) -> None:
         other = self.__class__(other)
         for key in other:
             Element = HEADER.get(key, HeaderElement)

@@ -71,7 +71,7 @@ class URI(with_metaclass(URIType)):
     def __init__(self, uri: Optional[Any] = None, *args, **kwargs) -> None:
         self.set(kwargs or args or uri or b'')
 
-    def join(self, other: Optional[bytes] = None, *args, **kwargs) -> Union['HTTP', 'SvnSSH', 'URI']:
+    def join(self, other: Optional[bytes] = None, *args, **kwargs) -> Union[HTTP, SvnSSH, URI]:
         """Join a URI with another absolute or relative URI."""
         relative = URI(other or args or kwargs)
         joined = URI()

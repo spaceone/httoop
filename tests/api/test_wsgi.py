@@ -68,17 +68,23 @@ def application8(environ, start_response):
     return [output]
 
 
-@pytest.mark.parametrize('application', [
-    application1,
-    application2,
-    application3,
-    application4,
-    application5,
-    application6,
-    application7,
-    application8,
+def application9(environ, start_response):
+    write = start_response(OK, response_headers)
+    return []
+
+
+@pytest.mark.parametrize('application,output', [
+    (application1, output),
+    (application2, output),
+    (application3, b'c\r\nHello World!\r\n0\r\n\r\n'),
+    (application4, b'5\r\nHello\r\n7\r\n World!\r\n0\r\n\r\n'),
+    (application5, output),
+    (application6, output),
+    (application7, output),
+    (application8, output + output),
+    (application9, b''),
 ])
-def test_wsgi_success(application):
+def test_wsgi_success(application, output):
     client = WSGIClient()
     client(application)
     assert client.response.headers
@@ -87,6 +93,10 @@ def test_wsgi_success(application):
 
 def application9(environ, start_response):
     return [output]
+
+
+def application9_b(environ, start_response):
+    return []
 
 
 def application10(environ, start_response):
@@ -108,7 +118,8 @@ def application13(environ, start_response):
 
 
 @pytest.mark.parametrize('application', [
-    pytest.param(application9, marks=pytest.mark.xfail(reason='No write() call currently')),
+    application9,
+    application9_b,
     pytest.param(application10, marks=pytest.mark.xfail(reason='No write() call currently')),
     application11,
     application12,

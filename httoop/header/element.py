@@ -114,9 +114,8 @@ class HeaderElement(with_metaclass(HeaderType)):
         quoted = value.startswith(b'"') and value.endswith(b'"')
         if quoted:
             value = re.sub(b'\\\\(?!\\\\)', b'', value[1:-1])
-        else:
-            if cls.RE_TSPECIALS.search(value):
-                raise InvalidHeader(_('Unquoted parameter in %r containing TSPECIALS: %r'), cls.__name__, value)
+        elif cls.RE_TSPECIALS.search(value):
+            raise InvalidHeader(_('Unquoted parameter in %r containing TSPECIALS: %r'), cls.__name__, value)
         return value, quoted
 
     @classmethod

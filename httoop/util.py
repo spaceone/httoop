@@ -1,9 +1,10 @@
-"""Utilities for python2/3 compatibility."""
+"""Utilities for Python compatibility."""
 
 from __future__ import annotations
 
 import codecs
 from typing import Any, Callable
+
 
 try:
     from typing import Self

@@ -54,9 +54,4 @@ class HTTPSemantic(type):
             bases.remove(object)
         bases.append(Semantic)
 
-        # python 2/3 unifying
-        if '__bool__' in dict_ or '__nonzero__' in dict_:
-            dict_.setdefault('__bool__', dict_.get('__nonzero__'))
-            dict_.setdefault('__nonzero__', dict_.get('__bool__'))
-
         return super().__new__(mcs, name, tuple(bases), dict_)

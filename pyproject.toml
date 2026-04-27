@@ -99,6 +99,8 @@ ignore = [
  "D404",  # First word of the docstring should not be "This"
  "D413",  # missing-blank-line-after-last-section
  "D104",  # Missing docstring in public package
+ "EM101", # raw-string-in-exception
+ "ERA001", # commented-out-code
  "T201", "T203",  # print, p-print
  "TD001",  # invalid-todo-tag
  "TD002",  # missing-todo-author

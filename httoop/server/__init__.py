@@ -28,10 +28,10 @@ class ServerStateMachine(StateMachine):
         super().on_message_started()
         self.response = Response()
         self.request = self.message
-        self.state.update(dict(
-            method=False,
-            uri=False
-        ))
+        self.state.update({
+            'method': False,
+            'uri': False
+        })
 
     def on_message_complete(self) -> tuple[httoop.messages.request.Request, httoop.messages.response.Response]:
         request = super().on_message_complete()

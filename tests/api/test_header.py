@@ -13,7 +13,7 @@ def test_merging_header(headers):
     h2['Accept'] = 'application/json; q=0.4'
     h2['Foo'] = 'bar'
     headers.merge(h2)
-    assert set(headers.keys()) == set(['Host', 'Accept', 'Foo'])
+    assert set(headers.keys()) == {'Host', 'Accept', 'Foo'}
     assert headers['Host'] == 'localhost, localhost'
     assert headers['Accept'] == 'text/plain; q=1.6, application/json; q=0.4, text/html; q=0.3'
     assert headers['Foo'] == 'bar'
@@ -51,7 +51,7 @@ def test_utf8_in_headers(headers):
     headers['foo'] = '→'
     assert bytes(headers) == b'Foo: =?utf-8?b?4oaS?=\r\n\r\n'
 
-    e = headers.create_element('foo', 'bar', dict(param='→'))
+    e = headers.create_element('foo', 'bar', {'param': '→'})
     assert bytes(e) == b"bar; param*=utf-8''%E2%86%92"
 
 

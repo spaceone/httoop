@@ -180,7 +180,7 @@ class CaseInsensitiveDict(dict):
 
     @classmethod
     def fromkeys(cls, seq: tuple[str, str, str], value: str | None = None) -> Self:
-        return cls(dict((key, value) for key in seq))
+        return cls(dict.fromkeys(seq, value))
 
 
 class ByteUnicodeDict(CaseInsensitiveDict):

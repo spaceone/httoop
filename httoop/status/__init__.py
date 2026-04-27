@@ -15,7 +15,7 @@ from httoop.status.types import StatusException, StatusType
 __all__ = ['Status', 'REASONS', 'StatusType', 'StatusException']
 
 # mapping of status -> Class
-STATUSES = dict()
+STATUSES = {}
 types = (informational, success, redirect, client_error, server_error)
 
 for _, member in (member for type_ in types for member in inspect.getmembers(type_, inspect.isclass)):

@@ -186,7 +186,7 @@ def test_invalid_nonce(headers):
 required = (b'algorithm', b'username', b'realm', b'uri')
 
 
-@pytest.mark.parametrize('params', set(tuple(tuple(set(x)) for x in chain(*list(set(product(required, repeat=i)) for i in range(1, len(required) + 1))))))
+@pytest.mark.parametrize('params', {tuple(set(x)) for x in chain(*[set(product(required, repeat=i)) for i in range(1, len(required) + 1)])})
 def test_required_parameter(params, headers):
     pvars = {
         b'algorithm': b'MD5',
@@ -200,7 +200,7 @@ def test_required_parameter(params, headers):
         headers.elements('Authorization')
     assert 'Missing parameter' in str(excinfo)
 
-    element = Authorization('Digest', dict((p, pvars[p].decode('ascii')) for p in params))
+    element = Authorization('Digest', {p: pvars[p].decode('ascii') for p in params})
     with pytest.raises(InvalidHeader) as excinfo:
         bytes(element)
     assert 'Missing parameter' in str(excinfo)

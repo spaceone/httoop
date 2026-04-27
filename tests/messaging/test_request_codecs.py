@@ -123,7 +123,7 @@ def test_hal_json(body):
     body.mimetype = 'application/hal+json'
     hal_doc = b"""{"_embedded": {"orders": [{"status": "shipped", "currency": "USD", "total": 30.0, "_links": {"basket": {"href": "/baskets/98712"}, "customer": {"href": "/customers/7809"}, "self": {"profile": null, "deprecation": false, "name": null, "hreflang": null, "href": "/orders/123", "templated": false, "type": null}}}, {"status": "processing", "currency": "USD", "total": 20.0, "_links": {"basket": {"href": "/baskets/97213"}, "customer": {"href": "/customers/12369"}, "self": {"href": "/orders/124"}}}]}, "currentlyProcessing": 14, "_links": {"curie": [{"profile": null, "deprecation": false, "name": "acme", "hreflang": null, "href": "http://docs.acme.com/relations/{rel}", "templated": true, "type": null}], "self": {"profile": null, "deprecation": false, "name": null, "hreflang": null, "href": "/orders", "templated": false, "type": null}, "find": {"href": "/orders{?id}", "templated": true}, "next": {"href": "/orders?page=2"}}, "shippedToday": 20}"""
     resource = body.decode(hal_doc)
-    assert set(resource.get_relations()) == set(['orders', 'curie', 'self', 'find', 'next'])
+    assert set(resource.get_relations()) == {'orders', 'curie', 'self', 'find', 'next'}
     assert resource.get_link('next') == {'profile': None, 'deprecation': False, 'name': None, 'hreflang': None, 'href': '/orders?page=2', 'templated': False, 'type': None}
     assert resource.self == '/orders'
     assert resource.get_curie('acme:widgets') == 'http://docs.acme.com/relations/widgets'

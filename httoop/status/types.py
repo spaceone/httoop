@@ -121,9 +121,9 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
 
     def to_dict(self) -> dict[str, int | str | dict[str, str]]:
         """the default body arguments."""
-        return dict(
-            status=self.status,
-            reason=self.reason,
-            description=self.description,
-            headers=self.headers
-        )
+        return {
+            'status': self.status,
+            'reason': self.reason,
+            'description': self.description,
+            'headers': self.headers
+        }

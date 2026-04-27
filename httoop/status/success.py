@@ -40,7 +40,7 @@ class CREATED(SuccessStatus):
 
     def to_dict(self) -> dict[str, int | str | dict[str, str]]:
         dct = super().to_dict()
-        dct.update(dict(Location=self.headers['Location']))
+        dct.update({'Location': self.headers['Location']})
         return dct
 
 

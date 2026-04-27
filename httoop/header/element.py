@@ -128,7 +128,7 @@ class HeaderElement(with_metaclass(HeaderType)):
     @classmethod
     def _rfc2231_and_continuation_params(cls, params: Iterator[Any]) -> Iterator[tuple[bytes, str]]:  # TODO: complexity
         count = set()
-        continuations = dict()
+        continuations = {}
         for key, value, quoted in params:
             if key in count:
                 raise InvalidHeader(_('Parameter given twice: %r'), key.decode('ISO8859-1'))
@@ -356,7 +356,7 @@ class _AcceptElement(HeaderElement):
 
     @classmethod
     def sorted(cls, elements: list) -> list:
-        return list(sorted(elements, reverse=True))
+        return sorted(elements, reverse=True)
 
     def __eq__(self, other: str) -> bool:
         if not isinstance(other, _AcceptElement):

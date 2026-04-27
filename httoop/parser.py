@@ -40,13 +40,13 @@ class StateMachine:
         self.message_length = None
         self.chunked = False
 
-        self.state = dict(
-            startline=False,
-            protocol=False,
-            headers=False,
-            body=False,
-            trailer=False,
-        )
+        self.state = {
+            'startline': False,
+            'protocol': False,
+            'headers': False,
+            'body': False,
+            'trailer': False,
+        }
 
     def on_message_started(self) -> None:
         self._reset_state()

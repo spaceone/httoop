@@ -11,7 +11,7 @@ from httoop.codecs import application, audio, example, image, message, model, mu
 from httoop.codecs.codec import Codec
 
 
-CODECS = dict()
+CODECS = {}
 types = (application, audio, example, image, message, model, multipart, text, video)
 
 __all__ = [

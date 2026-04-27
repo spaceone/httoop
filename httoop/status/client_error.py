@@ -43,7 +43,7 @@ class UNAUTHORIZED(ClientErrorStatus):
 
     def to_dict(self) -> dict[str, int | str | dict[str, str]]:
         dct = super().to_dict()
-        dct.update(dict({'WWW-Authenticate': self.headers['WWW-Authenticate']}))
+        dct.update({'WWW-Authenticate': self.headers['WWW-Authenticate']})
         return dct
 
 
@@ -69,7 +69,7 @@ class NOT_FOUND(ClientErrorStatus):
 
     def __init__(self, path: str, **kwargs) -> None:
         self.path = path
-        kwargs.update(dict(description='The requested resource "%s" was not found on this server.' % (path, )))
+        kwargs.update({'description': 'The requested resource "%s" was not found on this server.' % (path, )})
         super().__init__(**kwargs)
 
 
@@ -87,7 +87,7 @@ class METHOD_NOT_ALLOWED(ClientErrorStatus):
 
     def to_dict(self) -> dict[str, int | str | dict[str, str]]:
         dct = super().to_dict()
-        dct.update(dict(Allow=self.headers['Allow']))
+        dct.update({'Allow': self.headers['Allow']})
         return dct
 
 

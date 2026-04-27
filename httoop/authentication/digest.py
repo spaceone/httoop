@@ -50,7 +50,7 @@ class DigestAuthScheme:
     def parse(cls, authinfo: bytes) -> ByteUnicodeDict:
         atoms = [x.strip() for x in authinfo.split(b',') if x.strip()] or [b'']
 
-        params = dict((key.strip(), value.strip().strip(b'"')) for key, _, value in (atom.partition(b'=') for atom in atoms))
+        params = {key.strip(): value.strip().strip(b'"') for key, _, value in (atom.partition(b'=') for atom in atoms)}
         return ByteUnicodeDict(params)
 
 
@@ -102,7 +102,7 @@ class DigestAuthResponseScheme(DigestAuthScheme):  # WWW-Authenticate
             ('algorithm', params.get('algorithm')),
             ('qop', [p.strip() for p in params.get('qop', b'').split(b',')]),
         ]
-        return dict([(k, v) for k, v in params if v is not None])
+        return {k: v for k, v in params if v is not None}
 
 
 class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
@@ -157,7 +157,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
             ('qop', message_qop),
             ('nc', nonce_count),
         ]
-        return dict([(k, v) for k, v in params if v is not None])
+        return {k: v for k, v in params if v is not None}
 
     @classmethod
     def check(cls, authinfo: ByteUnicodeDict, request_params: ByteUnicodeDict) -> bool:

@@ -105,7 +105,7 @@ class AuthResponseElement(AuthElement):
 
     @classmethod
     def sorted(cls, elements: list[WWWAuthenticate | Any]) -> list[WWWAuthenticate | Any]:
-        return list(sorted(elements, key=lambda e: {'basic': '\xff'}.get(e.value.lower(), e.value)))
+        return sorted(elements, key=lambda e: {'basic': '\xff'}.get(e.value.lower(), e.value))
 
     @classmethod
     def join(cls, values: list[bytes]) -> bytes:

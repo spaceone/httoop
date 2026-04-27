@@ -197,7 +197,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
         self.write(data)
 
     def compose(self) -> bytes:
-        return b''.join(self.__iter__())
+        return b''.join(iter(self))
 
     def close(self) -> None:
         fileable = self.fileable

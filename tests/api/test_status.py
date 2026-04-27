@@ -159,7 +159,7 @@ def test_status_type(response):
     assert response.status.server_error
 
 
-@pytest.mark.parametrize('code', (99, 600, 1000))
+@pytest.mark.parametrize('code', [99, 600, 1000])
 def test_invalid_status_code(code, response):
     with pytest.raises(TypeError):
         response.status = code

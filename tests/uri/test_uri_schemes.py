@@ -3,7 +3,7 @@ import pytest
 from httoop import URI
 
 
-@pytest.mark.parametrize('url,expected', (
+@pytest.mark.parametrize('url,expected', [
     ('ftp://ftp.is.co.za/rfc/rfc1808.txt', ('ftp', '', '', 'ftp.is.co.za', 21, '/rfc/rfc1808.txt', '', '')),
     ('http://www.ietf.org/rfc/rfc2396.txt', ('http', '', '', 'www.ietf.org', 80, '/rfc/rfc2396.txt', '', '')),
     pytest.param('ldap://[2001:db8::7]/c=GB?objectClass?one', ('ldap', '', '', '[2001:db8::7]', 389, '/c=GB', 'objectClass?one', ''), marks=pytest.mark.skipif(True, reason='Parse query in ldap URI?')),
@@ -18,7 +18,7 @@ from httoop import URI
     ('nfs://server/path/to/file.txt', ('nfs', '', '', 'server', 2049, '/path/to/file.txt', '', '')),
     ('svn+ssh://svn.zope.org/repos/main/ZConfig/trunk/', ('svn+ssh', '', '', 'svn.zope.org', 22, '/repos/main/ZConfig/trunk/', '', '')),
     ('git+ssh://git@github.com/user/project.git', ('git+ssh', 'git', '', 'github.com', 22, '/user/project.git', '', '')),
-))
+])
 def test_parse_scheme(url, expected):
     uri = URI(url)
     assert uri.tuple == expected

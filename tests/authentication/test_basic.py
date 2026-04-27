@@ -27,7 +27,7 @@ def test_basic_authorization(headers):
     assert elem.password == 'test'
 
 
-@pytest.mark.parametrize('invalid', (b'foo', b'Zm9v', 'föo'.encode('latin1')))
+@pytest.mark.parametrize('invalid', [b'foo', b'Zm9v', 'föo'.encode('latin1')])
 def test_invalid_headers(headers, invalid):
     headers.parse(b'Authorization: Basic %s' % (invalid,))
     with pytest.raises(InvalidHeader):

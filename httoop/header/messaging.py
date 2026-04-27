@@ -378,7 +378,7 @@ class SetCookie(_ListElement, _CookieElement):
 
     @classmethod
     def split(cls, fieldvalue: bytes) -> list[bytes]:
-        fieldvalue = re.sub(b'(expires)=([^"][^;]+)', b'\\1="\\2"', fieldvalue, flags=re.I)
+        fieldvalue = re.sub(b'(expires)=([^"][^;]+)', b'\\1="\\2"', fieldvalue, flags=re.IGNORECASE)
         return super().split(fieldvalue)
 
     @property

@@ -22,7 +22,7 @@ class Message(with_metaclass(HTTPSemantic)):
     .. seealso:: :rfc:`2616#section-4`
     """
 
-    __slots__ = ('__protocol', '__headers', '__body')
+    __slots__ = ('__body', '__headers', '__protocol')
 
     @property
     def protocol(self):

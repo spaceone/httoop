@@ -41,7 +41,7 @@ class Date(with_metaclass(HTTPSemantic)):
     Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
     """
 
-    __slots__ = ('__composed', '__timestamp', '__datetime', '__time_struct')
+    __slots__ = ('__composed', '__datetime', '__time_struct', '__timestamp')
 
     def __init__(self, timeval: Any | None = None) -> None:
         """

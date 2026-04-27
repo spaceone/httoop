@@ -1,7 +1,7 @@
 from httoop.codecs.multipart.multipart import Multipart
 
 
-__all__ = ['MultipartMixed', 'MultipartMixedReplace', 'MultipartFormData', 'MultipartAlternative', 'MultipartDigest', 'MultipartParallel', 'MultipartByteranges']
+__all__ = ['MultipartAlternative', 'MultipartByteranges', 'MultipartDigest', 'MultipartFormData', 'MultipartMixed', 'MultipartMixedReplace', 'MultipartParallel']
 
 
 class MultipartMixed(Multipart):

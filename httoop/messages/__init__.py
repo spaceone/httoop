@@ -12,4 +12,4 @@ from httoop.messages.request import Request
 from httoop.messages.response import Response
 
 
-__all__ = ['Message', 'Request', 'Response', 'Protocol', 'Body', 'Method']
+__all__ = ['Body', 'Message', 'Method', 'Protocol', 'Request', 'Response']

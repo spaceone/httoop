@@ -20,7 +20,7 @@ __all__ = ('Protocol',)
 class Protocol(with_metaclass(HTTPSemantic)):
     """The HTTP protocol version."""
 
-    __slots__ = ('name', '__protocol')
+    __slots__ = ('__protocol', 'name')
 
     @property
     def version(self) -> tuple[int, int]:

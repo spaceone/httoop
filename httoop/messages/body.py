@@ -218,7 +218,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
 
     def __compose_chunked_iter(self, iterable):
         for data in iterable:
-            if not data:
+            if not data:  # pragma: no cover
                 continue
             yield b'%x\r\n%s\r\n' % (len(data), data)
         if self.trailer:

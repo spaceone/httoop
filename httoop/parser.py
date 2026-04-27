@@ -3,15 +3,17 @@
 
 from __future__ import annotations
 
-from typing import Iterator
+from typing import Iterator, TYPE_CHECKING
 
 from httoop.exceptions import Invalid, InvalidBody, InvalidHeader, InvalidLine, InvalidURI
 from httoop.header import Headers
 from httoop.messages import Message
-from httoop.messages.request import Request
-from httoop.messages.response import Response
 from httoop.status import BAD_REQUEST, NOT_IMPLEMENTED
 from httoop.util import _, integer
+
+if TYPE_CHECKING:
+    from httoop.messages.response import Response
+    from httoop.messages.request import Request
 
 
 CR = b'\r'

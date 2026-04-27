@@ -67,7 +67,7 @@ def application8(environ, start_response):
 
 
 def application9(environ, start_response):
-    write = start_response(OK, response_headers)
+    start_response(OK, response_headers)
     return []
 
 

@@ -4,6 +4,10 @@ import pytest
 from httoop.exceptions import InvalidLine
 
 
+def test_method_format(request_):
+    assert f'{request_.method}' == 'GET'
+
+
 def test_method_maxlength(request_):
     with pytest.raises(InvalidLine):
         request_.method.parse(b'A' * 21)

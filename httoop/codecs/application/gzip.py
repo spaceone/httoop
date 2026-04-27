@@ -27,7 +27,7 @@ class GZip(Codec):
         try:
             with gzip.GzipFile(fileobj=io.BytesIO(data)) as fd:
                 data = fd.read()
-        except (zlib.error, IOError, EOFError):
+        except (zlib.error, OSError, EOFError):
             raise DecodeError(_('Invalid gzip data.'))
         return Codec.decode(data, charset)
 
@@ -61,5 +61,5 @@ class GZip(Codec):
                     fd.write(part)
                 fd.seek(0)
                 yield Codec.decode(gzfd.read(), charset)
-        except (zlib.error, IOError, EOFError):
+        except (zlib.error, OSError, EOFError):
             raise DecodeError(_('Invalid gzip data.'))

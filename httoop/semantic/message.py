@@ -1,4 +1,3 @@
-
 from contextlib import contextmanager
 from typing import Iterator
 
@@ -54,5 +53,4 @@ class ComposedMessage:
             start_line = bytes(self.message)
             headers = bytes(self.message.headers)
             yield start_line + headers
-            for data in self.message.body:
-                yield data
+            yield from self.message.body

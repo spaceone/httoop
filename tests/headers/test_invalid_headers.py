@@ -1,6 +1,5 @@
 import pytest
 
-from httoop import six
 from httoop.exceptions import InvalidHeader
 
 
@@ -8,10 +7,10 @@ LATIN_CHARS = bytes(bytearray(range(0x80, 0xFF + 1)))
 INVALID_HEADER_FIELD_NAMES = bytes(bytearray(range(0x1F + 1))) + b'()<>@,;\\\\"/\\[\\]?={} \t'
 
 
-@pytest.mark.parametrize('invalid', six.iterbytes(INVALID_HEADER_FIELD_NAMES + LATIN_CHARS))
+@pytest.mark.parametrize('invalid', iter(INVALID_HEADER_FIELD_NAMES + LATIN_CHARS))
 def test_parse_invalid_characters(invalid, request_):
     with pytest.raises(InvalidHeader):
-        invalid = b'foo%sbaz: blub' % (six.int2byte(invalid),)
+        invalid = b'foo%sbaz: blub' % (bytes((invalid,)),)
         request_.headers.parse(invalid)
 
 

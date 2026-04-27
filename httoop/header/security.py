@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import re
+from typing import TYPE_CHECKING
 
 from httoop.header.element import HeaderElement
 from httoop.util import integer
-from typing import TYPE_CHECKING
+
 
 if TYPE_CHECKING:
     from httoop.uri.http import HTTPS

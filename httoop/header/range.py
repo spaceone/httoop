@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from math import sqrt
 from os import SEEK_END, SEEK_SET
-from typing import Iterator, TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterator
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
 from httoop.util import _, integer
+
 
 if TYPE_CHECKING:
     from io import BytesIO

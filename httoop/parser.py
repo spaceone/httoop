@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from typing import Iterator, TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterator
 
 from httoop.exceptions import Invalid, InvalidBody, InvalidHeader, InvalidLine, InvalidURI
 from httoop.header import Headers
@@ -11,9 +11,10 @@ from httoop.messages import Message
 from httoop.status import BAD_REQUEST, NOT_IMPLEMENTED
 from httoop.util import _, integer
 
+
 if TYPE_CHECKING:
-    from httoop.messages.response import Response
     from httoop.messages.request import Request
+    from httoop.messages.response import Response
 
 
 CR = b'\r'
@@ -191,7 +192,7 @@ class StateMachine:
             te = message.headers['Transfer-Encoding'].lower()
             self.chunked = te == 'chunked'
             if not self.chunked:
-                raise NOT_IMPLEMENTED('Unknown HTTP/1.1 Transfer-Encoding: %r' % te)
+                raise NOT_IMPLEMENTED(f'Unknown HTTP/1.1 Transfer-Encoding: {te!r}')
         else:
             # Content-Length header defines the length of the message body
             try:
@@ -287,7 +288,7 @@ class StateMachine:
                 message.headers.append(name, value)
         if self.trailers:
             msg_trailers = '" ,"'.join(self.trailers.keys())
-            raise BAD_REQUEST('untold trailers: "%s"' % msg_trailers)
+            raise BAD_REQUEST(f'untold trailers: "{msg_trailers}"')
         del self.trailers
 
     def set_body_content_encoding(self) -> None:

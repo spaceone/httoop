@@ -8,7 +8,7 @@ Uniform Resource Identifier.
 from __future__ import annotations
 
 import re
-from socket import AF_INET, AF_INET6, error as SocketError, inet_ntop, inet_pton
+from socket import AF_INET, AF_INET6, inet_ntop, inet_pton
 from typing import TYPE_CHECKING, Any, Iterator
 
 from httoop.exceptions import InvalidURI
@@ -120,7 +120,7 @@ class URI(with_metaclass(URIType)):
 
         self.abspath()
         if not self.path.startswith('/') and self.host and self.scheme and self.path:
-            self.path = '/%s' % (self.path,)
+            self.path = f'/{self.path}'
 
     def abspath(self) -> None:
         """
@@ -165,7 +165,7 @@ class URI(with_metaclass(URIType)):
         elif isinstance(uri, dict):
             self.dict = uri
         else:
-            raise TypeError('URI must be bytes/str/tuple/dict not %r' % (type(uri).__name__,))
+            raise TypeError(f'URI must be bytes/str/tuple/dict not {type(uri).__name__!r}')
 
     @property
     def dict(self):
@@ -262,8 +262,8 @@ class URI(with_metaclass(URIType)):
             host = host[1:-1]
             try:
                 host = inet_ntop(AF_INET6, inet_pton(AF_INET6, host.decode('ascii')))
-                return '[%s]' % (host,)
-            except (SocketError, UnicodeDecodeError):
+                return f'[{host}]'
+            except (OSError, UnicodeDecodeError):
                 # IPvFuture
                 if host.startswith(b'v') and b'.' in host and host[1:].split(b'.', 1)[0].isdigit():
                     try:
@@ -275,7 +275,7 @@ class URI(with_metaclass(URIType)):
         if all(x.isdigit() for x in host.split(b'.')):
             try:
                 return inet_ntop(AF_INET, inet_pton(AF_INET, host.decode('ascii')))
-            except (SocketError, UnicodeDecodeError):
+            except (OSError, UnicodeDecodeError):
                 raise InvalidURI(_('Invalid IPv4 address in URI.'))
 
         if host.strip(Percent.UNRESERVED + Percent.SUB_DELIMS + b'%'):
@@ -374,10 +374,10 @@ class URI(with_metaclass(URIType)):
             if value is None:
                 pass
             elif not isinstance(value, str):
-                raise TypeError('%r must be string, not %s' % (name, type(value).__name__))
+                raise TypeError(f'{name!r} must be string, not {type(value).__name__}')
 
         super().__setattr__(name, value)
         return None
 
     def __repr__(self) -> str:
-        return '<URI(%s)>' % bytes(self)
+        return f'<URI({bytes(self)})>'

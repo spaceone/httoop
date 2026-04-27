@@ -1,5 +1,3 @@
-
-
 def test_content_security_policy(headers):
     headers.parse(b"Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; object-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; media-src 'self'; frame-src 'self'; font-src 'none'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; report-uri /csp-violation;")
     assert bytes(headers.get_element('Content-Security-Policy', 'media-src')) == b"media-src 'self'; "

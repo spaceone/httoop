@@ -11,7 +11,7 @@ except ImportError:
     # TODO: emit a warning
     def expand(href: str, templates: dict[str, str]) -> str:
         for templ, value in templates.items():
-            href = href.replace('{%s}' % (templ,), value)
+            href = href.replace(f'{{{templ}}}', value)
         return href
 
 

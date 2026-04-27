@@ -1,7 +1,5 @@
 from typing import Iterator
 
-from httoop import six
-
 
 class Percent:
     """
@@ -13,7 +11,7 @@ class Percent:
     b"!#$&'()*+,/:;=?@[]"
     """
 
-    HEX_MAP = {(a + b).encode('ASCII'): six.int2byte(int(a + b, 16)) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef'}
+    HEX_MAP = {(a + b).encode('ASCII'): bytes((int(a + b, 16),)) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef'}
 
     # ABNF
     GEN_DELIMS = b':/?#[]@'
@@ -49,6 +47,6 @@ class Percent:
 
     @classmethod
     def quote(cls, data: bytes, charset: bytes = UNRESERVED) -> bytes:
-        charset = {six.int2byte(c) for c in six.iterbytes(charset)} - {b'%'}
-        data = (six.int2byte(d) for d in six.iterbytes(data))
+        charset = {bytes((c,)) for c in iter(charset)} - {b'%'}
+        data = (bytes((d,)) for d in iter(data))
         return b''.join(b'%%%X' % (ord(d),) if d not in charset else d for d in data)

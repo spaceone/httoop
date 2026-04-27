@@ -63,14 +63,14 @@ def _test_iter(header, host, port, headers):
     ]
 ))
 def test_invalid_host_header(invalid, headers):
-    headers['Host'] = 'foo%sbar' % (invalid,)
+    headers['Host'] = f'foo{invalid}bar'
     with pytest.raises(InvalidHeader):
         headers.element('Host')
 
 
 @pytest.mark.parametrize('forwarded,expected', [
-    (b'for=192.0.2.43', [('192.0.2.43',), ]),
-    (b'for=192.0.2.43; by=127.0.0.1', [('192.0.2.43', '127.0.0.1'), ]),
+    (b'for=192.0.2.43', [('192.0.2.43',)]),
+    (b'for=192.0.2.43; by=127.0.0.1', [('192.0.2.43', '127.0.0.1')]),
     (b'for=192.0.2.43, for="[2001:db8:cafe::17]"', [('192.0.2.43',), ('[2001:db8:cafe::17]',)]),
     (b'for=192.0.2.43, FOR=198.51.100.17; by=203.0.113.60; proto=http; host=example.com', [('192.0.2.43',), ('198.51.100.17', '203.0.113.60', 'http', 'example.com')]),
     (b'fOr=192.0.2.43, for=198.51.100.17;by=203.0.113.60;proto=http;host=example.com', [('192.0.2.43',), ('198.51.100.17', '203.0.113.60', 'http', 'example.com')]),

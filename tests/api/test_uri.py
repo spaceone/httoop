@@ -36,7 +36,7 @@ def test_set_invalid_uri_nonascii(request_):
     with pytest.raises(InvalidURI):
         request_.uri = '/fooäbar'.encode('latin-1')
     with pytest.raises(InvalidURI):
-        request_.uri = '/fooäbar'.encode('utf-8')
+        request_.uri = '/fooäbar'.encode()
 
 
 def test_set_invalid_uri(request_):

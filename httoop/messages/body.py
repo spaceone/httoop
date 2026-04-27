@@ -17,6 +17,9 @@ from httoop.six import with_metaclass
 from httoop.util import IFile
 
 
+_SENTINEL = object()
+
+
 class Body(with_metaclass(HTTPSemantic, IFile)):
     """
     A HTTP message body.
@@ -262,15 +265,13 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
         fd = self.fd
         buffer_ = []
         while True:
-            try:
-                data = next(fd)
-            except StopIteration:
+            data = next(fd, _SENTINEL)
+            if data is _SENTINEL:
                 self.set(buffer_)
                 # raise
                 return  # Python 3.7 PEP 479
-            else:
-                buffer_.append(data)
-                yield data
+            buffer_.append(data)
+            yield data
 
     # def __copy__(self):
     #     body = self.__class__(self.__content_bytes())

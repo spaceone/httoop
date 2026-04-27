@@ -22,7 +22,7 @@ class Semantic:
         raise NotImplementedError('%s.parse(%.5r)' % (type(self).__name__, data))
 
     def compose(self):  # pragma: no cover
-        raise NotImplementedError('%s.compose()' % (type(self).__name__,))
+        raise NotImplementedError(f'{type(self).__name__}.compose()')
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, str):
@@ -42,7 +42,7 @@ class Semantic:
         return format(str(self), format_spec)
 
     def __repr__(self) -> str:
-        return '<HTTP %s(0x%x)>' % (self.__class__.__name__, id(self))
+        return f'<HTTP {self.__class__.__name__}(0x{id(self):x})>'
 
 
 class HTTPSemantic(type):

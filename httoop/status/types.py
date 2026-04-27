@@ -31,7 +31,7 @@ class StatusType(HTTPSemantic):
             raise RuntimeError('A HTTP Status code can not be greater than 599 or lower than 100')
 
         if code and not any(scls == base.__name__ for base in bases):
-            raise RuntimeError('%s must inherit from %s' % (name, scls))
+            raise RuntimeError(f'{name} must inherit from {scls}')
 
         reason = REASONS.get(code, ('', ''))
         dict_.setdefault('reason', reason[0])
@@ -116,7 +116,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
     def __repr__(self) -> str:
         description = ''
         if self.description:
-            description = '(%s)' % (self.description,)
+            description = f'({self.description})'
         return '<HTTP Status %d %r %s>' % (int(self), self.reason, description)
 
     __str__ = __repr__

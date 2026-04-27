@@ -1,4 +1,3 @@
-
 import pytest
 
 from httoop import URI, InvalidURI
@@ -47,10 +46,10 @@ def test_query_string_compose(query_string, query):
 
 @pytest.mark.xfail(reason='API not yet implemented.')
 @pytest.mark.parametrize('query_string,encoding,query', [
-    (b'key=\u0141%E9', 'latin-1', [('key', '\u0141\xE9')]),
-    (b'key=\u0141%C3%A9', 'utf-8', [('key', '\u0141\xE9')]),
-    (b'key=\u0141%C3%A9', 'ascii', [('key', '\u0141\ufffd\ufffd')]),
-    (b'key=\u0141%E9-', 'ascii', [('key', '\u0141\ufffd-')]),
+    (br'key=\u0141%E9', 'latin-1', [('key', '\u0141\xE9')]),
+    (br'key=\u0141%C3%A9', 'utf-8', [('key', '\u0141\xE9')]),
+    (br'key=\u0141%C3%A9', 'ascii', [('key', '\u0141\ufffd\ufffd')]),
+    (br'key=\u0141%E9-', 'ascii', [('key', '\u0141\ufffd-')]),
 ])
 def test_parse_encodings(query_string, encoding, query):
     u = URI()

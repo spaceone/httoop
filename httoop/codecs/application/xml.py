@@ -33,7 +33,7 @@ class XML(Codec):
         try:
             return fromstring(data)
         except ParseError as exc:
-            raise DecodeError('Could not decode as %s: %s' % (mimetype, exc,))
+            raise DecodeError(f'Could not decode as {mimetype}: {exc}')
 
     @classmethod
     def encode(cls, root: Element, charset: str | None = None, mimetype: ContentType | None = None) -> bytes:

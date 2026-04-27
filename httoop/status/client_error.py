@@ -66,7 +66,7 @@ class NOT_FOUND(ClientErrorStatus):
 
     def __init__(self, path: str, **kwargs) -> None:
         self.path = path
-        kwargs.update({'description': 'The requested resource "%s" was not found on this server.' % (path,)})
+        kwargs.update({'description': f'The requested resource "{path}" was not found on this server.'})
         super().__init__(**kwargs)
 
 

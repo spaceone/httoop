@@ -166,4 +166,4 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
                 yield key, values
 
     def __repr__(self) -> str:
-        return '<HTTP Headers(%s)>' % repr(list(self.items()))
+        return f'<HTTP Headers({repr(list(self.items()))})>'

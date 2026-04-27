@@ -128,7 +128,7 @@ def test_parse_invalid_netloc(url):
         URI(url)
 
 
-@pytest.mark.parametrize('u', [b'Python', b'./Python', b'x-newscheme://foo.com/stuff', b'x://y', b'x:/y', b'x:/', b'/', ])
+@pytest.mark.parametrize('u', [b'Python', b'./Python', b'x-newscheme://foo.com/stuff', b'x://y', b'x:/y', b'x:/', b'/'])
 def test_unparse_parse(u):
     assert bytes(URI(u)) == u
 

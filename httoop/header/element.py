@@ -248,8 +248,8 @@ class HeaderElement(with_metaclass(HeaderType)):
                 return b'=?ISO8859-1?b?%s?=' % (b2a_base64(value.encode('ISO8859-1')).rstrip(b'\n'),)
 
     def __repr__(self) -> str:
-        params = ', %r' % (self.params,) if self.params else ''
-        return '<%s(%r%s)>' % (self.__class__.__name__, self.value, params)
+        params = f', {self.params!r}' if self.params else ''
+        return f'<{self.__class__.__name__}({self.value!r}{params})>'
 
 
 class MimeType:
@@ -261,7 +261,7 @@ class MimeType:
 
     @property
     def mimetype(self) -> str:
-        return '%s/%s' % (self.type, self.subtype_wo_vendor)
+        return f'{self.type}/{self.subtype_wo_vendor}'
 
     @property
     def type(self):
@@ -269,7 +269,7 @@ class MimeType:
 
     @type.setter
     def type(self, type_) -> None:
-        self.value = '%s/%s' % (type_, self.subtype)
+        self.value = f'{type_}/{self.subtype}'
 
     @property
     def subtype(self):
@@ -277,7 +277,7 @@ class MimeType:
 
     @subtype.setter
     def subtype(self, subtype) -> None:
-        self.value = '%s/%s' % (self.type, subtype)
+        self.value = f'{self.type}/{subtype}'
 
     # TODO: official name
     @property
@@ -286,7 +286,7 @@ class MimeType:
 
     @subtype_wo_vendor.setter
     def subtype_wo_vendor(self, subtype_wo_vendor) -> None:
-        self.subtype = '%s+%s' % (self.vendor, subtype_wo_vendor)
+        self.subtype = f'{self.vendor}+{subtype_wo_vendor}'
 
     @property
     def vendor(self):
@@ -296,7 +296,7 @@ class MimeType:
 
     @vendor.setter
     def vendor(self, vendor) -> None:
-        self.subtype = '%s+%s' % (vendor, self.subtype_wo_vendor)
+        self.subtype = f'{vendor}+{self.subtype_wo_vendor}'
 
     @property
     def version(self):
@@ -397,7 +397,7 @@ class _CookieElement(HeaderElement):
 
     @property
     def value(self) -> str:
-        return '%s=%s' % (self.cookie_name, self.cookie_value)
+        return f'{self.cookie_name}={self.cookie_value}'
 
     @value.setter
     def value(self, value) -> None:

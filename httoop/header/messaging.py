@@ -141,7 +141,7 @@ class ContentDisposition(HeaderElement):
             if b'form-data' in self.params:
                 raise InvalidHeader(_('Mixed Content-Disposition'))
         else:
-            raise InvalidHeader(_('Unknown Content-Disposition: %r'), self.value,)
+            raise InvalidHeader(_('Unknown Content-Disposition: %r'), self.value)
 
 
 class ContentEncoding(CodecElement, HeaderElement):
@@ -289,22 +289,22 @@ class Host(HeaderElement):
 
     @property
     def is_ip4(self) -> bool:
-        from socket import AF_INET, error, inet_pton
+        from socket import AF_INET, inet_pton
 
         try:
             inet_pton(AF_INET, self.host)
             return True
-        except error:
+        except OSError:
             return False
 
     @property
     def is_ip6(self) -> bool:
-        from socket import AF_INET6, error, inet_pton
+        from socket import AF_INET6, inet_pton
 
         try:
             inet_pton(AF_INET6, self.host)
             return True
-        except error:
+        except OSError:
             return False
 
     @property

@@ -18,7 +18,7 @@ def test_cli_compose():
     with tempfile.NamedTemporaryFile() as fd:
         fd.write(b'test')
         fd.flush()
-        stdout = subprocess.check_output([sys.executable, '-m', 'httoop', 'compose', 'request', '-b', '@%s' % (fd.name,)])
+        stdout = subprocess.check_output([sys.executable, '-m', 'httoop', 'compose', 'request', '-b', f'@{fd.name}'])
         assert stdout == b'GET / HTTP/1.1\r\n\r\ntest'
 
 

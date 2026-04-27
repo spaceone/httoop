@@ -23,7 +23,7 @@ class CLI:
         self.message = None
         self.parser = ArgumentParser(name, description=self.__doc__, epilog='https://github.com/spaceone/httoop/')
         self.parent_parser = ArgumentParser(add_help=False)
-        self.parser.add_argument('-v', '--version', action='version', version='%%(prog)s %s' % (version,))
+        self.parser.add_argument('-v', '--version', action='version', version=f'%(prog)s {version}')
         self.add_subparsers()
         self.parse_arguments()
 

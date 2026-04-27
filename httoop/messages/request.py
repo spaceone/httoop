@@ -99,4 +99,4 @@ class Request(Message):
         return b'%s %s %s\r\n' % (bytes(self.__method), bytes(self.__uri) or b'/', bytes(self.protocol))
 
     def __repr__(self) -> str:
-        return '<HTTP Request(%s %s %s)>' % (self.__method, self.__uri.path, self.protocol)
+        return f'<HTTP Request({self.__method} {self.__uri.path} {self.protocol})>'

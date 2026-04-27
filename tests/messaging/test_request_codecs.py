@@ -72,7 +72,7 @@ def test_compose_multipart_form_data(body):
     assert sorted(multipart_string.split(b'\r\n')) == sorted(bytes(body).split(b'\r\n'))
 
 
-@pytest.mark.parametrize('invalid', (b'', b'foo ', b'foo\tbar', b'a' * 202))
+@pytest.mark.parametrize('invalid', [b'', b'foo ', b'foo\tbar', b'a' * 202])
 def test_invalid_boundary(invalid, headers):
     headers.parse(b'Content-Type: multipart/mixed; boundary="%s"' % (invalid,))
     with pytest.raises(InvalidHeader):

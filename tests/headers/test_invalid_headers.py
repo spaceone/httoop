@@ -32,7 +32,7 @@ def test_set_header_with_colon(request_):
 #            request_.headers[name] = 'baz'
 
 
-@pytest.mark.parametrize('name', (b'Content-Encoding', b'Transfer-Encoding'))
+@pytest.mark.parametrize('name', [b'Content-Encoding', b'Transfer-Encoding'])
 def test_invalid_codec(name, headers):
     headers.parse(b'%s: foo' % (name,))
     with pytest.raises(InvalidHeader):

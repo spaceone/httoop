@@ -143,7 +143,7 @@ def test_parse_message_with_content_length_header(statemachine):
     assert bytes(request.body) == b'foo=bar'
 
 
-@pytest.mark.xfail()  # FIXME: new line not recognized in header parsing
+@pytest.mark.xfail  # FIXME: new line not recognized in header parsing
 def test_parse_message_without_carriage_return(statemachine):
     statemachine.parse(b'POST / HTTP/1.1\nHost: www.example.com\nContent-Type: application/x-www-form-urlencoded\nContent-Length: 7\n\nfoo=')
     request = statemachine.parse(b'bar')[0][0]

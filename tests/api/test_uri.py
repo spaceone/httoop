@@ -51,7 +51,7 @@ def test_set_latin1_bytes_uri_path(request_):  # just for code coverage... behva
     assert bytes(request_.uri) == b'/foo%C3%BFbar'
 
 
-@pytest.mark.xfail()
+@pytest.mark.xfail
 def test_uri_path_segments(request_):
     request_.uri.parse(b'/fo%2fbar/baz%2Fblub')
     assert request_.uri.path_segments == ['', 'fo/bar', 'baz/blub']

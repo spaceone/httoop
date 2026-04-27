@@ -261,8 +261,6 @@ class URI(with_metaclass(URIType)):
             host = host[1:-1]
             try:
                 host = inet_ntop(AF_INET6, inet_pton(AF_INET6, host.decode('ascii')))
-                if isinstance(host, bytes):  # Python 2
-                    host = host.decode('ascii')
                 return '[%s]' % (host, )
             except (SocketError, UnicodeDecodeError):
                 # IPvFuture
@@ -275,10 +273,7 @@ class URI(with_metaclass(URIType)):
         # IPv4
         if all(x.isdigit() for x in host.split(b'.')):
             try:
-                host = inet_ntop(AF_INET, inet_pton(AF_INET, host.decode('ascii')))
-                if isinstance(host, bytes):  # Python 2
-                    host = host.decode('ascii')
-                return host
+                return inet_ntop(AF_INET, inet_pton(AF_INET, host.decode('ascii')))
             except (SocketError, UnicodeDecodeError):
                 raise InvalidURI(_('Invalid IPv4 address in URI.'))
 

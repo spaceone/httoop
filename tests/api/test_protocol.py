@@ -61,4 +61,4 @@ def test_protocol_comparision(request_):
     assert request_.protocol >= (1, 1)
     assert request_.protocol <= (1, 2)
     assert request_.protocol <= (2, 1)
-    assert not (request_.protocol != 1)
+    assert not (request_.protocol != 1)  # noqa: SIM202

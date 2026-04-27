@@ -27,17 +27,17 @@ def test_staus_comparision(response):
     assert response.status > 203
     assert response.status < 205
 
-    assert not response.status != 204
-    assert not response.status == 200
+    assert not response.status != 204  # noqa: SIM202
+    assert not response.status == 200  # noqa: SIM201
     assert not response.status <= 203
     assert not response.status >= 205
     assert not response.status < 203
     assert not response.status > 205
 
     assert response.status != 'foo'
-    assert not response.status == 'foo'
+    assert not response.status == 'foo'  # noqa: SIM201
     assert response.status != b'foo'
-    assert not response.status == b'foo'
+    assert not response.status == b'foo'  # noqa: SIM201
 
     assert response.status == b'204 No Content'
 
@@ -53,8 +53,8 @@ def test_status_with_status_comparisions(response):
     assert response.status > Status(203)
     assert response.status < Status(205)
 
-    assert not response.status != Status(204)
-    assert not response.status == Status(200)
+    assert not response.status != Status(204)  # noqa: SIM202
+    assert not response.status == Status(200)  # noqa: SIM201
     assert not response.status <= Status(203)
     assert not response.status >= Status(205)
     assert not response.status < Status(203)

@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, NoReturn
 if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
 
+    from httoop.header.messaging import ContentType
+
 
 # TODO: http://docs.python.org/2/library/xml.html#xml-vulnerabilities
 # TODO: https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
@@ -17,7 +19,6 @@ except ImportError:  # pragma: no cover
 
     def fromstring(data) -> NoReturn:
         raise ParseError('Will not parse without defusedxml!')
-
 
 
 from httoop.codecs.codec import Codec

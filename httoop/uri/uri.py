@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 from socket import AF_INET, AF_INET6, error as SocketError, inet_ntop, inet_pton
-from typing import Any, Iterator
+from typing import TYPE_CHECKING, Any, Iterator
 
 from httoop.exceptions import InvalidURI
 from httoop.six import int2byte, iterbytes, with_metaclass
@@ -17,6 +17,10 @@ from httoop.uri.percent_encoding import Percent
 from httoop.uri.query_string import QueryString
 from httoop.uri.type import URIType
 from httoop.util import _, integer
+
+
+if TYPE_CHECKING:
+    from httoop.uri.http import HTTP
 
 
 class URI(with_metaclass(URIType)):
@@ -72,7 +76,7 @@ class URI(with_metaclass(URIType)):
     def __init__(self, uri: Any | None = None, *args, **kwargs) -> None:
         self.set(kwargs or args or uri or b'')
 
-    def join(self, other: bytes | None = None, *args, **kwargs) -> HTTP | SvnSSH | URI:
+    def join(self, other: bytes | None = None, *args, **kwargs) -> HTTP | URI:
         """Join a URI with another absolute or relative URI."""
         relative = URI(other or args or kwargs)
         joined = URI()

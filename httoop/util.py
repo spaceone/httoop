@@ -5,6 +5,11 @@ from __future__ import annotations
 import codecs
 from typing import Any, Callable
 
+try:
+    from typing import Self
+except ImportError:  # < Py 3.11
+    from typing_extensions import Self
+
 
 def _(x: str) -> str:
     return x
@@ -174,7 +179,7 @@ class CaseInsensitiveDict(dict):
         return dict.pop(self, self.formatkey(key), default)
 
     @classmethod
-    def fromkeys(cls, seq: tuple[str, str, str], value: str | None = None) -> Headers:
+    def fromkeys(cls, seq: tuple[str, str, str], value: str | None = None) -> Self:
         return cls(dict((key, value) for key in seq))
 
 

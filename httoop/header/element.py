@@ -160,11 +160,12 @@ class HeaderElement(with_metaclass(HeaderType)):
             yield key, value
 
         for key, lines in continuations.items():
+            lines: dict
             value = ''
             for i in range(len(lines)):
-                try:
+                if i in lines:
                     value += lines.pop(i)
-                except KeyError:
+                else:
                     break
             if not key:  # pragma: no cover
                 raise InvalidHeader(_('...'))

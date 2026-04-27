@@ -196,11 +196,11 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
         qop = params.get('qop', b'')
         if not qop or qop == b'auth':
             return b'%s:%s' % (params['method'], params['uri'])
-        elif qop == b'auth-int':
+        if qop == b'auth-int':
             H = cls.get_algorithm(params['algorithm'])
             return b'%s:%s:%s' % (params['method'], params['uri'], H(params['entity_body']))
-        else:  # pragma: no cover
-            raise NotImplementedError('Unknown quality of protection: %r' % (qop,))
+        # pragma: no cover
+        raise NotImplementedError('Unknown quality of protection: %r' % (qop,))
 
     @classmethod
     def A1(cls, params: ByteUnicodeDict) -> bytes:
@@ -208,9 +208,9 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
 
         if not algorithm or algorithm == b'MD5':
             return b'%s:%s:%s' % (params['username'], params['realm'], params['password'])
-        elif algorithm == b'MD5-sess':
+        if algorithm == b'MD5-sess':
             H = cls.get_algorithm(algorithm)
             s = b'%s:%s:%s' % (params['username'], params['realm'], params['password'])
             return b'%s:%s:%s' % (H(s), params['nonce'], params['cnonce'])
-        else:  # pragma: no cover
-            raise NotImplementedError('Unknown algorithm: %s' % (algorithm,))
+        # pragma: no cover
+        raise NotImplementedError('Unknown algorithm: %s' % (algorithm,))

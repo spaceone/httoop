@@ -216,10 +216,8 @@ class HeaderElement(with_metaclass(HeaderType)):
             if quote or cls.RE_TSPECIALS.search(value):
                 value = value.replace(b'\\', b'\\\\').replace(b'"', rb'\"')
                 return b'%s="%s"' % (param, value)
-            else:
-                return b'%s=%s' % (param, value)
-        else:
-            return param
+            return b'%s=%s' % (param, value)
+        return param
 
     @classmethod
     def decode_rfc2047(cls, value: bytes) -> str:
@@ -329,6 +327,7 @@ class _AcceptElement(HeaderElement):
             val = val.value
         if val:
             return float(val)
+        return None
 
     def sanitize(self) -> None:
         super().sanitize()
@@ -370,8 +369,7 @@ class _AcceptElement(HeaderElement):
             other = _AcceptElement(other)
         if self.quality == other.quality:
             return str(self) < str(other)
-        else:
-            return self.quality < other.quality
+        return self.quality < other.quality
 
 
 class _CookieElement(HeaderElement):

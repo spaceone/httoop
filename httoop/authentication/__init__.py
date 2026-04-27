@@ -89,6 +89,7 @@ class AuthRequestElement(AuthElement):
     def password(self):
         if self.scheme == 'basic':
             return self.params.get('password').decode(self.encoding)
+        return None
 
     @password.setter
     def password(self, password) -> None:

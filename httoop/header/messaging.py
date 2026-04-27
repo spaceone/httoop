@@ -37,6 +37,7 @@ class CodecElement:
                 return lookup(encoding.lower())
             except KeyError:
                 pass
+        return None
 
 
 class Accept(_AcceptElement, MimeType):
@@ -120,11 +121,13 @@ class ContentDisposition(HeaderElement):
     def creation_date(self) -> Date | None:
         if 'creation-date' in self.params:
             return self.Date(self.params['creation-date'])
+        return None
 
     @property
     def modification_date(self) -> Date | None:
         if 'modification-date' in self.params:
             return self.Date(self.params['modification-date'])
+        return None
 
     def sanitize(self) -> None:
         self.value = self.value.lower()
@@ -312,6 +315,7 @@ class Host(HeaderElement):
     def fqdn(self) -> str | None:
         if self.is_fqdn:
             return self.host
+        return None
 
     @property
     def hostname(self) -> str | None:
@@ -321,11 +325,13 @@ class Host(HeaderElement):
     def ip6address(self) -> str | None:
         if self.is_ip6:
             return self.host
+        return None
 
     @property
     def ip4address(self) -> str | None:
         if self.is_ip4:
             return self.host
+        return None
 
     def sanitize(self) -> None:
         self.value = self.value.lower()
@@ -408,6 +414,7 @@ class SetCookie(_ListElement, _CookieElement):
                 return integer(self.params['max-age'])
             except ValueError:
                 raise InvalidHeader(_('Cookie: max-age is not a number: %r'), self.params['max-age'])
+        return None
 
     @property
     def expires(self) -> Date:
@@ -416,6 +423,7 @@ class SetCookie(_ListElement, _CookieElement):
                 return self.Date(self.params['expires'])
             except InvalidDate:
                 raise InvalidHeader(_('Cookie: expires is not a valid date: %r'), self.params['expires'])
+        return None
 
 
 class TE(_HopByHopElement, _AcceptElement):

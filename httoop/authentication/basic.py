@@ -24,13 +24,12 @@ class BasicAuthRequestScheme:
         except ValueError:
             raise InvalidHeader(_('No username:password provided'))
 
-        authinfo = {
+        return {
             # 'username': username.decode('ISO8859-1'),
             # 'password': password.decode('ISO8859-1')
             'username': username,
             'password': password,
         }
-        return authinfo
 
     @staticmethod
     def compose(authinfo: ByteUnicodeDict) -> bytes:

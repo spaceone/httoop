@@ -254,6 +254,7 @@ class URI(with_metaclass(URIType)):
             query_string.decode(self.encoding),
             unquote(fragment)
         )
+        return None
 
     def _unquote_host(self, host: bytes) -> str:
         # IPv6 / IPvFuture
@@ -376,6 +377,7 @@ class URI(with_metaclass(URIType)):
                 raise TypeError('%r must be string, not %s' % (name, type(value).__name__))
 
         super().__setattr__(name, value)
+        return None
 
     def __repr__(self) -> str:
         return '<URI(%s)>' % bytes(self)

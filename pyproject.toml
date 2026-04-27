@@ -105,6 +105,7 @@ ignore = [
  "TD001",  # invalid-todo-tag
  "TD002",  # missing-todo-author
  "TD003",  # missing-todo-link
+ "RSE102",  # unnecessary-paren-on-raise-exception
  # "I", "S101", "Q000", "ANN", "ERA", "UP004", "ARG001", "ARG002",
 ]
 

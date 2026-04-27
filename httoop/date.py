@@ -105,7 +105,7 @@ class Date(with_metaclass(HTTPSemantic)):
     @classmethod
     def parse(cls, timestr: bytes | None = None) -> Date:
         """
-        parses a HTTP date string and returns a :class:`Date` object.
+        Parses a HTTP date string and returns a :class:`Date` object.
 
         :param timestr: the time string in one of the http formats
         :type  timestr: str

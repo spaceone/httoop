@@ -116,7 +116,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
 
     def parse(self, data: bytes) -> None:
         r"""
-        parses HTTP headers.
+        Parses HTTP headers.
 
         :param data:
         the header string containing headers separated by "\r\n"

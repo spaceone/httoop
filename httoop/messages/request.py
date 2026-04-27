@@ -56,7 +56,7 @@ class Request(Message):
 
     def parse(self, line: bytes) -> None:
         """
-        parses the request line and sets method, uri and protocol version
+        Parses the request line and sets method, uri and protocol version
         :param line: the request line
         :type  line: bytes.
         """
@@ -94,7 +94,7 @@ class Request(Message):
             raise InvalidURI(_('The request URI of an CONNECT request must be a authority.'))
 
     def compose(self) -> bytes:
-        """composes the request line."""
+        """Composes the request line."""
         self.validate_request_uri()
         return b'%s %s %s\r\n' % (bytes(self.__method), bytes(self.__uri) or b'/', bytes(self.protocol))
 

@@ -44,7 +44,7 @@ class Response(Message):
         self.__status = Status(status or 200)
 
     def parse(self, line: bytes) -> None:
-        """parses the response line."""
+        """Parses the response line."""
         bits = line.strip().split(None, 1)
         try:
             version, status = bits
@@ -58,7 +58,7 @@ class Response(Message):
         self.status.parse(status)
 
     def compose(self) -> bytes:
-        """composes the response line."""
+        """Composes the response line."""
         return b'%s %s\r\n' % (bytes(self.protocol), bytes(self.status))
 
     def __repr__(self) -> str:

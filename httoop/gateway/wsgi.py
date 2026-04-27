@@ -121,11 +121,11 @@ class WSGI:
     def get_environ(self) -> dict[str, str | tuple[int, int] | WSGIBody | bool | None]:
         environ = {}
         environ.update(dict(self.environ.items()))
-        environ.update(dict([
-            ('HTTP_%s' % name.upper().replace('-', '_'), value)
+        environ.update({
+            'HTTP_%s' % name.upper().replace('-', '_'): value
             for name, value in self.request.headers.items()
             if name.lower() not in ('content-type', 'content-length')
-        ]))
+        })
         environ.update({
             'REQUEST_METHOD': str(self.request.method),
             'SCRIPT_NAME': '',
@@ -145,7 +145,7 @@ class WSGI:
             'wsgi.multiprocess': self.multiprocess,
             'wsgi.run_once': self.run_once,
         })
-        environ = dict((key, value.decode('ISO8859-1') if isinstance(value, bytes) else value) for key, value in environ.items())
+        environ = {key: value.decode('ISO8859-1') if isinstance(value, bytes) else value for key, value in environ.items()}
         return environ
 
     def set_environ(self, environ: dict[str, str]) -> None:

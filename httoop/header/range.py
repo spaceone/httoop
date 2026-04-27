@@ -98,7 +98,7 @@ class Range(HeaderElement):
             if not start and not stop:
                 raise InvalidHeader(_('full range requested.'))
             ranges.add((start, stop))
-        return cls(bytesunit.decode('ISO8859-1'), list(sorted(ranges, key=lambda x: x[0] if x[0] is not None else -1)))
+        return cls(bytesunit.decode('ISO8859-1'), sorted(ranges, key=lambda x: x[0] if x[0] is not None else -1))
 
     def sanitize(self) -> None:
         super().sanitize()

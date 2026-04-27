@@ -14,7 +14,7 @@ class ServerErrorStatus(StatusException):
 
     def to_dict(self) -> dict[str, str | int]:
         dct = super().to_dict()
-        dct.update(dict(traceback=self.traceback or ''))
+        dct.update({'traceback': self.traceback or ''})
         return dct
 
 

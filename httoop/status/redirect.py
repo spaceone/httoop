@@ -23,7 +23,7 @@ class RedirectStatus(StatusException):
     def to_dict(self) -> dict[str, int | str | dict[str, str]]:
         dct = super().to_dict()
         if self.headers.get('Location'):
-            dct.update(dict(Location=self.headers['Location']))
+            dct.update({'Location': self.headers['Location']})
         return dct
 
 

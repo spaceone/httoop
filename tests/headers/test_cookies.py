@@ -9,10 +9,10 @@ from httoop.exceptions import InvalidHeader
 @pytest.mark.parametrize('cookie,values', [
     ('Foo=bar', {'Foo': 'bar'}),
     ('foo="bar"', {'foo': 'bar'}),
-    ('PREF=ID=1111111111111111:FF=0:TM=1442748479:LM=1442748479:V=1:S=65Xs1xpQVvq8hzFq; NID=71=mxdu-SNqsp8LWMgThQgDi6po2Hg-Hjd0BKRVs2l53eh70CacIMBNFPXldZLCQICeCmOwl68I6_7hr6Tuhku8wvnc1uJQt9r1zBy7J4TsELuTv8jsod_0WoWR-1neDai_uJiiNA', dict((
-        ('PREF', 'ID=1111111111111111:FF=0:TM=1442748479:LM=1442748479:V=1:S=65Xs1xpQVvq8hzFq'),
-        ('NID', '71=mxdu-SNqsp8LWMgThQgDi6po2Hg-Hjd0BKRVs2l53eh70CacIMBNFPXldZLCQICeCmOwl68I6_7hr6Tuhku8wvnc1uJQt9r1zBy7J4TsELuTv8jsod_0WoWR-1neDai_uJiiNA'),
-    ))),
+    ('PREF=ID=1111111111111111:FF=0:TM=1442748479:LM=1442748479:V=1:S=65Xs1xpQVvq8hzFq; NID=71=mxdu-SNqsp8LWMgThQgDi6po2Hg-Hjd0BKRVs2l53eh70CacIMBNFPXldZLCQICeCmOwl68I6_7hr6Tuhku8wvnc1uJQt9r1zBy7J4TsELuTv8jsod_0WoWR-1neDai_uJiiNA', {
+        'PREF': 'ID=1111111111111111:FF=0:TM=1442748479:LM=1442748479:V=1:S=65Xs1xpQVvq8hzFq',
+        'NID': '71=mxdu-SNqsp8LWMgThQgDi6po2Hg-Hjd0BKRVs2l53eh70CacIMBNFPXldZLCQICeCmOwl68I6_7hr6Tuhku8wvnc1uJQt9r1zBy7J4TsELuTv8jsod_0WoWR-1neDai_uJiiNA',
+    }),
 ])
 def test_cookie(cookie, values, headers):
     headers['Cookie'] = cookie

@@ -170,7 +170,7 @@ class URI(with_metaclass(URIType)):
     @property
     def dict(self):
         slots = (key.lstrip('_') for key in self.slots)
-        return dict((key, getattr(self, key)) for key in slots)
+        return {key: getattr(self, key) for key in slots}
 
     @dict.setter
     def dict(self, uri) -> None:

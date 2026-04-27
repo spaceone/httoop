@@ -125,7 +125,7 @@ class WSGI:
         environ.update({
             'HTTP_%s' % name.upper().replace('-', '_'): value
             for name, value in self.request.headers.items()
-            if name.lower() not in ('content-type', 'content-length')
+            if name.lower() not in {'content-type', 'content-length'}
         })
         environ.update({
             'REQUEST_METHOD': str(self.request.method),

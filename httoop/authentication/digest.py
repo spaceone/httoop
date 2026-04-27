@@ -182,7 +182,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
 
         qop = authinfo.get('qop')
         hash_a2 = H(cls.A2(authinfo))
-        if qop in (b'auth', b'auth-int'):
+        if qop in {b'auth', b'auth-int'}:
             data = b'%s:%s:%s:%s:%s' % (authinfo['nonce'], authinfo['nc'], authinfo['cnonce'], authinfo['qop'], hash_a2)
         elif qop is None:
             data = b'%s:%s' % (authinfo['nonce'], hash_a2)

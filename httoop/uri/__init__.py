@@ -9,4 +9,4 @@ from httoop.uri.schemes import GitSSH
 from httoop.uri.uri import URI
 
 
-__all__ = ('URI', 'HTTP', 'HTTPS', 'GitSSH')
+__all__ = ('HTTP', 'HTTPS', 'URI', 'GitSSH')

@@ -6,4 +6,4 @@ from httoop.codecs.application.xml import XML
 from httoop.codecs.application.zlib import Deflate
 
 
-__all__ = ['FormURLEncoded', 'JSON', 'GZip', 'Deflate', 'XML', 'HAL']
+__all__ = ['HAL', 'JSON', 'XML', 'Deflate', 'FormURLEncoded', 'GZip']

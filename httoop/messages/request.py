@@ -21,7 +21,7 @@ class Request(Message):
     .. seealso:: :rfc:`2616#section-5`
     """
 
-    __slots__ = ('__protocol', '__headers', '__body', '__uri', '__method')
+    __slots__ = ('__body', '__headers', '__method', '__protocol', '__uri')
 
     @property
     def method(self):

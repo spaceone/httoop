@@ -16,7 +16,7 @@ def _(x: str) -> str:
     return x
 
 
-__all__ = ['to_unicode', 'IFile', 'CaseInsensitiveDict', 'sanitize_encoding', '_', 'integer']
+__all__ = ['CaseInsensitiveDict', 'IFile', '_', 'integer', 'sanitize_encoding', 'to_unicode']
 
 KNOWN_ENCODINGS = {
     'cp1254', 'cp949', 'cp865', 'cp1257', 'euc_jp', 'cp1250', 'mac-cyrillic', 'mac-latin2', 'cp866', 'cp857',

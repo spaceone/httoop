@@ -12,7 +12,7 @@ from httoop.status.status import REASONS, Status
 from httoop.status.types import StatusException, StatusType
 
 
-__all__ = ['Status', 'REASONS', 'StatusType', 'StatusException']
+__all__ = ['REASONS', 'Status', 'StatusException', 'StatusType']
 
 # mapping of status -> Class
 STATUSES = {}

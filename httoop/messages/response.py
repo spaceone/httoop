@@ -20,7 +20,7 @@ class Response(Message):
     .. seealso:: :rfc:`2616#section-6`
     """
 
-    __slots__ = ('__protocol', '__headers', '__body', '__status')
+    __slots__ = ('__body', '__headers', '__protocol', '__status')
 
     @property
     def status(self):

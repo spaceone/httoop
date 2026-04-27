@@ -36,7 +36,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
     the content using the codec specified in the MIME media type.
     """
 
-    __slots__ = ('fd', 'data', '__iter', 'headers', 'trailer', 'content_codec', 'transfer_codec')
+    __slots__ = ('__iter', 'content_codec', 'data', 'fd', 'headers', 'trailer', 'transfer_codec')
 
     MAX_CHUNK_SIZE = 4096
 

@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 class URI(with_metaclass(URIType)):
     """Uniform Resource Identifier."""
 
-    __slots__ = ('scheme', 'username', 'password', 'host', '_port', 'path', 'query_string', 'fragment')
+    __slots__ = ('scheme', 'username', 'password', 'host', '_port', 'path', 'query_string', 'fragment')  # noqa: RUF023
     slots = __slots__
 
     SCHEMES = {}

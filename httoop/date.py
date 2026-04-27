@@ -153,7 +153,7 @@ class Date(with_metaclass(HTTPSemantic)):
     def __float__(self) -> float:
         return float(self.__timestamp)
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         try:
             return int(self) == int(self.__other(other))
         except NotImplementedError:  # pragma: no cover

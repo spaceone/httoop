@@ -7,7 +7,6 @@ HTTP request and response messages.
 from __future__ import annotations
 
 import re
-from typing import Any
 
 from httoop.exceptions import InvalidLine
 from httoop.meta import HTTPSemantic
@@ -67,7 +66,7 @@ class Protocol(with_metaclass(HTTPSemantic)):
     def __getitem__(self, key: int) -> int:
         return self.version[key]
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         try:
             other = Protocol(other)
         except (TypeError, InvalidLine):

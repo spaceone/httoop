@@ -65,10 +65,10 @@ class HeaderElement(with_metaclass(HeaderType)):
     def __gt__(self, other: str) -> bool:
         return self.value > getattr(other, 'value', other)
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         return self.value == getattr(other, 'value', other)
 
-    def __ne__(self, other: Any) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self == other
 
     def __bytes__(self) -> bytes:

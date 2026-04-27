@@ -1,5 +1,3 @@
-from typing import Any
-
 from httoop.date import Date
 from httoop.exceptions import InvalidDate
 from httoop.header.element import HeaderElement
@@ -13,7 +11,7 @@ class _DateComparable:
         super().sanitize()
         self.value = self.Date.parse(self.value.encode('ASCII', 'replace'))
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, Date):
             if isinstance(other, _DateComparable):
                 other = int(other)
@@ -29,7 +27,7 @@ class _DateComparable:
 
 class _MatchElement:
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         return self.value == other or self.value == '*'
 
     def matches(self, etag):
@@ -57,7 +55,7 @@ class ETag(HeaderElement):
 
     is_response_header = True
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, ETag):
             other = self.__class__(other)
         return other.value == self.value or other.value == '*'

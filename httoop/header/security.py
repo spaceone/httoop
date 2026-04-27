@@ -100,7 +100,7 @@ class FrameOptions(HeaderElement):
         if self.value.upper() == 'ALLOW-FROM':
             from httoop.uri import URI
 
-            return [URI(uri) for uri in self.params.keys()]
+            return [URI(uri) for uri in self.params]
         return None
 
 

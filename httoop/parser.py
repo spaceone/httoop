@@ -189,7 +189,7 @@ class StateMachine:
         if 'Transfer-Encoding' in message.headers and message.protocol >= (1, 1):
             # chunked transfer in HTTP/1.1
             te = message.headers['Transfer-Encoding'].lower()
-            self.chunked = 'chunked' == te
+            self.chunked = te == 'chunked'
             if not self.chunked:
                 raise NOT_IMPLEMENTED('Unknown HTTP/1.1 Transfer-Encoding: %r' % te)
         else:

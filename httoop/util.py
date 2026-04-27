@@ -165,7 +165,7 @@ class CaseInsensitiveDict(dict):
         return dict.get(self, self.formatkey(key), default)
 
     def update(self, E: dict[str, str]) -> None:
-        for key in E.keys():
+        for key in E:
             self[self.formatkey(key)] = self.formatvalue(E[key])
 
     # def setdefault(self, key: str, x: Optional[Union[UserAgent, Server, str, bytes]]=None) -> bytes:

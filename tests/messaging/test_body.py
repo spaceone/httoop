@@ -19,7 +19,7 @@ def test_chunked_body_without_trailer(request_):
 
     request_.body = content()
     request_.body.chunked = True
-    assert b'18\r\nLet us test this chunked\r\n1\r\n\n\r\n12\r\nTransfer Encoding.\r\nb\r\nIt is nice \r\n11\r\nand seems to work\r\n0\r\n\r\n' == bytes(request_.body)
+    assert bytes(request_.body) == b'18\r\nLet us test this chunked\r\n1\r\n\n\r\n12\r\nTransfer Encoding.\r\nb\r\nIt is nice \r\n11\r\nand seems to work\r\n0\r\n\r\n'
 
 
 def test_parse_chunked_body_without_trailer(statemachine):
@@ -94,7 +94,7 @@ def test_chunked_body_with_trailer(request_):
     request_.headers['foo'] = 'test'
     request_.headers['Bar'] = 'baz'
     request_.body.trailer = request_.trailer
-    assert b'18\r\nLet us test this chunked\r\n1\r\n\n\r\n12\r\nTransfer Encoding.\r\nb\r\nIt is nice \r\n11\r\nand seems to work\r\n0\r\nBar: baz\r\nFoo: test\r\n\r\n' == bytes(request_.body)
+    assert bytes(request_.body) == b'18\r\nLet us test this chunked\r\n1\r\n\n\r\n12\r\nTransfer Encoding.\r\nb\r\nIt is nice \r\n11\r\nand seems to work\r\n0\r\nBar: baz\r\nFoo: test\r\n\r\n'
 
 
 def test_chunked_body_with_untold_trailer():

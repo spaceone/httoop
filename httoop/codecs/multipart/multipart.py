@@ -1,9 +1,16 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from httoop.codecs.codec import Codec
 from httoop.exceptions import DecodeError
 from httoop.util import _
+
+
+if TYPE_CHECKING:
+    from httoop.header.messaging import ContentType
+    from httoop.messages.body import Body
 
 
 class Multipart(Codec):

@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 import re
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from httoop.authentication.basic import BasicAuthRequestScheme, BasicAuthResponseScheme
 from httoop.authentication.digest import DigestAuthRequestScheme, DigestAuthResponseScheme
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
 from httoop.util import _
+
+
+if TYPE_CHECKING:
+    from httoop.header.auth import WWWAuthenticate
 
 
 class AuthElement(HeaderElement):

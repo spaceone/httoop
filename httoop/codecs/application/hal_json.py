@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Iterator
+from typing import TYPE_CHECKING, Any, Iterator
 
 
 try:
@@ -18,6 +18,10 @@ except ImportError:
 from httoop.codecs.application.json import JSON
 from httoop.exceptions import DecodeError, EncodeError
 from httoop.six import string_types
+
+
+if TYPE_CHECKING:
+    from httoop.header.messaging import ContentType
 
 
 class Resource(dict):

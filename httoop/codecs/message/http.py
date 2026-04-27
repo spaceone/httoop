@@ -1,6 +1,14 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from httoop.codecs.codec import Codec
+
+
+if TYPE_CHECKING:
+    from httoop.header.messaging import ContentType
+    from httoop.messages.request import Request
+    from httoop.messages.response import Response
 
 
 class HTTP(Codec):

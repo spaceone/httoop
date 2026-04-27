@@ -63,6 +63,12 @@ zip-safe = true
 [project.urls]
 Homepage = "https://github.com/spaceone/httoop"
 
+[tool.coverage.report]
+exclude_lines = [
+  "if TYPE_CHECKING:",
+  "pragma: no cover",
+]
+
 [tool.ruff]
 line-length = 180
 target-version = "py37"

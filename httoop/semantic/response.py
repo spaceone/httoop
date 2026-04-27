@@ -1,13 +1,19 @@
 from __future__ import annotations
 
 from email.generator import _make_boundary as make_boundary
-from typing import Any, Iterator
+from typing import TYPE_CHECKING, Any, Iterator
 
 from httoop.date import Date
 from httoop.exceptions import InvalidHeader
 from httoop.messages.body import Body
 from httoop.semantic.message import ComposedMessage
 from httoop.status import STATUSES
+
+
+if TYPE_CHECKING:
+    from httoop.header.range import Range
+    from httoop.messages.request import Request
+    from httoop.messages.response import Response
 
 
 class ComposedResponse(ComposedMessage):

@@ -1,9 +1,13 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from httoop.codecs.codec import Codec
 from httoop.uri.percent_encoding import Percent
+
+
+if TYPE_CHECKING:
+    from httoop.header.messaging import ContentType
 
 
 class FormURLEncoded(Codec):

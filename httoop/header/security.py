@@ -5,8 +5,11 @@ from __future__ import annotations
 import re
 
 from httoop.header.element import HeaderElement
-from httoop.uri.http import HTTPS
 from httoop.util import integer
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from httoop.uri.http import HTTPS
 
 
 class ContentSecurityPolicy(HeaderElement):

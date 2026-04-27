@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 import httoop.messages.request
-import httoop.messages.response
 from httoop.exceptions import InvalidURI
 from httoop.messages import Request, Response
 from httoop.parser import NOT_RECEIVED_YET, StateMachine
 from httoop.status import BAD_REQUEST, HTTP_VERSION_NOT_SUPPORTED, LENGTH_REQUIRED, MOVED_PERMANENTLY, SWITCHING_PROTOCOLS, URI_TOO_LONG
 from httoop.util import _
 from httoop.version import ServerHeader, ServerProtocol
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import httoop.messages.response
 
 
 class ServerStateMachine(StateMachine):

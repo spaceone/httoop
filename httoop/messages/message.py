@@ -81,7 +81,7 @@ class Message(with_metaclass(HTTPSemantic)):
 
     def parse(self, protocol: bytes) -> None:
         """
-        parses the HTTP protocol version.
+        Parses the HTTP protocol version.
 
         :param protocol: the protocol version string
         :type  protocol: bytes

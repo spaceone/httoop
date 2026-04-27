@@ -88,7 +88,7 @@ class Status(with_metaclass(HTTPSemantic)):
 
     def parse(self, status: bytes) -> None:
         """
-        parse a Statuscode and Reason-Phrase.
+        Parse a Statuscode and Reason-Phrase.
 
         :param status: the code and reason
         :type  status: bytes
@@ -125,7 +125,7 @@ class Status(with_metaclass(HTTPSemantic)):
 
     def set(self, status: Any) -> None:
         """
-        sets reason and status.
+        Sets reason and status.
 
         :param status:
         A HTTP Status, e.g.: 200, (200, 'OK'), '200 OK'

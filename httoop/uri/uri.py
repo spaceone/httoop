@@ -296,7 +296,7 @@ class URI(with_metaclass(URIType)):
         return b''.join(self._compose_absolute_iter())
 
     def _compose_absolute_iter(self) -> Iterator[bytes]:
-        """composes the whole URI."""
+        """Composes the whole URI."""
         scheme, username, password, host, port, path, _, fragment = self.tuple
         if scheme:
             yield self.quote(scheme, Percent.SCHEME)

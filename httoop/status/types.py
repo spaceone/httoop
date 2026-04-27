@@ -120,7 +120,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
     __str__ = __repr__
 
     def to_dict(self) -> dict[str, int | str | dict[str, str]]:
-        """the default body arguments."""
+        """The default body arguments."""
         return {
             'status': self.status,
             'reason': self.reason,

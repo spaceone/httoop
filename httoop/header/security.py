@@ -25,7 +25,7 @@ class ContentSecurityPolicy(HeaderElement):
     __name__ = 'Content-Security-Policy'
     is_response_header = True
 
-    RE_SPLIT = re.compile(b';')
+    RE_SPLIT = re.compile(rb';')
     RE_PARAMS = re.compile(b'\\s+')
 
     def compose(self) -> bytes:

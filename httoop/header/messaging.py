@@ -201,7 +201,7 @@ class ContentType(HeaderElement, MimeType, CodecElement):
     def charset(self, charset) -> None:
         self.params['charset'] = charset
 
-    VALID_BOUNDARY = re.compile('^[ -~]{0,200}[!-~]$')
+    VALID_BOUNDARY = re.compile(r'^[ -~]{0,200}[!-~]$')
 
     def sanitize(self) -> None:
         super().sanitize()
@@ -225,7 +225,7 @@ class ContentType(HeaderElement, MimeType, CodecElement):
 class Cookie(_CookieElement):
 
     is_request_header = True
-    RE_SPLIT = re.compile(b'; ')
+    RE_SPLIT = re.compile(rb'; ')
 
     # TODO: prohibit that multiple Cookie lines are parsed as valid
 
@@ -384,7 +384,7 @@ class SetCookie(_ListElement, _CookieElement):
 
     @classmethod
     def split(cls, fieldvalue: bytes) -> list[bytes]:
-        fieldvalue = re.sub(b'(expires)=([^"][^;]+)', b'\\1="\\2"', fieldvalue, flags=re.IGNORECASE)
+        fieldvalue = re.sub(rb'(expires)=([^"][^;]+)', b'\\1="\\2"', fieldvalue, flags=re.IGNORECASE)
         return super().split(fieldvalue)
 
     @property

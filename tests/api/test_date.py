@@ -58,7 +58,7 @@ def test_date_gmtime(date, expected, lt, gt):
 def test_date_comparing_none():
     d = Date(datetime.datetime(1994, 11, 6, 8, 49, 37))
     assert d == Date(d)
-    assert not d == None  # noqa: E711
+    assert not d == None  # noqa: E711, SIM201
     assert d > None
     assert not d < None
 
@@ -73,7 +73,7 @@ def test_invalid_date(invalid):
 
     d = Date(784111777.0)
     assert d != invalid
-    assert not d == invalid
+    assert not d == invalid  # noqa: SIM201
     assert d > invalid
     assert not d < invalid
 

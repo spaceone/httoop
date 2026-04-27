@@ -175,7 +175,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
         algorithm = authinfo.get('algorithm', b'MD5').decode('ASCII', 'replace')
         H = cls.get_algorithm(algorithm)
 
-        if algorithm == 'MD5-sess' and authinfo.get('A1'):
+        if algorithm == 'MD5-sess' and authinfo.get('A1'):  # noqa: SIM108
             secret = H(authinfo['A1'])
         else:
             secret = H(cls.A1(authinfo))

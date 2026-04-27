@@ -98,7 +98,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
     def chunked(self):
         if not self.transfer_encoding:
             return False
-        return 'chunked' == self.transfer_encoding.value
+        return self.transfer_encoding.value == 'chunked'
 
     @chunked.setter
     def chunked(self, chunked) -> None:

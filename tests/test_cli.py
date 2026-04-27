@@ -1,3 +1,4 @@
+import re
 import subprocess
 import sys
 import tempfile
@@ -19,6 +20,18 @@ def test_cli_compose():
         fd.flush()
         stdout = subprocess.check_output([sys.executable, '-m', 'httoop', 'compose', 'request', '-b', '@%s' % (fd.name,)])
         assert b'GET / HTTP/1.1\r\n\r\ntest' == stdout
+
+
+def test_cli_parse():
+    with tempfile.NamedTemporaryFile() as fd:
+        fd.write(b'PUT /foo HTTP/1.1\r\nHost: foo\r\n\r\n')
+        fd.flush()
+        stdout = subprocess.check_output([sys.executable, '-m', 'httoop', 'parse', 'request', '--file', fd.name])
+        assert re.match(br"^<HTTP Response\(200 text/plain; charset=UTF\-8\)>\n<HTTP Headers\(\[\('Server', b'httoop/\d+\.\d+\.\d+'\)\]\)>\n<HTTP Body\(0x[0-9a-f]+\)>\n$", stdout)
+
+    p = subprocess.Popen([sys.executable, '-m', 'httoop', 'parse', 'response'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    stdout, stderr = p.communicate(b'HTTP/1.1 400 Evil Request\r\n\r\n')
+    assert re.match(br"^<HTTP Response\(400 text/plain; charset=UTF\-8\)>\n<HTTP Headers\(\[\('Content\-Length', b'0'\)\]\)>\n<HTTP Body\(0x[0-9a-f]+\)>\nb''\n$", stdout), stdout
 
 
 def test_invalid_input():

@@ -12,7 +12,7 @@ def test_cli_compose():
     assert subprocess.check_output([sys.executable, '-m', 'httoop', 'compose', 'request', '--protocol', '1.0']) == b'GET / HTTP/1.0\r\n\r\n'
     # assert b'GET / HTTP/1.0\r\n\r\n' == subprocess.check_output([sys.executable, '-m', 'httoop', 'compose', 'request', '--protocol', 'HTTP/1.0'])
     p = subprocess.Popen([sys.executable, '-m', 'httoop', 'compose', 'request', '-b', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    stdout, stderr = p.communicate(b'test')
+    stdout, _stderr = p.communicate(b'test')
     assert stdout == b'GET / HTTP/1.1\r\n\r\ntest'
 
     with tempfile.NamedTemporaryFile() as fd:
@@ -30,7 +30,7 @@ def test_cli_parse():
         assert re.match(br"^<HTTP Response\(200 text/plain; charset=UTF\-8\)>\n<HTTP Headers\(\[\('Server', b'httoop/\d+\.\d+\.\d+'\)\]\)>\n<HTTP Body\(0x[0-9a-f]+\)>\n$", stdout)
 
     p = subprocess.Popen([sys.executable, '-m', 'httoop', 'parse', 'response'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    stdout, stderr = p.communicate(b'HTTP/1.1 400 Evil Request\r\n\r\n')
+    stdout, _stderr = p.communicate(b'HTTP/1.1 400 Evil Request\r\n\r\n')
     assert re.match(br"^<HTTP Response\(400 text/plain; charset=UTF\-8\)>\n<HTTP Headers\(\[\('Content\-Length', b'0'\)\]\)>\n<HTTP Body\(0x[0-9a-f]+\)>\nb''\n$", stdout), stdout
 
 

@@ -61,7 +61,7 @@ class AuthElement(HeaderElement):
     def split(cls, value: bytes) -> list[bytes | Any]:
         value = cls.RE_SPACE_SPLIT.split(value)
         indexes = [i for i, val in enumerate(value) if val != b',' and b'=' not in val]
-        return [b' '.join(value[a:b]) for a, b in zip(indexes, indexes[1:] + [None])]
+        return [b' '.join(value[a:b]) for a, b in zip(indexes, [*indexes[1:], None])]
 
 
 class AuthRequestElement(AuthElement):

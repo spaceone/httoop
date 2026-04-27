@@ -97,7 +97,7 @@ class StateMachine:
         except (InvalidHeader, InvalidLine, InvalidURI, InvalidBody) as exc:
             raise BAD_REQUEST(str(exc))
 
-    def _parse(self) -> Iterator[None | Response | tuple[Request, Response]]:
+    def _parse(self) -> Iterator[Response | tuple[Request, Response] | None]:
         while self.buffer:
             if self.message is None:
                 yield self.on_message_started()
@@ -246,13 +246,13 @@ class StateMachine:
 
     def __parse_chunk_size(self):
         line, rest_chunk = self.buffer.split(self.line_end, 1)
-        _chunk_size = line.split(b';', 1)[0].strip()
+        chunk_size_ = line.split(b';', 1)[0].strip()
         try:
-            chunk_size = integer(bytes(_chunk_size), 16)
+            chunk_size = integer(bytes(chunk_size_), 16)
             if chunk_size < 0:
                 raise ValueError()
         except (ValueError, OverflowError):
-            exc = InvalidHeader(_('Invalid chunk size: %r'), _chunk_size.decode('ISO8859-1'))
+            exc = InvalidHeader(_('Invalid chunk size: %r'), chunk_size_.decode('ISO8859-1'))
             raise BAD_REQUEST(str(exc))
         else:
             return chunk_size, rest_chunk

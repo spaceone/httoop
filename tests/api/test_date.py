@@ -58,7 +58,7 @@ def test_date_gmtime(date, expected, lt, gt):
 def test_date_comparing_none():
     d = Date(datetime.datetime(1994, 11, 6, 8, 49, 37))
     assert d == Date(d)
-    assert not d == None  # noqa
+    assert not d == None  # noqa: E711
     assert d > None
     assert not d < None
 
@@ -83,4 +83,4 @@ def test_invalid_date(invalid):
 
 @pytest.mark.xfail(reason='currently it is not implemented in this way')
 def test_not_existing_comparision():
-    assert Date() == [] is None  # noqa: E711
+    assert Date() == [] is None  # noqa: F632

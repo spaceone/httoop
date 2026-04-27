@@ -105,7 +105,7 @@ class ServerStateMachine(StateMachine):
 
     def validate_request_uri_scheme(self) -> None:
         if self.message.uri.scheme:
-            if self.message.uri.scheme not in ('http', 'https'):  # pragma: no cover
+            if self.message.uri.scheme not in {'http', 'https'}:  # pragma: no cover
                 exc = InvalidURI(_('Invalid URL: wrong scheme'))
                 raise BAD_REQUEST(str(exc))
         else:
@@ -133,7 +133,7 @@ class ServerStateMachine(StateMachine):
             raise LENGTH_REQUIRED('Missing Content-Length header.')
 
     def check_methods_without_body(self) -> None:
-        if self.message.method in ('HEAD', 'GET', 'TRACE') and self.message.body:
+        if self.message.method in {'HEAD', 'GET', 'TRACE'} and self.message.body:
             raise BAD_REQUEST(f'A {self.message.method} request is considered as safe and MUST NOT contain a request body.')
 
     def check_http2_upgrade(self) -> None:

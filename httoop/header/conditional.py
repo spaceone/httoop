@@ -28,7 +28,7 @@ class _DateComparable:
 class _MatchElement:
 
     def __eq__(self, other: object) -> bool:
-        return self.value == other or self.value == '*'
+        return self.value in {other, '*'}
 
     def matches(self, etag):
         return self == etag
@@ -58,7 +58,7 @@ class ETag(HeaderElement):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ETag):
             other = self.__class__(other)
-        return other.value == self.value or other.value == '*'
+        return other.value in {self.value, '*'}
 
 
 class LastModified(_DateComparable, HeaderElement):

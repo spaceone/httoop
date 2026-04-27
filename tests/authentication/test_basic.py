@@ -6,7 +6,7 @@ from httoop.header import Authorization, WWWAuthenticate
 
 def test_basic_www_authenticate(headers):
     www_auth = WWWAuthenticate('Basic', {'realm': 'simple'})
-    assert bytes(www_auth) in (b'Basic realm="simple"', b'Basic realm=simple')
+    assert bytes(www_auth) in {b'Basic realm="simple"', b'Basic realm=simple'}
     headers.parse(b'WWW-Authenticate: %s' % www_auth)
     assert headers.elements('WWW-Authenticate')[0].realm == 'simple'
 

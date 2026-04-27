@@ -28,7 +28,7 @@ class ComposedResponse(ComposedMessage):
         response = self.response
 
         status = int(response.status)
-        if status < 200 or status in (204, 205, 304):
+        if status < 200 or status in {204, 205, 304}:
             # 1XX, 204 NO_CONTENT, 205 RESET_CONTENT, 304 NOT_MODIFIED
             response.body = None
 

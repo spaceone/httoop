@@ -390,7 +390,7 @@ class _CookieElement(HeaderElement):
     @classmethod
     def unescape_key(cls, key: bytes) -> bytes:
         key = key.strip()
-        if key.lower() in (b'httponly', b'secure', b'path', b'domain', b'max-age', b'expires'):
+        if key.lower() in {b'httponly', b'secure', b'path', b'domain', b'max-age', b'expires'}:
             return key.lower()
         return key
 

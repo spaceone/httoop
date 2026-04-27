@@ -33,7 +33,7 @@ class ComposedRequest(ComposedMessage):
         if 'Host' not in self.message.headers and self.message.uri.host:
             self.message.headers['Host'] = self.message.uri.host
 
-        if self.message.method in ('PUT', 'POST') and self.message.body and 'Date' not in self.message.headers:
+        if self.message.method in {'PUT', 'POST'} and self.message.body and 'Date' not in self.message.headers:
             self.message.headers['Date'] = bytes(Date())  # RFC 2616 Section 14.18
 
         if self.message.method == 'TRACE':

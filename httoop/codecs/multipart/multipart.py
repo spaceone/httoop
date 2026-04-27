@@ -34,7 +34,7 @@ class Multipart(Codec):
         if part:
             raise DecodeError(_('Data before boundary: %r'), part.decode('ISO8859-1'))
         part = parts.pop()
-        if part not in (b'--', b'--\r\n'):
+        if part not in {b'--', b'--\r\n'}:
             raise DecodeError(_('Invalid multipart end: %r'), part.decode('ISO8859-1'))
 
         from httoop.messages.body import Body

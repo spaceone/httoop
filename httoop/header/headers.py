@@ -15,7 +15,7 @@ class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
     __slots__ = ()
 
     # disallowed bytes for HTTP header field names
-    HEADER_RE = re.compile(br'[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]')
+    HEADER_RE = re.compile(rb'[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]')
 
     @staticmethod
     def formatvalue(value: Any) -> bytes:

@@ -3,6 +3,7 @@ Web Server Gateway Interface.
 
 .. seealso:: `PEP 333 <http://www.python.org/dev/peps/pep-0333/>`_
 """
+
 from __future__ import annotations
 
 from typing import Any, Callable, Iterator
@@ -11,7 +12,7 @@ from httoop.messages import Body
 from httoop.six import reraise
 
 
-__all__ = ('WSGI', )
+__all__ = ('WSGI',)
 
 
 class WSGIBody(Body):
@@ -115,6 +116,7 @@ class WSGI:
             finally:
                 if hasattr(result, 'close'):
                     result.close()
+
         self.response.body = buffered(data)
         return raw_result
 

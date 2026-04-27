@@ -3,6 +3,7 @@ HTTP request and response messages.
 
 .. seealso:: :rfc:`2616#section-4`
 """
+
 from __future__ import annotations
 
 import re
@@ -13,13 +14,13 @@ from httoop.six import with_metaclass
 from httoop.util import _
 
 
-__all__ = ('Method', )
+__all__ = ('Method',)
 
 
 class Method(with_metaclass(HTTPSemantic)):
     """A HTTP request method."""
 
-    __slots__ = ('__method')
+    __slots__ = ('__method',)
 
     @property
     def safe(self) -> bool:
@@ -31,7 +32,7 @@ class Method(with_metaclass(HTTPSemantic)):
 
     safe_methods = ('GET', 'HEAD', 'SEARCH')
     idempotent_methods = ('GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE', 'SEARCH')
-    METHOD_RE = re.compile(br'^[A-Z0-9$-_.]{1,20}\Z', re.IGNORECASE)
+    METHOD_RE = re.compile(rb'^[A-Z0-9$-_.]{1,20}\Z', re.IGNORECASE)
 
     def __init__(self, method: str | None = None) -> None:
         self.set(method or 'GET')

@@ -1,4 +1,3 @@
-
 import pytest
 
 from httoop.exceptions import InvalidURI
@@ -23,7 +22,8 @@ def test_uri_set_dict(request_):
         'port': 8090,
         'path': '/path',
         'query_string': 'query=string',
-        'fragment': 'fragment'}
+        'fragment': 'fragment',
+    }
     request_.uri = uri
     assert request_.uri.dict == uri
     assert request_.uri == uri

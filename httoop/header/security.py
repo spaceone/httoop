@@ -1,4 +1,5 @@
 """Security related header."""
+
 from __future__ import annotations
 
 import re
@@ -95,6 +96,7 @@ class FrameOptions(HeaderElement):
     def allow_from(self) -> list[HTTPS]:
         if self.value.upper() == 'ALLOW-FROM':
             from httoop.uri import URI
+
             return [URI(uri) for uri in self.params.keys()]
 
 

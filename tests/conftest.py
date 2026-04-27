@@ -1,4 +1,3 @@
-
 import pytest
 
 from httoop import URI, Body, ClientStateMachine, Headers, Request, Response, ServerStateMachine

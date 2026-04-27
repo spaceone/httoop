@@ -1,4 +1,3 @@
-
 from httoop.authentication import AuthInfoElement, AuthRequestElement, AuthResponseElement
 from httoop.header.element import _HopByHopElement, _ListElement
 

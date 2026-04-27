@@ -1,4 +1,3 @@
-
 import pytest
 
 from httoop import URI, InvalidURI

@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from hashlib import md5, sha256
@@ -32,7 +31,12 @@ class DigestAuthScheme:
     def generate_nonce(cls, authinfo: ByteUnicodeDict) -> bytes:
         from time import time
         from uuid import uuid4
-        nonce = b'%d:%s:%s' % (time(), authinfo.get('etag', authinfo.get('realm', b'')), str(uuid4()).encode('ASCII'), )
+
+        nonce = b'%d:%s:%s' % (
+            time(),
+            authinfo.get('etag', authinfo.get('realm', b'')),
+            str(uuid4()).encode('ASCII'),
+        )
         algorithm = authinfo.get('algorithm', b'MD5').decode('ASCII', 'replace')
         H = cls.get_algorithm(algorithm)
         return H(nonce)
@@ -81,7 +85,7 @@ class DigestAuthResponseScheme(DigestAuthScheme):  # WWW-Authenticate
             ('stale', stale),
             ('algorithm', algorithm),
             ('qop', qop_options),
-            authinfo.get('auth-param', [None, None])
+            authinfo.get('auth-param', [None, None]),
         ]
         return [(k, v) for k, v in params if v is not None]
 
@@ -132,7 +136,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
             ('opaque', authinfo.get('opaque')),
             ('qop', message_qop),
             ('nc', nonce_count),
-            authinfo.get('auth-param', [None, None])
+            authinfo.get('auth-param', [None, None]),
         ]
         return [(k, v) for k, v in params if v is not None]
 
@@ -183,7 +187,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
         elif qop is None:
             data = b'%s:%s' % (authinfo['nonce'], hash_a2)
         else:  # pragma: no cover
-            raise NotImplementedError('Unknown quality of protection: %r' % (qop, ))
+            raise NotImplementedError('Unknown quality of protection: %r' % (qop,))
 
         return H(b'%s:%s' % (secret, data))
 
@@ -196,7 +200,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
             H = cls.get_algorithm(params['algorithm'])
             return b'%s:%s:%s' % (params['method'], params['uri'], H(params['entity_body']))
         else:  # pragma: no cover
-            raise NotImplementedError('Unknown quality of protection: %r' % (qop, ))
+            raise NotImplementedError('Unknown quality of protection: %r' % (qop,))
 
     @classmethod
     def A1(cls, params: ByteUnicodeDict) -> bytes:
@@ -209,4 +213,4 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
             s = b'%s:%s:%s' % (params['username'], params['realm'], params['password'])
             return b'%s:%s:%s' % (H(s), params['nonce'], params['cnonce'])
         else:  # pragma: no cover
-            raise NotImplementedError('Unknown algorithm: %s' % (algorithm, ))
+            raise NotImplementedError('Unknown algorithm: %s' % (algorithm,))

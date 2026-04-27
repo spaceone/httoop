@@ -3,6 +3,7 @@ HTTP status codes.
 
 .. seealso:: :rfc:`2616#section-10`
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -53,6 +54,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
     def body(self):
         if not hasattr(self, '_body'):
             from httoop.messages.body import Body
+
             self._body = Body(mimetype='application/json')
             self._body.data = self.to_dict()
         return self._body
@@ -114,7 +116,7 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
     def __repr__(self) -> str:
         description = ''
         if self.description:
-            description = '(%s)' % (self.description, )
+            description = '(%s)' % (self.description,)
         return '<HTTP Status %d %r %s>' % (int(self), self.reason, description)
 
     __str__ = __repr__
@@ -125,5 +127,5 @@ class StatusException(with_metaclass(StatusType, Status, Exception)):
             'status': self.status,
             'reason': self.reason,
             'description': self.description,
-            'headers': self.headers
+            'headers': self.headers,
         }

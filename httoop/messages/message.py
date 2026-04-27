@@ -12,7 +12,7 @@ from httoop.meta import HTTPSemantic
 from httoop.six import with_metaclass
 
 
-__all__ = ('Message')
+__all__ = ('Message',)
 
 
 class Message(with_metaclass(HTTPSemantic)):
@@ -89,4 +89,4 @@ class Message(with_metaclass(HTTPSemantic)):
         self.protocol.parse(protocol)
 
     def __repr__(self) -> str:
-        return '<HTTP Message(protocol=%s)>' % (self.protocol, )
+        return '<HTTP Message(protocol=%s)>' % (self.protocol,)

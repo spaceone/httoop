@@ -1,4 +1,3 @@
-
 import pytest
 
 from httoop.codecs import Codec, lookup, register

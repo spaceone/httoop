@@ -272,7 +272,7 @@ class Forwarded(HeaderElement):
 
     @classmethod
     def parse(cls, elementstr: bytes) -> Forwarded:
-        return super().parse(b'x; %s' % (elementstr, ))
+        return super().parse(b'x; %s' % (elementstr,))
 
 
 # TODO: add case insensitive HeaderElement
@@ -287,6 +287,7 @@ class Host(HeaderElement):
     @property
     def is_ip4(self) -> bool:
         from socket import AF_INET, error, inet_pton
+
         try:
             inet_pton(AF_INET, self.host)
             return True
@@ -296,6 +297,7 @@ class Host(HeaderElement):
     @property
     def is_ip6(self) -> bool:
         from socket import AF_INET6, error, inet_pton
+
         try:
             inet_pton(AF_INET6, self.host)
             return True

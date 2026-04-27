@@ -1,4 +1,3 @@
-
 import pytest
 
 from httoop import Headers, InvalidHeader

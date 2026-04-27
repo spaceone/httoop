@@ -10,7 +10,7 @@ from httoop.util import _
 
 class QueryString(FormURLEncoded):
 
-    INVALID = (stringprep.in_table_c21, )
+    INVALID = (stringprep.in_table_c21,)
     UNQUOTED = Percent.QUERY.replace(b'+', b'').replace(b'=', b'').replace(b'&', b'')
 
     @classmethod

@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class AuthElement(HeaderElement):
 
     schemes = {}
-    RE_SPACE_SPLIT = re.compile(br'\s+(?=(?:[^"]*"[^"]*")*[^"]*$)')
+    RE_SPACE_SPLIT = re.compile(rb'\s+(?=(?:[^"]*"[^"]*")*[^"]*$)')
 
     def sanitize(self) -> None:
         for key, value in list(self.params.items()):
@@ -70,7 +70,7 @@ class AuthRequestElement(AuthElement):
 
     schemes = {
         'basic': BasicAuthRequestScheme,
-        'digest': DigestAuthRequestScheme
+        'digest': DigestAuthRequestScheme,
     }
 
     @property
@@ -100,7 +100,7 @@ class AuthResponseElement(AuthElement):
 
     schemes = {
         'basic': BasicAuthResponseScheme,
-        'digest': DigestAuthResponseScheme
+        'digest': DigestAuthResponseScheme,
     }
 
     @classmethod

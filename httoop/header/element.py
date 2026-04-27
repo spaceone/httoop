@@ -7,6 +7,7 @@ HTTP header elements.
 
 .. seealso:: :rfc:`2616#section-14`
 """
+
 from __future__ import annotations
 
 import re
@@ -140,7 +141,7 @@ class HeaderElement(with_metaclass(HeaderType)):
                     try:
                         key, value = key[:-1], Percent.unquote(value_).decode(encoding)
                     except UnicodeDecodeError as exc:
-                        raise InvalidHeader(_('%s') % (exc, ))
+                        raise InvalidHeader(_('%s') % (exc,))
                 else:
                     value = value.decode('ISO8859-1')
                 key_, asterisk, num = key.rpartition(b'*')
@@ -208,11 +209,11 @@ class HeaderElement(with_metaclass(HeaderType)):
                     value = value.encode('ASCII')
                 except UnicodeEncodeError:
                     param += b'*'
-                    value = b"utf-8''%s" % (Percent.quote(value.encode('UTF-8')), )
+                    value = b"utf-8''%s" % (Percent.quote(value.encode('UTF-8')),)
                     quote = False
 
             if quote or cls.RE_TSPECIALS.search(value):
-                value = value.replace(b'\\', b'\\\\').replace(b'"', br'\"')
+                value = value.replace(b'\\', b'\\\\').replace(b'"', rb'\"')
                 return b'%s="%s"' % (param, value)
             else:
                 return b'%s=%s' % (param, value)
@@ -244,12 +245,12 @@ class HeaderElement(with_metaclass(HeaderType)):
             try:
                 value.encode('ISO8859-1')
             except UnicodeEncodeError:
-                return b'=?utf-8?b?%s?=' % (b2a_base64(value.encode('utf-8')).rstrip(b'\n'), )
+                return b'=?utf-8?b?%s?=' % (b2a_base64(value.encode('utf-8')).rstrip(b'\n'),)
             else:  # pragma: no cover
-                return b'=?ISO8859-1?b?%s?=' % (b2a_base64(value.encode('ISO8859-1')).rstrip(b'\n'), )
+                return b'=?ISO8859-1?b?%s?=' % (b2a_base64(value.encode('ISO8859-1')).rstrip(b'\n'),)
 
     def __repr__(self) -> str:
-        params = ', %r' % (self.params, ) if self.params else ''
+        params = ', %r' % (self.params,) if self.params else ''
         return '<%s(%r%s)>' % (self.__class__.__name__, self.value, params)
 
 
@@ -317,7 +318,7 @@ class _AcceptElement(HeaderElement):
     """
 
     # RFC 2616 Section 3.9
-    RE_Q_SEPARATOR = re.compile(br';\s*q\s*=\s*')
+    RE_Q_SEPARATOR = re.compile(rb';\s*q\s*=\s*')
 
     @property
     def quality(self) -> float:

@@ -1,4 +1,3 @@
-
 import pytest
 
 from httoop import Status
@@ -168,11 +167,14 @@ def test_invalid_status_code(code, response):
 
 def test_invalid_status_subclasses():
     from httoop.status import ServerErrorStatus
+
     with pytest.raises(RuntimeError):
+
         class MyServerError(ServerErrorStatus):
             code = 600
 
     with pytest.raises(RuntimeError):
+
         class MyInformational(ServerErrorStatus):
             code = 100
 
@@ -181,7 +183,13 @@ def test_created_location():
     with pytest.raises(CREATED) as exc:
         raise CREATED('http://example.com')
     assert exc.value.to_dict()['Location'] == 'http://example.com'
-    assert exc.value.body.data == {'status': 201, 'headers': {'Location': 'http://example.com'}, 'reason': 'Created', 'description': 'Document created, URL follows', 'Location': 'http://example.com'}
+    assert exc.value.body.data == {
+        'status': 201,
+        'headers': {'Location': 'http://example.com'},
+        'reason': 'Created',
+        'description': 'Document created, URL follows',
+        'Location': 'http://example.com',
+    }
     exc.value.body = None
     assert exc.value.body.data is None
 
@@ -224,7 +232,7 @@ def test_unauthorized():
 def test_not_found():
     with pytest.raises(NOT_FOUND) as exc:
         raise NOT_FOUND('/foo')
-    assert repr(exc.value) == "<HTTP Status 404 'Not Found' (The requested resource \"/foo\" was not found on this server.)>"
+    assert repr(exc.value) == '<HTTP Status 404 \'Not Found\' (The requested resource "/foo" was not found on this server.)>'
 
 
 def test_method_not_allowed():

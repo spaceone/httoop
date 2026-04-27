@@ -4,7 +4,6 @@ HTTPOOP - an OOP model of the HTTP protocol.
 .. seealso:: :rfc:`2616`
 """
 
-
 from httoop import cache
 from httoop.client import ClientStateMachine
 from httoop.date import Date

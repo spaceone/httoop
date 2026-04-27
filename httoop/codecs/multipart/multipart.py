@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -24,13 +23,13 @@ class Multipart(Codec):
         multipart = b''
         for body in data:
             multipart += b'--%s\r\n%s%s\r\n' % (boundary, body.headers, body)
-        multipart += b'--%s--\r\n' % (boundary, )
+        multipart += b'--%s--\r\n' % (boundary,)
         return multipart
 
     @classmethod
     def decode(cls, data: bytes, charset: str | None = None, mimetype: ContentType | None = None) -> list[Body]:
         boundary = mimetype.boundary.encode('ISO8859-1')
-        parts = data.split(b'--%s' % (boundary, ))
+        parts = data.split(b'--%s' % (boundary,))
         part = parts.pop(0)
         if part:
             raise DecodeError(_('Data before boundary: %r'), part.decode('ISO8859-1'))
@@ -39,6 +38,7 @@ class Multipart(Codec):
             raise DecodeError(_('Invalid multipart end: %r'), part.decode('ISO8859-1'))
 
         from httoop.messages.body import Body
+
         multiparts = []
         for part in parts:
             if not part.startswith(b'\r\n'):

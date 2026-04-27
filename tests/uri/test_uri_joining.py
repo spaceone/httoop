@@ -1,4 +1,3 @@
-
 import pytest
 
 from httoop import URI
@@ -159,7 +158,7 @@ uri_join = {
         (b'./g/.', b'http://a/b/c/g/'),
         (b'g/./h', b'http://a/b/c/g/h'),
         (b'g/../h', b'http://a/b/c/h'),
-    ]
+    ],
 }
 
 further = [
@@ -192,6 +191,8 @@ def test_uri_join(base, relative, expected):
 def test_uri_join_very_strict(base, relative, expected):
     uri = URI(base).join(relative)
     assert bytes(uri) == bytes(expected)
+
+
 # @pytest.mark.parametrize('expected,got,relative', [(expected, bytes(URI(base).join(relative)), relative) for base, relative_expected in uri_join.items() for (relative, expected) in relative_expected])
 # def test_uri_join_very_strict(expected, got, relative):
 #    assert expected == got

@@ -15,6 +15,7 @@ def authentication():
         h = Headers()
         h.parse(header)
         return h.elements('WWW-Authenticate')[0]
+
     return _parse
 
 

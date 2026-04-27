@@ -1,4 +1,3 @@
-
 from itertools import chain, product
 
 import pytest
@@ -15,8 +14,8 @@ def test_digest_www_authentication(headers):
         'nonce': 'dcd98b7102dd2f0e8b11d0f600bfb0c093',
         'stale': True,
         'domain': ('www.example.com', 'www.example.org'),
-        'opaque': '5ccc069c403ebaf9f0171e9517f40e41'}
-    )
+        'opaque': '5ccc069c403ebaf9f0171e9517f40e41',
+    })
     www_auth = WWWAuthenticate.parse(bytes(www_auth))
     www_auth_bytes = b'''WWW-Authenticate: Digest realm="testrealm@host.com",
     nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
@@ -40,8 +39,8 @@ def test_digest_authorization(headers):
         'qop': 'auth',
         'nc': '00000001',
         'cnonce': '0a4f113b',
-        'opaque': '5ccc069c403ebaf9f0171e9517f40e41'}
-    )
+        'opaque': '5ccc069c403ebaf9f0171e9517f40e41',
+    })
     auth = Authorization.parse(bytes(auth))
     auth_bytes = b'''Authorization: Digest username="Mufasa",
     realm="testrealm@host.com",
@@ -71,8 +70,8 @@ def test_digest_authorization_no_qop(headers):
         'nonce': 'dcd98b7102dd2f0e8b11d0f600bfb0c093',
         'uri': '/dir/index.html',
         'password': 'Circle Of Life',
-        'method': 'GET'}
-    )
+        'method': 'GET',
+    })
     auth = Authorization.parse(bytes(auth))
     auth_bytes = b'''Authorization: Digest username="Mufasa",
     realm="testrealm@host.com",
@@ -96,8 +95,8 @@ def test_digest_authorization_auth_int(headers):
         'nc': '00000001',
         'cnonce': '0a4f113b',
         'entity_body': 'foo',
-        'opaque': '5ccc069c403ebaf9f0171e9517f40e41'}
-    )
+        'opaque': '5ccc069c403ebaf9f0171e9517f40e41',
+    })
     auth = Authorization.parse(bytes(auth))
     auth_bytes = b'''Authorization: Digest username="Mufasa",
     realm="testrealm@host.com",
@@ -127,8 +126,8 @@ def test_digest_authorization_md5_sess_a1(headers):
         'nc': '00000001',
         'cnonce': '0a4f113b',
         'entity_body': 'foo',
-        'opaque': '5ccc069c403ebaf9f0171e9517f40e41'}
-    )
+        'opaque': '5ccc069c403ebaf9f0171e9517f40e41',
+    })
     auth = Authorization.parse(bytes(auth))
     auth_bytes = b'''Authorization: Digest username="Mufasa",
     realm="testrealm@host.com",
@@ -151,8 +150,8 @@ def test_digest_authorization_md5_sess_a1(headers):
 def test_check(headers, realm, result):
     www_auth = WWWAuthenticate('Digest', {
         'realm': realm,
-        'response': '4c187ba5e8ff03c06627fc4e3940fc97'}
-    )
+        'response': '4c187ba5e8ff03c06627fc4e3940fc97',
+    })
     auth = Authorization('Digest', {
         'username': 'Mufasa',
         'realm': 'testrealm@host.com',
@@ -172,7 +171,7 @@ def test_check(headers, realm, result):
 def test_unknown_algorithm(headers):
     auth = Authorization('Digest', {
         'algorithm': 'bar', 'username': 'foo', 'realm': 'foo',
-        'uri': '/'
+        'uri': '/',
     })
     with pytest.raises(InvalidHeader) as excinfo:
         bytes(auth)
@@ -200,7 +199,7 @@ def test_required_parameter(params, headers):
         b'algorithm': b'MD5',
         b'username': b'foo',
         b'realm': b'foo',
-        b'uri': b'/'
+        b'uri': b'/',
     }
     header = b', '.join(b'%s="%s"' % (p, pvars[p]) for p in params)
     headers.parse(b'Authorization: digest %s' % header)

@@ -1,4 +1,3 @@
-
 import pytest
 
 from httoop.exceptions import InvalidHeader

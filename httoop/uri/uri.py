@@ -120,7 +120,7 @@ class URI(with_metaclass(URIType)):
 
         self.abspath()
         if not self.path.startswith('/') and self.host and self.scheme and self.path:
-            self.path = '/%s' % (self.path, )
+            self.path = '/%s' % (self.path,)
 
     def abspath(self) -> None:
         """
@@ -165,7 +165,7 @@ class URI(with_metaclass(URIType)):
         elif isinstance(uri, dict):
             self.dict = uri
         else:
-            raise TypeError('URI must be bytes/str/tuple/dict not %r' % (type(uri).__name__, ))
+            raise TypeError('URI must be bytes/str/tuple/dict not %r' % (type(uri).__name__,))
 
     @property
     def dict(self):
@@ -261,7 +261,7 @@ class URI(with_metaclass(URIType)):
             host = host[1:-1]
             try:
                 host = inet_ntop(AF_INET6, inet_pton(AF_INET6, host.decode('ascii')))
-                return '[%s]' % (host, )
+                return '[%s]' % (host,)
             except (SocketError, UnicodeDecodeError):
                 # IPvFuture
                 if host.startswith(b'v') and b'.' in host and host[1:].split(b'.', 1)[0].isdigit():

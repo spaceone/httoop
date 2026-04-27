@@ -3,6 +3,7 @@ HTTP request and response body.
 
 .. seealso:: :rfc:`2616#section-4.3`
 """
+
 from __future__ import annotations
 
 from io import BytesIO
@@ -32,10 +33,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
     the content using the codec specified in the MIME media type.
     """
 
-    __slots__ = (
-        'fd', 'data', '__iter', 'headers', 'trailer',
-        'content_codec', 'transfer_codec'
-    )
+    __slots__ = ('fd', 'data', '__iter', 'headers', 'trailer', 'content_codec', 'transfer_codec')
 
     MAX_CHUNK_SIZE = 4096
 
@@ -242,7 +240,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
                 if isinstance(data, str):
                     data = data.encode(self.encoding)
                 elif not isinstance(data, bytes):  # pragma: no cover
-                    raise TypeError('Iterable contained non-bytes: %r' % (type(data).__name__, ))
+                    raise TypeError('Iterable contained non-bytes: %r' % (type(data).__name__,))
                 yield data
         finally:
             self.seek(t)

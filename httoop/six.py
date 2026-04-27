@@ -1,4 +1,3 @@
-
 from six import int2byte, iterbytes, reraise, string_types, with_metaclass
 
 

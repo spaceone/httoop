@@ -1,4 +1,3 @@
-
 from httoop.status.types import StatusException
 
 

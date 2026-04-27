@@ -1,4 +1,3 @@
-
 from httoop.server import ServerStateMachine
 
 

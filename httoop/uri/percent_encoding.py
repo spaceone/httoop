@@ -1,4 +1,3 @@
-
 from typing import Iterator
 
 from httoop import six
@@ -52,4 +51,4 @@ class Percent:
     def quote(cls, data: bytes, charset: bytes = UNRESERVED) -> bytes:
         charset = {six.int2byte(c) for c in six.iterbytes(charset)} - {b'%'}
         data = (six.int2byte(d) for d in six.iterbytes(data))
-        return b''.join(b'%%%X' % (ord(d), ) if d not in charset else d for d in data)
+        return b''.join(b'%%%X' % (ord(d),) if d not in charset else d for d in data)

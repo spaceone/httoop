@@ -87,7 +87,7 @@ class ComposedResponse(ComposedMessage):
         yield self.request.protocol >= (1, 1)
         yield response.status == 200
         yield 'Range' in self.request.headers
-        yield self.request.method in ('GET', )
+        yield self.request.method in ('GET',)
         yield response.headers.element('Accept-Ranges') == 'bytes'
         yield not self.chunked
         yield response.body

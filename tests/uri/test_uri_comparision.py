@@ -1,4 +1,3 @@
-
 from httoop import URI
 
 

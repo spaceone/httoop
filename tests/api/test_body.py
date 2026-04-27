@@ -1,4 +1,3 @@
-
 from io import BytesIO, StringIO
 from tempfile import NamedTemporaryFile
 
@@ -75,6 +74,7 @@ def test_body_set_generator(request_):
         yield 'A'
         yield '\t'
         yield 'Generator'
+
     request_.body = g()
     assert request_.body.generator
     assert bytes(request_.body) == b'This is A\tGenerator'

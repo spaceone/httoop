@@ -99,7 +99,10 @@ class Date(with_metaclass(HTTPSemantic)):
             (b'Mon', b'Tue', b'Wed', b'Thu', b'Fri', b'Sat', b'Sun')[d.tm_wday],
             d.tm_mday,
             (b'Jan', b'Feb', b'Mar', b'Apr', b'May', b'Jun', b'Jul', b'Aug', b'Sep', b'Oct', b'Nov', b'Dec')[d.tm_mon - 1],
-            d.tm_year, d.tm_hour, d.tm_min, d.tm_sec
+            d.tm_year,
+            d.tm_hour,
+            d.tm_min,
+            d.tm_sec,
         )
 
     @classmethod
@@ -181,4 +184,4 @@ class Date(with_metaclass(HTTPSemantic)):
             raise NotImplementedError()  # pragma: no cover
 
     def __repr__(self) -> str:
-        return '<HTTP Date(%d)>' % (int(self), )
+        return '<HTTP Date(%d)>' % (int(self),)

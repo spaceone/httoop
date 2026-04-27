@@ -4,6 +4,7 @@ HTTP status codes.
 .. seealso:: :rfc:`2616#section-6.2`
 .. seealso:: :rfc:`2616#section-10`
 """
+
 from __future__ import annotations
 
 import re
@@ -69,7 +70,7 @@ class Status(with_metaclass(HTTPSemantic)):
     def reason(self, reason) -> None:
         self.set((self.__code, reason))
 
-    STATUS_RE = re.compile(br'^([1-5]\d{2})(?:\s+([\s\w]*))\Z')
+    STATUS_RE = re.compile(rb'^([1-5]\d{2})(?:\s+([\s\w]*))\Z')
 
     def __init__(self, code: int | None = None, reason: bytes | None = None) -> None:
         """
@@ -84,7 +85,7 @@ class Status(with_metaclass(HTTPSemantic)):
         reason = reason or ''
         reason = reason or reason or REASONS.get(code, ('', ''))[0]
         if code:
-            self.set((code, reason,))
+            self.set((code, reason))
 
     def parse(self, status: bytes) -> None:
         """
@@ -97,7 +98,7 @@ class Status(with_metaclass(HTTPSemantic)):
         if match is None:
             raise InvalidLine(_('Invalid status %r'), status.decode('ISO8859-1'))
 
-        self.set((int(match.group(1)), match.group(2).decode('ascii'),))
+        self.set((int(match.group(1)), match.group(2).decode('ascii')))
 
     def compose(self) -> bytes:
         return b'%d %s' % (self.__code, self.__reason.encode('ascii'))
@@ -194,5 +195,5 @@ REASONS = {
     502: ('Bad Gateway', 'Invalid responses from another server/proxy.'),
     503: ('Service Unavailable', 'The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.'),
     504: ('Gateway Timeout', 'The gateway server did not receive a timely response'),
-    505: ('HTTP Version Not Supported', 'Cannot fulfill request.')
+    505: ('HTTP Version Not Supported', 'Cannot fulfill request.'),
 }

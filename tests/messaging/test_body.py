@@ -1,4 +1,3 @@
-
 import sys
 
 import pytest
@@ -17,6 +16,7 @@ def test_chunked_body_without_trailer(request_):
         yield ''
         yield 'It is nice '
         yield 'and seems to work'
+
     request_.body = content()
     request_.body.chunked = True
     assert b'18\r\nLet us test this chunked\r\n1\r\n\n\r\n12\r\nTransfer Encoding.\r\nb\r\nIt is nice \r\n11\r\nand seems to work\r\n0\r\n\r\n' == bytes(request_.body)
@@ -87,6 +87,7 @@ def test_chunked_body_with_trailer(request_):
         yield ''
         yield 'It is nice '
         yield 'and seems to work'
+
     request_.body = content()
     request_.body.chunked = True
     request_.headers['Trailer'] = 'Foo, bar'

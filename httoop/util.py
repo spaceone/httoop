@@ -57,6 +57,7 @@ def if_has(func: Callable) -> Callable:
         if hasattr(self.fd, func.__name__):
             return func(self, *args, **kwargs)
         return False
+
     return _decorated
 
 

@@ -1,4 +1,3 @@
-
 import six
 
 from httoop import Date
@@ -22,4 +21,5 @@ def test_repr(request_, response):
 def test_object_inheritance_removed():
     class Foo(six.with_metaclass(HTTPSemantic, object)):
         pass
+
     print(Foo.mro())

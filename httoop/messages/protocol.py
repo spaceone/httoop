@@ -3,6 +3,7 @@ HTTP request and response messages.
 
 .. seealso:: :rfc:`2616#section-4`
 """
+
 from __future__ import annotations
 
 import re
@@ -14,7 +15,7 @@ from httoop.six import with_metaclass
 from httoop.util import _
 
 
-__all__ = ('Protocol', )
+__all__ = ('Protocol',)
 
 
 class Protocol(with_metaclass(HTTPSemantic)):
@@ -34,7 +35,7 @@ class Protocol(with_metaclass(HTTPSemantic)):
     def minor(self) -> int:
         return self[1]
 
-    PROTOCOL_RE = re.compile(br'^(HTTP)/(\d+)\.(\d+)\Z')
+    PROTOCOL_RE = re.compile(rb'^(HTTP)/(\d+)\.(\d+)\Z')
 
     def __init__(self, protocol: bytes | Protocol | tuple[int, int] | int | str = (1, 1)) -> None:
         self.__protocol = protocol

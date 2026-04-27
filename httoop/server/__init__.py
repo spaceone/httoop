@@ -30,7 +30,7 @@ class ServerStateMachine(StateMachine):
         self.request = self.message
         self.state.update({
             'method': False,
-            'uri': False
+            'uri': False,
         })
 
     def on_message_complete(self) -> tuple[httoop.messages.request.Request, httoop.messages.response.Response]:
@@ -90,9 +90,7 @@ class ServerStateMachine(StateMachine):
 
     def _check_uri_max_length(self, uri: bytearray | bytes) -> None:
         if len(uri) > self.MAX_URI_LENGTH:
-            raise URI_TOO_LONG(
-                'The maximum length of the request is %d' % self.MAX_URI_LENGTH
-            )
+            raise URI_TOO_LONG('The maximum length of the request is %d' % self.MAX_URI_LENGTH)
 
     def sanitize_request_uri_path(self) -> None:
         path = self.message.uri.path

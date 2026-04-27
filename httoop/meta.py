@@ -24,12 +24,12 @@ class Semantic:
     def compose(self):  # pragma: no cover
         raise NotImplementedError('%s.compose()' % (type(self).__name__,))
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, str):
             return str(self) == other
         return bytes(self) == other
 
-    def __ne__(self, other: Any) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self == other
 
     def __ge__(self, other: int | tuple[int, int]) -> bool:

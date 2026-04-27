@@ -110,7 +110,7 @@ class Status(with_metaclass(HTTPSemantic)):
         """Returns this status as number."""
         return self.__code
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Compares a status with another :class:`Status` or :class:`int`."""
         if isinstance(other, int):
             return self.__code == other

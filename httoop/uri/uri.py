@@ -336,7 +336,7 @@ class URI(with_metaclass(URIType)):
     def quote(self, data: str, charset: bytes) -> bytes:
         return Percent.quote(str(data).encode(self.encoding), charset)
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         """
         Compares the URI with another string or URI.
 

@@ -53,7 +53,15 @@ def test_digest_authorization(headers):
     qop="auth",
     nc="00000001"'''
     headers.parse(auth_bytes)
-    assert auth.params == headers.element('Authorization').params
+    elem = headers.element('Authorization')
+    assert elem.params == auth.params
+    assert elem.scheme == 'digest'
+    assert elem.username == 'Mufasa'
+    assert elem.password is None
+    elem.username = 'test'
+    elem.password = 'test'
+    assert elem.username == 'test'
+    assert elem.password is None
 
 
 def test_digest_authorization_no_qop(headers):

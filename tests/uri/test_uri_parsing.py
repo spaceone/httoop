@@ -193,6 +193,7 @@ def test_invalid_uri_characters(char):
     with pytest.raises(InvalidURI) as exc:
         URI().parse(b'/foo%sbar' % (char,))
     assert 'must consist of printable ASCII characters without whitespace.' in str(exc.value)
+    assert b'must consist of printable ASCII characters without whitespace.' in bytes(exc.value)
 
 
 @pytest.mark.parametrize('char', [

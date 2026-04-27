@@ -30,8 +30,28 @@ class _DateComparable:
 
 class _MatchElement:
 
-    def matches(self, value):
-        return self == value or self == '*'
+    def __eq__(self, other: Any) -> bool:
+        return self.value == other or self.value == '*'
+
+    def matches(self, etag):
+        return self == etag
+
+    def matches_etag(self, etag, *, strong: bool = True):
+        value = self.value
+
+        if value == '*':
+            return True
+
+        is_weak = value.startswith('W/')
+        if is_weak:
+            if strong:
+                return False
+            value = value[2:]
+
+        if not (value.startswith('"') and value.endswith('"')):
+            return False
+
+        return value[1:-1] == etag
 
 
 class ETag(HeaderElement):

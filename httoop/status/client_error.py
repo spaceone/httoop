@@ -10,8 +10,6 @@ class ClientErrorStatus(StatusException):
     format of wanted representation, or error in the clients http library.
     """
 
-    pass
-
 
 class BAD_REQUEST(ClientErrorStatus):
     """

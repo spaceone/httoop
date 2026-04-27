@@ -7,6 +7,7 @@ python3 -m httoop compose request -H 'Host: www.example.net'  | python3 -m httoo
 python3 -m httoop compose response  | python3 -m httoop parse response
 """
 
+import pathlib
 import sys
 from argparse import ArgumentParser, FileType
 
@@ -132,7 +133,7 @@ class CLI:
         if body == '-':
             body = sys.stdin.read()
         elif body.startswith('@'):
-            body = open(body[1:], 'rb')
+            body = pathlib.Path(body[1:]).open('rb')
         self.message.body = body
 
         sys.stdout.write(self.decode(bytes(self.message)))

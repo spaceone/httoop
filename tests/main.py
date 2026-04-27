@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
+import pathlib
 import sys
-from os.path import abspath, dirname
 from subprocess import STDOUT, Popen
 from types import ModuleType
 
@@ -22,7 +22,7 @@ def main():
         #        cmd.append("--no-cov-on-fail")
         cmd.append('--cov-report=html')
 
-    cmd.append(dirname(abspath(__file__)))
+    cmd.append(pathlib.Path(pathlib.Path(__file__).resolve()).parent)
 
     raise SystemExit(Popen(cmd, stdout=sys.stdout, stderr=STDOUT).wait())
 

@@ -70,7 +70,7 @@ def integer(number: int | str | bytes, *args) -> int:
     ValueError:
     """
     num = int(number, *args)
-    if isinstance(number, str) and '_' in number or isinstance(number, (bytes, bytearray)) and b' ' in number:
+    if (isinstance(number, str) and '_' in number) or (isinstance(number, (bytes, bytearray)) and b' ' in number):
         raise ValueError()
     return num
 

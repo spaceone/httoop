@@ -135,7 +135,7 @@ class HeaderElement(with_metaclass(HeaderType)):
             count.add(key)
             if b'*' in key:
                 if key.endswith(b'*') and not quoted and not value.startswith(b"'") and value.count(b"'") >= 2:
-                    charset, language, value_ = value.split(b"'", 2)
+                    charset, _language, value_ = value.split(b"'", 2)
                     encoding = cls._sanitize_encoding(charset.decode('ASCII', 'replace'))
                     try:
                         key, value = key[:-1], Percent.unquote(value_).decode(encoding)
@@ -273,7 +273,7 @@ class MimeType:
 
     @property
     def subtype(self):
-        return (self.value.split('/', 1) + [''])[1]
+        return ([*self.value.split('/', 1), ''])[1]
 
     @subtype.setter
     def subtype(self, subtype) -> None:

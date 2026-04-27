@@ -91,7 +91,7 @@ class Range(HeaderElement):
             try:
                 start = integer(start) if start else None
                 stop = integer(stop) if stop else None
-                if start and start < 0 or stop and stop < 0:
+                if (start and start < 0) or (stop and stop < 0):
                     raise ValueError()
             except ValueError:
                 raise InvalidHeader(_('no range number.'))

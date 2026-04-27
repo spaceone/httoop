@@ -40,7 +40,7 @@ class Resource(dict):
     def self(self) -> str:
         return self.expand(self.get_link('self')['href'])
 
-    def get_links(self, relation: str, name: None = None) -> Iterator[dict[str, None | bool | str]]:
+    def get_links(self, relation: str, name: None = None) -> Iterator[dict[str, bool | str | None]]:
         links = self['_links'].get(relation)
         if links is None:
             return

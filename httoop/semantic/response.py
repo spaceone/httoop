@@ -55,7 +55,7 @@ class ComposedResponse(ComposedMessage):
         if 'Content-Type' not in response.headers and response.body.mimetype and response.body:
             response.headers['Content-Type'] = bytes(response.body.mimetype)
 
-        if response.status == 200 and response.body.fileable and not self.chunked and 'Etag' in response.headers or 'Last-Modified' in response.headers:
+        if (response.status == 200 and response.body.fileable and not self.chunked and 'Etag' in response.headers) or 'Last-Modified' in response.headers:
             response.headers.setdefault('Accept-Ranges', b'bytes')
 
         self.prepare_ranges()

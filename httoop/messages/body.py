@@ -146,6 +146,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
         if codec:
             self.data = codec.decode(self.__content_bytes(), self.encoding, self.mimetype)
             return self.data
+        return None
 
     def compress(self) -> None:
         """Applies the Content-Encoding codec to the content."""
@@ -251,7 +252,7 @@ class Body(with_metaclass(HTTPSemantic, IFile)):
     def __iterable(self):
         if self.fileable:
             return self.__iter_fileable()
-        elif self.generator:
+        if self.generator:
             return self.__iter_generator()
         return self.fd
 

@@ -17,5 +17,4 @@ class QueryString(FormURLEncoded):
     def decode(cls, data: bytes, charset: str | None = None) -> tuple[()] | tuple[tuple[str, str]] | tuple[tuple[str, str], tuple[str, str], tuple[str, str]] | tuple[tuple[str, str], tuple[str, str]]:
         if any(in_table(x) for x in cls.unquote(data, 'ISO8859-1') for in_table in cls.INVALID):
             raise DecodeError(_('Invalid query string: contains invalid token'))
-        data = super().decode(data, charset)
-        return data
+        return super().decode(data, charset)

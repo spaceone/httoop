@@ -148,6 +148,7 @@ class StateMachine:
 
         headers, self.buffer = self.buffer.split(header_end, 1)
         self._parse_header(headers)
+        return None
 
     def _parse_single_headers(self) -> None:
         if self.buffer.endswith(self.line_end):
@@ -173,10 +174,9 @@ class StateMachine:
 
         if self.chunked:
             return self.parse_chunked_body()
-        elif self.message_length:
+        if self.message_length:
             return self.parse_body_with_message_length()
-        else:
-            return False  # no message body
+        return False  # no message body
 
     def determine_message_length(self) -> None:
         # RFC 2616 Section 4.4
@@ -211,6 +211,7 @@ class StateMachine:
         if unfinished:
             # the body is not yet received completely
             return NOT_RECEIVED_YET
+        return None
 
     def parse_chunked_body(self) -> bool:
         if self.state['trailer']:

@@ -66,7 +66,7 @@ class WSGI:
         def write(data):
             if not self.headers_set:
                 raise RuntimeError('write() before start_response()')
-            elif not self.headers_sent:
+            if not self.headers_sent:
                 self.start_response()
                 self.headers_sent = True
             return self.response.body.write(data)
@@ -105,7 +105,7 @@ class WSGI:
                 break
         else:
             write(b'')  # send headers now if body was empty
-            return
+            return None
 
         def buffered(data):
             try:
@@ -147,8 +147,7 @@ class WSGI:
             'wsgi.multiprocess': self.multiprocess,
             'wsgi.run_once': self.run_once,
         })
-        environ = {key: value.decode('ISO8859-1') if isinstance(value, bytes) else value for key, value in environ.items()}
-        return environ
+        return {key: value.decode('ISO8859-1') if isinstance(value, bytes) else value for key, value in environ.items()}
 
     def set_environ(self, environ: dict[str, str]) -> None:
         environ = environ.copy()

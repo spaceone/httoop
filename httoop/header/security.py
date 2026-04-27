@@ -98,6 +98,7 @@ class FrameOptions(HeaderElement):
             from httoop.uri import URI
 
             return [URI(uri) for uri in self.params.keys()]
+        return None
 
 
 class PermittedCrossDomainPolicies(HeaderElement):

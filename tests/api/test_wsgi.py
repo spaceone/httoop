@@ -71,6 +71,19 @@ def application9(environ, start_response):
     return []
 
 
+def application_string_write(environ, start_response):
+    # it's probably invalid but we support it currently
+    write = start_response(OK, response_headers)
+    write(output.decode('ASCII'))
+    return []
+
+
+def application_string_result(environ, start_response):
+    # it's probably invalid but we support it currently
+    start_response(OK, response_headers)
+    return output.decode('ASCII')
+
+
 @pytest.mark.parametrize('application,output', [
     (application1, output),
     (application2, output),
@@ -81,6 +94,8 @@ def application9(environ, start_response):
     (application7, output),
     (application8, output + output),
     (application9, b''),
+    (application_string_write, output),
+    (application_string_result, output),
 ])
 def test_wsgi_success(application, output):
     client = WSGIClient()

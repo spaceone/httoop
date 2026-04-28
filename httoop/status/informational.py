@@ -8,7 +8,7 @@ class InformationalStatus(StatusException):
     """
 
 
-class CONTINUE(InformationalStatus):
+class CONTINUE(InformationalStatus, code=100):
     """
     This is, beside 417, the code for a LBYL (Look before you leap) request.
     It indicates that the request is OK and the client should resent its request.
@@ -16,19 +16,17 @@ class CONTINUE(InformationalStatus):
     .. seealso:: :rfc:`2616#section-10.1`
     """
 
-    code = 100
     body = None
 
 
-class SWITCHING_PROTOCOLS(InformationalStatus):
+class SWITCHING_PROTOCOLS(InformationalStatus, code=101):
     """
     If the client wants to use another protocol (in the Upgrade-header)
     this is the response that the TCP server now speaks another protocol.
     """
 
-    code = 101
     body = None
 
 
-class PROCESSING(InformationalStatus):
-    code = 102
+class PROCESSING(InformationalStatus, code=102):
+    """Processing."""

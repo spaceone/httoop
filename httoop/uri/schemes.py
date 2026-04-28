@@ -1,43 +1,36 @@
 from httoop.uri.uri import URI
 
 
-class GitSSH(URI):
+class GitSSH(URI, scheme='git+ssh'):
     __slots__ = ()
-    SCHEME = b'git+ssh'
     PORT = 22
 
 
-class SvnSSH(URI):
+class SvnSSH(URI, scheme='svn+ssh'):
     __slots__ = ()
-    SCHEME = b'svn+ssh'
     PORT = 22
 
 
-class IMAP(URI):
+class IMAP(URI, scheme='imap'):
     __slots__ = ()
-    SCHEME = b'imap'
     PORT = 143
 
 
-class NFS(URI):
+class NFS(URI, scheme='nfs'):
     __slots__ = ()
-    SCHEME = b'nfs'
     PORT = 2049
 
 
-class MMS(URI):
+class MMS(URI, scheme='mms'):
     __slots__ = ()
-    SCHEME = b'mms'
     PORT = 1755
 
 
-class FTP(URI):
+class FTP(URI, scheme='ftp'):
     __slots__ = ()
-    SCHEME = b'ftp'
     PORT = 21
 
 
-class LDAP(URI):
+class LDAP(URI, scheme='ldap'):
     __slots__ = ()
-    SCHEME = b'ldap'
     PORT = 389

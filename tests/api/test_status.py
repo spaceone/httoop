@@ -159,10 +159,15 @@ def test_status_type(response):
     assert response.status.server_error
 
 
-@pytest.mark.parametrize('code', [99, 600, 1000])
+@pytest.mark.parametrize('code', [99, 600, 1000, 0])
 def test_invalid_status_code(code, response):
     with pytest.raises(TypeError):
         response.status = code
+    with pytest.raises(TypeError):
+        response.status.code = code
+    from httoop.status import Status
+    with pytest.raises(TypeError):
+        Status(code)
 
 
 def test_invalid_status_subclasses():
@@ -170,13 +175,13 @@ def test_invalid_status_subclasses():
 
     with pytest.raises(RuntimeError):
 
-        class MyServerError(ServerErrorStatus):
-            code = 600
+        class MyServerError(ServerErrorStatus, code=600):
+            pass
 
     with pytest.raises(RuntimeError):
 
-        class MyInformational(ServerErrorStatus):
-            code = 100
+        class MyInformational(ServerErrorStatus, code=100):
+            pass
 
 
 def test_created_location():

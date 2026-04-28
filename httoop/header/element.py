@@ -26,17 +26,10 @@ __all__ = ['HEADER', 'HeaderElement']
 HEADER = CaseInsensitiveDict()
 
 
-class HeaderType(type):
-
-    def __new__(cls: type, name: str, bases: Any, dict_: dict[str, Any]) -> Any:
-        __all__.append(name)
-        name = dict_.get('__name__', name)
-        return super().__new__(cls, name, bases, dict_)
-
-
-class HeaderElement(metaclass=HeaderType):
+class HeaderElement:
     """An element (with parameters) from an HTTP header's element list."""
 
+    name = ''
     priority = None
     is_request_header = False
     is_response_header = False
@@ -54,6 +47,13 @@ class HeaderElement(metaclass=HeaderType):
         self.value = value
         self.params = ByteUnicodeDict(params or {})
         self.sanitize()
+
+    def __init_subclass__(cls, name=None, **kwargs):
+        super().__init_subclass__(**kwargs)
+        name = name or cls.__name__
+        if name != 'HeaderElement' and not name.startswith('_'):
+            HEADER[name] = cls
+        cls.name = name
 
     def sanitize(self) -> None:
         pass
@@ -101,7 +101,7 @@ class HeaderElement(metaclass=HeaderType):
         try:
             val, quoted = cls.unescape_param(val.strip())
         except InvalidHeader:
-            raise InvalidHeader(_('Unquoted parameter %r in %r containing TSPECIALS: %r'), key, cls.__name__, val)
+            raise InvalidHeader(_('Unquoted parameter %r in %r containing TSPECIALS: %r'), key, cls.name, val)
         return cls.unescape_key(key), val, quoted
 
     @classmethod
@@ -114,7 +114,7 @@ class HeaderElement(metaclass=HeaderType):
         if quoted:
             value = re.sub(b'\\\\(?!\\\\)', b'', value[1:-1])
         elif cls.RE_TSPECIALS.search(value):
-            raise InvalidHeader(_('Unquoted parameter in %r containing TSPECIALS: %r'), cls.__name__, value)
+            raise InvalidHeader(_('Unquoted parameter in %r containing TSPECIALS: %r'), cls.name, value)
         return value, quoted
 
     @classmethod
@@ -248,7 +248,7 @@ class HeaderElement(metaclass=HeaderType):
 
     def __repr__(self) -> str:
         params = f', {self.params!r}' if self.params else ''
-        return f'<{self.__class__.__name__}({self.value!r}{params})>'
+        return f'<{self.name}({self.value!r}{params})>'
 
 
 class MimeType:

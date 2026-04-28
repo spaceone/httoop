@@ -9,14 +9,14 @@ from __future__ import annotations
 import re
 
 from httoop.exceptions import InvalidLine
-from httoop.meta import HTTPSemantic
+from httoop.meta import Semantic
 from httoop.util import _
 
 
 __all__ = ('Protocol',)
 
 
-class Protocol(metaclass=HTTPSemantic):
+class Protocol(Semantic):
     """The HTTP protocol version."""
 
     __slots__ = ('__protocol', 'name')

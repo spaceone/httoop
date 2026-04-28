@@ -10,7 +10,7 @@ class SuccessStatus(StatusException):
     """
 
 
-class OK(SuccessStatus):
+class OK(SuccessStatus, code=200):
     """
     The request was successful.
     On GET requests the entity body will be a
@@ -19,19 +19,16 @@ class OK(SuccessStatus):
     the current state of the resource or a description of the performed action.
     """
 
-    code = 200
     cacheable = True
 
 
-class CREATED(SuccessStatus):
+class CREATED(SuccessStatus, code=201):
     """
     A new resource was created.
     This should only be send on POST and PUT requests.
     The Location-Header should contain the URI to the created resource.
     The entity-body should describe and link to the created resource.
     """
-
-    code = 201
 
     def __init__(self, location: str, *args, **kwargs) -> None:
         kwargs.setdefault('headers', {})['Location'] = location
@@ -43,7 +40,7 @@ class CREATED(SuccessStatus):
         return dct
 
 
-class ACCEPTED(SuccessStatus):
+class ACCEPTED(SuccessStatus, code=202):
     """
     The request looks valid but will be procecced later.
     It is an asynchronous action.
@@ -53,20 +50,17 @@ class ACCEPTED(SuccessStatus):
     time when the request will be processed.
     """
 
-    code = 202
 
-
-class NON_AUTHORITATIVE_INFORMATION(SuccessStatus):
+class NON_AUTHORITATIVE_INFORMATION(SuccessStatus, code=203):
     """
     Everything is OK but the response headers
     may be altered by a third party.
     """
 
-    code = 203
     cacheable = True
 
 
-class NO_CONTENT(SuccessStatus):
+class NO_CONTENT(SuccessStatus, code=204):
     """
     GET: The representation of the resource is empty.
     other request methods: the status message or representation is not needed.
@@ -75,12 +69,11 @@ class NO_CONTENT(SuccessStatus):
     to a single record (a HTML POST form).
     """
 
-    code = 204
     body = None
     cacheable = True
 
 
-class RESET_CONTENT(SuccessStatus):
+class RESET_CONTENT(SuccessStatus, code=205):
     """
     The same as 204 but this indicated that the client should
     reset the view of its data structure.
@@ -88,11 +81,10 @@ class RESET_CONTENT(SuccessStatus):
     in succession (a HTML POST form).
     """
 
-    code = 205
     body = None
 
 
-class PARTIAL_CONTENT(SuccessStatus):
+class PARTIAL_CONTENT(SuccessStatus, code=206):
     """
     Partial GET:
     The response does not contain the full representation of a resource
@@ -102,10 +94,8 @@ class PARTIAL_CONTENT(SuccessStatus):
     and Content-Location-header are useful.
     """
 
-    code = 206
 
-
-class MULTI_STATUS(SuccessStatus):
+class MULTI_STATUS(SuccessStatus, code=207):
     """
     This status code indicated that the entity-body contains information
     about the states of the batch request.
@@ -113,14 +103,12 @@ class MULTI_STATUS(SuccessStatus):
     The entity-body is descripted in RFC 2518.
     """
 
-    code = 207
+
+class ALREADY_REPORTED(SuccessStatus, code=208):
+    """Already reported."""
 
 
-class ALREADY_REPORTED(SuccessStatus):
+class IM_USED(SuccessStatus, code=226):
+    """I'm used."""
 
-    code = 208
-
-
-class IM_USED(SuccessStatus):
-
-    code = 226
+    reason = 'foo'

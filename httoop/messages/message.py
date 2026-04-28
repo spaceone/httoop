@@ -8,13 +8,13 @@ import httoop.header.headers
 from httoop.header import Headers
 from httoop.messages.body import Body
 from httoop.messages.protocol import Protocol
-from httoop.meta import HTTPSemantic
+from httoop.meta import Semantic
 
 
 __all__ = ('Message',)
 
 
-class Message(metaclass=HTTPSemantic):
+class Message(Semantic):
     """
     A HTTP message.
 

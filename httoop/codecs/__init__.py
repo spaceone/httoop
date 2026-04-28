@@ -2,6 +2,7 @@
 Module containing various codecs which are
 common used in combination with HTTP.
 """
+
 from __future__ import annotations
 
 import inspect
@@ -14,11 +15,7 @@ from httoop.codecs.codec import Codec
 CODECS = {}
 types = (application, audio, example, image, message, model, multipart, text, video)
 
-__all__ = [
-    'CODECS', 'Codec',
-    'application', 'audio', 'example', 'image',
-    'message', 'model', 'multipart', 'text', 'video'
-]
+__all__ = ['CODECS', 'Codec', 'application', 'audio', 'example', 'image', 'message', 'model', 'multipart', 'text', 'video']
 
 
 def lookup(encoding: str, raise_errors: bool = True) -> Any:

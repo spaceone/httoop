@@ -82,7 +82,7 @@ class Request(Message):
 
     def validate_request_uri(self) -> None:
         uri = self.uri
-        if not isinstance(uri, (uri.SCHEMES[b'http'], uri.SCHEMES[b'https'])):
+        if not isinstance(uri, (uri.SCHEMES['http'], uri.SCHEMES['https'])):
             raise InvalidURI(_('The request URI scheme must be HTTP based.'))
         if uri.fragment or uri.username or uri.password:
             raise InvalidURI(_('The request URI must not contain fragments or user information.'))

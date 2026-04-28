@@ -26,17 +26,15 @@ class RedirectStatus(StatusException):
         return dct
 
 
-class MULTIPLE_CHOICES(RedirectStatus):
+class MULTIPLE_CHOICES(RedirectStatus, code=300):
     """
     The server has multiple representations of the requested resource.
     And the client e.g. did not specify the Accept-header or
     the requested representation does not exists.
     """
 
-    code = 300
 
-
-class MOVED_PERMANENTLY(RedirectStatus):
+class MOVED_PERMANENTLY(RedirectStatus, code=301):
     """
     The the server knows the target resource but the URI
     is incorrect (wrong domain, trailing slash, etc.).
@@ -44,17 +42,14 @@ class MOVED_PERMANENTLY(RedirectStatus):
     renamed to prevent broken links.
     """
 
-    code = 301
     cacheable = True
 
 
-class FOUND(RedirectStatus):
-
-    code = 302
+class FOUND(RedirectStatus, code=302):
     cacheable = True
 
 
-class SEE_OTHER(RedirectStatus):
+class SEE_OTHER(RedirectStatus, code=303):
     """
     The request has been processed but instead of serving a
     representation of the result or resource it links to another
@@ -65,11 +60,10 @@ class SEE_OTHER(RedirectStatus):
     .
     """
 
-    code = 303
     cacheable = True
 
 
-class NOT_MODIFIED(RedirectStatus):
+class NOT_MODIFIED(RedirectStatus, code=304):
     """
     The client already has the data which is provided through the
     information in the Etag or If-Modified-Since-header.
@@ -82,7 +76,6 @@ class NOT_MODIFIED(RedirectStatus):
     The response body has to be empty.
     """
 
-    code = 304
     body = None
 
     def __init__(self, *args, **kwargs) -> None:
@@ -96,12 +89,11 @@ class NOT_MODIFIED(RedirectStatus):
     )
 
 
-class USE_PROXY(RedirectStatus):
+class USE_PROXY(RedirectStatus, code=305):
+    """Use proxy."""
 
-    code = 305
 
-
-class TEMPORARY_REDIRECT(RedirectStatus):
+class TEMPORARY_REDIRECT(RedirectStatus, code=307):
     """
     The request has not processed because the requested
     resource is located at a different URI.
@@ -110,11 +102,8 @@ class TEMPORARY_REDIRECT(RedirectStatus):
     important that the request was not processed.
     """
 
-    code = 307
     cacheable = True
 
 
-class PERMANENT_REDIRECT(RedirectStatus):
-
-    code = 308
+class PERMANENT_REDIRECT(RedirectStatus, code=308):
     cacheable = True

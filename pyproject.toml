@@ -7,7 +7,6 @@ version = { attr = "httoop.version.__version__" }
 
 [project]
 name = "httoop"
-# version = "0.1.1"
 dynamic = ["version"]
 description = "object oriented HTTP protocol library"
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -28,6 +27,11 @@ classifiers = [
   "Operating System :: Microsoft :: Windows",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
   "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
   "Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware",

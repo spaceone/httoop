@@ -11,11 +11,14 @@ import re
 from typing import Any
 
 from httoop.exceptions import InvalidLine
-from httoop.meta import HTTPSemantic
+from httoop.meta import Semantic
 from httoop.util import _, integer
 
 
-class Status(metaclass=HTTPSemantic):
+STATUSES = {}
+
+
+class Status(Semantic):
     """
     A HTTP Status.
 
@@ -69,6 +72,8 @@ class Status(metaclass=HTTPSemantic):
     def reason(self, reason) -> None:
         self.set((self.__code, reason))
 
+    description = ''
+
     STATUS_RE = re.compile(rb'^([1-5]\d{2})(?:\s+([\s\w]*))\Z')
 
     def __init__(self, code: int | None = None, reason: bytes | None = None) -> None:
@@ -83,8 +88,38 @@ class Status(metaclass=HTTPSemantic):
         self.__reason = ''
         reason = reason or ''
         reason = reason or reason or REASONS.get(code, ('', ''))[0]
-        if code:
+        if code is not None:
             self.set((code, reason))
+
+    def __init_subclass__(cls, code=None, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if code is None:
+            return
+
+        if not (100 <= code <= 599):
+            raise RuntimeError('HTTP status code must be between 100 and 599', code, cls)
+
+        if code < 200:
+            expected = 'InformationalStatus'
+        elif code < 300:
+            expected = 'SuccessStatus'
+        elif code < 400:
+            expected = 'RedirectStatus'
+        elif code < 500:
+            expected = 'ClientErrorStatus'
+        else:
+            expected = 'ServerErrorStatus'
+
+        if not any(base.__name__ == expected for base in cls.__mro__):
+            raise RuntimeError(f'{cls.__name__} must inherit from {expected}')
+
+        cls.code = code
+        reason, description = REASONS.get(code, ('', ''))
+        if cls.reason is Status.reason:
+            cls.reason = reason
+        if not cls.description:
+            cls.description = description
+        STATUSES[code] = cls
 
     def parse(self, status: bytes) -> None:
         """
@@ -132,7 +167,7 @@ class Status(metaclass=HTTPSemantic):
         :type  status:
         int or tuple or bytes or Status
         """
-        if isinstance(status, int) and 99 < status < 600:
+        if isinstance(status, int):
             self.__code, self.__reason = status, REASONS.get(status, ('', ''))[0]
         elif isinstance(status, tuple):
             code, reason = status
@@ -147,6 +182,8 @@ class Status(metaclass=HTTPSemantic):
         elif isinstance(status, Status):
             self.__code, self.__reason = status.code, status.reason
         else:
+            raise TypeError('invalid status')
+        if not (99 < self.__code < 600):
             raise TypeError('invalid status')
 
     def __repr__(self) -> str:

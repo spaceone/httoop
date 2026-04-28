@@ -7,7 +7,7 @@ from httoop.date import Date
 from httoop.exceptions import InvalidHeader
 from httoop.messages.body import Body
 from httoop.semantic.message import ComposedMessage
-from httoop.status import STATUSES
+from httoop.status.status import STATUSES
 
 
 if TYPE_CHECKING:

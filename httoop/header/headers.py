@@ -5,11 +5,11 @@ from typing import Any
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HEADER, HeaderElement
-from httoop.meta import HTTPSemantic
+from httoop.meta import Semantic
 from httoop.util import CaseInsensitiveDict, _, to_unicode
 
 
-class Headers(CaseInsensitiveDict, metaclass=HTTPSemantic):
+class Headers(CaseInsensitiveDict, Semantic):
 
     __slots__ = ()
 
@@ -45,7 +45,7 @@ class Headers(CaseInsensitiveDict, metaclass=HTTPSemantic):
         if cls.HEADER_RE.search(key.encode('utf-8')):
             raise InvalidHeader(_('Invalid header name: %r'), key)
         try:
-            return to_unicode(HEADER[key].__name__)
+            return to_unicode(HEADER[key].name)
         except KeyError:
             return key
 
@@ -156,7 +156,7 @@ class Headers(CaseInsensitiveDict, metaclass=HTTPSemantic):
         for key, values in self.items():
             Element = HEADER.get(key, HeaderElement)
             if Element is not HeaderElement:
-                key = Element.__name__
+                key = Element.name
             key = key.encode('ascii', 'ignore')
             if Element.list_element:
                 for value in Element.split(values):

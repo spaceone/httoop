@@ -15,14 +15,14 @@ from email.utils import parsedate_tz
 from typing import Any
 
 from httoop.exceptions import InvalidDate
-from httoop.meta import HTTPSemantic
+from httoop.meta import Semantic
 from httoop.util import _
 
 
 __all__ = ['Date']
 
 
-class Date(metaclass=HTTPSemantic):
+class Date(Semantic):
     """
     A HTTP Date string.
 

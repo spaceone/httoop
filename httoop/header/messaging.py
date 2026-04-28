@@ -19,7 +19,7 @@ class CodecElement:
     def sanitize(self) -> None:
         super().sanitize()
         if self.value and self.codec is None and self.raise_on_missing_codec:
-            raise InvalidHeader(_('Unknown %s: %r'), self.__name__, self.value)
+            raise InvalidHeader(_('Unknown %s: %r'), self.name, self.value)
 
     @property
     def codec(self) -> Any:
@@ -50,28 +50,23 @@ class Accept(_AcceptElement, MimeType):
             self.value = '*/*'
 
 
-class AcceptCharset(_AcceptElement):
-    __name__ = 'Accept-Charset'
+class AcceptCharset(_AcceptElement, name='Accept-Charset'):
     is_request_header = True
 
 
-class AcceptEncoding(_AcceptElement):
-    __name__ = 'Accept-Encoding'
+class AcceptEncoding(_AcceptElement, name='Accept-Encoding'):
     is_request_header = True
 
 
-class AcceptLanguage(_AcceptElement):
-    __name__ = 'Accept-Language'
+class AcceptLanguage(_AcceptElement, name='Accept-Language'):
     is_request_header = True
 
 
-class AcceptRanges(_AcceptElement):
-    __name__ = 'Accept-Ranges'
+class AcceptRanges(_AcceptElement, name='Accept-Ranges'):
     is_request_header = True
 
 
-class AcceptPatch(_AcceptElement):
-    __name__ = 'Accept-Patch'
+class AcceptPatch(_AcceptElement, name='Accept-Patch'):
     is_response_header = True
 
 
@@ -94,9 +89,8 @@ class Connection(_HopByHopElement, HeaderElement):
         return self.value.lower() == 'upgrade'
 
 
-class ContentDisposition(HeaderElement):
+class ContentDisposition(HeaderElement, name='Content-Disposition'):
 
-    __name__ = 'Content-Disposition'
     is_response_header = True
 
     from httoop.date import Date
@@ -144,8 +138,7 @@ class ContentDisposition(HeaderElement):
             raise InvalidHeader(_('Unknown Content-Disposition: %r'), self.value)
 
 
-class ContentEncoding(CodecElement, HeaderElement):
-    __name__ = 'Content-Encoding'
+class ContentEncoding(CodecElement, HeaderElement, name='Content-Encoding'):
     is_request_header = True
     is_response_header = True
 
@@ -162,32 +155,29 @@ class ContentEncoding(CodecElement, HeaderElement):
     }
 
 
-class ContentLanguage(HeaderElement):
-    __name__ = 'Content-Language'
+class ContentLanguage(HeaderElement, name='Content-Language'):
     is_request_header = True
     is_response_header = True
 
 
-class ContentLength(HeaderElement):
-    __name__ = 'Content-Length'
+class ContentLength(HeaderElement, name='Content-Length'):
     is_request_header = True
     is_response_header = True
 
 
-class ContentLocation(HeaderElement):
-    __name__ = 'Content-Location'
+class ContentLocation(HeaderElement, name='Content-Location'):
+
     is_response_header = True
 
 
-class ContentMD5(HeaderElement):
-    __name__ = 'Content-MD5'
+class ContentMD5(HeaderElement, name='Content-MD5'):
+
     is_request_header = True
     is_response_header = True
 
 
-class ContentType(HeaderElement, MimeType, CodecElement):
+class ContentType(HeaderElement, MimeType, CodecElement, name='Content-Type'):
 
-    __name__ = 'Content-Type'
     is_request_header = True
     is_response_header = True
 
@@ -344,8 +334,8 @@ class Host(HeaderElement):
             raise InvalidHeader(_('Invalid Host header: %s'), self.value)
 
 
-class XForwardedHost(Host):
-    __name__ = 'X-Forwarded-Host'
+class XForwardedHost(Host, name='X-Forwarded-Host'):
+
     is_request_header = True
 
 
@@ -353,9 +343,8 @@ class Location(HeaderElement):
     is_response_header = True
 
 
-class MaxForwards(HeaderElement):
+class MaxForwards(HeaderElement, name='Max-Forwards'):
 
-    __name__ = 'Max-Forwards'
     is_response_header = True
 
 
@@ -363,9 +352,8 @@ class Referer(HeaderElement):
     is_request_header = True
 
 
-class RetryAfter(HeaderElement):
+class RetryAfter(HeaderElement, name='Retry-After'):
 
-    __name__ = 'Retry-After'
     is_response_header = True
 
 
@@ -375,9 +363,8 @@ class Server(HeaderElement):
     is_response_header = True
 
 
-class SetCookie(_ListElement, _CookieElement):
+class SetCookie(_ListElement, _CookieElement, name='Set-Cookie'):
 
-    __name__ = 'Set-Cookie'
     is_response_header = True
 
     from httoop.date import Date
@@ -443,8 +430,7 @@ class Trailer(_HopByHopElement, HeaderElement):
             raise InvalidHeader(_('A Trailer header MUST NOT contain %r field'), self.value.title())
 
 
-class TransferEncoding(_HopByHopElement, CodecElement, HeaderElement):
-    __name__ = 'Transfer-Encoding'
+class TransferEncoding(_HopByHopElement, CodecElement, HeaderElement, name='Transfer-Encoding'):
 
     is_response_header = True
     is_request_header = True
@@ -468,8 +454,8 @@ class Upgrade(_HopByHopElement, HeaderElement):
         return self.value.lower() == 'websocket'
 
 
-class UserAgent(HeaderElement):
-    __name__ = 'User-Agent'
+class UserAgent(HeaderElement, name='User-Agent'):
+
     is_response_header = True
     is_request_header = True
 
@@ -479,7 +465,6 @@ class Via(HeaderElement):
     is_response_header = True
 
 
-class HTTP2Settings(HeaderElement):
-    __name__ = 'HTTP2-Settings'
+class HTTP2Settings(HeaderElement, name='HTTP2-Settings'):
     is_request_header = True
     is_response_header = True

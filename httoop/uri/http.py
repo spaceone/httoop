@@ -8,13 +8,11 @@ HTTP URLs
 from httoop.uri.uri import URI
 
 
-class HTTP(URI):
+class HTTP(URI, scheme='http'):
     __slots__ = ()
-    SCHEME = b'http'
     PORT = 80
 
 
-class HTTPS(HTTP):
+class HTTPS(HTTP, scheme='https'):
     __slots__ = ()
-    SCHEME = b'HTTPS'
     PORT = 443

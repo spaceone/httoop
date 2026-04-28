@@ -61,26 +61,26 @@ class ETag(HeaderElement):
         return other.value in {self.value, '*'}
 
 
-class LastModified(_DateComparable, HeaderElement):
-    __name__ = 'Last-Modified'
+class LastModified(_DateComparable, HeaderElement, name='Last-Modified'):
+
     is_response_header = True
 
 
-class IfMatch(_MatchElement, HeaderElement):
-    __name__ = 'If-Match'
+class IfMatch(_MatchElement, HeaderElement, name='If-Match'):
+
     is_request_header = True
 
 
-class IfModifiedSince(_DateComparable, HeaderElement):
-    __name__ = 'If-Modified-Since'
+class IfModifiedSince(_DateComparable, HeaderElement, name='If-Modified-Since'):
+
     is_request_header = True
 
 
-class IfNoneMatch(_MatchElement, HeaderElement):
-    __name__ = 'If-None-Match'
+class IfNoneMatch(_MatchElement, HeaderElement, name='If-None-Match'):
+
     is_request_header = True
 
 
-class IfUnmodifiedSince(_DateComparable, HeaderElement):
-    __name__ = 'If-Unmodified-Since'
+class IfUnmodifiedSince(_DateComparable, HeaderElement, name='If-Unmodified-Since'):
+
     is_request_header = True

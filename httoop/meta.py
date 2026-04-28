@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Any
 
-
-__all__ = ['HTTPSemantic']
+__all__ = ['Semantic']
 
 
 class Semantic:
+    """Implements the HTTP Semantic interface."""
 
     __slots__ = ()
 
@@ -43,15 +42,3 @@ class Semantic:
 
     def __repr__(self) -> str:
         return f'<HTTP {self.__class__.__name__}(0x{id(self):x})>'
-
-
-class HTTPSemantic(type):
-    """Implements the HTTP Semantic interface."""
-
-    def __new__(mcs: type, name: str, bases: Any, dict_: dict[str, Any]) -> Any:
-        bases = list(bases)
-        if object in bases:
-            bases.remove(object)
-        bases.append(Semantic)
-
-        return super().__new__(mcs, name, tuple(bases), dict_)

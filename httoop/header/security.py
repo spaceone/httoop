@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from httoop.uri.http import HTTPS
 
 
-class ContentSecurityPolicy(HeaderElement):
+class ContentSecurityPolicy(HeaderElement, name='Content-Security-Policy'):
     """
     Content security policy (CSP).
 
@@ -22,7 +22,6 @@ class ContentSecurityPolicy(HeaderElement):
     ..seealso:: http://www.w3.org/TR/CSP2/
     """
 
-    __name__ = 'Content-Security-Policy'
     is_response_header = True
 
     RE_SPLIT = re.compile(rb';')
@@ -32,12 +31,12 @@ class ContentSecurityPolicy(HeaderElement):
         return b'%s %s; ' % (self.value.encode('ISO8859-1'), b' '.join(self.params.keys()))
 
 
-class ContentSecurityPolicyReportOnly(ContentSecurityPolicy):
-    __name__ = 'Content-Security-Policy-Report-Only'
+class ContentSecurityPolicyReportOnly(ContentSecurityPolicy, name='Content-Security-Policy-Report-Only'):
+
     is_response_header = True
 
 
-class StrictTransportSecurity(HeaderElement):
+class StrictTransportSecurity(HeaderElement, name='Strict-Transport-Security'):
     """
     HTTP strict transport security (HSTS).
 
@@ -46,7 +45,6 @@ class StrictTransportSecurity(HeaderElement):
     ..seealso:: :rfc:`rfc6797`
     """
 
-    __name__ = 'Strict-Transport-Security'
     is_response_header = True
 
     @property
@@ -58,14 +56,13 @@ class StrictTransportSecurity(HeaderElement):
         return integer(self.value.split('=', 1)[1])  # TODO: more generic parsing
 
 
-class ContentTypeOptions(HeaderElement):
+class ContentTypeOptions(HeaderElement, name='X-Content-Type-Options'):
     """
     Content Type options.
 
     "nosniff" forces user agents to strictly evaluate the Content-Type response header.
     """
 
-    __name__ = 'X-Content-Type-Options'
     is_response_header = True
 
     @property
@@ -73,7 +70,7 @@ class ContentTypeOptions(HeaderElement):
         return self == 'nosniff'
 
 
-class FrameOptions(HeaderElement):
+class FrameOptions(HeaderElement, name='X-Frame-Options'):
     """
     Frame Options.
 
@@ -83,7 +80,6 @@ class FrameOptions(HeaderElement):
     ..seealso:: :rfc:`7034`
     """
 
-    __name__ = 'X-Frame-Options'
     is_response_header = True
 
     RE_PARAMS = re.compile(b'\\s+')
@@ -105,26 +101,24 @@ class FrameOptions(HeaderElement):
         return None
 
 
-class PermittedCrossDomainPolicies(HeaderElement):
-    __name__ = 'X-Permitted-Cross-Domain-Policies'
+class PermittedCrossDomainPolicies(HeaderElement, name='X-Permitted-Cross-Domain-Policies'):
+
     is_response_header = True
 
 
-class PublicKeyPins(HeaderElement):
+class PublicKeyPins(HeaderElement, name='Public-Key-Pins'):
     """Public Key Pinning Extension for HTTP (HPKP)."""
 
-    __name__ = 'Public-Key-Pins'
     is_response_header = True
 
 
-class XSSProtection(HeaderElement):
+class XSSProtection(HeaderElement, name='X-XSS-Protection'):
     """
     Cross site scripting (XSS) protection.
 
     Enable cross site scripting filter in the user agent.
     """
 
-    __name__ = 'X-XSS-Protection'
     is_response_header = True
 
     @property

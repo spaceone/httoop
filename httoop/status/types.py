@@ -6,39 +6,10 @@ HTTP status codes.
 
 from __future__ import annotations
 
-from typing import Any
-
-from httoop.meta import HTTPSemantic
-from httoop.status.status import REASONS, Status
+from httoop.status.status import Status
 
 
-class StatusType(HTTPSemantic):
-
-    def __new__(cls: type, name: str, bases: Any, dict_: dict[str, Any]) -> Any:
-        code = int(dict_.get('code', 0))
-        if 99 < code < 200:
-            scls = 'InformationalStatus'
-        elif code < 300:
-            scls = 'SuccessStatus'
-        elif code < 400:
-            scls = 'RedirectStatus'
-        elif code < 500:
-            scls = 'ClientErrorStatus'
-        elif code < 600:
-            scls = 'ServerErrorStatus'
-        else:
-            raise RuntimeError('A HTTP Status code can not be greater than 599 or lower than 100')
-
-        if code and not any(scls == base.__name__ for base in bases):
-            raise RuntimeError(f'{name} must inherit from {scls}')
-
-        reason = REASONS.get(code, ('', ''))
-        dict_.setdefault('reason', reason[0])
-        dict_.setdefault('description', reason[1])
-        return super().__new__(cls, name, bases, dict_)
-
-
-class StatusException(Status, Exception, metaclass=StatusType):
+class StatusException(Status, Exception):
     """
     This class represents a small HTTP Response message
     for error handling purposes
@@ -79,7 +50,7 @@ class StatusException(Status, Exception, metaclass=StatusType):
         if self.server_error:
             self._traceback = tb
 
-    code = 0
+    code = None
 
     def __init__(self, description: str | None = None, reason: None = None, headers: dict[str, str] | None = None, traceback: str | None = None) -> None:
         """
@@ -108,6 +79,8 @@ class StatusException(Status, Exception, metaclass=StatusType):
 
         if description is not None:
             self.description = description
+        else:
+            self.description = type(self).description
 
         if traceback:
             self.traceback = traceback

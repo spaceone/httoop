@@ -5,21 +5,17 @@ HTTP status codes.
 .. seealso:: :rfc:`2616#section-10`
 """
 
-import inspect
+from httoop.status.client_error import ClientErrorStatus
+from httoop.status.informational import InformationalStatus
+from httoop.status.redirect import RedirectStatus
+from httoop.status.server_error import ServerErrorStatus
+from httoop.status.status import REASONS, STATUSES, Status
+from httoop.status.success import SuccessStatus
+from httoop.status.types import StatusException
 
-from httoop.status import client_error, informational, redirect, server_error, success
-from httoop.status.status import REASONS, Status
-from httoop.status.types import StatusException, StatusType
 
+__all__ = ['REASONS', 'ClientErrorStatus', 'InformationalStatus', 'RedirectStatus', 'ServerErrorStatus', 'Status', 'StatusException', 'SuccessStatus']
 
-__all__ = ['REASONS', 'Status', 'StatusException', 'StatusType']
-
-# mapping of status -> Class
-STATUSES = {}
-types = (informational, success, redirect, client_error, server_error)
-
-for _, member in (member for type_ in types for member in inspect.getmembers(type_, inspect.isclass)):
-    if isinstance(member, StatusType) and member is not StatusType:
-        STATUSES[member.code] = member
-        globals()[_] = member
-        __all__.append(_)
+for member in STATUSES.values():
+    __all__.append(member.__name__)
+    globals()[member.__name__] = member

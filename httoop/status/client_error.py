@@ -11,18 +11,17 @@ class ClientErrorStatus(StatusException):
     """
 
 
-class BAD_REQUEST(ClientErrorStatus):
+class BAD_REQUEST(ClientErrorStatus, code=400):
     """
     The generic response code for client side errors.
     The response entity-body should contain information
     about what is wrong with the request.
     """
 
-    code = 400
     cacheable = True
 
 
-class UNAUTHORIZED(ClientErrorStatus):
+class UNAUTHORIZED(ClientErrorStatus, code=401):
     """
     The requested resource is protected and no or wrong
     authentication credentials were given.
@@ -31,8 +30,6 @@ class UNAUTHORIZED(ClientErrorStatus):
     The entity-body should contain information about what was wrong with
     the given credentials and where to register a new account.
     """
-
-    code = 401
 
     def __init__(self, authenticate: str, *args, **kwargs) -> None:
         kwargs.setdefault('headers', {})['WWW-Authenticate'] = authenticate
@@ -44,24 +41,20 @@ class UNAUTHORIZED(ClientErrorStatus):
         return dct
 
 
-class PAYMENT_REQUIRED(ClientErrorStatus):
+class PAYMENT_REQUIRED(ClientErrorStatus, code=402):
+    """Payment required."""
 
-    code = 402
 
-
-class FORBIDDEN(ClientErrorStatus):
+class FORBIDDEN(ClientErrorStatus, code=403):
     """
     The resource can only be served for specific users, at a specific time
     or from a certain IP address, etc.
     """
 
-    code = 403
 
-
-class NOT_FOUND(ClientErrorStatus):
+class NOT_FOUND(ClientErrorStatus, code=404):
     """No resource could be found at the given URI."""
 
-    code = 404
     cacheable = True
 
     def __init__(self, path: str, **kwargs) -> None:
@@ -70,13 +63,11 @@ class NOT_FOUND(ClientErrorStatus):
         super().__init__(**kwargs)
 
 
-class METHOD_NOT_ALLOWED(ClientErrorStatus):
+class METHOD_NOT_ALLOWED(ClientErrorStatus, code=405):
     """
     The client tried to use a HTTP Method which is not allowed.
     The Allow-header has to contain the allowed methods for this resource.
     """
-
-    code = 405
 
     def __init__(self, allow: str, *args, **kwargs) -> None:
         kwargs.setdefault('headers', {})['Allow'] = allow
@@ -88,7 +79,7 @@ class METHOD_NOT_ALLOWED(ClientErrorStatus):
         return dct
 
 
-class NOT_ACCEPTABLE(ClientErrorStatus):
+class NOT_ACCEPTABLE(ClientErrorStatus, code=406):
     r"""
     The clients Accept-\*-header wants a representation of
     the resource which the server can not deliver.
@@ -96,28 +87,23 @@ class NOT_ACCEPTABLE(ClientErrorStatus):
     acceptable representations (similar to 300).
     """
 
-    code = 406
+
+class PROXY_AUTHENTICATION_REQUIRED(ClientErrorStatus, code=407):
+    """Proxy authenticate required."""
 
 
-class PROXY_AUTHENTICATION_REQUIRED(ClientErrorStatus):
-
-    code = 407
-
-
-class REQUEST_TIMEOUT(ClientErrorStatus):
+class REQUEST_TIMEOUT(ClientErrorStatus, code=408):
     """
     The client opens a connection to a server without sending a
     request after a specific amount of time.
     """
-
-    code = 408
 
     def __init__(self, *args, **kwargs) -> None:
         kwargs.setdefault('headers', {})['Connection'] = 'close'
         super().__init__(*args, **kwargs)
 
 
-class CONFLICT(ClientErrorStatus):
+class CONFLICT(ClientErrorStatus, code=409):
     """
     If the request would cause to leave the resource in an inconsequent
     state this status is send.
@@ -127,35 +113,28 @@ class CONFLICT(ClientErrorStatus):
     The entity body should contain a description of the conflict.
     """
 
-    code = 409
 
-
-class GONE(ClientErrorStatus):
+class GONE(ClientErrorStatus, code=410):
     """The resource exists but is not anymore available (propably DELETEd)."""
 
-    code = 410
     cacheable = True
 
 
-class LENGTH_REQUIRED(ClientErrorStatus):
+class LENGTH_REQUIRED(ClientErrorStatus, code=411):
     """
     If a request representation is given but no Content-Length-header
     the HTTP server can decide to respond with this status code.
     """
 
-    code = 411
 
-
-class PRECONDITION_FAILED(ClientErrorStatus):
+class PRECONDITION_FAILED(ClientErrorStatus, code=412):
     r"""
     If a condition from any of the If-\*-headers except for conditional
     GET fails this status code is the respond.
     """
 
-    code = 412
 
-
-class PAYLOAD_TOO_LARGE(ClientErrorStatus):
+class PAYLOAD_TOO_LARGE(ClientErrorStatus, code=413):
     """
     The HTTP server can deny too large representations.
     A LBYL request can be useful.
@@ -163,104 +142,75 @@ class PAYLOAD_TOO_LARGE(ClientErrorStatus):
     full disk space it can send the Retry-After-header.
     """
 
-    code = 413
 
-
-class URI_TOO_LONG(ClientErrorStatus):
+class URI_TOO_LONG(ClientErrorStatus, code=414):
     """Raised if the given URI is too long for the server."""
 
-    code = 414
 
-
-class UNSUPPORTED_MEDIA_TYPE(ClientErrorStatus):
+class UNSUPPORTED_MEDIA_TYPE(ClientErrorStatus, code=415):
     """
     This status code is sent when the server does not know
     the representation media type given in Content-Type-header.
     If the representation is just broken use 400 or 422.
     """
 
-    code = 415
+
+class RANGE_NOT_SATISFIABLE(ClientErrorStatus, code=416):
+    """Range not satisfiable."""
 
 
-class RANGE_NOT_SATISFIABLE(ClientErrorStatus):
-
-    code = 416
-
-
-class EXPECTATION_FAILED(ClientErrorStatus):
+class EXPECTATION_FAILED(ClientErrorStatus, code=417):
     """
     This is the response code if a LBYL request (Expect-header) fails.
     It is the flip side of 100 Continue.
     """
 
-    code = 417
+
+class I_AM_A_TEAPOT(ClientErrorStatus, code=418):
+    """I am a teapot."""
 
 
-class I_AM_A_TEAPOT(ClientErrorStatus):
-
-    code = 418
-
-
-# class ENHANCE_YOUR_CALM(ClientErrorStatus):
-#
-#    code = 420
+# class ENHANCE_YOUR_CALM(ClientErrorStatus, code=420):
+#     """Enhance our calm."""
 
 
-class MISDIRECTED_REQUEST(ClientErrorStatus):
-
-    code = 421
-
-
-class UNPROCESSABLE_ENTITY(ClientErrorStatus):
-
-    code = 422
+class MISDIRECTED_REQUEST(ClientErrorStatus, code=421):
+    """Misredirected request."""
 
 
-class LOCKED(ClientErrorStatus):
-
-    code = 423
-
-
-class FAILED_DEPENDENCY(ClientErrorStatus):
-
-    code = 424
+class UNPROCESSABLE_ENTITY(ClientErrorStatus, code=422):
+    """Unprocessable entity."""
 
 
-class UPGRADE_REQUIRED(ClientErrorStatus):
+class LOCKED(ClientErrorStatus, code=423):
+    """Locked."""
 
-    code = 426
 
+class FAILED_DEPENDENCY(ClientErrorStatus, code=424):
+    """Failed dependency."""
+
+
+class UPGRADE_REQUIRED(ClientErrorStatus, code=426):
     def __init__(self, upgrade: str, *args, **kwargs) -> None:
         kwargs.setdefault('headers', {})['Upgrade'] = upgrade
         kwargs['headers']['Connection'] = 'Upgrade'
         super().__init__(*args, **kwargs)
 
 
-class PRECONDITION_REQUIRED(ClientErrorStatus):
-
-    code = 428
-
-
-class TOO_MANY_REQUESTS(ClientErrorStatus):
-
-    code = 429
+class PRECONDITION_REQUIRED(ClientErrorStatus, code=428):
+    """Precondition required."""
 
 
-class REQUEST_HEADER_FIELDS_TOO_LARGE(ClientErrorStatus):
+class TOO_MANY_REQUESTS(ClientErrorStatus, code=429):
+    """Too many requests."""
 
-    code = 431
+
+class REQUEST_HEADER_FIELDS_TOO_LARGE(ClientErrorStatus, code=431):
+    """Request header fields too large."""
 
 
-# class NO_RESPONSE(ClientErrorStatus):
+# class NO_RESPONSE(ClientErrorStatus, code=444):
 #
-#    code = 444
+# class UNAVAILABLE_FOR_LEGAL_REASONS(ClientErrorStatus, code=451):
 #
-#
-# class UNAVAILABLE_FOR_LEGAL_REASONS(ClientErrorStatus):
-#
-#    code = 451
-#
-#
-# class CLIENT_CLOSED_REQUEST(ClientErrorStatus):
-#
-#    code = 499
+# class CLIENT_CLOSED_REQUEST(ClientErrorStatus, code=499):

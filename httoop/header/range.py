@@ -16,9 +16,8 @@ if TYPE_CHECKING:
 __all__ = ('ContentRange', 'IfRange', 'Range')
 
 
-class ContentRange(HeaderElement):
+class ContentRange(HeaderElement, name='Content-Range'):
 
-    __name__ = 'Content-Range'
     is_response_header = True
 
     def __init__(self, value: str, range_: tuple[int, None] | tuple[int, int] | None, length: int | str | None) -> None:
@@ -62,8 +61,7 @@ class ContentRange(HeaderElement):
         return cls(value.decode('ISO8859-1'), (start, end), complete_length)
 
 
-class IfRange(HeaderElement):
-    __name__ = 'If-Range'
+class IfRange(HeaderElement, name='If-Range'):
     is_request_header = True
 
 

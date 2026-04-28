@@ -6,8 +6,7 @@ class Age(HeaderElement):
     is_response_header = True
 
 
-class CacheControl(HeaderElement):
-    __name__ = 'Cache-Control'
+class CacheControl(HeaderElement, name='Cache-Control'):
 
     is_request_header = True
     is_response_header = True

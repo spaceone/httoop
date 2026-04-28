@@ -12,14 +12,14 @@ from types import GeneratorType
 from typing import Any, Iterator
 
 from httoop.header import Headers
-from httoop.meta import HTTPSemantic
+from httoop.meta import Semantic
 from httoop.util import IFile
 
 
 _SENTINEL = object()
 
 
-class Body(IFile, metaclass=HTTPSemantic):
+class Body(IFile, Semantic):
     """
     A HTTP message body.
 

@@ -12,9 +12,9 @@ from socket import AF_INET, AF_INET6, inet_ntop, inet_pton
 from typing import TYPE_CHECKING, Any, Iterator
 
 from httoop.exceptions import InvalidURI
+from httoop.meta import Semantic
 from httoop.uri.percent_encoding import Percent
 from httoop.uri.query_string import QueryString
-from httoop.uri.type import URIType
 from httoop.util import _, integer
 
 
@@ -22,14 +22,13 @@ if TYPE_CHECKING:
     from httoop.uri.http import HTTP
 
 
-class URI(metaclass=URIType):
+class URI(Semantic):
     """Uniform Resource Identifier."""
 
     __slots__ = ('scheme', 'username', 'password', 'host', '_port', 'path', 'query_string', 'fragment')  # noqa: RUF023
     slots = __slots__
 
     SCHEMES = {}
-    SCHEME = None
     PORT = None
     encoding = 'UTF-8'
 
@@ -74,6 +73,12 @@ class URI(metaclass=URIType):
 
     def __init__(self, uri: Any | None = None, *args, **kwargs) -> None:
         self.set(kwargs or args or uri or b'')
+
+    def __init_subclass__(cls, *, scheme=None, **kwargs):
+        super().__init_subclass__(**kwargs)
+
+        if scheme:
+            URI.SCHEMES.setdefault(scheme.lower(), cls)
 
     def join(self, other: bytes | None = None, *args, **kwargs) -> HTTP | URI:
         """Join a URI with another absolute or relative URI."""
@@ -359,10 +364,11 @@ class URI(metaclass=URIType):
 
     def __setattr__(self, name: str, value: Any) -> None:
         if name.startswith('_'):
-            return super().__setattr__(name, value)
+            super().__setattr__(name, value)
+            return
 
         if name == 'scheme' and value:
-            self.__class__ = self.SCHEMES.get(value if isinstance(value, bytes) else value.encode(), URI)
+            self.__class__ = self.SCHEMES.get(value.decode('ISO8859-1') if isinstance(value, bytes) else value, URI)
 
         if name in self.slots:
             if isinstance(value, bytes):
@@ -376,7 +382,6 @@ class URI(metaclass=URIType):
                 raise TypeError(f'{name!r} must be string, not {type(value).__name__}')
 
         super().__setattr__(name, value)
-        return None
 
     def __repr__(self) -> str:
         return f'<URI({bytes(self)})>'

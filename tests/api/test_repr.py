@@ -1,6 +1,5 @@
 from httoop import Date
 from httoop.messages import Message
-from httoop.meta import HTTPSemantic
 
 
 def test_repr(request_, response):
@@ -14,10 +13,3 @@ def test_repr(request_, response):
 
     assert repr(request_.uri).startswith('<URI')
     assert repr(request_.uri).endswith('>')
-
-
-def test_object_inheritance_removed():
-    class Foo(metaclass=HTTPSemantic):
-        pass
-
-    print(Foo.mro())

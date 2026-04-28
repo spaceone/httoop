@@ -10,20 +10,13 @@ HTTP headers.
 
 # TODO: add a MAXIMUM of 500 headers?
 
-from httoop.header import (
-    auth,
-    cache,
-    conditional,
-    messaging,
-    range,  # pylint: disable=W0622
-    security,
-)
+from httoop.header import auth, cache, conditional, messaging, ranges, security
 from httoop.header.element import HEADER, HeaderElement
 from httoop.header.headers import Headers
 from httoop.header.messaging import Server, UserAgent
 
 
-__all__ = ['Headers', 'Server', 'UserAgent', 'auth', 'cache', 'conditional', 'messaging', 'range', 'security', 'HeaderElement']
+__all__ = ['Headers', 'Server', 'UserAgent', 'auth', 'cache', 'conditional', 'messaging', 'ranges', 'security', 'HeaderElement']
 for member in HEADER.values():
     name = member.__name__
     __all__.append(name)

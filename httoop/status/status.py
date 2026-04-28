@@ -12,11 +12,10 @@ from typing import Any
 
 from httoop.exceptions import InvalidLine
 from httoop.meta import HTTPSemantic
-from httoop.six import with_metaclass
 from httoop.util import _, integer
 
 
-class Status(with_metaclass(HTTPSemantic)):
+class Status(metaclass=HTTPSemantic):
     """
     A HTTP Status.
 

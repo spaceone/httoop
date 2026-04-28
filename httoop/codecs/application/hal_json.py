@@ -17,7 +17,6 @@ except ImportError:
 
 from httoop.codecs.application.json import JSON
 from httoop.exceptions import DecodeError, EncodeError
-from httoop.six import string_types
 
 
 if TYPE_CHECKING:
@@ -51,7 +50,7 @@ class Resource(dict):
         for link in links:
             if not isinstance(link, dict):
                 raise DecodeError('HAL link must be object')
-            if not isinstance(link.get('href'), string_types):
+            if not isinstance(link.get('href'), str):
                 raise DecodeError('HAL links must contain href')
             if name is not None and link.get('name') != name:
                 continue
@@ -62,7 +61,7 @@ class Resource(dict):
             link.setdefault('profile', None)
             link.setdefault('hreflang', None)
             for key in ('name', 'type', 'profile', 'hreflang'):
-                if not isinstance(link[key], string_types):
+                if not isinstance(link[key], str):
                     link[key] = None
             if not isinstance(link['templated'], bool):
                 link['templated'] = False

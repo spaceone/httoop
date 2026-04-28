@@ -16,14 +16,13 @@ from typing import Any
 
 from httoop.exceptions import InvalidDate
 from httoop.meta import HTTPSemantic
-from httoop.six import with_metaclass
 from httoop.util import _
 
 
 __all__ = ['Date']
 
 
-class Date(with_metaclass(HTTPSemantic)):
+class Date(metaclass=HTTPSemantic):
     """
     A HTTP Date string.
 

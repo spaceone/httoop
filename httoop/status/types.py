@@ -9,7 +9,6 @@ from __future__ import annotations
 from typing import Any
 
 from httoop.meta import HTTPSemantic
-from httoop.six import with_metaclass
 from httoop.status.status import REASONS, Status
 
 
@@ -39,7 +38,7 @@ class StatusType(HTTPSemantic):
         return super().__new__(cls, name, bases, dict_)
 
 
-class StatusException(with_metaclass(StatusType, Status, Exception)):
+class StatusException(Status, Exception, metaclass=StatusType):
     """
     This class represents a small HTTP Response message
     for error handling purposes

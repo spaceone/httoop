@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61", "six"]
+requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.dynamic]
@@ -37,8 +37,6 @@ classifiers = [
 ]
 
 requires-python = ">=3.8"
-
-dependencies = ["six"]
 
 [project.optional-dependencies]
 xml = ["defusedxml"]

@@ -79,8 +79,3 @@ def test_invalid_date(invalid):
 
     with pytest.raises(TypeError):
         Date({})
-
-
-@pytest.mark.xfail(reason='currently it is not implemented in this way')
-def test_not_existing_comparision():
-    assert Date() == [] is None  # noqa: F632

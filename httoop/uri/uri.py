@@ -12,7 +12,6 @@ from socket import AF_INET, AF_INET6, inet_ntop, inet_pton
 from typing import TYPE_CHECKING, Any, Iterator
 
 from httoop.exceptions import InvalidURI
-from httoop.six import int2byte, iterbytes, with_metaclass
 from httoop.uri.percent_encoding import Percent
 from httoop.uri.query_string import QueryString
 from httoop.uri.type import URIType
@@ -23,7 +22,7 @@ if TYPE_CHECKING:
     from httoop.uri.http import HTTP
 
 
-class URI(with_metaclass(URIType)):
+class URI(metaclass=URIType):
     """Uniform Resource Identifier."""
 
     __slots__ = ('scheme', 'username', 'password', 'host', '_port', 'path', 'query_string', 'fragment')  # noqa: RUF023
@@ -322,7 +321,7 @@ class URI(with_metaclass(URIType)):
         scheme, path, query_string, quote, fragment = self.scheme, self.path, self.query_string, self.quote, self.fragment
         PATH = Percent.PATH
         if not scheme and not path.startswith('/'):
-            PATH = b''.join({int2byte(c) for c in iterbytes(PATH)} - {b':', b'@'})
+            PATH = b''.join({bytes((c,)) for c in iter(PATH)} - {b':', b'@'})
         yield b'/'.join(quote(x, PATH) for x in path.split('/'))
         if query_string:
             yield b'?'

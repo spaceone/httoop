@@ -10,14 +10,13 @@ import re
 
 from httoop.exceptions import InvalidLine
 from httoop.meta import HTTPSemantic
-from httoop.six import with_metaclass
 from httoop.util import _
 
 
 __all__ = ('Method',)
 
 
-class Method(with_metaclass(HTTPSemantic)):
+class Method(metaclass=HTTPSemantic):
     """A HTTP request method."""
 
     __slots__ = ('__method',)

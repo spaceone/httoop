@@ -21,13 +21,13 @@ def test_set_header_with_colon(request_):
 
 # @pytest.mark.skip()
 # def test_set_invalid_characters(request_):
-#    for invalid in six.iterbytes(INVALID_HEADER_FIELD_NAMES):
-#        name = b'foo%sbar' % (six.int2byte(invalid),)
+#    for invalid in iter(INVALID_HEADER_FIELD_NAMES):
+#        name = b'foo%sbar' % (bytes((invalid,)),)
 #        request_.headers[name] = 'baz'
 #        assert name not in request_.headers
-#    for invalid in six.iterbytes(LATIN_CHARS):
+#    for invalid in iter(LATIN_CHARS):
 #        with pytest.raises(InvalidHeader):
-#            name = b'foo%sbar' % (six.int2byte(invalid),)
+#            name = b'foo%sbar' % (bytes((invalid,)),)
 #            request_.headers[name] = 'baz'
 
 

@@ -9,7 +9,6 @@ from __future__ import annotations
 from typing import Any, Callable, Iterator
 
 from httoop.messages import Body
-from httoop.six import reraise
 
 
 __all__ = ('WSGI',)
@@ -74,7 +73,7 @@ class WSGI:
         def start_response(status, response_headers, exc_info=None):
             if exc_info and self.headers_sent:
                 try:
-                    reraise(exc_info[0], exc_info[1], exc_info[2])
+                    raise exc_info[1].with_traceback(exc_info[2])
                 finally:
                     exc_info = None  # avoid dangling circular ref
             elif self.headers_set:

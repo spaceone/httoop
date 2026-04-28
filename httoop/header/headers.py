@@ -6,11 +6,10 @@ from typing import Any
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HEADER, HeaderElement
 from httoop.meta import HTTPSemantic
-from httoop.six import with_metaclass
 from httoop.util import CaseInsensitiveDict, _, to_unicode
 
 
-class Headers(with_metaclass(HTTPSemantic, CaseInsensitiveDict)):
+class Headers(CaseInsensitiveDict, metaclass=HTTPSemantic):
 
     __slots__ = ()
 

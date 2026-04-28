@@ -17,7 +17,6 @@ from email.header import decode_header
 from typing import Any, Iterator
 
 from httoop.exceptions import InvalidHeader
-from httoop.six import with_metaclass
 from httoop.uri.percent_encoding import Percent
 from httoop.util import ByteUnicodeDict, CaseInsensitiveDict, _, integer, sanitize_encoding
 
@@ -35,7 +34,7 @@ class HeaderType(type):
         return super().__new__(cls, name, bases, dict_)
 
 
-class HeaderElement(with_metaclass(HeaderType)):
+class HeaderElement(metaclass=HeaderType):
     """An element (with parameters) from an HTTP header's element list."""
 
     priority = None

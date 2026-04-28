@@ -13,14 +13,13 @@ from typing import Any, Iterator
 
 from httoop.header import Headers
 from httoop.meta import HTTPSemantic
-from httoop.six import with_metaclass
 from httoop.util import IFile
 
 
 _SENTINEL = object()
 
 
-class Body(with_metaclass(HTTPSemantic, IFile)):
+class Body(IFile, metaclass=HTTPSemantic):
     """
     A HTTP message body.
 

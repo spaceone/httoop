@@ -13,6 +13,7 @@ name: Manual PyPI Release
 
 permissions:
   id-token: write
+  contents: write
 
 jobs:
   release:

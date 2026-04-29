@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61"]
+requires = ["setuptools>=70", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.dynamic]
@@ -8,18 +8,17 @@ version = { attr = "httoop.version.__version__" }
 [project]
 name = "httoop"
 dynamic = ["version"]
+license = { text = "MIT" }
 description = "object oriented HTTP protocol library"
 readme = { file = "README.md", content-type = "text/markdown" }
 authors = [
   { name = "SpaceOne", email = "space@wechall.net" }
 ]
-license = { text = "MIT" }
 keywords = ["HTTP", "web", "proxy", "cache", "client", "server", "library"]
 classifiers = [
   "Environment :: Web Environment",
   "Intended Audience :: Developers",
   "Intended Audience :: Information Technology",
-  "License :: OSI Approved :: MIT License",
   "Natural Language :: English",
   "Operating System :: POSIX :: BSD",
   "Operating System :: POSIX :: Linux",
@@ -55,12 +54,12 @@ test = [
 [tool.pytest.ini_options]
 addopts = "-s -l -vv --tb=native --strict-markers --cov=httoop --cov-report=xml --cov-report=term-missing"
 
-[tool.setuptools.packages.find]
-where = ["."]
-exclude = ["tests", "tests.*"]
-
 [tool.setuptools]
 zip-safe = true
+
+[tool.setuptools.packages.find]
+include = ["httoop*"]
+exclude = ["debian.*", "tests.*", "rfc.*"]
 
 [project.urls]
 Homepage = "https://github.com/spaceone/httoop"

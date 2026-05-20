@@ -31,7 +31,7 @@ class Method(Semantic):
 
     safe_methods = ('GET', 'HEAD', 'SEARCH')
     idempotent_methods = ('GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE', 'SEARCH')
-    METHOD_RE = re.compile(rb'^[A-Z0-9$-_.]{1,20}\Z', re.IGNORECASE)
+    METHOD_RE = re.compile(rb'^[A-Z0-9$_.-]{1,20}\Z', re.IGNORECASE)
 
     def __init__(self, method: str | None = None) -> None:
         self.set(method or 'GET')

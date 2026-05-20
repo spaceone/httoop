@@ -57,6 +57,7 @@ def _test_iter(header, host, port, headers):
 
 @pytest.mark.parametrize('invalid', list(
     list((set('\x7F()<>@,;:/\\[\\]={} \t\\\\^"\'') | set(map(chr, range(0x1F)))) - set(';\n\x00')) + [
+        ', ',
         pytest.param(';', marks=pytest.mark.xfail),  # FIXME
         pytest.param('\n', marks=pytest.mark.xfail),  # FIXME
         pytest.param('\x00', marks=pytest.mark.xfail),  # FIXME

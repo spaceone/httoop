@@ -325,7 +325,10 @@ class Host(HeaderElement):
 
     def sanitize(self) -> None:
         self.value = self.value.lower()
-        self.host, self.port = self.HOSTPORT.match(self.value).groups()
+        match = self.HOSTPORT.match(self.value)
+        if not match:
+            raise InvalidHeader(_('Invalid Host header: %s'), self.value)
+        self.host, self.port = match.groups()
         if self.host.endswith(']') and self.host.startswith('['):
             self.host = self.host[1:-1]
         if self.port:

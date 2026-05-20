@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import codecs
 import string
+from binascii import Error as Base64Error, a2b_base64, b2a_base64
 from typing import Any, Callable
 
 
@@ -17,7 +18,7 @@ def _(x: str) -> str:
     return x
 
 
-__all__ = ['CaseInsensitiveDict', 'IFile', '_', 'integer', 'sanitize_encoding', 'to_unicode']
+__all__ = ['CaseInsensitiveDict', 'IFile', '_', 'integer', 'sanitize_encoding', 'to_unicode', 'base64', 'base64_decode', 'Base64Error']
 
 KNOWN_ENCODINGS = {
     'cp1254', 'cp949', 'cp865', 'cp1257', 'euc_jp', 'cp1250', 'mac-cyrillic', 'mac-latin2', 'cp866', 'cp857',
@@ -30,6 +31,18 @@ KNOWN_ENCODINGS = {
     'cp850', 'gbk', 'cp858', 'iso8859-3', 'iso8859-4', 'mac-greek', 'iso2022_jp_1', 'ptcp154', 'iso8859-7',
     'iso8859-5', 'cp500', 'iso8859-13', 'iso8859-9', 'cp1256', 'iso8859-16', 'cp932', 'iso2022_jp_3'
 }
+
+
+def base64(data: bytes):
+    return b2a_base64(data, newline=False)
+
+
+def base64_decode(data: bytes):
+    try:
+        return a2b_base64(data, strict_mode=True)
+    except TypeError:  # Py < 3.11
+        import base64
+        return base64.b64decode(data, validate=True)
 
 
 def sanitize_encoding(encoding: str) -> str | None:

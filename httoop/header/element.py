@@ -11,14 +11,13 @@ HTTP header elements.
 from __future__ import annotations
 
 import re
-from binascii import b2a_base64
 from email.errors import HeaderParseError
 from email.header import decode_header
 from typing import Any, Iterator
 
 from httoop.exceptions import InvalidHeader
 from httoop.uri.percent_encoding import Percent
-from httoop.util import ByteUnicodeDict, CaseInsensitiveDict, _, integer, sanitize_encoding
+from httoop.util import ByteUnicodeDict, CaseInsensitiveDict, _, base64, integer, sanitize_encoding
 
 
 __all__ = ['HEADER', 'HeaderElement']
@@ -242,9 +241,9 @@ class HeaderElement:
             try:
                 value.encode('ISO8859-1')
             except UnicodeEncodeError:
-                return b'=?utf-8?b?%s?=' % (b2a_base64(value.encode('utf-8')).rstrip(b'\n'),)
+                return b'=?utf-8?b?%s?=' % (base64(value.encode('utf-8')),)
             else:  # pragma: no cover
-                return b'=?ISO8859-1?b?%s?=' % (b2a_base64(value.encode('ISO8859-1')).rstrip(b'\n'),)
+                return b'=?ISO8859-1?b?%s?=' % (base64(value.encode('ISO8859-1')),)
 
     def __repr__(self) -> str:
         params = f', {self.params!r}' if self.params else ''

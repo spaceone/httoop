@@ -185,14 +185,16 @@ class StateMachine:
         # RFC 2616 Section 4.4
         # get message length
 
-        # TODO: check if both is set
         message = self.message
+        if 'Transfer-Encoding' in message.headers and 'Content-Length' in message.headers:
+            raise BAD_REQUEST(_('Invalid Content-Length and Transfer-Encoding combination header.'))
+
         if 'Transfer-Encoding' in message.headers and message.protocol >= (1, 1):
             # chunked transfer in HTTP/1.1
             te = message.headers['Transfer-Encoding'].lower()
             self.chunked = te == 'chunked'
             if not self.chunked:
-                raise NOT_IMPLEMENTED(f'Unknown HTTP/1.1 Transfer-Encoding: {te!r}')
+                raise NOT_IMPLEMENTED(_('Unknown HTTP/1.1 Transfer-Encoding: %r') % (te,))
         else:
             # Content-Length header defines the length of the message body
             try:

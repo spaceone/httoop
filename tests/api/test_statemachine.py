@@ -183,23 +183,29 @@ def test_parse_invalid_trailer_as_bad_request(statemachine):
 
 
 def test_parse_request_startline_in_chunks(statemachine):
-    statemachine.parse(b'GET')
-    statemachine.parse(b' ')
-    statemachine.parse(b'/')
-    statemachine.parse(b' ')
-    statemachine.parse(b'HTTP/')
-    statemachine.parse(b'1.1\r')
-    statemachine.parse(b'\n')
-    statemachine.parse(b'Host: www.example.com\r\n\r\n')[0][0]
+    assert not statemachine.parse(b'GET')
+    assert not statemachine.parse(b' ')
+    assert not statemachine.parse(b'/')
+    assert not statemachine.parse(b' ')
+    assert not statemachine.parse(b'HTTP/')
+    assert not statemachine.parse(b'1.1\r')
+    assert not statemachine.parse(b'\n')
+    assert statemachine.parse(b'Host: www.example.com\r\n\r\n')[0][0]
 
 
 def test_parse_response_startline_in_chunks(clientstatemachine):
-    clientstatemachine.parse(b'HTTP')
-    clientstatemachine.parse(b'/')
-    clientstatemachine.parse(b'1.1')
-    clientstatemachine.parse(b' ')
-    clientstatemachine.parse(b'200')
-    clientstatemachine.parse(b' ')
-    clientstatemachine.parse(b'OK\r')
-    clientstatemachine.parse(b'\n')
-    clientstatemachine.parse(b'\r\n')[0]
+    assert not clientstatemachine.parse(b'HTTP')
+    assert not clientstatemachine.parse(b'/')
+    assert not clientstatemachine.parse(b'1.1')
+    assert not clientstatemachine.parse(b' ')
+    assert not clientstatemachine.parse(b'200')
+    assert not clientstatemachine.parse(b' ')
+    assert not clientstatemachine.parse(b'OK\r')
+    assert not clientstatemachine.parse(b'\n')
+    assert clientstatemachine.parse(b'\r\n')[0]
+
+
+def test_parse_cl_te_combination(statemachine):
+    with pytest.raises(BAD_REQUEST) as exc:
+        statemachine.parse(b'POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Length: 0\r\nAccept: */*\r\nUser-Agent: httoop/0.0\r\nHost: localhost\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n')
+    assert 'Invalid Content-Length and Transfer-Encoding combination' in str(exc.value)

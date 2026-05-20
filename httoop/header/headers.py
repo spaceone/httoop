@@ -11,10 +11,14 @@ from httoop.util import CaseInsensitiveDict, _, to_unicode
 
 class Headers(CaseInsensitiveDict, Semantic):
 
-    __slots__ = ()
+    __slots__ = ('line_end',)
 
     # disallowed bytes for HTTP header field names
     HEADER_RE = re.compile(rb'[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]')
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.line_end = b'\r\n'
 
     @staticmethod
     def formatvalue(value: Any) -> bytes:
@@ -122,7 +126,7 @@ class Headers(CaseInsensitiveDict, Semantic):
         without trailing "\r\n"
         :type  data: bytes
         """
-        lines = data.split(b'\r\n')
+        lines = data.split(self.line_end)
 
         while lines:
             curr = lines.pop(0)

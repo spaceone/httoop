@@ -31,9 +31,10 @@ class StateMachine:
 
     Message = Message  # subclass provides the type
 
-    def __init__(self) -> None:
+    def __init__(self, strict: bool = True) -> None:
         self.buffer = bytearray()
         self.message = None
+        self.strict = strict
 
     def _reset_state(self) -> None:
         self.message = self.Message()
@@ -126,7 +127,9 @@ class StateMachine:
         if CRLF not in self.buffer:
             if LF not in self.buffer:
                 return NOT_RECEIVED_YET
-            self.line_end = LF
+            if self.strict:
+                raise BAD_REQUEST(_('HTTP requires CR/LF line feeds.'))
+            self.line_end = self.message.headers.line_end = LF
 
         requestline, self.buffer = self.buffer.split(self.line_end, 1)
 

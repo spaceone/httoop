@@ -143,8 +143,8 @@ def test_parse_message_with_content_length_header(statemachine):
     assert bytes(request.body) == b'foo=bar'
 
 
-@pytest.mark.xfail  # FIXME: new line not recognized in header parsing
 def test_parse_message_without_carriage_return(statemachine):
+    statemachine.strict = False
     statemachine.parse(b'POST / HTTP/1.1\nHost: www.example.com\nContent-Type: application/x-www-form-urlencoded\nContent-Length: 7\n\nfoo=')
     request = statemachine.parse(b'bar')[0][0]
     assert bytes(request.body) == b'foo=bar'
@@ -209,3 +209,15 @@ def test_parse_cl_te_combination(statemachine):
     with pytest.raises(BAD_REQUEST) as exc:
         statemachine.parse(b'POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Length: 0\r\nAccept: */*\r\nUser-Agent: httoop/0.0\r\nHost: localhost\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n')
     assert 'Invalid Content-Length and Transfer-Encoding combination' in str(exc.value)
+
+
+def test_parse_lf_messages(statemachine):
+    with pytest.raises(BAD_REQUEST) as exc:
+        statemachine.parse(b'GET / HTTP/1.1\nAccept: */*\nUser-Agent: httoop/0.0\nHost: localhost\nContent-Type: text/plain; charset="UTF-8"\n\n')
+    assert 'HTTP requires CR/LF line feeds' in str(exc.value)
+
+
+def test_parse_lf_messages_unstrict(statemachine):
+    statemachine.strict = False
+    assert statemachine.parse(b'GET / HTTP/1.1\nAccept: */*\nUser-Agent: httoop/0.0\nHost: localhost\nContent-Type: text/plain; charset="UTF-8"\n\n')[0]
+    assert statemachine.parse(b'GET / HTTP/1.1\nHost: x\n\n')[0]

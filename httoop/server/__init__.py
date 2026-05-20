@@ -20,8 +20,8 @@ class ServerStateMachine(StateMachine):
     Message = Request
     HTTP2 = None
 
-    def __init__(self, scheme: str, host: str, port: int) -> None:
-        super().__init__()
+    def __init__(self, scheme: str, host: str, port: int, strict: bool = True) -> None:
+        super().__init__(strict=strict)
         self.MAX_URI_LENGTH = float('inf')  # 8000
         self._default_scheme = scheme
         self._default_host = host

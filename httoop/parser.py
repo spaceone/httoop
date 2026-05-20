@@ -202,9 +202,6 @@ class StateMachine:
             # Content-Length header defines the length of the message body
             try:
                 self.message_length = integer(message.headers.get('Content-Length', '0'))
-                if self.message_length < 0:
-                    self.message_length = None
-                    raise ValueError()
             except ValueError:
                 raise BAD_REQUEST(_('Invalid Content-Length header.'))
 

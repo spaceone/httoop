@@ -140,7 +140,7 @@ def test_body_deflate_compressed(request_, response, clientstatemachine):
     assert str(res.body) == 'this is a test'
 
 
-@pytest.mark.parametrize('chunk_size', [b'-18', b'fg'])
+@pytest.mark.parametrize('chunk_size', [b'-18', b'fg', b'1_8'])
 def test_parse_chunked_body_with_invalid_chunk_size(statemachine, chunk_size):
     statemachine.parse(b'POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nTrailer: Foo\r\nAccept: */*\r\nUser-Agent: httoop/0.0\r\nHost: localhost\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n')
     with pytest.raises(BAD_REQUEST) as exc:

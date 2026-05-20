@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import codecs
+import string
 from typing import Any, Callable
 
 
@@ -61,18 +62,49 @@ def if_has(func: Callable) -> Callable:
     return _decorated
 
 
-def integer(number: int | str | bytes, *args) -> int:
+def integer(number: str | bytes, base=10) -> int:
     """
-    In Python 3 int() is broken.
-    >>> int(bytearray(b'1_0'))
+    The native Python integer parsing from string allows to many forms which are not allowed by the protocol.
+
+    >>> integer(bytearray(b'10'))
+    10
+    >>> integer(b'5a', 16)
+    90
+    >>> integer(bytearray(b'-1'))
+    Traceback (most recent call last):
+            ...
+    ValueError:
+    >>> integer(bytearray(b'1_0'))
+    Traceback (most recent call last):
+            ...
+    ValueError:
+    >>> integer(bytearray(b' 10'))
+    Traceback (most recent call last):
+            ...
+    ValueError:
+    >>> integer(bytearray(b'\t10'))
+    Traceback (most recent call last):
+            ...
+    ValueError:
+    >>> integer(bytearray(b'\v10'))
+    Traceback (most recent call last):
+            ...
+    ValueError:
+    >>> integer(bytearray(b'\f10'))
+    Traceback (most recent call last):
+            ...
+    ValueError:
+    >>> integer(bytearray(b'10 \t\v\f'))
     Traceback (most recent call last):
             ...
     ValueError:
     """
-    num = int(number, *args)
-    if (isinstance(number, str) and '_' in number) or (isinstance(number, (bytes, bytearray)) and b' ' in number):
-        raise ValueError()
-    return num
+    if isinstance(number, int):
+        return int(number)
+    if not number.isdigit():
+        if base != 16 or number.strip(string.hexdigits if isinstance(string, str) else string.hexdigits.encode('ASCII')):
+            raise ValueError()
+    return int(number, base)
 
 
 class IFile:

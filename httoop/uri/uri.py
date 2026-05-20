@@ -65,7 +65,7 @@ class URI(Semantic):
         if port:
             try:
                 port = integer(port)
-                if not 0 < integer(port) <= 65535:
+                if not 0 < port <= 65535:
                     raise ValueError
             except ValueError:
                 raise InvalidURI(_('Invalid port: %r'), port)  # TODO: TypeError

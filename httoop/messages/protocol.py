@@ -10,7 +10,7 @@ import re
 
 from httoop.exceptions import InvalidLine
 from httoop.meta import Semantic
-from httoop.util import _
+from httoop.util import _, integer
 
 
 __all__ = ('Protocol',)
@@ -47,13 +47,13 @@ class Protocol(Semantic):
             protocol = self.parse(protocol)
         else:
             major, minor = tuple(protocol)
-            self.__protocol = (int(major), int(minor))
+            self.__protocol = (integer(major), integer(minor))
 
     def parse(self, protocol: bytes) -> None:
         match = self.PROTOCOL_RE.match(protocol)
         if match is None:
             raise InvalidLine(_('Invalid HTTP protocol: %r'), protocol.decode('ISO8859-1'))
-        self.__protocol = (int(match.group(2)), int(match.group(3)))
+        self.__protocol = (integer(match.group(2)), integer(match.group(3)))
         self.name = match.group(1)
 
     def compose(self) -> bytes:

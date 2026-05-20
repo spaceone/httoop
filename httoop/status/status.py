@@ -132,7 +132,7 @@ class Status(Semantic):
         if match is None:
             raise InvalidLine(_('Invalid status %r'), status.decode('ISO8859-1'))
 
-        self.set((int(match.group(1)), match.group(2).decode('ascii')))
+        self.set((integer(match.group(1)), match.group(2).decode('ascii')))
 
     def compose(self) -> bytes:
         return b'%d %s' % (self.__code, self.__reason.encode('ascii'))

@@ -53,8 +53,11 @@ class Protocol(Semantic):
         match = self.PROTOCOL_RE.match(protocol)
         if match is None:
             raise InvalidLine(_('Invalid HTTP protocol: %r'), protocol.decode('ISO8859-1'))
-        self.__protocol = (integer(match.group(2)), integer(match.group(3)))
-        self.name = match.group(1)
+        self.name, major, minor = match.groups()
+        try:
+            self.__protocol = (integer(major), integer(minor))
+        except ValueError:
+            raise InvalidLine(_('Invalid HTTP protocol: %r'), protocol.decode('ISO8859-1'))
 
     def compose(self) -> bytes:
         return b'%s/%d.%d' % (self.name, self.major, self.minor)

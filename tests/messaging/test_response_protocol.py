@@ -25,6 +25,7 @@ def test_response_protocol_with_http2_0_request_():
 
 @pytest.mark.parametrize('protocol', [
     b'HTTP/ 1.1',
+    b'HTTP/1.00',
     b'HTTP/1_1.1',
     b'HTTP/1.a',
     b'HTTP/1.1a',

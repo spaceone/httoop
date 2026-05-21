@@ -150,7 +150,7 @@ def test_parse_message_without_carriage_return(statemachine):
     assert bytes(request.body) == b'foo=bar'
 
 
-@pytest.mark.parametrize('cl', [b'-1', b'a', b'1_0'])
+@pytest.mark.parametrize('cl', [b'-1', b'a', b'1_0', b'04', b'00', b'0_4'])
 def test_parse_invalid_content_length(statemachine, cl):
     with pytest.raises(BAD_REQUEST) as exc:
         statemachine.parse(b'POST / HTTP/1.1\r\nHost: www.example.com\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: %s\r\n\r\nfoo=' % (cl,))

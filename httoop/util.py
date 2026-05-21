@@ -83,6 +83,8 @@ def integer(number: str | bytes, base=10) -> int:
     10
     >>> integer(b'5a', 16)
     90
+    >>> integer(b'0')
+    0
     >>> integer(bytearray(b'-1'))
     Traceback (most recent call last):
             ...
@@ -111,12 +113,23 @@ def integer(number: str | bytes, base=10) -> int:
     Traceback (most recent call last):
             ...
     ValueError:
+    >>> integer(bytearray(b'0012'))
+    Traceback (most recent call last):
+            ...
+    ValueError:
+    >>> integer(bytearray(b'00'))
+    Traceback (most recent call last):
+            ...
+    ValueError:
     """
     if isinstance(number, int):
         return int(number)
     if not number.isdigit():
-        if base != 16 or number.strip(string.hexdigits if isinstance(string, str) else string.hexdigits.encode('ASCII')):
+        if base != 16 or number.strip(string.hexdigits if isinstance(number, str) else string.hexdigits.encode('ASCII')):
             raise ValueError()
+    zero = '0' if isinstance(number, str) else b'0'
+    if number != zero and len(number.lstrip(zero)) != len(number):
+        raise ValueError()
     return int(number, base)
 
 

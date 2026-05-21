@@ -24,7 +24,7 @@ def test_digest_www_authentication(headers):
     stale="true",
     domain="www.example.com www.example.org",
     qop="auth,auth-int"'''
-    headers.parse(www_auth_bytes)
+    headers.parse(www_auth_bytes.replace(b'\n   ', b''))
     assert www_auth.params == headers.elements('WWW-Authenticate')[0].params
 
 
@@ -51,7 +51,7 @@ def test_digest_authorization(headers):
     opaque="5ccc069c403ebaf9f0171e9517f40e41",
     qop="auth",
     nc="00000001"'''
-    headers.parse(auth_bytes)
+    headers.parse(auth_bytes.replace(b'\n   ', b''))
     elem = headers.element('Authorization')
     assert elem.params == auth.params
     assert elem.scheme == 'digest'
@@ -78,7 +78,7 @@ def test_digest_authorization_no_qop(headers):
     nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
     uri="/dir/index.html",
     response="670fd8c2df070c60b045671b8b24ff02"'''
-    headers.parse(auth_bytes)
+    headers.parse(auth_bytes.replace(b'\n   ', b''))
     assert auth.params == headers.element('Authorization').params
 
 
@@ -108,7 +108,7 @@ def test_digest_authorization_auth_int(headers):
     opaque="5ccc069c403ebaf9f0171e9517f40e41",
     qop="auth-int",
     nc="00000001"'''
-    headers.parse(auth_bytes)
+    headers.parse(auth_bytes.replace(b'\n   ', b''))
     assert auth.params == headers.element('Authorization').params
 
 
@@ -139,7 +139,7 @@ def test_digest_authorization_md5_sess_a1(headers):
     opaque="5ccc069c403ebaf9f0171e9517f40e41",
     qop="auth-int",
     nc="00000001"'''
-    headers.parse(auth_bytes)
+    headers.parse(auth_bytes.replace(b'\n   ', b''))
     assert auth.params == headers.element('Authorization').params
 
 
@@ -184,7 +184,7 @@ def test_invalid_nonce(headers):
     opaque="5ccc069c403ebaf9f0171e9517f40e41",
     algorithm="MD5",
     qop="auth,auth-int"'''
-    headers.parse(www_auth_bytes)
+    headers.parse(www_auth_bytes.replace(b'\n   ', b''))
     with pytest.raises(InvalidHeader) as exc:
         headers.element('WWW-Authenticate')
     assert 'Nonce must not contain double quote' in str(exc.value)

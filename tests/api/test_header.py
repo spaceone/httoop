@@ -101,3 +101,9 @@ def test_header_append_params(headers):
     assert dict(headers.items())['Foo'] == b'bar; baz=val'
     headers.append('Bar', 'bar', baz=None)
     assert dict(headers.items())['Bar'] == b'bar; baz'
+
+
+def test_headers_composing_rejects_invalid_values(headers):
+    dict.__setitem__(headers, 'Location', b'Foo\r\nSet-Cookie: foo=bar')  # noqa: PLC2801
+    with pytest.raises(InvalidHeader):
+        bytes(headers)

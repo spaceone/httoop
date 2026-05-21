@@ -23,8 +23,12 @@ class Headers(CaseInsensitiveDict, Semantic):
     @staticmethod
     def formatvalue(value: Any) -> bytes:
         if isinstance(value, str):
-            return HeaderElement.encode_rfc2047(value)
-        return bytes(value)
+            val = HeaderElement.encode_rfc2047(value)
+        else:
+            val = bytes(value)
+        if b'\r' in val or b'\n' in val:
+            raise InvalidHeader(_('Invalid header value: %r'), val.decode('ISO8859-1'))
+        return val
 
     def __getitem__(self, key: str) -> str:
         Element = HEADER.get(key, HeaderElement)
@@ -151,7 +155,11 @@ class Headers(CaseInsensitiveDict, Semantic):
             super().__setitem__(name, value)
 
     def compose(self) -> bytes:
-        return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (k, v) for k, v in self.__items())
+        def _save(s):
+            if b'\r' in s or b'\n' in s:
+                raise InvalidHeader(_('Header contains newlines.'))
+            return s
+        return b'%s\r\n' % b''.join(b'%s: %s\r\n' % (_save(k), _save(v)) for k, v in self.__items())
 
     def __items(self):
         return sorted(self.__encoded_items(), key=lambda x: HEADER.get(x[0], HeaderElement).priority or x[0])

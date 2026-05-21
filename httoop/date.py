@@ -6,7 +6,6 @@ HTTP Date.
 
 from __future__ import annotations
 
-import locale
 import time
 
 # import calendar
@@ -105,11 +104,11 @@ class Date(Semantic):
         )
 
     @classmethod
-    def parse(cls, timestr: bytes | None = None) -> Date:
+    def parse(cls, timestr: bytes) -> Date:
         """
         Parses a HTTP date string and returns a :class:`Date` object.
 
-        :param timestr: the time string in one of the http formats
+        :param timestr: the time string in one of the HTTP formats
         :type  timestr: str
 
         :returns: the HTTP Date object
@@ -118,33 +117,12 @@ class Date(Semantic):
         """
         timestr = timestr.decode('ISO8859-1')
 
-        # parse the most common HTTP Date format (RFC 2822)
+        # parse the most common HTTP Date formats (RFC 2822, RFC 1036, C's asctime)
         date = parsedate_tz(timestr)
-        if date is not None:
-            return cls(date[:9])
+        if date is None:
+            raise InvalidDate(_('Invalid date: %r'), timestr)
 
-        old = locale.getlocale(locale.LC_TIME)
-        locale.setlocale(locale.LC_TIME, (None, None))
-        try:
-            # parse RFC 1036 date format
-            try:
-                date = time.strptime(timestr, '%A, %d-%b-%y %H:%M:%S GMT')
-            except ValueError:
-                pass
-            else:  # pragma: no cover
-                return cls(date)
-
-            # parse C's asctime format
-            try:
-                date = time.strptime(timestr, '%a %b %d %H:%M:%S %Y')
-            except ValueError:
-                pass
-            else:  # pragma: no cover
-                return cls(date)
-        finally:
-            locale.setlocale(locale.LC_TIME, old)
-
-        raise InvalidDate(_('Invalid date: %r'), timestr)
+        return cls(date[:9])
 
     def __int__(self) -> int:
         return int(float(self))

@@ -1,0 +1,60 @@
+# SPDX-FileCopyrightText: 2026 Florian Best
+# SPDX-License-Identifier: CC0-1.0
+---
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-json
+      - id: check-xml
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: pretty-format-json
+        args:
+          - --autofix
+          - --no-ensure-ascii
+      - id: trailing-whitespace
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+      - id: python-check-blanket-noqa
+      - id: python-no-eval
+      - id: rst-backticks
+      - id: rst-directive-colons
+      - id: rst-inline-touching-normal
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.14
+    hooks:
+      - id: ruff-check
+        alias: "ruff"
+      - id: ruff-format
+        alias: "ruff-format-check"
+        args: ["--check", "--diff"]
+        stages: [manual]
+      - id: ruff-check
+        alias: "ruff-fix"
+        stages: [manual]
+        args: ["--fix", "--unsafe-fixes"]
+      - id: ruff-check
+        alias: "ruff-statistics"
+        stages: [manual]
+        args: ["--statistics"]
+      - id: ruff-format
+        alias: "ruff-format"
+        stages: [manual]
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.3.0
+    hooks:
+      - id: flake8
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.4.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: ["--strict"]
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v2.1.0
+    hooks:
+      - id: mypy
+        stages: [manual]

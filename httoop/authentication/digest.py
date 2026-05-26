@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from hashlib import md5, sha256
+from hashlib import md5, new, sha256
 from hmac import compare_digest
+from time import time
 from typing import Callable
+from uuid import uuid4
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
@@ -10,29 +12,32 @@ from httoop.util import ByteUnicodeDict, _
 
 
 class DigestAuthScheme:
-
     algorithms = {
-        'MD5': lambda val: md5(val).hexdigest().encode('ASCII'),  # nosec
-        'MD5-sess': lambda val: md5(val).hexdigest().encode('ASCII'),  # nosec
-        'SHA-256': lambda val: sha256(val).hexdigest().encode('ASCII'),
-        'SHA-256-sess': lambda val: sha256(val).hexdigest().encode('ASCII'),
-        # 'SHA-512-256': lambda val: sha256(val).hexdigest().encode('ASCII'), TODO: ??
-        # 'SHA-512-256-sess': lambda val: sha256(val).hexdigest().encode('ASCII'), TODO: ??
-    }
+        'MD5': lambda: md5(),  # noqa: S324
+        'SHA-256': lambda: sha256(),
+        'SHA-512-256': lambda: new('sha512_256'),
+    }  # not case insensitive per RFC
+    algorithms['MD5-sess'] = algorithms['MD5']
+    algorithms['SHA-256-sess'] = algorithms['SHA-256']
+    algorithms['SHA-512-256-sess'] = algorithms['SHA-512-256']
     qops = (b'auth', b'auth-int')  # quality of protection
 
     @classmethod
-    def get_algorithm(cls, algorithm: bytes | str) -> Callable:
+    def get_algorithm(cls, algorithm: bytes | str) -> Callable[bytes, bytes]:
         try:
-            return cls.algorithms[algorithm.decode('ASCII', 'ignore') if isinstance(algorithm, bytes) else algorithm]
+            H = cls.algorithms[algorithm.decode('ASCII', 'ignore') if isinstance(algorithm, bytes) else algorithm]
         except KeyError:
-            raise InvalidHeader(_('Unknown digest authentication algorithm: %r'), algorithm)
+            raise InvalidHeader(_('Unknown digest authentication algorithm: %r'), algorithm) from None
+
+        def _algo(value) -> bytes:
+            h = H()
+            h.update(value)
+            return h.hexdigest().encode('ASCII')
+
+        return _algo
 
     @classmethod
     def generate_nonce(cls, authinfo: ByteUnicodeDict) -> bytes:
-        from time import time
-        from uuid import uuid4
-
         nonce = b'%d:%s:%s' % (
             time(),
             authinfo.get('etag', authinfo.get('realm', b'')),
@@ -176,7 +181,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
         algorithm = authinfo.get('algorithm', b'MD5').decode('ASCII', 'replace')
         H = cls.get_algorithm(algorithm)
 
-        if algorithm == 'MD5-sess' and authinfo.get('A1'):  # noqa: SIM108
+        if algorithm.endswith('-sess') and authinfo.get('A1'):  # noqa: SIM108
             secret = H(authinfo['A1'])
         else:
             secret = H(cls.A1(authinfo))
@@ -198,7 +203,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
         if not qop or qop == b'auth':
             return b'%s:%s' % (params['method'], params['uri'])
         if qop == b'auth-int':
-            H = cls.get_algorithm(params['algorithm'])
+            H = cls.get_algorithm(params.get('algorithm', b'MD5'))
             return b'%s:%s:%s' % (params['method'], params['uri'], H(params['entity_body']))
         raise NotImplementedError(f'Unknown quality of protection: {qop!r}')  # pragma: no cover
 
@@ -206,10 +211,9 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
     def A1(cls, params: ByteUnicodeDict) -> bytes:
         algorithm = params.get('algorithm', b'')
 
-        if not algorithm or algorithm == b'MD5':
+        if not algorithm or not algorithm.endswith(b'-sess'):
             return b'%s:%s:%s' % (params['username'], params['realm'], params['password'])
-        if algorithm == b'MD5-sess':
-            H = cls.get_algorithm(algorithm)
-            s = b'%s:%s:%s' % (params['username'], params['realm'], params['password'])
-            return b'%s:%s:%s' % (H(s), params['nonce'], params['cnonce'])
-        raise NotImplementedError(f'Unknown algorithm: {algorithm}')  # pragma: no cover
+
+        H = cls.get_algorithm(algorithm)
+        s = b'%s:%s:%s' % (params['username'], params['realm'], params['password'])
+        return b'%s:%s:%s' % (H(s), params['nonce'], params['cnonce'])

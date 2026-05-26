@@ -7,6 +7,31 @@ from httoop.exceptions import InvalidHeader
 from httoop.header import Authorization, WWWAuthenticate
 
 
+RFC7616_MUFASA = {
+    'username': 'Mufasa',
+    'realm': 'http-auth@example.org',
+    'password': 'Circle of Life',
+    'method': 'GET',
+    'uri': '/dir/index.html',
+    'nonce': '7ypf/xlj9XXwfDPEoM4URrv/xwf94BcCAzFZH4GiTo0v',
+    'nc': '00000001',
+    'cnonce': 'f2/wE4q74E6zIJEtWaHKaf5wv/H5QzzpXusqGemxURZJ',
+    'qop': 'auth',
+}
+
+RFC7616_JASON_DOE = {
+    'username': 'Jäsøn Doe',
+    'realm': 'api@example.org',
+    'password': 'Secret, or not?',
+    'method': 'GET',
+    'uri': '/doe.json',
+    'nonce': '5TsQWLVdgBdmrQ0XsxbDODV+57QdFR34I9HAbC/RVvkK',
+    'nc': '00000001',
+    'cnonce': 'NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v',
+    'qop': 'auth',
+}
+
+
 def test_digest_www_authentication(headers):
     www_auth = WWWAuthenticate('Digest', {
         'realm': 'testrealm@host.com',
@@ -58,7 +83,7 @@ def test_digest_authorization(headers):
     assert elem.username == 'Mufasa'
     assert elem.password is None
     elem.username = 'test'
-    elem.password = 'test'
+    elem.password = 'test'  # noqa: S105
     assert elem.username == 'test'
     assert elem.password is None
 
@@ -110,6 +135,35 @@ def test_digest_authorization_auth_int(headers):
     nc="00000001"'''
     headers.parse(auth_bytes.replace(b'\n   ', b''))
     assert auth.params == headers.element('Authorization').params
+
+
+@pytest.mark.parametrize(
+    'algorithm, expected',
+    [
+        ('MD5', '02c9d6f0ab6dfc20fc9e2105c8fc728b'),
+        ('MD5-sess', '4c187ba5e8ff03c06627fc4e3940fc97'),
+        ('SHA-256', '22be276ffb2b1acc389119cac518f32fb2db8a419f31ec8ba3f395d711920c6e'),
+        ('SHA-256-sess', '28a76fe8f6141a8d4d868ed1c8ff383edf29c5f03b50e1d53e7251654befbe83'),
+        ('SHA-512-256', 'd54bd6b5b9fc948b8135e347402e314d14f62d9041cb6745c7f5331c6809d221'),
+        ('SHA-512-256-sess', '87bad8ef67556e3c82f765be811beeb7c5bc61d4d7c2e538f8561a7cc04027f3'),
+    ],
+)
+def test_digest_auth_int_all_algorithms(algorithm, expected):
+    auth = {
+        'username': b'Mufasa',
+        'realm': b'testrealm@host.com',
+        'password': b'Circle Of Life',
+        'method': b'GET',
+        'uri': b'/dir/index.html',
+        'nonce': b'dcd98b7102dd2f0e8b11d0f600bfb0c093',
+        'nc': b'00000001',
+        'cnonce': b'0a4f113b',
+        'qop': b'auth-int',
+        'algorithm': algorithm.encode(),
+        'entity_body': b'foo',
+    }
+
+    assert DigestAuthRequestScheme.calculate_request_digest(auth) == expected.encode()
 
 
 def test_digest_authorization_md5_sess_a1(headers):
@@ -211,3 +265,20 @@ def test_required_parameter(params, headers):
     with pytest.raises(InvalidHeader) as excinfo:
         bytes(element)
     assert 'Missing parameter' in str(excinfo)
+
+
+def test_auth_int_defaults_to_md5_when_algorithm_omitted():
+    authinfo = {
+        'username': b'Mufasa',
+        'realm': b'testrealm@host.com',
+        'password': b'Circle Of Life',
+        'method': b'GET',
+        'uri': b'/dir/index.html',
+        'nonce': b'dcd98b7102dd2f0e8b11d0f600bfb0c093',
+        'nc': b'00000001',
+        'cnonce': b'0a4f113b',
+        'qop': b'auth-int',
+        'entity_body': b'',
+    }
+
+    DigestAuthRequestScheme.calculate_request_digest(authinfo)

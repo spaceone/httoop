@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from hashlib import md5, sha256
+from hmac import compare_digest
 from typing import Callable
 
 from httoop.exceptions import InvalidHeader
@@ -168,7 +169,7 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
         if authinfo['realm'] != request_params['realm']:
             return False
         response = cls.calculate_request_digest(authinfo)
-        return response == request_params['response']
+        return len(response) == len(request_params['response']) and compare_digest(response, request_params['response'])
 
     @classmethod
     def calculate_request_digest(cls, authinfo: ByteUnicodeDict) -> bytes:

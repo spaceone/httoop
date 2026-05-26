@@ -15,6 +15,10 @@ class InvalidHeader(Invalid):
     """error raised when header is invalid."""
 
 
+class InvalidHeaderSize(InvalidHeader):
+    """error raised when maximum header size constraints are reached."""
+
+
 class InvalidURI(Invalid):
     """error raised when URI is invalid."""
 

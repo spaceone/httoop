@@ -5,10 +5,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterator
 
-from httoop.exceptions import Invalid, InvalidBody, InvalidHeader, InvalidLine, InvalidURI
+from httoop.exceptions import Invalid, InvalidBody, InvalidHeader, InvalidHeaderSize, InvalidLine, InvalidURI
 from httoop.header import Headers
 from httoop.messages import Message
-from httoop.status import BAD_REQUEST, NOT_IMPLEMENTED
+from httoop.status import BAD_REQUEST, NOT_IMPLEMENTED, PAYLOAD_TOO_LARGE, REQUEST_HEADER_FIELDS_TOO_LARGE
 from httoop.util import _, integer
 
 
@@ -31,13 +31,27 @@ class StateMachine:
 
     Message = Message  # subclass provides the type
 
-    def __init__(self, strict: bool = True) -> None:
+    def __init__(
+        self,
+        *,
+        strict: bool = True,
+        max_header_count: int = 1024,
+        max_header_line_length: int = 8192,
+        max_header_section_size: int = 65536,
+        max_body_size: float = float('inf'),
+    ) -> None:
         self.buffer = bytearray()
         self.message = None
         self.strict = strict
+        self.max_header_count = max_header_count
+        self.max_header_line_length = max_header_line_length
+        self.max_header_section_size = max_header_section_size
+        self.max_body_size = max_body_size
 
     def _reset_state(self) -> None:
         self.message = self.Message()
+        self.message.headers.max_header_count = self.max_header_count
+        self.message.headers.max_header_line_length = self.max_header_line_length
 
         self.trailers = None
         self.line_end = CRLF
@@ -50,6 +64,7 @@ class StateMachine:
             'headers': False,
             'body': False,
             'trailer': False,
+            '_header_section_size': 0,
         }
 
     def on_message_started(self) -> None:
@@ -88,9 +103,8 @@ class StateMachine:
         Appends the given data to the internal buffer
         and parses it as HTTP Request-Messages.
 
-        :param data:
-        data to parse
-        :type  data: bytes
+        :param data: data to parse
+        :type data: bytes
         """
         self.buffer.extend(data)
         try:
@@ -167,10 +181,14 @@ class StateMachine:
             self._parse_header(headers)
 
     def _parse_header(self, headers: bytearray) -> None:
-        # parse headers
         if headers:
+            self.state['_header_section_size'] += len(headers)
+            if self.state['_header_section_size'] >= self.max_header_section_size:
+                raise REQUEST_HEADER_FIELDS_TOO_LARGE(_('Maximum allowed header section size (%d) reached.') % (self.max_header_section_size,))
             try:
                 self.message.headers.parse(bytes(headers))
+            except InvalidHeaderSize as exc:
+                raise REQUEST_HEADER_FIELDS_TOO_LARGE(str(exc))
             except InvalidHeader as exc:
                 raise BAD_REQUEST(str(exc))
 
@@ -204,6 +222,8 @@ class StateMachine:
                 self.message_length = integer(message.headers.get('Content-Length', '0'))
             except ValueError:
                 raise BAD_REQUEST(_('Invalid Content-Length header.'))
+            if self.message_length > self.max_body_size:
+                raise PAYLOAD_TOO_LARGE(_('Maximum content size (%d) reached') % (self.max_body_size,))
 
     def parse_body_with_message_length(self) -> bool | None:
         body, self.buffer = self.buffer[:self.message_length], self.buffer[self.message_length:]

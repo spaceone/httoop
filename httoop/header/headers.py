@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from httoop.exceptions import InvalidHeader
+from httoop.exceptions import InvalidHeader, InvalidHeaderSize
 from httoop.header.element import HEADER, HeaderElement
 from httoop.meta import Semantic
 from httoop.util import CaseInsensitiveDict, _, to_unicode
@@ -11,7 +11,7 @@ from httoop.util import CaseInsensitiveDict, _, to_unicode
 
 class Headers(CaseInsensitiveDict, Semantic):
 
-    __slots__ = ('line_end',)
+    __slots__ = ('line_end', 'max_header_count', 'max_header_line_length')
 
     # disallowed bytes for HTTP header field names
     HEADER_RE = re.compile(rb'[\x00-\x1F\x7F()<>@,;:\\\\\"/\[\]?={} \t\x80-\xFF]')
@@ -19,6 +19,8 @@ class Headers(CaseInsensitiveDict, Semantic):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.line_end = b'\r\n'
+        self.max_header_count = 1024
+        self.max_header_line_length = 8192
 
     @staticmethod
     def formatvalue(value: Any) -> bytes:
@@ -141,6 +143,9 @@ class Headers(CaseInsensitiveDict, Semantic):
             if self.HEADER_RE.search(name):
                 raise InvalidHeader(_('Invalid header name: %r'), name.decode('ISO8859-1'))
 
+            if len(curr) >= self.max_header_line_length:
+                raise InvalidHeaderSize(_('Maximum allowed header line length (%d) reached.'), self.max_header_line_length)
+
             name, value = name.strip(), [value.lstrip()]
 
             # continuation lines
@@ -153,6 +158,8 @@ class Headers(CaseInsensitiveDict, Semantic):
             if name in self:
                 value = Element.join([super().__getitem__(name), value])
             super().__setitem__(name, value)
+            if len(self) >= self.max_header_count:
+                raise InvalidHeaderSize(_('Maximum allowed header count (%d) reached.'), self.max_header_count)
 
     def compose(self) -> bytes:
         def _save(s):

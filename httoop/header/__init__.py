@@ -8,8 +8,6 @@ HTTP headers.
 .. seealso:: :rfc:`2616#section-14`
 """
 
-# TODO: add a MAXIMUM of 500 headers?
-
 from httoop.header import auth, cache, conditional, messaging, ranges, security
 from httoop.header.element import HEADER, HeaderElement
 from httoop.header.headers import Headers

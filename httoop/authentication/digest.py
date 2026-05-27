@@ -14,22 +14,30 @@ from httoop.util import ByteUnicodeDict, _
 class DigestAuthScheme:
     algorithms = {
         'MD5': lambda: md5(),  # noqa: S324
+        'MD5-sess': lambda: md5(),  # noqa: S324
         'SHA-256': lambda: sha256(),
+        'SHA-256-sess': lambda: sha256(),
         'SHA-512-256': lambda: new('sha512_256'),
+        'SHA-512-256-sess': lambda: new('sha512_256'),
     }  # not case insensitive per RFC
-    algorithms['MD5-sess'] = algorithms['MD5']
-    algorithms['SHA-256-sess'] = algorithms['SHA-256']
-    algorithms['SHA-512-256-sess'] = algorithms['SHA-512-256']
+
+    allowed_algorithms = frozenset(algorithms)
     qops = (b'auth', b'auth-int')  # quality of protection
 
     @classmethod
-    def get_algorithm(cls, algorithm: bytes | str) -> Callable[bytes, bytes]:
+    def get_algorithm(cls, algorithm: bytes | str) -> Callable[[bytes], bytes]:
+        if not isinstance(algorithm, str):
+            algorithm = algorithm.decode('ASCII')
+
+        if algorithm not in cls.allowed_algorithms:
+            raise InvalidHeader(_('Digest algorithm not allowed: %r'), algorithm)
+
         try:
-            H = cls.algorithms[algorithm.decode('ASCII', 'ignore') if isinstance(algorithm, bytes) else algorithm]
+            H = cls.algorithms[algorithm]
         except KeyError:
             raise InvalidHeader(_('Unknown digest authentication algorithm: %r'), algorithm) from None
 
-        def _algo(value) -> bytes:
+        def _algo(value: bytes) -> bytes:
             h = H()
             h.update(value)
             return h.hexdigest().encode('ASCII')
@@ -217,3 +225,12 @@ class DigestAuthRequestScheme(DigestAuthScheme):  # Authorization
         H = cls.get_algorithm(algorithm)
         s = b'%s:%s:%s' % (params['username'], params['realm'], params['password'])
         return b'%s:%s:%s' % (H(s), params['nonce'], params['cnonce'])
+
+
+class SecureDigestAuthRequestScheme(DigestAuthRequestScheme):
+    allowed_algorithms = frozenset({
+        'SHA-256',
+        'SHA-256-sess',
+        'SHA-512-256',
+        'SHA-512-256-sess',
+    })

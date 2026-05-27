@@ -4,7 +4,7 @@ import re
 from typing import TYPE_CHECKING, Any
 
 from httoop.authentication.basic import BasicAuthRequestScheme, BasicAuthResponseScheme
-from httoop.authentication.digest import DigestAuthRequestScheme, DigestAuthResponseScheme
+from httoop.authentication.digest import DigestAuthRequestScheme, DigestAuthResponseScheme, SecureDigestAuthRequestScheme
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
 from httoop.util import _
@@ -70,8 +70,12 @@ class AuthRequestElement(AuthElement):
 
     schemes = {
         'basic': BasicAuthRequestScheme,
-        'digest': DigestAuthRequestScheme,
+        'digest': SecureDigestAuthRequestScheme,
     }
+
+    @classmethod
+    def allow_insecure_digest_algorithms(cls, *, allow=False):
+        cls.schemes['digest'] = DigestAuthRequestScheme if allow else SecureDigestAuthRequestScheme
 
     @property
     def scheme(self):

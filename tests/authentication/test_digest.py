@@ -31,6 +31,8 @@ RFC7616_JASON_DOE = {
     'qop': 'auth',
 }
 
+Authorization.allow_insecure_digest_algorithms(allow=True)
+
 
 def test_digest_www_authentication(headers):
     www_auth = WWWAuthenticate('Digest', {
@@ -201,7 +203,7 @@ def test_digest_authorization_md5_sess_a1(headers):
     ('testrealm@host.com', True),
     ('hacker@host.com', False),
 ])
-def test_check(headers, realm, result):
+def test_check(realm, result):
     www_auth = WWWAuthenticate('Digest', {
         'realm': realm,
         'response': '4c187ba5e8ff03c06627fc4e3940fc97',
@@ -222,7 +224,7 @@ def test_check(headers, realm, result):
     assert result == DigestAuthRequestScheme.check(auth.params, www_auth.params)
 
 
-def test_unknown_algorithm(headers):
+def test_unknown_algorithm():
     auth = Authorization('Digest', {
         'algorithm': 'bar', 'username': 'foo', 'realm': 'foo',
         'uri': '/',
@@ -282,3 +284,25 @@ def test_auth_int_defaults_to_md5_when_algorithm_omitted():
     }
 
     DigestAuthRequestScheme.calculate_request_digest(authinfo)
+
+
+def test_auth_disabled_insecure_alghorithms():
+    Authorization.allow_insecure_digest_algorithms(allow=False)
+    auth = Authorization('Digest', {
+        'username': 'Mufasa',
+        'realm': 'testrealm@host.com',
+        'nonce': 'dcd98b7102dd2f0e8b11d0f600bfb0c093',
+        'uri': '/dir/index.html',
+        'password': 'Circle Of Life',
+        'method': 'GET',
+        'A1': '939e7578ed9e3c518a452acee763bce9:dcd98b7102dd2f0e8b11d0f600bfb0c093:0a4f113b',
+        'qop': 'auth-int',
+        'algorithm': 'MD5-sess',
+        'nc': '00000001',
+        'cnonce': '0a4f113b',
+        'entity_body': 'foo',
+        'opaque': '5ccc069c403ebaf9f0171e9517f40e41',
+    })
+    with pytest.raises(InvalidHeader)as excinfo:
+        bytes(auth)
+    assert "Digest algorithm not allowed: 'MD5-sess'" in str(excinfo.value)

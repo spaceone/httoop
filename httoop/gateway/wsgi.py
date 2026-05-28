@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from typing import Any, Callable, Iterator
 
+import httoop.header
 from httoop.messages import Body
 
 
@@ -57,6 +58,8 @@ class WSGI:
 
         self.request.body.__class__ = WSGIBody
         self.response.body.__class__ = WSGIBody
+
+        self.ignored_hop_by_hop_headers = {h.name.lower() for h in httoop.header.HEADER.values() if h.hop_by_hop}
 
     def start_response(self) -> None:
         pass
@@ -125,7 +128,7 @@ class WSGI:
         environ.update({
             'HTTP_%s' % name.upper().replace('-', '_'): value
             for name, value in self.request.headers.items()
-            if name.lower() not in {'content-type', 'content-length'}
+            if name.lower() not in {'content-type', 'content-length', 'proxy'} | self.ignored_hop_by_hop_headers
         })
         environ.update({
             'REQUEST_METHOD': str(self.request.method),

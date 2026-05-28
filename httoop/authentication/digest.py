@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from hashlib import md5, new, sha256
 from hmac import compare_digest
-from time import time
+from secrets import token_bytes
 from typing import Callable
-from uuid import uuid4
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
@@ -46,13 +45,15 @@ class DigestAuthScheme:
 
     @classmethod
     def generate_nonce(cls, authinfo: ByteUnicodeDict) -> bytes:
-        nonce = b'%d:%s:%s' % (
-            time(),
-            authinfo.get('etag', authinfo.get('realm', b'')),
-            str(uuid4()).encode('ASCII'),
-        )
         algorithm = authinfo.get('algorithm', b'MD5').decode('ASCII', 'replace')
         H = cls.get_algorithm(algorithm)
+
+        # nonce = b'%d:%s:%s' % (
+        #     time(),
+        #     authinfo.get('etag', authinfo.get('realm', b'')),
+        #     str(uuid4()).encode('ASCII'),
+        # )
+        nonce = token_bytes(32)
         return H(nonce)
 
     @classmethod
@@ -108,6 +109,7 @@ class DigestAuthResponseScheme(DigestAuthScheme):  # WWW-Authenticate
         params = super(cls, cls).parse(authinfo)
         if b'"' in params['nonce']:
             raise InvalidHeader(_('Nonce must not contain double quote'))
+
         stale = params.get('stale')
         if stale:
             stale = {b'false': False, b'true': True}.get(stale.lower())

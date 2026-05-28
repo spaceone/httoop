@@ -31,6 +31,10 @@ class InvalidBody(Invalid):
     """error raised when Body is invalid."""
 
 
+class InvalidBodySize(InvalidHeader):
+    """error raised when maximum body size constraints are reached."""
+
+
 class EncodeError(_Translateable, ValueError):
     """error raised when encoding failed."""
 

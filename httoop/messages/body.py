@@ -11,9 +11,10 @@ from os import fstat
 from types import GeneratorType
 from typing import Any, Iterator
 
+from httoop.exceptions import InvalidBodySize
 from httoop.header import Headers
 from httoop.meta import Semantic
-from httoop.util import IFile
+from httoop.util import IFile, _
 
 
 _SENTINEL = object()
@@ -35,7 +36,7 @@ class Body(IFile, Semantic):
     the content using the codec specified in the MIME media type.
     """
 
-    __slots__ = ('__iter', 'content_codec', 'data', 'fd', 'headers', 'trailer', 'transfer_codec')
+    __slots__ = ('__iter', 'content_codec', 'data', 'fd', 'headers', 'max_body_size', 'trailer', 'transfer_codec')
 
     MAX_CHUNK_SIZE = 4096
 
@@ -103,7 +104,7 @@ class Body(IFile, Semantic):
     def chunked(self, chunked) -> None:
         self.transfer_encoding = 'chunked' if chunked else None
 
-    def __init__(self, content: bytes | list[bytes] | str | None = None, mimetype: str | None = None) -> None:
+    def __init__(self, content: bytes | list[bytes] | str | None = None, mimetype: str | None = None, *, max_body_size: int | None = None) -> None:
         self.data = None
         self.__iter = None
         self.fd = BytesIO()
@@ -111,6 +112,7 @@ class Body(IFile, Semantic):
         self.trailer = Headers()
         self.transfer_codec = None
         self.content_codec = None
+        self.max_body_size = max_body_size
 
         self.mimetype = mimetype or b'text/plain; charset=UTF-8'
         self.set(content)
@@ -192,6 +194,9 @@ class Body(IFile, Semantic):
 
         # if self.content_codec and data:
         #     data = self.content_codec.decode(data, self.encoding).encode(self.encode)
+
+        if self.max_body_size and len(self) + len(data) >= self.max_body_size:
+            raise InvalidBodySize(_('Maximum content size (%d) reached'), self.max_body_size)
 
         self.write(data)
 

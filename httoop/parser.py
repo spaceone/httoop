@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterator
 
-from httoop.exceptions import Invalid, InvalidBody, InvalidHeader, InvalidHeaderSize, InvalidLine, InvalidURI
+from httoop.exceptions import Invalid, InvalidBody, InvalidBodySize, InvalidHeader, InvalidHeaderSize, InvalidLine, InvalidURI
 from httoop.header import Headers
 from httoop.messages import Message
 from httoop.status import BAD_REQUEST, NOT_IMPLEMENTED, PAYLOAD_TOO_LARGE, REQUEST_HEADER_FIELDS_TOO_LARGE
@@ -216,6 +216,7 @@ class StateMachine:
             self.chunked = te == 'chunked'
             if not self.chunked:
                 raise NOT_IMPLEMENTED(_('Unknown HTTP/1.1 Transfer-Encoding: %r') % (te,))
+            self.message.body.max_body_size = self.max_body_size
         else:
             # Content-Length header defines the length of the message body
             try:
@@ -227,7 +228,10 @@ class StateMachine:
 
     def parse_body_with_message_length(self) -> bool | None:
         body, self.buffer = self.buffer[:self.message_length], self.buffer[self.message_length:]
-        self.message.body.parse(bytes(body))
+        try:
+            self.message.body.parse(bytes(body))
+        except InvalidBodySize as exc:
+            raise PAYLOAD_TOO_LARGE(str(exc))
 
         blen = len(body)
         unfinished = blen < self.message_length
@@ -252,7 +256,10 @@ class StateMachine:
             return NOT_RECEIVED_YET
 
         body_part, rest_chunk = rest_chunk[:chunk_size], rest_chunk[chunk_size:]
-        self.message.body.parse(bytes(body_part))
+        try:
+            self.message.body.parse(bytes(body_part))
+        except InvalidBodySize as exc:
+            raise PAYLOAD_TOO_LARGE(str(exc))
         self.buffer = rest_chunk
 
         if chunk_size == 0:

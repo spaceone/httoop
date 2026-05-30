@@ -112,6 +112,34 @@ Extended information about hypermedia, WWW and how HTTP is meant to be used:
 
   * [Economies of scale](https://roy.gbiv.com/untangled/2008/economies-of-scale)
 
+* Clarifications of misconceptions people have about REST:
+
+ * [Do You Really Understand the REST?](https://t-code.pl/blog/2016/02/rest-misconceptions-0/)
+
+ * [the URI Confusion](https://t-code.pl/blog/2016/02/rest-misconceptions-1/)
+
+ * [(Not) Linking Data (Enough)](https://t-code.pl/blog/2016/02/rest-misconceptions-2/)
+
+ * [More Than Links](https://t-code.pl/blog/2016/03/rest-misconceptions-3/)
+
+ * [Resources Are Application State](https://t-code.pl/blog/2016/03/rest-misconceptions-4/)
+
+ * [REST "Documentation"](https://t-code.pl/blog/2016/03/rest-misconceptions-5/)
+
+ * [Versioning and Hypermedia](https://t-code.pl/blog/2016/03/rest-misconceptions-6/)
+
+ * [HATEOAS as if You Meant It](https://t-code.pl/blog/2015/01/hateoas-as-if-you-meant-it/)
+
+ * [The Labours of Hypermedia](https://t-code.pl/blog/2016/04/labours-of-hypermedia/)
+
+ * [Hypermedia must be extensible - Extensible Media Types](https://t-code.pl/blog/2016/04/hypermedia-must-be-extensible/)
+
+ * [Consuming Hypermedia - Declarative UI](https://t-code.pl/blog/2016/04/hypermedia-driven-ui/)
+
+ * [Towards Server-side Routing With URI Templates (RFC 6570)](https://t-code.pl/blog/2016/11/towards-server-side-routing-with-uri-templates/)
+
+ * [Testing APIs Hypermedia-style](https://t-code.pl/blog/2019/06/testing-hypermedia-api/)
+
 * [Richardson Maturity Model](https://martinfowler.com/articles/richardsonMaturityModel.html)
 
 * [Test Cases for HTTP Content-Disposition header field](http://greenbytes.de/tech/tc2231/)

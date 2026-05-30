@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Iterator
 
 from httoop.exceptions import Invalid, InvalidBody, InvalidBodySize, InvalidHeader, InvalidHeaderSize, InvalidLine, InvalidURI
 from httoop.header import Headers
+from httoop.header.messaging import Trailer
 from httoop.messages import Message
 from httoop.status import BAD_REQUEST, NOT_IMPLEMENTED, PAYLOAD_TOO_LARGE, REQUEST_HEADER_FIELDS_TOO_LARGE
 from httoop.util import _, integer
@@ -305,6 +306,11 @@ class StateMachine:
         except InvalidHeader as exc:
             exc = InvalidHeader(_('Invalid trailers: %r'), str(exc))
             raise BAD_REQUEST(str(exc))
+
+        for forbidden in Trailer.forbidden_headers:
+            if forbidden in self.trailers:
+                exc = InvalidHeader(_('A Trailer header MUST NOT contain %r field.'), forbidden)
+                raise BAD_REQUEST(str(exc))
 
         self.merge_trailer_into_header()
         return False

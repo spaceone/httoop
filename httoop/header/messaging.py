@@ -426,7 +426,21 @@ class Trailer(_HopByHopElement, HeaderElement):
 
     is_response_header = True
     is_request_header = True
-    forbidden_headers = ('Transfer-Encoding', 'Content-Length', 'Trailer')
+    forbidden_headers = (
+        # framing
+        'Transfer-Encoding', 'Content-Length',
+        # routing
+        'Host',
+        # request modifiers (controls, conditionals)
+        'Expect', 'Max-Forwards',
+        'If-Match', 'If-None-Match', 'If-Modified-Since', 'If-Unmodified-Since', 'If-Range',
+        # authentication and state management
+        'Authorization', 'Proxy-Authorization', 'Cookie', 'Set-Cookie',
+        # response control data
+        'Age', 'Cache-Control', 'Expires', 'Date', 'Location', 'Retry-After', 'Vary', 'Warning',
+        # payload processing
+        'Content-Encoding', 'Content-Type', 'Content-Range', 'Trailer',
+    )  # fmt: off
 
     def sanitize(self) -> None:
         if self.value.title() in self.forbidden_headers:

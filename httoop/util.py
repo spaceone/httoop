@@ -124,9 +124,8 @@ def integer(number: str | bytes, base=10) -> int:
     """
     if isinstance(number, int):
         return int(number)
-    if not number.isdigit():
-        if base != 16 or number.strip(string.hexdigits if isinstance(number, str) else string.hexdigits.encode('ASCII')):
-            raise ValueError()
+    if not number.isdigit() and (base != 16 or number.strip(string.hexdigits if isinstance(number, str) else string.hexdigits.encode('ASCII'))):
+        raise ValueError()
     zero = '0' if isinstance(number, str) else b'0'
     if number != zero and len(number.lstrip(zero)) != len(number):
         raise ValueError()

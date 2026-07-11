@@ -76,6 +76,8 @@ HTTP and extensions are defined in the following RFC's:
 
 * JavaScript Object Notation (JSON) Patch ([RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902))
 
+* The HTTP QUERY Method ([RFC 10008](https://datatracker.ietf.org/doc/html/rfc10008))
+
 * Use of the Content-Disposition Header Field in the Hypertext Transfer Protocol (HTTP) ([RFC 6266](https://datatracker.ietf.org/doc/html/rfc6266))
 
 * Upgrading to TLS Within HTTP/1.1 ([RFC 2817](https://datatracker.ietf.org/doc/html/rfc2817))

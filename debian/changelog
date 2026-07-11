@@ -1,6 +1,7 @@
 httoop (0.2.2) UNRELEASED; urgency=medium
 
   * Drop support for Python 3.8
+  * Add compatibility with mypy and ty
 
  -- Florian Best <space@wechall.net>  Wed, 09 Sep 2026 23:36:58 +0200
 

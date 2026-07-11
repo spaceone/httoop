@@ -3,7 +3,7 @@
 from httoop.util import _Translateable
 
 
-class Invalid(_Translateable, ValueError):
+class Invalid(_Translateable, ValueError):  # noqa: N818
     """base class for invalid values."""
 
 

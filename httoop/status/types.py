@@ -9,7 +9,7 @@ from __future__ import annotations
 from httoop.status.status import Status
 
 
-class StatusException(Status, Exception):
+class StatusException(Status, Exception):  # noqa: N818
     """
     This class represents a small HTTP Response message
     for error handling purposes

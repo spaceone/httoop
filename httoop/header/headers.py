@@ -30,13 +30,13 @@ class Headers(CaseInsensitiveDict, Semantic):
         return val
 
     def __getitem__(self, key: str) -> str:
-        Element = HEADER.get(key, HeaderElement)
-        return Element.decode_rfc2047(super().__getitem__(key))
+        element_cls = HEADER.get(key, HeaderElement)
+        return element_cls.decode_rfc2047(super().__getitem__(key))
 
     def get(self, key: str, default: bytes | str | None = None) -> bytes | str | None:
-        Element = HEADER.get(key, HeaderElement)
+        element_cls = HEADER.get(key, HeaderElement)
         try:
-            return Element.decode_rfc2047(super().__getitem__(key))
+            return element_cls.decode_rfc2047(super().__getitem__(key))
         except KeyError:
             return default
 
@@ -65,14 +65,14 @@ class Headers(CaseInsensitiveDict, Semantic):
         if not fieldvalue:
             return []
 
-        Element = HEADER.get(fieldname, HeaderElement)
-        return Element.sorted([Element.parse(element) for element in Element.split(fieldvalue)])
+        element_cls = HEADER.get(fieldname, HeaderElement)
+        return element_cls.sorted([element_cls.parse(element) for element in element_cls.split(fieldvalue)])
 
     def element(self, fieldname: bytes | str, default: None = None) -> Any:
         """Treat the field as single element."""
         if fieldname in self:
-            Element = HEADER.get(fieldname, HeaderElement)
-            return Element.parse(super().__getitem__(fieldname))
+            element_cls = HEADER.get(fieldname, HeaderElement)
+            return element_cls.parse(super().__getitem__(fieldname))
         return default
 
     def get_element(self, fieldname: str, which: str | None = None, default: object | None = None) -> Any:
@@ -88,8 +88,8 @@ class Headers(CaseInsensitiveDict, Semantic):
         self.append(fieldname, bytes(self.create_element(fieldname, *args, **kwargs)))
 
     def create_element(self, fieldname: str, *args, **kwargs) -> HeaderElement:
-        Element = HEADER.get(fieldname, HeaderElement)
-        return Element(*args, **kwargs)
+        element_cls = HEADER.get(fieldname, HeaderElement)
+        return element_cls(*args, **kwargs)
 
     def values(self, *key) -> list[Any | str]:
         if not key:
@@ -100,21 +100,21 @@ class Headers(CaseInsensitiveDict, Semantic):
     def append(self, _name: str, _value: bytes | str, **params) -> None:
         _value = self.formatvalue(_value)
         if params:
-            Element = HEADER.get(_name, HeaderElement)
-            parts = [_value or b''] + [Element.formatparam(k.encode(), v) for k, v in params.items()]
+            element_cls = HEADER.get(_name, HeaderElement)
+            parts = [_value or b''] + [element_cls.formatparam(k.encode(), v) for k, v in params.items()]
             _value = b'; '.join(parts)
 
         if _name not in self or not self[_name]:
             self[_name] = _value
         else:
-            Element = HEADER.get(_name, HeaderElement)
-            self[_name] = Element.join([super().__getitem__(_name), _value])
+            element_cls = HEADER.get(_name, HeaderElement)
+            self[_name] = element_cls.join([super().__getitem__(_name), _value])
 
     def merge(self, other: Headers) -> None:
         other = self.__class__(other)
         for key in other:
-            Element = HEADER.get(key, HeaderElement)
-            self[key] = Element.merge(self.elements(key), other.elements(key))
+            element_cls = HEADER.get(key, HeaderElement)
+            self[key] = element_cls.merge(self.elements(key), other.elements(key))
 
     def set(self, headers: dict[str, str]) -> None:
         self.clear()
@@ -149,11 +149,11 @@ class Headers(CaseInsensitiveDict, Semantic):
             while lines and lines[0].startswith((b' ', b'\t')):
                 value.append(lines.pop(0)[1:])
             value = b''.join(value).rstrip()
-            Element = HEADER.get(name, HeaderElement)
+            element_cls = HEADER.get(name, HeaderElement)
             name = name.decode('ascii')
 
             if name in self:
-                value = Element.join([super().__getitem__(name), value])
+                value = element_cls.join([super().__getitem__(name), value])
             super().__setitem__(name, value)
             if len(self) >= self.max_header_count:
                 raise InvalidHeaderSize(_('Maximum allowed header count (%d) reached.'), self.max_header_count)
@@ -170,12 +170,12 @@ class Headers(CaseInsensitiveDict, Semantic):
 
     def __encoded_items(self):
         for key, values in self.items():
-            Element = HEADER.get(key, HeaderElement)
-            if Element is not HeaderElement:
-                key = Element.name
+            element_cls = HEADER.get(key, HeaderElement)
+            if element_cls is not HeaderElement:
+                key = element_cls.name
             key = key.encode('ascii', 'ignore')
-            if Element.list_element:
-                for value in Element.split(values):
+            if element_cls.list_element:
+                for value in element_cls.split(values):
                     yield key, value
             else:
                 yield key, values

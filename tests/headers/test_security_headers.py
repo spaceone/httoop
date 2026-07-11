@@ -3,7 +3,7 @@ def test_content_security_policy(headers):
     assert bytes(headers.get_element('Content-Security-Policy', 'media-src')) == b"media-src 'self'; "
 
 
-def test_content_security_policy_element(headers):  # TODO(FIXME: very bad API design
+def test_content_security_policy_element(headers):  # FIXME: very bad API design
     headers.append_element('Content-Security-Policy', 'default-src', {b"'self'": None})
     headers.append_element('Content-Security-Policy', 'font-src', {b"'none'": None})
     assert bytes(headers) == b"Content-Security-Policy: default-src 'self'; , font-src 'none'; \r\n\r\n"

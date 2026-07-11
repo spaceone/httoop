@@ -95,7 +95,7 @@ class Resource(dict):
         except StopIteration:
             pass
 
-    def expand(___self, ___href, **templates):
+    def expand(___self, ___href, **templates):  # noqa: N805
         return expand(___href, templates)
 
     def get_curie(self, relation: str) -> str:

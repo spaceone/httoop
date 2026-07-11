@@ -9,7 +9,7 @@ class ClientStateMachine(StateMachine):
 
     Message = Response
 
-    def __init__(self, *, strict: bool = True, max_status_line_length: int | float = 256) -> None:
+    def __init__(self, *, strict: bool = True, max_status_line_length: float = 256) -> None:
         super().__init__(strict=strict)
         self.max_status_line_length = max_status_line_length
 

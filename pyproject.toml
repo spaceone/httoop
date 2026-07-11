@@ -80,6 +80,7 @@ unsafe-fixes = true
 preview = true
 select = ["E", "W", "F", "I", "D", "TD", "ALL"]
 ignore = [
+# Invalid / don't care:
  "E501",  # line-too-long
  "E203",  # whitespace-before-punctuation
  "COM812",  # missing-trailing-comma
@@ -102,6 +103,9 @@ ignore = [
  "D404",  # First word of the docstring should not be "This"
  "D413",  # missing-blank-line-after-last-section
  "D104",  # Missing docstring in public package
+ "DOC201",  # docstring-missing-returns
+ "DOC402",  # docstring-missing-yields
+ "DOC501",  # docstring-missing-exception
  "EM101", # raw-string-in-exception
  "ERA001", # commented-out-code
  "T201", "T203",  # print, p-print
@@ -109,9 +113,14 @@ ignore = [
  "TD002",  # missing-todo-author
  "TD003",  # missing-todo-link
  "RSE102",  # unnecessary-paren-on-raise-exception
+ "UP031",  # printf-string-formatting
  "CPY",  # copyright
+ "EM102",  # f-string-in-exception
  # "I", "S101", "Q000", "ANN", "ERA", "UP004", "ARG001", "ARG002",
+ "FURB189",  # subclass-builtin
+ "TRY301",  # raise-within-try
 
+# too much effort:
  "ANN001",  # missing-type-function-argument
  "ANN201",  # missing-return-type-undocumented-public-function
  "ANN202",  # missing-return-type-private-function
@@ -120,6 +129,65 @@ ignore = [
  "ANN401",  # any-type
  "ANN204",  # missing-return-type-special-method
  "ANN206",  # missing-return-type-class-method
+
+ "ARG001",  # unused-function-argument
+ "ARG003",  # unused-class-method-argument
+ "FIX001",  # line-contains-fixme
+ "FIX002",  # line-contains-todo
+ "PLC2701",  # import-private-name
+ "PLR0904",  # too-many-public-methods
+ "PLR0912",  # too-many-branches
+
+# needs decision:
+ "PLC2801",  # unnecessary-dunder-call
+ "TRY003",  # raise-vanilla-args
+ "TRY300",  # try-consider-else
+
+# should be fixed!
+ "A001",  # builtin-variable-shadowing
+ "A003",  # builtin-attribute-shadowing
+ "B015",  # useless-comparison
+ "B018",  # useless-expression
+ "B904",  # raise-without-from-inside-except
+ "D301",  # escape-sequence-in-docstring
+ "DTZ001",  # call-datetime-without-tzinfo
+ "DTZ004",  # call-datetime-utcfromtimestamp
+ "FBT001",  # boolean-type-hint-positional-argument
+ "FBT002",  # boolean-default-value-positional-argument
+ "FBT003",  # boolean-positional-value-in-call
+ "FURB113",  # repeated-append
+ "N802",  # invalid-function-name
+ "N803",  # invalid-argument-name
+ "N805",  # invalid-first-argument-name-for-method
+ "N806",  # non-lowercase-variable-in-function
+ "N818",  # error-suffix-on-exception-name
+ "PERF203",  # try-except-in-loop
+ "PLC0206",  # dict-index-missing-items
+ "PLC0415",  # import-outside-top-level
+ "PLC1901",  # compare-to-empty-string
+ "PLR1704",  # redefined-argument-from-local
+ "PLR2004",  # magic-value-comparison
+ "PLR6201",  # literal-membership
+ "PLR6301",  # no-self-use
+ "PLW0108",  # unnecessary-lambda
+ "PLW0717",  # too-many-statements-in-try-clause
+ "PLW1641",  # eq-without-hash
+ "PLW2901",  # redefined-loop-name
+ "PT011",  # pytest-raises-too-broad
+ "PT012",  # pytest-raises-with-multiple-statements
+ "PYI041",  # redundant-numeric-union
+ "PYI056",  # unsupported-method-call-on-all
+ "RUF005",  # collection-literal-concatenation
+ "RUF012",  # mutable-class-default
+ "RUF022",  # unsorted-dunder-all
+ "RUF039",  # unraw-re-pattern
+ "RUF067",  # non-empty-init-module
+ "RUF069",  # float-equality-comparison
+ "SIM102",  # collapsible-if
+ "SIM108",  # if-else-block-instead-of-if-exp
+ "SIM115",  # open-file-with-context-handler
+ "RUF100",  # unused-noqa
+ "S101",  # assert
 ]
 
 
@@ -154,7 +222,12 @@ task-tags = ["TODO", "FIXME"]
 [tool.ruff.lint.extend-per-file-ignores]
 "tests/*" = [
  "ANN",
- "S101",
+ "S101",  # assert
+ "S105",  # hardcoded-password-string
+ "S108",  # hardcoded-temp-file
+ "S404",  # suspicious-subprocess-import
+ "S405",  # suspicious-xml-etree-import
+ "S603",  # subprocess-without-shell-equals-true
 ]
 "httoop/status/*.py" = [
  "N801",

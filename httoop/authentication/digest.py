@@ -43,6 +43,19 @@ class DigestAuthScheme:
 
         return _algo
 
+    # import base64
+    # import hmac
+    # from time import time
+
+    # SERVER_SECRET = b'...32+ random bytes from config...'
+
+    @classmethod
+    def generate_nonce(cls, authinfo: ByteUnicodeDict) -> bytes:
+        payload = b'%s:%s' % (time(), base64.urlsafe_b64encode(token_bytes(16)).rstrip(b'='))
+        sig = hmac.digest(SERVER_SECRET, payload, 'sha256')
+
+        return base64.urlsafe_b64encode(b'%s:%s' % (payload, sig)).rstrip(b'=')
+
     @classmethod
     def generate_nonce(cls, authinfo: ByteUnicodeDict) -> bytes:
         algorithm = authinfo.get('algorithm', b'MD5').decode('ASCII', 'replace')

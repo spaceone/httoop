@@ -24,10 +24,7 @@ class Headers(CaseInsensitiveDict, Semantic):
 
     @staticmethod
     def formatvalue(value: Any) -> bytes:
-        if isinstance(value, str):
-            val = HeaderElement.encode_rfc2047(value)
-        else:
-            val = bytes(value)
+        val = HeaderElement.encode_rfc2047(value) if isinstance(value, str) else bytes(value)
         if b'\r' in val or b'\n' in val:
             raise InvalidHeader(_('Invalid header value: %r'), val.decode('ISO8859-1'))
         return val

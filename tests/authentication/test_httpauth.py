@@ -152,7 +152,7 @@ def test_multibasicunknown2(authentication):
 
 
 @pytest.mark.xfail(reason='FIXME')
-def test_multibasicunknown2mf(authentication):  # TODO
+def test_multibasicunknown2mf(authentication):  # TODO: fix
     a = authentication(b'WWW-Authenticate: Newauth realm="newauth"')
     assert a
     a = authentication(b'WWW-Authenticate: Basic realm="basic"')

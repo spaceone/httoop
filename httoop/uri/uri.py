@@ -324,10 +324,10 @@ class URI(Semantic):
     def _compose_relative_iter(self) -> Iterator[bytes]:
         """Composes the relative URI beginning with the path."""
         scheme, path, query_string, quote, fragment = self.scheme, self.path, self.query_string, self.quote, self.fragment
-        PATH = Percent.PATH
+        path_quote_chars = Percent.PATH
         if not scheme and not path.startswith('/'):
-            PATH = b''.join({bytes((c,)) for c in iter(PATH)} - {b':', b'@'})
-        yield b'/'.join(quote(x, PATH) for x in path.split('/'))
+            path_quote_chars = b''.join({bytes((c,)) for c in iter(path_quote_chars)} - {b':', b'@'})
+        yield b'/'.join(quote(x, path_quote_chars) for x in path.split('/'))
         if query_string:
             yield b'?'
             yield query_string.encode(self.encoding)

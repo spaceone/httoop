@@ -76,7 +76,7 @@ def if_has(func: Callable) -> Callable:
 
 
 def integer(number: str | bytes, base=10) -> int:
-    """
+    r"""
     The native Python integer parsing from string allows to many forms which are not allowed by the protocol.
 
     >>> integer(bytearray(b'10'))

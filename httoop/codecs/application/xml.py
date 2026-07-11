@@ -15,7 +15,7 @@ try:
     from defusedxml.ElementTree import ParseError, fromstring, tostring
 except ImportError:  # pragma: no cover
     # TODO: emit a warning
-    from xml.etree.ElementTree import ParseError, tostring
+    from xml.etree.ElementTree import ParseError, tostring  # noqa: S405
 
     def fromstring(data) -> NoReturn:
         raise ParseError('Will not parse without defusedxml!')

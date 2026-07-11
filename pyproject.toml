@@ -43,6 +43,8 @@ requires-python = ">=3.9"
 [project.optional-dependencies]
 xml = ["defusedxml"]
 hal = ["uritemplate"]
+
+[dependency-groups]
 test = [
   "pytest",
   "pytest-cov",

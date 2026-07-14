@@ -87,7 +87,8 @@ class Headers(CaseInsensitiveDict, Semantic):
     def append_element(self, fieldname: str, *args, **kwargs) -> None:
         self.append(fieldname, bytes(self.create_element(fieldname, *args, **kwargs)))
 
-    def create_element(self, fieldname: str, *args, **kwargs) -> HeaderElement:
+    @classmethod
+    def create_element(cls, fieldname: str, *args, **kwargs) -> HeaderElement:
         element_cls = HEADER.get(fieldname, HeaderElement)
         return element_cls(*args, **kwargs)
 
@@ -171,14 +172,12 @@ class Headers(CaseInsensitiveDict, Semantic):
     def __encoded_items(self):
         for key, values in self.items():
             element_cls = HEADER.get(key, HeaderElement)
-            if element_cls is not HeaderElement:
-                key = element_cls.name
-            key = key.encode('ascii', 'ignore')
+            name = (element_cls.name if element_cls is not HeaderElement else key).encode('ascii', 'ignore')
             if element_cls.list_element:
                 for value in element_cls.split(values):
-                    yield key, value
+                    yield name, value
             else:
-                yield key, values
+                yield name, values
 
     def __repr__(self) -> str:
         return f'<HTTP Headers({list(self.items())!r})>'

@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import re
-from typing import Any
+from typing import Any, ClassVar
 
 from httoop.codecs import lookup
 from httoop.exceptions import InvalidDate, InvalidHeader
@@ -12,6 +12,9 @@ from httoop.util import _, integer
 
 class CodecElement:
 
+    value: str
+    mimetype: str
+    name: str
     CODECS = None
 
     raise_on_missing_codec = True
@@ -28,7 +31,8 @@ class CodecElement:
         except AttributeError:
             mimetype = self.value
 
-        for encoding in (self.value, mimetype):
+        for val in (self.value, mimetype):
+            encoding = val
             if self.CODECS is not None:
                 encoding = self.CODECS.get(encoding)
                 if not isinstance(encoding, (bytes, str)):
@@ -93,7 +97,7 @@ class ContentDisposition(HeaderElement, name='Content-Disposition'):
 
     is_response_header = True
 
-    from httoop.date import Date
+    from httoop.date import Date  # noqa: PLC0415
 
     @property
     def filename(self) -> str | None:
@@ -143,7 +147,7 @@ class ContentEncoding(CodecElement, HeaderElement, name='Content-Encoding'):
     is_response_header = True
 
     # IANA assigned HTTP Content-Encoding values
-    CODECS = {
+    CODECS: ClassVar = {
         'gzip': 'application/gzip',
         'deflate': 'application/zlib',
         # TODO: implement the following
@@ -279,7 +283,7 @@ class Host(HeaderElement):
 
     @property
     def is_ip4(self) -> bool:
-        from socket import AF_INET, inet_pton
+        from socket import AF_INET, inet_pton  # noqa: PLC0415
 
         try:
             inet_pton(AF_INET, self.host)
@@ -289,7 +293,7 @@ class Host(HeaderElement):
 
     @property
     def is_ip6(self) -> bool:
-        from socket import AF_INET6, inet_pton
+        from socket import AF_INET6, inet_pton  # noqa: PLC0415
 
         try:
             inet_pton(AF_INET6, self.host)
@@ -370,7 +374,7 @@ class SetCookie(_ListElement, _CookieElement, name='Set-Cookie'):
 
     is_response_header = True
 
-    from httoop.date import Date
+    from httoop.date import Date  # noqa: PLC0415
 
     @classmethod
     def split(cls, fieldvalue: bytes) -> list[bytes]:
@@ -398,21 +402,21 @@ class SetCookie(_ListElement, _CookieElement, name='Set-Cookie'):
         return 'max-age' in self.params or 'expires' in self.params
 
     @property
-    def max_age(self) -> None:
+    def max_age(self) -> int | None:
         if self.params.get('max-age'):
             try:
                 return integer(self.params['max-age'])
             except ValueError:
-                raise InvalidHeader(_('Cookie: max-age is not a number: %r'), self.params['max-age'])
+                raise InvalidHeader(_('Cookie: max-age is not a number: %r'), self.params['max-age']) from None
         return None
 
     @property
-    def expires(self) -> Date:
+    def expires(self) -> Date | None:
         if self.params.get('expires'):
             try:
                 return self.Date(self.params['expires'])
             except InvalidDate:
-                raise InvalidHeader(_('Cookie: expires is not a valid date: %r'), self.params['expires'])
+                raise InvalidHeader(_('Cookie: expires is not a valid date: %r'), self.params['expires']) from None
         return None
 
 
@@ -453,7 +457,7 @@ class TransferEncoding(_HopByHopElement, CodecElement, HeaderElement, name='Tran
     is_request_header = True
 
     # IANA assigned HTTP Transfer-Encoding values
-    CODECS = {
+    CODECS: ClassVar = {
         'chunked': False,
         'compress': NotImplementedError,
         'deflate': 'application/zlib',

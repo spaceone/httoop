@@ -16,7 +16,7 @@ def test_json(body):
 
 def test_invalid_json(body):
     body.mimetype = 'application/json'
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"Expecting ':' delimiter: line 1 column 8 \(char 7\)"):
         body.decode('{"foo" "bar"}')
 
 
@@ -38,7 +38,7 @@ multipart_string = (
 )
 
 
-def test_parse_multipart_form_data(body):
+def test_parse_multipart_form_data(body: Body):
     body.mimetype = 'multipart/form-data'
     content_type = body.mimetype
     content_type.boundary = '------------------------409e1d7f8fe3763a'
@@ -58,7 +58,7 @@ def test_parse_multipart_form_data(body):
     assert bar.headers.element('Content-Disposition').params['filename'] == 'test.txt'
 
 
-def test_compose_multipart_form_data(body):
+def test_compose_multipart_form_data(body: Body):
     body.mimetype = 'multipart/form-data'
     content_type = body.mimetype
     content_type.boundary = '------------------------409e1d7f8fe3763a'
@@ -159,7 +159,7 @@ def check_encoding_dict(body, data):
 
 def check_raises(body, chars, type_, exception):
     for chr_ in chars:
-        with pytest.raises(exception):
+        with pytest.raises(exception):  # noqa: PT012
             body.set(chr_)
             type_(body)
 

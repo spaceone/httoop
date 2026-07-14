@@ -11,6 +11,7 @@ from httoop.version import UserAgentHeader
 class ComposedRequest(ComposedMessage):
 
     USER_AGENT = UserAgentHeader
+    message: Request
 
     def __init__(self, request: Request) -> None:
         self.message = request

@@ -1,8 +1,22 @@
+from __future__ import annotations
+
 from contextlib import contextmanager
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
+
+
+if TYPE_CHECKING:
+    from httoop import Request, Response
+
+
+try:
+    from typing import override
+except ImportError:  # < Py 3.11
+    from typing_extensions import override
 
 
 class ComposedMessage:
+
+    message: Request | Response
 
     # FIXME: use it
     @property
@@ -44,6 +58,7 @@ class ComposedMessage:
             if not te:
                 self.message.headers.pop('Transfer-Encoding')
 
+    @override
     @contextmanager
     def _composing(self) -> Iterator[None]:
         yield

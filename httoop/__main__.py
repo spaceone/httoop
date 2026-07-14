@@ -9,7 +9,8 @@ python3 -m httoop compose response  | python3 -m httoop parse response
 
 import pathlib
 import sys
-from argparse import ArgumentParser, FileType
+from argparse import ArgumentParser
+from typing import IO
 
 from httoop import Request, Response, __name__ as name, __version__ as version
 from httoop.client import ClientStateMachine
@@ -51,7 +52,7 @@ class CLI:
         request = parse_message_subparsers.add_parser('request', parents=[self.parent_parser])
         request.set_defaults(func=self.parse_request)
         add = request.add_argument
-        add('--file', default='-', type=FileType('rb'))
+        add('--file', default='-')
         add('--scheme', default='http')
         add('--host', default='www.example.net')
         add('--port', default=80, type=int)
@@ -59,24 +60,27 @@ class CLI:
         response = parse_message_subparsers.add_parser('response', parents=[self.parent_parser])
         add = response.add_argument
         response.set_defaults(func=self.parse_response)
-        add('--file', default='-', type=FileType('rb'))
+        add('--file', default='-')
 
     def parse_arguments(self) -> None:
         self.arguments = self.parser.parse_args()
-
-        if self.arguments.action == 'parse' and hasattr(self.arguments.file, 'buffer'):
-            # https://bugs.python.org/issue14156
-            self.arguments.file = self.arguments.file.buffer
         self.arguments.func()
 
-    def add_common_arguments(self, add) -> None:
+    @classmethod
+    def add_common_arguments(cls, add) -> None:
         add('--protocol')
         add('-H', '--header', action='append', default=[])
         add('-b', '--body', default='')
 
+    @classmethod
+    def get_file(cls, file: str) -> IO:
+        if file == '-':
+            return sys.stdin.buffer
+        return pathlib.Path(file).open('rb')
+
     def parse_request(self) -> None:
         server = ServerStateMachine(self.arguments.scheme, self.arguments.host, self.arguments.port)
-        for _request, response in server.parse(self.arguments.file.read()):
+        for _request, response in server.parse(self.get_file(self.arguments.file).read()):
             print(repr(response))
             print(repr(response.headers))
             print(repr(response.body))
@@ -84,12 +88,13 @@ class CLI:
     def parse_response(self) -> None:
         client = ClientStateMachine()
         client.request = Request()
-        for response in client.parse(self.arguments.file.read()):
+        for response in client.parse(self.get_file(self.arguments.file).read()):
             print(repr(response))
             print(repr(response.headers))
             print(repr(response.body))
             print(repr(bytes(response.body)))
         if client.buffer:
+            assert client.message  # noqa: S101
             print('WARNING: response not yet complete!:')
             print(repr(client.message))
             print(repr(client.message.headers))
@@ -115,10 +120,11 @@ class CLI:
         self.common()
 
     def common(self) -> None:
+        assert self.message is not None  # noqa: S101
         if self.arguments.protocol:
             protocol = self.arguments.protocol
             try:
-                protocol = [int(x) for x in protocol.split('.', 1)]
+                protocol = tuple(int(x) for x in protocol.split('.', 1))
             except ValueError:
                 pass
             else:
@@ -133,14 +139,15 @@ class CLI:
         if body == '-':
             body = sys.stdin.read()
         elif body.startswith('@'):
-            body = pathlib.Path(body[1:]).open('rb')
+            body = pathlib.Path(body[1:]).open('rb')  # noqa: SIM115
         self.message.body = body
 
         sys.stdout.write(self.decode(bytes(self.message)))
         sys.stdout.write(self.decode(bytes(self.message.headers)))
         sys.stdout.write(self.decode(bytes(self.message.body)))
 
-    def decode(self, data):
+    @classmethod
+    def decode(cls, data):
         if str is not bytes:
             data = data.decode('ISO8859-1')
         return data

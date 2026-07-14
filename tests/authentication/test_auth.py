@@ -48,7 +48,8 @@ def test_order(headers):
 
 def test_no_realm(headers):
     headers.parse(b'WWW-Authenticate: basic foo="bar"')
-    assert headers.get_element('WWW-Authenticate').realm == ''
+    assert not headers.get_element('WWW-Authenticate').realm
+    assert isinstance(headers.get_element('WWW-Authenticate').realm, str)
 
 
 def test_multiple_headers(headers):

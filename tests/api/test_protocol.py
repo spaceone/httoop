@@ -1,25 +1,26 @@
 import pytest
 
+from httoop import Request
 from httoop.exceptions import InvalidLine
 
 
-def test_protocol_tuple(request_):
+def test_protocol_tuple(request_: Request):
     request_.protocol.parse(b'HTTP/1.0')
     assert request_.protocol == (1, 0)
 
 
-def test_set_protocol_tuple(request_):
+def test_set_protocol_tuple(request_: Request):
     request_.protocol = (1, 0)
     assert bytes(request_.protocol) == b'HTTP/1.0'
 
 
-def test_protocol_minor_mayor(request_):
+def test_protocol_minor_mayor(request_: Request):
     request_.protocol = (1, 0)
     assert request_.protocol.major == 1
     assert request_.protocol.minor == 0
 
 
-def test_protocol_compare_bytes(request_):
+def test_protocol_compare_bytes(request_: Request):
     request_.protocol = (1, 0)
     assert request_.protocol == b'HTTP/1.0'
 
@@ -42,7 +43,7 @@ def test_invalid_protocol(request_, invalid):
         request_.protocol.set(invalid)
 
 
-def test_protocol_comparision(request_):
+def test_protocol_comparision(request_: Request):
     request_.protocol = (1, 2)
     assert request_.protocol < (2, 0)
     assert request_.protocol < 2

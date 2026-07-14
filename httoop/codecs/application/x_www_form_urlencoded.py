@@ -39,5 +39,4 @@ class FormURLEncoded(Codec):
 
     @classmethod
     def quote(cls, data: str | list[int], charset: str | None = None) -> bytes:
-        data = data.encode(charset or 'ISO8859-1')
-        return Percent.quote(data, cls.UNQUOTED)
+        return Percent.quote(data.encode(charset or 'ISO8859-1'), cls.UNQUOTED)

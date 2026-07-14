@@ -33,6 +33,6 @@ def test_slots(class_, args):
     obj = class_(*args)
     assert obj.__slots__ is not None
     with pytest.raises(AttributeError):
-        obj.__dict__
+        _ = obj.__dict__
     with pytest.raises(AttributeError):
         obj.foo = True

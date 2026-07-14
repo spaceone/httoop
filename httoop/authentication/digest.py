@@ -1,9 +1,10 @@
+# ruff: file-ignore[N806,N802]
 from __future__ import annotations
 
 from hashlib import md5, new, sha256
 from hmac import compare_digest
 from secrets import token_bytes
-from typing import Callable
+from typing import Callable, ClassVar
 
 from httoop.exceptions import InvalidHeader
 from httoop.header.element import HeaderElement
@@ -11,9 +12,9 @@ from httoop.util import ByteUnicodeDict, _
 
 
 class DigestAuthScheme:
-    algorithms = {
-        'MD5': md5,  # noqa: S324
-        'MD5-sess': md5,  # noqa: S324
+    algorithms: ClassVar = {
+        'MD5': md5,
+        'MD5-sess': md5,
         'SHA-256': sha256,
         'SHA-256-sess': sha256,
         'SHA-512-256': lambda: new('sha512_256'),

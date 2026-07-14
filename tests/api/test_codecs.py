@@ -1,5 +1,6 @@
 import pytest
 
+from httoop import Body
 from httoop.codecs import Codec, lookup, register
 from httoop.exceptions import DecodeError, EncodeError
 
@@ -54,7 +55,7 @@ def test_body_invalid_hal():
         hal.decode(b'{"_embedded": {"foo": 1}}').get_resource('foo')
 
 
-def test_invalid_multipart(body):
+def test_invalid_multipart(body: Body):
     body.mimetype = 'multipart/x; boundary=asdf'
     codec = body.mimetype.codec
     '--asdf\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\nfoo\r\n--asdf\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\nbar\r\n--asdf\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\nbaz\r\n--asdf--\r\n'

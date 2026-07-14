@@ -64,14 +64,12 @@ from httoop.version import ServerHeader, ServerProtocol, UserAgentHeader, __vers
 
 
 __all__ = [
-    'ACCEPTED', 'BAD_GATEWAY', 'BAD_REQUEST', 'CONFLICT', 'CONTINUE', 'CREATED', 'EXPECTATION_FAILED', 'FORBIDDEN', 'FOUND', 'GATEWAY_TIMEOUT',
-    'GONE', 'HTTP_VERSION_NOT_SUPPORTED', 'INTERNAL_SERVER_ERROR', 'I_AM_A_TEAPOT', 'LENGTH_REQUIRED', 'METHOD_NOT_ALLOWED', 'MOVED_PERMANENTLY',
-    'MULTIPLE_CHOICES', 'NON_AUTHORITATIVE_INFORMATION', 'NOT_ACCEPTABLE', 'NOT_FOUND', 'NOT_IMPLEMENTED', 'NOT_MODIFIED', 'NO_CONTENT', 'OK',
-    'PARTIAL_CONTENT', 'CONTENT_TOO_LARGE', 'PAYMENT_REQUIRED', 'PRECONDITION_FAILED', 'PROXY_AUTHENTICATION_REQUIRED', 'RANGE_NOT_SATISFIABLE',
-    'REQUEST_TIMEOUT', 'RESET_CONTENT', 'SEE_OTHER', 'SERVICE_UNAVAILABLE', 'SWITCHING_PROTOCOLS', 'TEMPORARY_REDIRECT', 'UNAUTHORIZED',
-    'UNPROCESSABLE_ENTITY', 'UNSUPPORTED_MEDIA_TYPE', 'URI', 'URI_TOO_LONG', 'USE_PROXY',
-    'Body', 'ClientStateMachine', 'ComposedRequest', 'ComposedResponse', 'Date', 'DecodeError', 'EncodeError', 'Headers',
-    'InvalidBody', 'InvalidDate', 'InvalidHeader', 'InvalidLine', 'InvalidURI',
-    'Method', 'Protocol', 'ProxyStateMachine', 'Request', 'Response', 'ServerHeader', 'ServerProtocol', 'ServerStateMachine', 'Status',
+    'ACCEPTED', 'BAD_GATEWAY', 'BAD_REQUEST', 'CONFLICT', 'CONTENT_TOO_LARGE', 'CONTINUE', 'CREATED', 'EXPECTATION_FAILED', 'FORBIDDEN', 'FOUND', 'GATEWAY_TIMEOUT',
+    'GONE', 'HTTP_VERSION_NOT_SUPPORTED', 'INTERNAL_SERVER_ERROR', 'I_AM_A_TEAPOT', 'LENGTH_REQUIRED', 'METHOD_NOT_ALLOWED', 'MOVED_PERMANENTLY', 'MULTIPLE_CHOICES',
+    'NON_AUTHORITATIVE_INFORMATION', 'NOT_ACCEPTABLE', 'NOT_FOUND', 'NOT_IMPLEMENTED', 'NOT_MODIFIED', 'NO_CONTENT', 'OK', 'PARTIAL_CONTENT', 'PAYMENT_REQUIRED',
+    'PRECONDITION_FAILED', 'PROXY_AUTHENTICATION_REQUIRED', 'RANGE_NOT_SATISFIABLE', 'REQUEST_TIMEOUT', 'RESET_CONTENT', 'SEE_OTHER', 'SERVICE_UNAVAILABLE',
+    'SWITCHING_PROTOCOLS', 'TEMPORARY_REDIRECT', 'UNAUTHORIZED', 'UNPROCESSABLE_ENTITY', 'UNSUPPORTED_MEDIA_TYPE', 'URI', 'URI_TOO_LONG', 'USE_PROXY', 'Body',
+    'ClientStateMachine', 'ComposedRequest', 'ComposedResponse', 'Date', 'DecodeError', 'EncodeError', 'Headers', 'InvalidBody', 'InvalidDate', 'InvalidHeader',
+    'InvalidLine', 'InvalidURI', 'Method', 'Protocol', 'ProxyStateMachine', 'Request', 'Response', 'ServerHeader', 'ServerProtocol', 'ServerStateMachine', 'Status',
     'StatusException', 'UserAgentHeader', '__version__', 'cache',
 ]

@@ -49,7 +49,7 @@ class Response(Message):
         try:
             version, status = bits
         except ValueError:
-            raise InvalidLine(_('Invalid response line: %r'), line.decode('ISO8859-1'))
+            raise InvalidLine(_('Invalid response line: %r'), line.decode('ISO8859-1')) from None
 
         # version
         super().parse(version)

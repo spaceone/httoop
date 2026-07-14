@@ -2,8 +2,10 @@
 
 import pytest
 
+from httoop import Request
 
-def test_safe_methods(request_):
+
+def test_safe_methods(request_: Request):
     all_methods = (
         ('GET', True, True),
         ('HEAD', True, True),
@@ -20,7 +22,7 @@ def test_safe_methods(request_):
 
 
 @pytest.mark.xfail(reason='hash changing + fixed references')
-def test_hashable_methods(request_):
+def test_hashable_methods(request_: Request):
     methods = {}
     request_.method = 'GET'
     methods[request_.method] = 1

@@ -74,7 +74,7 @@ def test_pop_header(headers):
 
 
 def test_util_to_unicode():
-    assert to_unicode(None) == ''
+    assert to_unicode(None) == ''  # noqa: PLC1901
     assert to_unicode(b'\xff') == '\xff'
 
 
@@ -104,6 +104,6 @@ def test_header_append_params(headers):
 
 
 def test_headers_composing_rejects_invalid_values(headers):
-    dict.__setitem__(headers, 'Location', b'Foo\r\nSet-Cookie: foo=bar')  # noqa: PLC2801
+    dict.__setitem__(headers, 'Location', b'Foo\r\nSet-Cookie: foo=bar')
     with pytest.raises(InvalidHeader):
         bytes(headers)

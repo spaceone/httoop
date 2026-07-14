@@ -15,10 +15,8 @@ class JSON(Codec):
 
     @classmethod
     def encode(cls, data: dict[str, str], charset: str | None = None, mimetype: ContentType | None = None) -> bytes:
-        data = json_encode(data)
-        if not isinstance(data, bytes):  # python3
-            data = data.encode(charset or 'UTF-8')
-        return data
+        doc = json_encode(data)
+        return doc.encode(charset or 'UTF-8')
 
     @classmethod
     def decode(cls, data: bytes, charset: str | None = None, mimetype: ContentType | None = None) -> dict[str, Any]:

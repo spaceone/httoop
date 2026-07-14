@@ -5,7 +5,7 @@ from __future__ import annotations
 import codecs
 import string
 from binascii import Error as Base64Error, a2b_base64, b2a_base64
-from typing import Any, Callable
+from typing import IO, Any, Callable
 
 
 try:
@@ -39,9 +39,9 @@ def base64(data: bytes):
 
 def base64_decode(data: bytes):
     try:
-        return a2b_base64(data, strict_mode=True)
+        return a2b_base64(data, strict_mode=True)  # type: ignore[unknown-argument]
     except TypeError:  # Py < 3.11
-        import base64
+        import base64  # noqa: PLC0415
         return base64.b64decode(data, validate=True)
 
 
@@ -68,7 +68,7 @@ def to_unicode(string: bytes | str | None) -> str:
 
 def if_has(func: Callable) -> Callable:
     def _decorated(self, *args, **kwargs):
-        if hasattr(self.fd, func.__name__):
+        if hasattr(self.fd, getattr(func, '__name__', '')):
             return func(self, *args, **kwargs)
         return False
 
@@ -136,6 +136,7 @@ class IFile:
     """The file interface."""
 
     __slots__ = ('fd',)
+    fd: IO
 
     @property
     def name(self) -> None:

@@ -23,7 +23,7 @@ class StatusException(Status, Exception):  # noqa: N818
     @property
     def body(self):
         if not hasattr(self, '_body'):
-            from httoop.messages.body import Body
+            from httoop.messages.body import Body  # noqa: PLC0415
 
             self._body = Body(mimetype='application/json')
             self._body.data = self.to_dict()

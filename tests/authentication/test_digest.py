@@ -85,7 +85,7 @@ def test_digest_authorization(headers):
     assert elem.username == 'Mufasa'
     assert elem.password is None
     elem.username = 'test'
-    elem.password = 'test'  # noqa: S105
+    elem.password = 'test'
     assert elem.username == 'test'
     assert elem.password is None
 

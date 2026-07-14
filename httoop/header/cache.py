@@ -27,6 +27,6 @@ class Vary(HeaderElement):
     is_response_header = True
 
 
-class Warning(HeaderElement):  # pylint: disable=W0622
+class Warning(HeaderElement):  # noqa: A001
 
     is_response_header = True

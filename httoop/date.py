@@ -9,7 +9,7 @@ from __future__ import annotations
 import time
 
 # import calendar
-from datetime import datetime
+from datetime import datetime as datetime_type, timezone
 from email.utils import parsedate_tz
 from typing import Any
 
@@ -21,7 +21,7 @@ from httoop.util import _
 __all__ = ['Date']
 
 
-class Date(Semantic):
+class Date(Semantic):  # noqa: PLW1641
     """
     A HTTP Date string.
 
@@ -50,7 +50,7 @@ class Date(Semantic):
         or a timetuple
         """
         self.__composed = None
-        self.__timestamp = None
+        self.__timestamp: float = 0.0
         self.__datetime = None
         self.__time_struct = None
 
@@ -61,7 +61,7 @@ class Date(Semantic):
         elif isinstance(timeval, (tuple, time.struct_time)):
             # self.__timestamp = calendar.timegm(timeval)
             self.__timestamp = time.mktime(timeval) - time.timezone
-        elif isinstance(timeval, datetime):
+        elif isinstance(timeval, datetime_type):
             self.__datetime = timeval
             # self.__timestamp = calendar.timegm(self.datetime.utctimetuple())
             self.__timestamp = time.mktime(self.datetime.utctimetuple()) - time.timezone
@@ -75,9 +75,9 @@ class Date(Semantic):
             raise TypeError('Date(): got invalid argument')
 
     @property
-    def datetime(self) -> datetime:
+    def datetime(self) -> datetime_type:
         if self.__datetime is None:
-            self.__datetime = datetime.utcfromtimestamp(int(self))
+            self.__datetime = datetime_type.fromtimestamp(int(self), tz=timezone.utc)
         return self.__datetime
 
     @property
@@ -104,7 +104,7 @@ class Date(Semantic):
         )
 
     @classmethod
-    def parse(cls, timestr: bytes) -> Date:
+    def parse(cls, data: bytes) -> Date:
         """
         Parses a HTTP date string and returns a :class:`Date` object.
 
@@ -115,7 +115,7 @@ class Date(Semantic):
         :rtype  : :class:`Date`
 
         """
-        timestr = timestr.decode('ISO8859-1')
+        timestr = data.decode('ISO8859-1')
 
         # parse the most common HTTP Date formats (RFC 2822, RFC 1036, C's asctime)
         date = parsedate_tz(timestr)
@@ -148,17 +148,18 @@ class Date(Semantic):
         except NotImplementedError:  # pragma: no cover
             return NotImplemented
 
-    def __other(self, other):
+    @staticmethod
+    def __other(other) -> Date:
         if other is None:
             return Date(0)
-            raise NotImplementedError()  # pragma: no cover
+            # raise NotImplementedError()
         if isinstance(other, Date):
             return other
         try:
             return Date(other)
         except (InvalidDate, TypeError):
             return Date(0)
-            raise NotImplementedError()  # pragma: no cover
+            # raise NotImplementedError()
 
     def __repr__(self) -> str:
         return '<HTTP Date(%d)>' % (int(self),)

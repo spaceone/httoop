@@ -64,7 +64,7 @@ class Request(Message):
         try:
             method, uri, version = bits
         except ValueError:
-            raise InvalidLine(_('Invalid request line: %r'), line.decode('ISO8859-1'))
+            raise InvalidLine(_('Invalid request line: %r'), line.decode('ISO8859-1')) from None
 
         # protocol version
         super().parse(version)

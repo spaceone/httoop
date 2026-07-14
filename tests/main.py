@@ -18,9 +18,8 @@ def main():
     cmd = ['py.test', '-r', 'fsxX', '--durations=1', '--ignore=tmp', '--color=yes', '--continue-on-collection-errors']
 
     if importable('pytest_cov'):
-        cmd.append('--cov=httoop')
-        #        cmd.append("--no-cov-on-fail")
-        cmd.append('--cov-report=html')
+        cmd.extend(('--cov=httoop', '--cov-report=html'))
+        # cmd.append("--no-cov-on-fail")
 
     cmd.append(pathlib.Path(pathlib.Path(__file__).resolve()).parent)
 

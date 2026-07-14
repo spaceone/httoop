@@ -11,7 +11,7 @@ import time
 # import calendar
 from datetime import datetime
 from email.utils import parsedate_tz
-from typing import Any
+from typing import Any, Self
 
 from httoop.exceptions import InvalidDate
 from httoop.meta import Semantic
@@ -50,7 +50,7 @@ class Date(Semantic):
         or a timetuple
         """
         self.__composed = None
-        self.__timestamp = None
+        self.__timestamp: float = 0.0
         self.__datetime = None
         self.__time_struct = None
 
@@ -104,7 +104,7 @@ class Date(Semantic):
         )
 
     @classmethod
-    def parse(cls, timestr: bytes) -> Date:
+    def parse(cls, data: bytes) -> Date:
         """
         Parses a HTTP date string and returns a :class:`Date` object.
 
@@ -115,7 +115,7 @@ class Date(Semantic):
         :rtype  : :class:`Date`
 
         """
-        timestr = timestr.decode('ISO8859-1')
+        timestr = data.decode('ISO8859-1')
 
         # parse the most common HTTP Date formats (RFC 2822, RFC 1036, C's asctime)
         date = parsedate_tz(timestr)
@@ -148,17 +148,18 @@ class Date(Semantic):
         except NotImplementedError:  # pragma: no cover
             return NotImplemented
 
-    def __other(self, other):
+    @staticmethod
+    def __other(other) -> Self:
         if other is None:
             return Date(0)
-            raise NotImplementedError()  # pragma: no cover
+            # raise NotImplementedError()
         if isinstance(other, Date):
             return other
         try:
             return Date(other)
         except (InvalidDate, TypeError):
             return Date(0)
-            raise NotImplementedError()  # pragma: no cover
+            # raise NotImplementedError()
 
     def __repr__(self) -> str:
         return '<HTTP Date(%d)>' % (int(self),)

@@ -12,8 +12,8 @@ from httoop.util import ByteUnicodeDict, _
 
 class DigestAuthScheme:
     algorithms = {
-        'MD5': md5,  # noqa: S324
-        'MD5-sess': md5,  # noqa: S324
+        'MD5': md5,
+        'MD5-sess': md5,
         'SHA-256': sha256,
         'SHA-256-sess': sha256,
         'SHA-512-256': lambda: new('sha512_256'),

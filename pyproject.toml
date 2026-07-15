@@ -158,52 +158,6 @@ ignore = [
  "PLC2801",  # unnecessary-dunder-call
  "TRY003",  # raise-vanilla-args
  "TRY300",  # try-consider-else
-
-# should be fixed!
- "A001",  # builtin-variable-shadowing
- "A003",  # builtin-attribute-shadowing
- "B015",  # useless-comparison
- "B018",  # useless-expression
- "B904",  # raise-without-from-inside-except
- "D301",  # escape-sequence-in-docstring
- "DTZ001",  # call-datetime-without-tzinfo
- "DTZ004",  # call-datetime-utcfromtimestamp
- "FBT001",  # boolean-type-hint-positional-argument
- "FBT002",  # boolean-default-value-positional-argument
- "FBT003",  # boolean-positional-value-in-call
- "FURB113",  # repeated-append
- "N802",  # invalid-function-name
- "N803",  # invalid-argument-name
- "N805",  # invalid-first-argument-name-for-method
- "N806",  # non-lowercase-variable-in-function
- "N818",  # error-suffix-on-exception-name
- "PERF203",  # try-except-in-loop
- "PLC0206",  # dict-index-missing-items
- "PLC0415",  # import-outside-top-level
- "PLC1901",  # compare-to-empty-string
- "PLR1704",  # redefined-argument-from-local
- "PLR2004",  # magic-value-comparison
- "PLR6201",  # literal-membership
- "PLR6301",  # no-self-use
- "PLW0108",  # unnecessary-lambda
- "PLW0717",  # too-many-statements-in-try-clause
- "PLW1641",  # eq-without-hash
- "PLW2901",  # redefined-loop-name
- "PT011",  # pytest-raises-too-broad
- "PT012",  # pytest-raises-with-multiple-statements
- "PYI041",  # redundant-numeric-union
- "PYI056",  # unsupported-method-call-on-all
- "RUF005",  # collection-literal-concatenation
- "RUF012",  # mutable-class-default
- "RUF022",  # unsorted-dunder-all
- "RUF039",  # unraw-re-pattern
- "RUF067",  # non-empty-init-module
- "RUF069",  # float-equality-comparison
- "SIM102",  # collapsible-if
- "SIM108",  # if-else-block-instead-of-if-exp
- "SIM115",  # open-file-with-context-handler
- "RUF100",  # unused-noqa
- "S101",  # assert
 ]
 
 

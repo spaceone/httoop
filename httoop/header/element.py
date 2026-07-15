@@ -38,7 +38,7 @@ class HeaderElement:
 
     # Regular expression that matches `special' characters in parameters, the
     # existence of which force quoting of the parameter value.
-    RE_TSPECIALS = re.compile(b'[ \\(\\)<>@,;:\\\\"/\\[\\]\\?=]')
+    RE_TSPECIALS = re.compile(rb'[ \(\)<>@,;:\\"/\[\]\?=]')
     RE_SPLIT = re.compile(rb',(?=(?:[^"]*"[^"]*")*[^"]*$)')
     RE_PARAMS = re.compile(rb';(?=(?:[^"]*"[^"]*")*[^"]*$)')
 
@@ -111,7 +111,7 @@ class HeaderElement:
     def unescape_param(cls, value: bytes) -> tuple[bytes, bool]:
         quoted = value.startswith(b'"') and value.endswith(b'"')
         if quoted:
-            value = re.sub(b'\\\\(?!\\\\)', b'', value[1:-1])
+            value = re.sub(rb'\\(?!\\)', b'', value[1:-1])
         elif cls.RE_TSPECIALS.search(value):
             raise InvalidHeader(_('Unquoted parameter in %r containing TSPECIALS: %r'), cls.name, value)
         return value, quoted

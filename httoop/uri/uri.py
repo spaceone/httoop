@@ -138,7 +138,7 @@ class URI(Semantic):
         >>> u = URI(b'/foo/../bar/.'); u.abspath(); u.path == u'/bar/'
         True
         """
-        path = re.sub('\\/{2,}', '/', self.path)  # remove //
+        path = re.sub(r'\/{2,}', '/', self.path)  # remove //
         if not path:
             return
         unsplit = []

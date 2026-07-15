@@ -56,13 +56,13 @@ def test_set_cookie(cookie, values, headers):
 def test_invalid_expires(headers):
     headers['Set-Cookie'] = 'foo=bar; expires=xyz'
     with pytest.raises(InvalidHeader):
-        headers.get_element('Set-Cookie').expires
+        _ = headers.get_element('Set-Cookie').expires
 
 
 def test_invalid_max_age(headers):
     headers['Set-Cookie'] = 'foo=bar; max-age=1.1'
     with pytest.raises(InvalidHeader):
-        headers.get_element('Set-Cookie').max_age
+        _ = headers.get_element('Set-Cookie').max_age
 
 
 def test_persistent(headers):

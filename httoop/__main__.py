@@ -76,7 +76,7 @@ class CLI:
     def get_file(cls, file: str) -> IO:
         if file == '-':
             return sys.stdin.buffer
-        return open(file, 'rb')
+        return pathlib.Path(file).open('rb')
 
     def parse_request(self) -> None:
         server = ServerStateMachine(self.arguments.scheme, self.arguments.host, self.arguments.port)

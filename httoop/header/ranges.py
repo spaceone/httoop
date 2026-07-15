@@ -38,7 +38,7 @@ class ContentRange(HeaderElement, name='Content-Range'):
     @classmethod
     def parse(cls, elementstr: bytes) -> ContentRange:
         value, start, end, complete_length = None, None, None, None
-        try:
+        try:  # noqa: PLW0717
             value, content_range = elementstr.split(None, 1)
             if value != b'bytes':
                 raise InvalidHeader(_('Only "bytes" Content-Range supported'))
@@ -56,8 +56,8 @@ class ContentRange(HeaderElement, name='Content-Range'):
                     raise ValueError()
             if complete_length is None and start is None:
                 raise ValueError()
-        except ValueError:
-            raise InvalidHeader(_('Content-Range: %r'), elementstr)
+        except ValueError as exc:
+            raise InvalidHeader(_('Content-Range: %r'), elementstr) from exc
         return cls(value.decode('ISO8859-1'), (start, end), complete_length)
 
 
@@ -91,8 +91,8 @@ class Range(HeaderElement):
                 stop = integer(stop) if stop else None
                 if (start and start < 0) or (stop and stop < 0):
                     raise ValueError()
-            except ValueError:
-                raise InvalidHeader(_('no range number.'))
+            except ValueError as exc:
+                raise InvalidHeader(_('no range number.')) from exc
             if start is not None and stop is not None and stop <= start:
                 raise InvalidHeader(_('range start must be smaller than end.'))
             if not start and not stop:
@@ -117,7 +117,8 @@ class Range(HeaderElement):
         if self.stddev([(x[1] or float('inf')) - (x[0] or 0) for x in self.ranges]) > 2.0:
             raise InvalidHeader(_('ranges exceeding high standard deviation'))
 
-    def stddev(self, xs: list[int | float]) -> float:
+    @classmethod
+    def stddev(cls, xs: list[int | float]) -> float:
         def average(xs):
             return sum(xs) * 1.0 / len(xs)
 

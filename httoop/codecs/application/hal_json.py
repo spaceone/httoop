@@ -138,6 +138,6 @@ class HAL(JSON):
         try:
             Resource(data.copy())
         except DecodeError as exc:
-            raise EncodeError(str(exc))
+            raise EncodeError(str(exc)) from exc
 
         return super().encode(data)

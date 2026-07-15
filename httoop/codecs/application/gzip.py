@@ -20,7 +20,7 @@ class GZip(Codec):
                 fd.write(Codec.encode(data, charset))
             return out.getvalue()
         except zlib.error:  # pragma: no cover
-            raise EncodeError(_('Invalid gzip data.'))
+            raise EncodeError(_('Invalid gzip data.')) from None
 
     @classmethod
     def decode(cls, data: bytes, charset: None = None, mimetype: None = None) -> str:
@@ -28,7 +28,7 @@ class GZip(Codec):
             with gzip.GzipFile(fileobj=io.BytesIO(data)) as fd:
                 data = fd.read()
         except (zlib.error, OSError, EOFError):
-            raise DecodeError(_('Invalid gzip data.'))
+            raise DecodeError(_('Invalid gzip data.')) from None
         return Codec.decode(data, charset)
 
     @classmethod
@@ -43,7 +43,7 @@ class GZip(Codec):
                     out.truncate()
             yield out.getvalue()
         except zlib.error:  # pragma: no cover
-            raise EncodeError(_('Invalid gzip data.'))
+            raise EncodeError(_('Invalid gzip data.')) from None
 
     @classmethod
     def iterdecode(cls, data, charset=None, mimetype=None):
@@ -62,4 +62,4 @@ class GZip(Codec):
                 fd.seek(0)
                 yield Codec.decode(gzfd.read(), charset)
         except (zlib.error, OSError, EOFError):
-            raise DecodeError(_('Invalid gzip data.'))
+            raise DecodeError(_('Invalid gzip data.')) from None

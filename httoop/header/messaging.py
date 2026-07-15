@@ -93,7 +93,7 @@ class ContentDisposition(HeaderElement, name='Content-Disposition'):
 
     is_response_header = True
 
-    from httoop.date import Date
+    from httoop.date import Date  # noqa: PLC0415
 
     @property
     def filename(self) -> str | None:
@@ -279,7 +279,7 @@ class Host(HeaderElement):
 
     @property
     def is_ip4(self) -> bool:
-        from socket import AF_INET, inet_pton
+        from socket import AF_INET, inet_pton  # noqa: PLC0415
 
         try:
             inet_pton(AF_INET, self.host)
@@ -289,7 +289,7 @@ class Host(HeaderElement):
 
     @property
     def is_ip6(self) -> bool:
-        from socket import AF_INET6, inet_pton
+        from socket import AF_INET6, inet_pton  # noqa: PLC0415
 
         try:
             inet_pton(AF_INET6, self.host)
@@ -370,7 +370,7 @@ class SetCookie(_ListElement, _CookieElement, name='Set-Cookie'):
 
     is_response_header = True
 
-    from httoop.date import Date
+    from httoop.date import Date  # noqa: PLC0415
 
     @classmethod
     def split(cls, fieldvalue: bytes) -> list[bytes]:
@@ -398,21 +398,21 @@ class SetCookie(_ListElement, _CookieElement, name='Set-Cookie'):
         return 'max-age' in self.params or 'expires' in self.params
 
     @property
-    def max_age(self) -> None:
+    def max_age(self) -> int | None:
         if self.params.get('max-age'):
             try:
                 return integer(self.params['max-age'])
             except ValueError:
-                raise InvalidHeader(_('Cookie: max-age is not a number: %r'), self.params['max-age'])
+                raise InvalidHeader(_('Cookie: max-age is not a number: %r'), self.params['max-age']) from None
         return None
 
     @property
-    def expires(self) -> Date:
+    def expires(self) -> Date | None:
         if self.params.get('expires'):
             try:
                 return self.Date(self.params['expires'])
             except InvalidDate:
-                raise InvalidHeader(_('Cookie: expires is not a valid date: %r'), self.params['expires'])
+                raise InvalidHeader(_('Cookie: expires is not a valid date: %r'), self.params['expires']) from None
         return None
 
 

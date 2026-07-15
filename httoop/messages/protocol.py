@@ -57,7 +57,7 @@ class Protocol(Semantic):
         try:
             self.__protocol = (integer(major), integer(minor))
         except ValueError:
-            raise InvalidLine(_('Invalid HTTP protocol: %r'), protocol.decode('ISO8859-1'))
+            raise InvalidLine(_('Invalid HTTP protocol: %r'), protocol.decode('ISO8859-1')) from None
 
     def compose(self) -> bytes:
         return b'%s/%d.%d' % (self.name, self.major, self.minor)

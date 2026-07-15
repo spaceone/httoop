@@ -87,7 +87,8 @@ class Headers(CaseInsensitiveDict, Semantic):
     def append_element(self, fieldname: str, *args, **kwargs) -> None:
         self.append(fieldname, bytes(self.create_element(fieldname, *args, **kwargs)))
 
-    def create_element(self, fieldname: str, *args, **kwargs) -> HeaderElement:
+    @classmethod
+    def create_element(cls, fieldname: str, *args, **kwargs) -> HeaderElement:
         element_cls = HEADER.get(fieldname, HeaderElement)
         return element_cls(*args, **kwargs)
 

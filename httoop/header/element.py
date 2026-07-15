@@ -138,7 +138,7 @@ class HeaderElement:
                     try:
                         key, value = key[:-1], Percent.unquote(value_).decode(encoding)
                     except UnicodeDecodeError as exc:
-                        raise InvalidHeader(_('%s') % (exc,))
+                        raise InvalidHeader(_('%s') % (exc,)) from None
                 else:
                     value = value.decode('ISO8859-1')
                 key_, asterisk, num = key.rpartition(b'*')
@@ -195,7 +195,7 @@ class HeaderElement:
         return cls.join([bytes(x) for x in cls.sorted(elements + others)])
 
     @classmethod
-    def formatparam(cls, param: bytes, value: bytes | str | None = None, quote: bool = False) -> bytes:
+    def formatparam(cls, param: bytes, value: bytes | str | None = None, *, quote: bool = False) -> bytes:
         """
         Convenience function to format and return a key=value pair.
 
@@ -227,7 +227,7 @@ class HeaderElement:
             try:
                 return ''.join(atom.decode(cls._sanitize_encoding(charset or 'ISO8859-1')) for atom, charset in decode_header(value.decode('ISO8859-1'))), 'UTF-8'
             except (UnicodeDecodeError, HeaderParseError) as exc:
-                raise InvalidHeader(str(exc))
+                raise InvalidHeader(str(exc)) from exc
         try:
             return value.decode('ASCII'), 'ASCII'
         except UnicodeDecodeError:
@@ -265,7 +265,7 @@ class MimeType:
     def type(self):
         return self.value.split('/', 1)[0]
 
-    @type.setter
+    @type.setter  # noqa: A003 # https://github.com/astral-sh/ruff/issues/23074
     def type(self, type_) -> None:
         self.value = f'{type_}/{self.subtype}'
 
@@ -317,7 +317,7 @@ class _AcceptElement(HeaderElement):
     RE_Q_SEPARATOR = re.compile(rb';\s*q\s*=\s*')
 
     @property
-    def quality(self) -> float:
+    def quality(self) -> float | None:
         """The quality of this value."""
         val = self.params.get('q', '1')
         if isinstance(val, HeaderElement):  # pragma: no cover
@@ -329,9 +329,9 @@ class _AcceptElement(HeaderElement):
     def sanitize(self) -> None:
         super().sanitize()
         try:
-            self.quality
+            self.quality  # noqa: B018
         except ValueError:
-            raise InvalidHeader(_('Quality value must be float.'))
+            raise InvalidHeader(_('Quality value must be float.')) from None
 
     @classmethod
     def parse(cls, elementstr: bytes) -> HeaderElement:

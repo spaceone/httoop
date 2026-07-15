@@ -20,7 +20,7 @@ class PlainText(Codec):
             assert isinstance(data, bytes)
             return data.decode(charset or 'UTF-8')
         except UnicodeDecodeError:
-            raise DecodeError('Wrong encoding.')
+            raise DecodeError('Wrong encoding.') from None
 
     @classmethod
     def encode(cls, data: str, charset: str | None = None, mimetype: ContentType | None = None) -> bytes:
@@ -28,4 +28,4 @@ class PlainText(Codec):
             assert not isinstance(data, bytes)
             return data.encode(charset or 'UTF-8')
         except UnicodeEncodeError:
-            raise EncodeError('Wrong encoding.')
+            raise EncodeError('Wrong encoding.') from None

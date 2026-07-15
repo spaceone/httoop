@@ -19,9 +19,9 @@ class BasicAuthRequestScheme:
             if not username:
                 raise ValueError()
         except Base64Error:
-            raise InvalidHeader(_('Basic authentication contains invalid base64'))
+            raise InvalidHeader(_('Basic authentication contains invalid base64')) from None
         except ValueError:
-            raise InvalidHeader(_('No username:password provided'))
+            raise InvalidHeader(_('No username:password provided')) from None
 
         return {
             # 'username': username.decode('ISO8859-1'),
@@ -49,4 +49,4 @@ class BasicAuthResponseScheme:
 
     @staticmethod
     def compose(authinfo: ByteUnicodeDict) -> bytes:
-        return HeaderElement.formatparam(b'realm', authinfo['realm'], True)
+        return HeaderElement.formatparam(b'realm', authinfo['realm'], quote=True)

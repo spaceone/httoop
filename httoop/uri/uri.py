@@ -68,7 +68,7 @@ class URI(Semantic):
                 if not 0 < port <= 65535:
                     raise ValueError
             except ValueError:
-                raise InvalidURI(_('Invalid port: %r'), port)  # TODO: TypeError
+                raise InvalidURI(_('Invalid port: %r'), port) from None  # TODO: TypeError
         self._port = port
 
     def __init__(self, uri: Any | None = None, *args, **kwargs) -> None:
@@ -240,10 +240,10 @@ class URI(Semantic):
         try:
             scheme = scheme.decode('ascii').lower()
         except UnicodeDecodeError:  # pragma: no cover
-            raise InvalidURI(_('Invalid scheme: must be ASCII.'))
+            raise InvalidURI(_('Invalid scheme: must be ASCII.')) from None
 
         if scheme and scheme.strip('abcdefghijklmnopqrstuvwxyz0123456789.-+'):
-            raise InvalidURI(_('Invalid scheme: must only contain alphanumeric letters or plus, dash, dot.'))
+            raise InvalidURI(_('Invalid scheme: must only contain alphanumeric letters or plus, dash, dot.')) from None
 
         if query_string:
             query_string = QueryString.encode(QueryString.decode(query_string, self.encoding), self.encoding)
@@ -273,14 +273,14 @@ class URI(Semantic):
                     try:
                         return '[%s]' % host.decode('ascii')
                     except UnicodeDecodeError:  # pragma: no cover
-                        raise InvalidURI(_('Invalid IPvFuture address: must be ASCII.'))
-                raise InvalidURI(_('Invalid IP address in URI.'))
+                        raise InvalidURI(_('Invalid IPvFuture address: must be ASCII.')) from None
+                raise InvalidURI(_('Invalid IP address in URI.')) from None
         # IPv4
         if all(x.isdigit() for x in host.split(b'.')):
             try:
                 return inet_ntop(AF_INET, inet_pton(AF_INET, host.decode('ascii')))
             except (OSError, UnicodeDecodeError):
-                raise InvalidURI(_('Invalid IPv4 address in URI.'))
+                raise InvalidURI(_('Invalid IPv4 address in URI.')) from None
 
         if host.strip(Percent.UNRESERVED + Percent.SUB_DELIMS + b'%'):
             raise InvalidURI(_('Invalid URI host.'))
@@ -290,7 +290,7 @@ class URI(Semantic):
         try:
             return host.encode('ascii').decode('idna').lower()
         except UnicodeError:  # pragma: no cover
-            raise InvalidURI(_('Invalid host.'))
+            raise InvalidURI(_('Invalid host.')) from None
 
     def compose(self) -> bytes:
         return b''.join(self._compose_absolute_iter())

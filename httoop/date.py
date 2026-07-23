@@ -11,12 +11,17 @@ import time
 # import calendar
 from datetime import datetime, timezone
 from email.utils import parsedate_tz
-from typing import Any, Self
+from typing import Any
 
 from httoop.exceptions import InvalidDate
 from httoop.meta import Semantic
 from httoop.util import _
 
+
+try:
+    from typing import Self
+except ImportError:  # < Py 3.11
+    from typing_extensions import Self
 
 __all__ = ['Date']
 

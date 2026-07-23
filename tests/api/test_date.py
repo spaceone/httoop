@@ -35,7 +35,7 @@ def test_date_datetime(date, expected, lt, gt):
 def test_date_timestamp(date, expected, lt, gt):
     for d in (Date.parse(date.encode('utf-8')), Date(date)):
         assert d is not None
-        assert float(d) == expected
+        assert float(d) == expected  # noqa: RUF069
         assert d == expected
         assert d == Date(date)
 

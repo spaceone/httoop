@@ -249,7 +249,8 @@ class Body(IFile, Semantic):
                     yield data.encode(self.encoding)
                 elif isinstance(data, bytes):
                     yield data
-                raise TypeError(f'Iterable contained non-bytes: {type(data).__name__!r}')  # pragma: no cover
+                else:  # pragma: no cover
+                    raise TypeError(f'Iterable contained non-bytes: {type(data).__name__!r}')
         finally:
             self.seek(t)
 

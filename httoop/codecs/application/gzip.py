@@ -33,17 +33,17 @@ class GZip(Codec):
 
     @classmethod
     def iterencode(cls, data, charset=None, mimetype=None):
-        try:  # noqa: PLW0717
-            out = io.BytesIO()
+        out = io.BytesIO()
+        try:
             with gzip.GzipFile(fileobj=out, mode='w', compresslevel=cls.compression_level) as fd:
                 for part in data:
                     fd.write(Codec.encode(part, charset))
                     yield out.getvalue()
                     out.seek(0)
                     out.truncate()
-            yield out.getvalue()
         except zlib.error:  # pragma: no cover
             raise EncodeError(_('Invalid gzip data.')) from None
+        yield out.getvalue()
 
     @classmethod
     def iterdecode(cls, data, charset=None, mimetype=None):

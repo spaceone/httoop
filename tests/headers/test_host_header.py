@@ -55,13 +55,12 @@ def _test_iter(header, host, port, headers):
     return element
 
 
-@pytest.mark.parametrize('invalid', list(
-    (set('\x7F()<>@,;:/\\[\\]={} \t\\\\^"\'') | set(map(chr, range(0x1F)))) - set(';\x00'), *[
-        ', ',
-        pytest.param(';', marks=pytest.mark.xfail),  # FIXME: fails
-        pytest.param('\x00', marks=pytest.mark.xfail),  # FIXME: fails
-    ]
-))
+@pytest.mark.parametrize('invalid', [
+    *((set('\x7F()<>@,;:/\\[\\]={} \t\\\\^"\'') | set(map(chr, range(0x1F)))) - {';', '\x00'}),
+    ', ',
+    pytest.param(';', marks=pytest.mark.xfail(reason='FIXME: fails')),
+    pytest.param('\x00', marks=pytest.mark.xfail(reason='FIXME: fails')),
+])
 def test_invalid_host_header(invalid, headers):
     dict.__setitem__(headers, 'Host', f'foo{invalid}bar'.encode('ISO8859-1'))
     with pytest.raises(InvalidHeader):

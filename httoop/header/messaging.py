@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import re
-from typing import Any
+from typing import Any, ClassVar
 
 from httoop.codecs import lookup
 from httoop.exceptions import InvalidDate, InvalidHeader
@@ -143,7 +143,7 @@ class ContentEncoding(CodecElement, HeaderElement, name='Content-Encoding'):
     is_response_header = True
 
     # IANA assigned HTTP Content-Encoding values
-    CODECS = {  # noqa: RUF012
+    CODECS: ClassVar = {
         'gzip': 'application/gzip',
         'deflate': 'application/zlib',
         # TODO: implement the following
@@ -453,7 +453,7 @@ class TransferEncoding(_HopByHopElement, CodecElement, HeaderElement, name='Tran
     is_request_header = True
 
     # IANA assigned HTTP Transfer-Encoding values
-    CODECS = {  # noqa: RUF012
+    CODECS: ClassVar = {
         'chunked': False,
         'compress': NotImplementedError,
         'deflate': 'application/zlib',

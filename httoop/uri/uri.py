@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 from socket import AF_INET, AF_INET6, inet_ntop, inet_pton
-from typing import TYPE_CHECKING, Any, Iterator
+from typing import TYPE_CHECKING, Any, ClassVar, Iterator
 
 from httoop.exceptions import InvalidURI
 from httoop.meta import Semantic
@@ -28,7 +28,7 @@ class URI(Semantic):  # noqa: PLW1641
     __slots__ = ('scheme', 'username', 'password', 'host', '_port', 'path', 'query_string', 'fragment')  # noqa: RUF023
     slots = __slots__
 
-    SCHEMES = {}  # noqa: RUF012
+    SCHEMES: ClassVar = {}
     PORT = None
     encoding = 'UTF-8'
 

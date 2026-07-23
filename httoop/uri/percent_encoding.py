@@ -1,4 +1,4 @@
-from typing import Iterator
+from typing import ClassVar, Iterator
 
 
 class Percent:
@@ -11,7 +11,7 @@ class Percent:
     b"!#$&'()*+,/:;=?@[]"
     """
 
-    HEX_MAP = {(a + b).encode('ASCII'): bytes((int(a + b, 16),)) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef'}  # noqa: RUF012
+    HEX_MAP: ClassVar = {(a + b).encode('ASCII'): bytes((int(a + b, 16),)) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef'}
 
     # ABNF
     GEN_DELIMS = b':/?#[]@'

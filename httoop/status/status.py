@@ -4,6 +4,7 @@ HTTP status codes.
 .. seealso:: :rfc:`2616#section-6.2`
 .. seealso:: :rfc:`2616#section-10`
 """
+# ruff: file-ignore[PLR2004]
 
 from __future__ import annotations
 
@@ -29,23 +30,23 @@ class Status(Semantic):  # noqa: PLW1641
 
     @property
     def informational(self) -> bool:
-        return 99 < self.__code < 200  # noqa: PLR2004
+        return 99 < self.__code < 200
 
     @property
     def successful(self) -> bool:
-        return 199 < self.__code < 300  # noqa: PLR2004
+        return 199 < self.__code < 300
 
     @property
     def redirection(self) -> bool:
-        return 299 < self.__code < 400  # noqa: PLR2004
+        return 299 < self.__code < 400
 
     @property
     def client_error(self) -> bool:
-        return 399 < self.__code < 500  # noqa: PLR2004
+        return 399 < self.__code < 500
 
     @property
     def server_error(self) -> bool:
-        return 499 < self.__code < 600  # noqa: PLR2004
+        return 499 < self.__code < 600
 
     # aliases
     @property
@@ -96,16 +97,16 @@ class Status(Semantic):  # noqa: PLW1641
         if code is None:
             return
 
-        if not (100 <= code <= 599):  # noqa: PLR2004
+        if not (100 <= code <= 599):
             raise RuntimeError('HTTP status code must be between 100 and 599', code, cls)
 
-        if code < 200:  # noqa: PLR2004
+        if code < 200:
             expected = 'InformationalStatus'
-        elif code < 300:  # noqa: PLR2004
+        elif code < 300:
             expected = 'SuccessStatus'
-        elif code < 400:  # noqa: PLR2004
+        elif code < 400:
             expected = 'RedirectStatus'
-        elif code < 500:  # noqa: PLR2004
+        elif code < 500:
             expected = 'ClientErrorStatus'
         else:
             expected = 'ServerErrorStatus'
@@ -183,7 +184,7 @@ class Status(Semantic):  # noqa: PLW1641
             self.__code, self.__reason = status.code, status.reason
         else:
             raise TypeError('invalid status')
-        if not (99 < self.__code < 600):  # noqa: PLR2004
+        if not (99 < self.__code < 600):
             raise TypeError('invalid status')
 
     def __repr__(self) -> str:

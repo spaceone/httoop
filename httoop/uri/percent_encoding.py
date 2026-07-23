@@ -38,10 +38,11 @@ class Percent:
         data = data.split(b'%')
         yield data.pop(0)
         for item in data:
-            try:
-                yield cls.HEX_MAP[item[:2]]
+            mapped = cls.HEX_MAP.get(item[:2])
+            if mapped is not None:
+                yield mapped
                 yield item[2:]
-            except KeyError:  # noqa: PERF203
+            else:
                 yield b'%'
                 yield item
 

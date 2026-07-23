@@ -114,7 +114,8 @@ class Range(HeaderElement):
                 raise InvalidHeader(_('duplicated range.'))
             byterange.update(range_)
 
-        if self.stddev([(x[1] or float('inf')) - (x[0] or 0) for x in self.ranges]) > 2.0:  # noqa: PLR2004
+        max_dev = 2.0
+        if self.stddev([(x[1] or float('inf')) - (x[0] or 0) for x in self.ranges]) > max_dev:
             raise InvalidHeader(_('ranges exceeding high standard deviation'))
 
     @classmethod

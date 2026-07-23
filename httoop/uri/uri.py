@@ -21,6 +21,8 @@ from httoop.util import _, integer
 if TYPE_CHECKING:
     from httoop.uri.http import HTTP
 
+_MAX_PORT = 65535
+
 
 class URI(Semantic):  # noqa: PLW1641
     """Uniform Resource Identifier."""
@@ -65,7 +67,7 @@ class URI(Semantic):  # noqa: PLW1641
         if port:
             try:
                 port = integer(port)
-                if not 0 < port <= 65535:  # noqa: PLR2004
+                if not 0 < port <= _MAX_PORT:
                     raise ValueError
             except ValueError:
                 raise InvalidURI(_('Invalid port: %r'), port) from None  # TODO: TypeError

@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from typing import Iterator
+from typing import Iterator, override
 
 
 class ComposedMessage:
@@ -44,8 +44,9 @@ class ComposedMessage:
             if not te:
                 self.message.headers.pop('Transfer-Encoding')
 
+    @override
     @contextmanager
-    def _composing(self) -> Iterator[None]:  # noqa: PLR6301
+    def _composing(self) -> Iterator[None]:
         yield
 
     def __iter__(self) -> Iterator[bytes]:

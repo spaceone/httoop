@@ -6,7 +6,7 @@ from httoop import Date, InvalidDate
 
 
 dates = [{
-    'datetime': datetime.datetime(1994, 11, 6, 8, 49, 37),  # noqa: DTZ001
+    'datetime': datetime.datetime(1994, 11, 6, 8, 49, 37, tzinfo=datetime.timezone.utc),
     'timestamp': 784111777.0,
     'lt': Date(784111776.0),
     'gt': Date(784111778.0),
@@ -56,7 +56,7 @@ def test_date_gmtime(date, expected, lt, gt):
 
 
 def test_date_comparing_none():
-    d = Date(datetime.datetime(1994, 11, 6, 8, 49, 37))  # noqa: DTZ001
+    d = Date(datetime.datetime(1994, 11, 6, 8, 49, 37, tzinfo=datetime.timezone.utc))
     assert d == Date(d)
     assert not d == None  # noqa: E711, SIM201
     assert d > None

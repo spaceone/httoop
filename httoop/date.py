@@ -9,7 +9,7 @@ from __future__ import annotations
 import time
 
 # import calendar
-from datetime import datetime
+from datetime import datetime, timezone
 from email.utils import parsedate_tz
 from typing import Any, Self
 
@@ -77,7 +77,7 @@ class Date(Semantic):  # noqa: PLW1641
     @property
     def datetime(self) -> datetime:
         if self.__datetime is None:
-            self.__datetime = datetime.utcfromtimestamp(int(self))  # noqa: DTZ004
+            self.__datetime = datetime.fromtimestamp(int(self), tz=timezone.utc)
         return self.__datetime
 
     @property

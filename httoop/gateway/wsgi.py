@@ -32,7 +32,7 @@ class WSGIBody(Body):
 class WSGI:
     """A mixin class which implements the WSGI interface."""
 
-    def __init__(self, environ: dict[str, str] | None = None, use_path_info: bool = False, *args, **kwargs) -> None:  # noqa: FBT001, FBT002
+    def __init__(self, environ: dict[str, str] | None = None, *args, use_path_info: bool = False, **kwargs) -> None:
         self.use_path_info = use_path_info
         super().__init__()
         self.exc_info = None

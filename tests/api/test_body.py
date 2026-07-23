@@ -37,14 +37,13 @@ def test_body_set_stringio(request_):
 
 
 def test_body_set_tempfile(request_):
-    tempfile = NamedTemporaryFile()
-    tempfile.write(b'ThisIsANamedTemporaryFile')
-    tempfile.flush()
-    request_.body = tempfile
-    assert len(request_.body) == 25
-    assert request_.body == b'ThisIsANamedTemporaryFile'
-    assert request_.body.fileable
-    tempfile.close()
+    with NamedTemporaryFile() as tempfile:
+        tempfile.write(b'ThisIsANamedTemporaryFile')
+        tempfile.flush()
+        request_.body = tempfile
+        assert len(request_.body) == 25
+        assert request_.body == b'ThisIsANamedTemporaryFile'
+        assert request_.body.fileable
 
 
 def test_body_set_bytearray(request_):
@@ -109,7 +108,7 @@ def tets_body_set_none(request_):
 def test_closed_body(request_):
     b = BytesIO()
     b.close()
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r'I/O operation on closed file\.'):
         request_.body = b
 
 

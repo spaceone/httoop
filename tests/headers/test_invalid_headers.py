@@ -9,8 +9,8 @@ INVALID_HEADER_FIELD_NAMES = bytes(bytearray(range(0x1F + 1))) + b'()<>@,;\\\\"/
 
 @pytest.mark.parametrize('invalid', iter(INVALID_HEADER_FIELD_NAMES + LATIN_CHARS))
 def test_parse_invalid_characters(invalid, request_):
+    invalid = b'foo%sbaz: blub' % (bytes((invalid,)),)
     with pytest.raises(InvalidHeader):
-        invalid = b'foo%sbaz: blub' % (bytes((invalid,)),)
         request_.headers.parse(invalid)
 
 

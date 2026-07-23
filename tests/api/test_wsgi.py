@@ -149,7 +149,7 @@ def application14(environ, start_response):
 
 def test_eror_reraising():
     client = WSGIClient()
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match='test'):
         client(application14)
 
 

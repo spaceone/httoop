@@ -201,6 +201,7 @@ task-tags = ["TODO", "FIXME"]
  "S404",  # suspicious-subprocess-import
  "S405",  # suspicious-xml-etree-import
  "S603",  # subprocess-without-shell-equals-true
+ "PLR2004",  # magic-value-comparison
 ]
 "httoop/status/*.py" = [
  "N801",

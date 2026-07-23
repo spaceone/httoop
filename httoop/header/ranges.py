@@ -141,5 +141,5 @@ class Range(HeaderElement):
     def get_range_content(self, fd: BytesIO) -> Iterator[bytes]:
         for offset, whence, length in self.positions:
             fd.seek(offset, whence)
-            length = () if length is None else (length,)  # noqa: PLW2901
-            yield fd.read(*length)
+            args = () if length is None else (length,)
+            yield fd.read(*args)

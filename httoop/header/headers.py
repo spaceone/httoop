@@ -172,14 +172,12 @@ class Headers(CaseInsensitiveDict, Semantic):
     def __encoded_items(self):
         for key, values in self.items():
             element_cls = HEADER.get(key, HeaderElement)
-            if element_cls is not HeaderElement:
-                key = element_cls.name  # noqa: PLW2901
-            key = key.encode('ascii', 'ignore')  # noqa: PLW2901
+            name = (element_cls.name if element_cls is not HeaderElement else key).encode('ascii', 'ignore')
             if element_cls.list_element:
                 for value in element_cls.split(values):
-                    yield key, value
+                    yield name, value
             else:
-                yield key, values
+                yield name, values
 
     def __repr__(self) -> str:
         return f'<HTTP Headers({list(self.items())!r})>'

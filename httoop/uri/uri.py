@@ -178,8 +178,8 @@ class URI(Semantic):  # noqa: PLW1641
 
     @dict.setter  # noqa: A003
     def dict(self, uri) -> None:
-        for key in self.slots:
-            key = key.lstrip('_')  # noqa: PLW2901
+        for name in self.slots:
+            key = name.lstrip('_')
             setattr(self, key, uri.get(key, ''))
 
     @property

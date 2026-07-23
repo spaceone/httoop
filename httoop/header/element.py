@@ -127,20 +127,20 @@ class HeaderElement:  # noqa: PLW1641
     def _rfc2231_and_continuation_params(cls, params: Iterator[Any]) -> Iterator[tuple[bytes, str]]:  # TODO: complexity
         count = set()
         continuations = {}
-        for key, value, quoted in params:
+        for key, val, quoted in params:
             if key in count:
                 raise InvalidHeader(_('Parameter given twice: %r'), key.decode('ISO8859-1'))
             count.add(key)
             if b'*' in key:
-                if key.endswith(b'*') and not quoted and not value.startswith(b"'") and value.count(b"'") >= 2:  # noqa: PLR2004
-                    charset, _language, value_ = value.split(b"'", 2)
+                if key.endswith(b'*') and not quoted and not val.startswith(b"'") and val.count(b"'") >= 2:  # noqa: PLR2004
+                    charset, _language, value_ = val.split(b"'", 2)
                     encoding = cls._sanitize_encoding(charset.decode('ASCII', 'replace'))
                     try:
                         key, value = key[:-1], Percent.unquote(value_).decode(encoding)  # noqa: PLW2901
                     except UnicodeDecodeError as exc:
                         raise InvalidHeader(_('%s') % (exc,)) from None
                 else:
-                    value = value.decode('ISO8859-1')  # noqa: PLW2901
+                    value = val.decode('ISO8859-1')
                 key_, asterisk, num = key.rpartition(b'*')
                 if asterisk:
                     try:
@@ -153,7 +153,7 @@ class HeaderElement:  # noqa: PLW1641
                     continuations.setdefault(key_, {})[num] = value
                     continue
             else:
-                value = value.decode('ISO8859-1')  # noqa: PLW2901
+                value = val.decode('ISO8859-1')
             yield key, value
 
         for key, lines in continuations.items():

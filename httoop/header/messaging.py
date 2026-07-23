@@ -12,6 +12,9 @@ from httoop.util import _, integer
 
 class CodecElement:
 
+    value: str
+    mimetype: str
+    name: str
     CODECS = None
 
     raise_on_missing_codec = True
@@ -28,9 +31,10 @@ class CodecElement:
         except AttributeError:
             mimetype = self.value
 
-        for encoding in (self.value, mimetype):
+        for val in (self.value, mimetype):
+            encoding = val
             if self.CODECS is not None:
-                encoding = self.CODECS.get(encoding)  # noqa: PLW2901
+                encoding = self.CODECS.get(encoding)
                 if not isinstance(encoding, (bytes, str)):
                     return encoding
             try:

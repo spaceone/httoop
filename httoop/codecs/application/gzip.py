@@ -33,7 +33,7 @@ class GZip(Codec):
 
     @classmethod
     def iterencode(cls, data, charset=None, mimetype=None):
-        try:
+        try:  # noqa: PLW0717
             out = io.BytesIO()
             with gzip.GzipFile(fileobj=out, mode='w', compresslevel=cls.compression_level) as fd:
                 for part in data:

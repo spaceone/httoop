@@ -355,13 +355,13 @@ def test_attabspathwin(content_disposition):
 def test_attcdate(content_disposition):
     h = content_disposition(b'Content-Disposition: attachment; creation-date="Wed, 12 Feb 1997 16:29:51 -0500"')
 
-    assert h.creation_date == datetime.datetime(1997, 2, 12, 16, 29, 51)
+    assert h.creation_date == datetime.datetime(1997, 2, 12, 16, 29, 51)  # noqa: DTZ001
     # assert h.creation_date == 855761391.0  # FIXME: assert <HTTP Date(855764991)> == 855761391.0
 
 
 def test_attmdate(content_disposition):
     h = content_disposition(b'Content-Disposition: attachment; modification-date="Wed, 12 Feb 1997 16:29:51 -0500"')
-    assert h.modification_date == datetime.datetime(1997, 2, 12, 16, 29, 51)
+    assert h.modification_date == datetime.datetime(1997, 2, 12, 16, 29, 51)  # noqa: DTZ001
     # assert h.modification_date == 855761391.0  # FIXME: assert <HTTP Date(855764991)> == 855761391.0
 
 

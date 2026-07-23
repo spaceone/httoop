@@ -94,7 +94,7 @@ class CLI:
             print(repr(response.body))
             print(repr(bytes(response.body)))
         if client.buffer:
-            assert client.message
+            assert client.message  # noqa: S101
             print('WARNING: response not yet complete!:')
             print(repr(client.message))
             print(repr(client.message.headers))
@@ -120,7 +120,7 @@ class CLI:
         self.common()
 
     def common(self) -> None:
-        assert self.message is not None
+        assert self.message is not None  # noqa: S101
         if self.arguments.protocol:
             protocol = self.arguments.protocol
             try:

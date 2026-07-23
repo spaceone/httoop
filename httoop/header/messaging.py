@@ -30,7 +30,7 @@ class CodecElement:
 
         for encoding in (self.value, mimetype):
             if self.CODECS is not None:
-                encoding = self.CODECS.get(encoding)
+                encoding = self.CODECS.get(encoding)  # noqa: PLW2901
                 if not isinstance(encoding, (bytes, str)):
                     return encoding
             try:
@@ -143,7 +143,7 @@ class ContentEncoding(CodecElement, HeaderElement, name='Content-Encoding'):
     is_response_header = True
 
     # IANA assigned HTTP Content-Encoding values
-    CODECS = {
+    CODECS = {  # noqa: RUF012
         'gzip': 'application/gzip',
         'deflate': 'application/zlib',
         # TODO: implement the following
@@ -453,7 +453,7 @@ class TransferEncoding(_HopByHopElement, CodecElement, HeaderElement, name='Tran
     is_request_header = True
 
     # IANA assigned HTTP Transfer-Encoding values
-    CODECS = {
+    CODECS = {  # noqa: RUF012
         'chunked': False,
         'compress': NotImplementedError,
         'deflate': 'application/zlib',

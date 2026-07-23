@@ -138,6 +138,7 @@ ignore = [
  # "I", "S101", "Q000", "ANN", "ERA", "UP004", "ARG001", "ARG002",
  "FURB189",  # subclass-builtin
  "TRY301",  # raise-within-try
+ "RUF067",  # non-empty-init-module
 
 # too much effort:
  "ANN001",  # missing-type-function-argument

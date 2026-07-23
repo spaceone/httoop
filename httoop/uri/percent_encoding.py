@@ -11,7 +11,7 @@ class Percent:
     b"!#$&'()*+,/:;=?@[]"
     """
 
-    HEX_MAP = {(a + b).encode('ASCII'): bytes((int(a + b, 16),)) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef'}
+    HEX_MAP = {(a + b).encode('ASCII'): bytes((int(a + b, 16),)) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef'}  # noqa: RUF012
 
     # ABNF
     GEN_DELIMS = b':/?#[]@'
@@ -41,7 +41,7 @@ class Percent:
             try:
                 yield cls.HEX_MAP[item[:2]]
                 yield item[2:]
-            except KeyError:
+            except KeyError:  # noqa: PERF203
                 yield b'%'
                 yield item
 

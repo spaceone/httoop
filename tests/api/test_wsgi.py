@@ -171,7 +171,7 @@ def test_essential_parameters():
 def test_client_reraising():
     client = WSGIClient({'CONTENT_TYPE': 'text/html', 'CONTENT_LENGTH': '0', 'HTTP_HOST': 'foobar'})
     client.headers_sent = True
-    with pytest.raises(ValueError) as exc:
+    with pytest.raises(ValueError) as exc:  # noqa: PT011
         client(application15)
     assert exc.value.args[0] is True
 

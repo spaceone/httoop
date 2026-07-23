@@ -3,7 +3,7 @@ from httoop.exceptions import InvalidDate
 from httoop.header.element import HeaderElement
 
 
-class _DateComparable:
+class _DateComparable:  # noqa: PLW1641
 
     Date = Date
 
@@ -25,7 +25,7 @@ class _DateComparable:
         return int(self.value)
 
 
-class _MatchElement:
+class _MatchElement:  # noqa: PLW1641
 
     def __eq__(self, other: object) -> bool:
         return self.value in {other, '*'}
@@ -51,7 +51,7 @@ class _MatchElement:
         return value[1:-1] == etag
 
 
-class ETag(HeaderElement):
+class ETag(HeaderElement):  # noqa: PLW1641
 
     is_response_header = True
 

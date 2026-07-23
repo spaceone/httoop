@@ -25,7 +25,7 @@ __all__ = ['HEADER', 'HeaderElement']
 HEADER = CaseInsensitiveDict()
 
 
-class HeaderElement:
+class HeaderElement:  # noqa: PLW1641
     """An element (with parameters) from an HTTP header's element list."""
 
     name = ''
@@ -100,7 +100,7 @@ class HeaderElement:
         try:
             val, quoted = cls.unescape_param(val.strip())
         except InvalidHeader:
-            raise InvalidHeader(_('Unquoted parameter %r in %r containing TSPECIALS: %r'), key, cls.name, val)
+            raise InvalidHeader(_('Unquoted parameter %r in %r containing TSPECIALS: %r'), key, cls.name, val)  # noqa: B904
         return cls.unescape_key(key), val, quoted
 
     @classmethod
@@ -132,15 +132,15 @@ class HeaderElement:
                 raise InvalidHeader(_('Parameter given twice: %r'), key.decode('ISO8859-1'))
             count.add(key)
             if b'*' in key:
-                if key.endswith(b'*') and not quoted and not value.startswith(b"'") and value.count(b"'") >= 2:
+                if key.endswith(b'*') and not quoted and not value.startswith(b"'") and value.count(b"'") >= 2:  # noqa: PLR2004
                     charset, _language, value_ = value.split(b"'", 2)
                     encoding = cls._sanitize_encoding(charset.decode('ASCII', 'replace'))
                     try:
-                        key, value = key[:-1], Percent.unquote(value_).decode(encoding)
+                        key, value = key[:-1], Percent.unquote(value_).decode(encoding)  # noqa: PLW2901
                     except UnicodeDecodeError as exc:
                         raise InvalidHeader(_('%s') % (exc,)) from None
                 else:
-                    value = value.decode('ISO8859-1')
+                    value = value.decode('ISO8859-1')  # noqa: PLW2901
                 key_, asterisk, num = key.rpartition(b'*')
                 if asterisk:
                     try:
@@ -153,7 +153,7 @@ class HeaderElement:
                     continuations.setdefault(key_, {})[num] = value
                     continue
             else:
-                value = value.decode('ISO8859-1')
+                value = value.decode('ISO8859-1')  # noqa: PLW2901
             yield key, value
 
         for key, lines in continuations.items():
@@ -305,7 +305,7 @@ class MimeType:
         self.params['version'] = str(version)
 
 
-class _AcceptElement(HeaderElement):
+class _AcceptElement(HeaderElement):  # noqa: PLW1641
     """
     An Accept element with quality value.
 

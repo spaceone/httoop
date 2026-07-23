@@ -16,7 +16,7 @@ from httoop.util import _, integer
 __all__ = ('Protocol',)
 
 
-class Protocol(Semantic):
+class Protocol(Semantic):  # noqa: PLW1641
     """The HTTP protocol version."""
 
     __slots__ = ('__protocol', 'name')

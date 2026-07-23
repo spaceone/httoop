@@ -114,7 +114,7 @@ class Range(HeaderElement):
                 raise InvalidHeader(_('duplicated range.'))
             byterange.update(range_)
 
-        if self.stddev([(x[1] or float('inf')) - (x[0] or 0) for x in self.ranges]) > 2.0:
+        if self.stddev([(x[1] or float('inf')) - (x[0] or 0) for x in self.ranges]) > 2.0:  # noqa: PLR2004
             raise InvalidHeader(_('ranges exceeding high standard deviation'))
 
     @classmethod
@@ -141,5 +141,5 @@ class Range(HeaderElement):
     def get_range_content(self, fd: BytesIO) -> Iterator[bytes]:
         for offset, whence, length in self.positions:
             fd.seek(offset, whence)
-            length = () if length is None else (length,)
+            length = () if length is None else (length,)  # noqa: PLW2901
             yield fd.read(*length)

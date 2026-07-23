@@ -18,7 +18,7 @@ types = (application, audio, example, image, message, model, multipart, text, vi
 __all__ = ['CODECS', 'Codec', 'application', 'audio', 'example', 'image', 'message', 'model', 'multipart', 'text', 'video']
 
 
-def lookup(encoding: str, raise_errors: bool = True) -> Any:
+def lookup(encoding: str, raise_errors: bool = True) -> Any:  # noqa: FBT001, FBT002
     type_ = '%s/*' % (encoding.split('/', 1)[0],)
     return CODECS.get(encoding) or CODECS.get(type_) or (raise_errors and CODECS[encoding]) or None
 

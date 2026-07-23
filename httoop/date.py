@@ -21,7 +21,7 @@ from httoop.util import _
 __all__ = ['Date']
 
 
-class Date(Semantic):
+class Date(Semantic):  # noqa: PLW1641
     """
     A HTTP Date string.
 
@@ -77,7 +77,7 @@ class Date(Semantic):
     @property
     def datetime(self) -> datetime:
         if self.__datetime is None:
-            self.__datetime = datetime.utcfromtimestamp(int(self))
+            self.__datetime = datetime.utcfromtimestamp(int(self))  # noqa: DTZ004
         return self.__datetime
 
     @property

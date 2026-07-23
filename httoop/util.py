@@ -124,7 +124,7 @@ def integer(number: str | bytes, base=10) -> int:
     """
     if isinstance(number, int):
         return int(number)
-    if not number.isdigit() and (base != 16 or number.strip(string.hexdigits if isinstance(number, str) else string.hexdigits.encode('ASCII'))):
+    if not number.isdigit() and (base != 16 or number.strip(string.hexdigits if isinstance(number, str) else string.hexdigits.encode('ASCII'))):  # noqa: PLR2004
         raise ValueError()
     zero = '0' if isinstance(number, str) else b'0'
     if number != zero and len(number.lstrip(zero)) != len(number):
@@ -222,8 +222,8 @@ class CaseInsensitiveDict(dict):
     def get(self, key: bytes | str, default: Any | None = None) -> Any:
         return dict.get(self, self.formatkey(key), default)
 
-    def update(self, E: dict[str, str]) -> None:
-        for key in E:
+    def update(self, E: dict[str, str]) -> None:  # noqa: N803
+        for key in E:  # noqa: PLC0206
             self[self.formatkey(key)] = self.formatvalue(E[key])
 
     # def setdefault(self, key: str, x: Optional[Union[UserAgent, Server, str, bytes]]=None) -> bytes:

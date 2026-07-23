@@ -17,5 +17,5 @@ from httoop.header.messaging import Server, UserAgent
 __all__ = ['HeaderElement', 'Headers', 'Server', 'UserAgent', 'auth', 'cache', 'conditional', 'messaging', 'ranges', 'security']
 for member in HEADER.values():
     name = member.__name__
-    __all__ += name
+    __all__ += name  # noqa: PLE0605
     globals()[name] = member

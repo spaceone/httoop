@@ -74,7 +74,7 @@ def test_pop_header(headers):
 
 
 def test_util_to_unicode():
-    assert to_unicode(None) == ''
+    assert to_unicode(None) == ''  # noqa: PLC1901
     assert to_unicode(b'\xff') == '\xff'
 
 

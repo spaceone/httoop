@@ -165,13 +165,13 @@ def test_invalid_status_code(code, response):
         response.status = code
     with pytest.raises(TypeError):
         response.status.code = code
-    from httoop.status import Status
+    from httoop.status import Status  # noqa: PLC0415
     with pytest.raises(TypeError):
         Status(code)
 
 
 def test_invalid_status_subclasses():
-    from httoop.status import ServerErrorStatus
+    from httoop.status import ServerErrorStatus  # noqa: PLC0415
 
     with pytest.raises(RuntimeError):
 

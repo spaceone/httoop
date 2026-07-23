@@ -96,7 +96,7 @@ class StateMachine:
 
     def on_message_complete(self) -> Response | Request:
         message = self.message
-        assert self.message
+        assert self.message  # noqa: S101
         self.message = None
         return message
 
@@ -150,7 +150,7 @@ class StateMachine:
         requestline, self.buffer = self.buffer.split(self.line_end, 1)
 
         # parse request line
-        assert self.message
+        assert self.message  # noqa: S101
         try:
             self.message.parse(bytes(requestline))
         except (InvalidLine, InvalidURI) as exc:
@@ -189,7 +189,7 @@ class StateMachine:
             if self.state['_header_section_size'] >= self.max_header_section_size:
                 raise REQUEST_HEADER_FIELDS_TOO_LARGE(_('Maximum allowed header section size (%d) reached.') % (self.max_header_section_size,))
             try:
-                assert self.message
+                assert self.message  # noqa: S101
                 self.message.headers.parse(bytes(headers))
             except InvalidHeaderSize as exc:
                 raise REQUEST_HEADER_FIELDS_TOO_LARGE(str(exc)) from exc
@@ -210,7 +210,7 @@ class StateMachine:
         # RFC 2616 Section 4.4
         # get message length
 
-        assert self.message
+        assert self.message  # noqa: S101
         message = self.message
         if 'Transfer-Encoding' in message.headers and 'Content-Length' in message.headers:
             raise BAD_REQUEST(_('Invalid Content-Length and Transfer-Encoding combination header.'))
@@ -232,7 +232,7 @@ class StateMachine:
                 raise PAYLOAD_TOO_LARGE(_('Maximum content size (%d) reached') % (self.max_body_size,))
 
     def parse_body_with_message_length(self) -> bool | None:
-        assert self.message
+        assert self.message  # noqa: S101
         body, self.buffer = self.buffer[:self.message_length], self.buffer[self.message_length:]
         try:
             self.message.body.parse(bytes(body))
@@ -249,7 +249,7 @@ class StateMachine:
         return None
 
     def parse_chunked_body(self) -> bool:
-        assert self.message
+        assert self.message  # noqa: S101
         if self.state['trailer']:
             return self.parse_trailers()
         if self.line_end not in self.buffer:
@@ -323,7 +323,7 @@ class StateMachine:
 
     def merge_trailer_into_header(self) -> None:
         message = self.message
-        assert self.message
+        assert self.message  # noqa: S101
         for name in message.headers.values('Trailer'):
             value = self.trailers.pop(name, None)
             if value is not None:
@@ -334,7 +334,7 @@ class StateMachine:
         del self.trailers
 
     def set_body_content_encoding(self) -> None:
-        assert self.message
+        assert self.message  # noqa: S101
         if 'Content-Encoding' in self.message.headers:
             try:
                 self.message.body.content_encoding = self.message.headers.element('Content-Encoding')
@@ -343,12 +343,12 @@ class StateMachine:
                 raise NOT_IMPLEMENTED(str(exc)) from exc
 
     def set_body_content_type(self) -> None:
-        assert self.message
+        assert self.message  # noqa: S101
         if 'Content-Type' in self.message.headers:
             self.message.body.mimetype = self.message.headers.element('Content-Type')
 
     def set_content_length(self) -> None:
-        assert self.message
+        assert self.message  # noqa: S101
         if 'Content-Length' not in self.message.headers:
             self.message.headers['Content-Length'] = str(len(self.message.body)).encode('ASCII')
         if self.chunked:

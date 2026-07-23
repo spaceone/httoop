@@ -173,8 +173,8 @@ class Headers(CaseInsensitiveDict, Semantic):
         for key, values in self.items():
             element_cls = HEADER.get(key, HeaderElement)
             if element_cls is not HeaderElement:
-                key = element_cls.name
-            key = key.encode('ascii', 'ignore')
+                key = element_cls.name  # noqa: PLW2901
+            key = key.encode('ascii', 'ignore')  # noqa: PLW2901
             if element_cls.list_element:
                 for value in element_cls.split(values):
                     yield key, value

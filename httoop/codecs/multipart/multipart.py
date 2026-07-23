@@ -37,13 +37,13 @@ class Multipart(Codec):
         if part not in {b'--', b'--\r\n'}:
             raise DecodeError(_('Invalid multipart end: %r'), part.decode('ISO8859-1'))
 
-        from httoop.messages.body import Body
+        from httoop.messages.body import Body  # noqa: PLC0415
 
         multiparts = []
         for part in parts:
             if not part.startswith(b'\r\n'):
                 raise DecodeError(_('Invalid boundary end: %r'), part[:2].decode('ISO8859-1'))
-            part = part[2:]
+            part = part[2:]  # noqa: PLW2901
             headers, separator, content = part.partition(b'\r\n\r\n')
             if not separator:
                 raise DecodeError(_('Multipart does not contain CRLF header separator'))

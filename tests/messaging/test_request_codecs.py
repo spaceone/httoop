@@ -16,7 +16,7 @@ def test_json(body):
 
 def test_invalid_json(body):
     body.mimetype = 'application/json'
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError):  # noqa: PT011
         body.decode('{"foo" "bar"}')
 
 
@@ -159,7 +159,7 @@ def check_encoding_dict(body, data):
 
 def check_raises(body, chars, type_, exception):
     for chr_ in chars:
-        with pytest.raises(exception):
+        with pytest.raises(exception):  # noqa: PT012
             body.set(chr_)
             type_(body)
 

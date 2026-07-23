@@ -42,7 +42,7 @@ def test_max_uri_length(statemachine):
     statemachine.MAX_URI_LENGTH = 100
     path = b'A' * (statemachine.MAX_URI_LENGTH - 5)
     statemachine.parse(b'GET /%s HTTP/1.1\r\nHost: example.com\r\nContent-Length: 0\r\n\r\n' % (path,))
-    with pytest.raises(URI_TOO_LONG) as exc:
+    with pytest.raises(URI_TOO_LONG) as exc:  # noqa: PT012
         path = b'A' * statemachine.MAX_URI_LENGTH
         statemachine.parse(b'GET /%s HTTP/1.1\r\nHost: example.com\r\nContent-Length: 0\r\n\r\n' % (path,))
     assert 'The maximum length of the request is 100' in str(exc.value.description)
@@ -50,7 +50,7 @@ def test_max_uri_length(statemachine):
 
 def test_max_request_line_length(statemachine):
     statemachine.MAX_URI_LENGTH = 100
-    with pytest.raises(URI_TOO_LONG) as exc:
+    with pytest.raises(URI_TOO_LONG) as exc:  # noqa: PT012
         path = b'A' * statemachine.MAX_URI_LENGTH
         statemachine.parse(b'GET /%s HTTP/' % (path,))
         statemachine.parse(b'1.1\r\nHost: example.com\r\nContent-Length: 0\r\n\r\n')

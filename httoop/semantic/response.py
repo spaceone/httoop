@@ -28,7 +28,7 @@ class ComposedResponse(ComposedMessage):
         response = self.response
 
         status = int(response.status)
-        if status < 200 or status in {204, 205, 304}:
+        if status < 200 or status in {204, 205, 304}:  # noqa: PLR2004
             # 1XX, 204 NO_CONTENT, 205 RESET_CONTENT, 304 NOT_MODIFIED
             response.body = None
 
@@ -47,7 +47,7 @@ class ComposedResponse(ComposedMessage):
             for header in STATUSES[status].header_to_remove:
                 response.headers.pop(header, None)
 
-        if status == 405:
+        if status == 405:  # noqa: PLR2004
             response.headers.setdefault('Allow', 'GET, HEAD')
 
         self.close = self.close
@@ -55,12 +55,12 @@ class ComposedResponse(ComposedMessage):
         if 'Content-Type' not in response.headers and response.body.mimetype and response.body:
             response.headers['Content-Type'] = bytes(response.body.mimetype)
 
-        if (response.status == 200 and response.body.fileable and not self.chunked and 'Etag' in response.headers) or 'Last-Modified' in response.headers:
+        if (response.status == 200 and response.body.fileable and not self.chunked and 'Etag' in response.headers) or 'Last-Modified' in response.headers:  # noqa: PLR2004
             response.headers.setdefault('Accept-Ranges', b'bytes')
 
         self.prepare_ranges()
 
-        if response.status == 416:
+        if response.status == 416:  # noqa: PLR2004
             response.headers.set_element('Content-Range', 'bytes', None, response.headers.get('Content-Length'))
 
         if self.request.method == 'TRACE':
@@ -85,7 +85,7 @@ class ComposedResponse(ComposedMessage):
         response = self.response
         yield response.protocol >= (1, 1)
         yield self.request.protocol >= (1, 1)
-        yield response.status == 200
+        yield response.status == 200  # noqa: PLR2004
         yield 'Range' in self.request.headers
         yield self.request.method == 'GET'
         yield response.headers.element('Accept-Ranges') == 'bytes'
@@ -111,7 +111,7 @@ class ComposedResponse(ComposedMessage):
         response.headers['Content-Length'] = str(len(response.body)).encode('ASCII')  # FIXME: len(response.body) causes the whole body to be generated
         return True
 
-    def multipart_byteranges(self, range_body: Iterator[Any], range_: Range, content_length: str, content_type: str) -> Iterator[Body]:
+    def multipart_byteranges(self, range_body: Iterator[Any], range_: Range, content_length: str, content_type: str) -> Iterator[Body]:  # noqa: PLR6301
         for content, byterange in zip(range_body, range_.ranges):
             body = Body(content)
             body.headers['Content-Type'] = content_type
@@ -127,7 +127,7 @@ class ComposedResponse(ComposedMessage):
         # TODO: 100 Continue
         # 413 Request Entity Too Large
         # RFC 2616 Section 10.4.14
-        yield response.status == 413
+        yield response.status == 413  # noqa: PLR2004
 
         yield response.headers.get('Connection') == 'close'
 

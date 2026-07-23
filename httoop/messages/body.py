@@ -246,7 +246,7 @@ class Body(IFile, Semantic):
                 if not data:
                     continue
                 if isinstance(data, str):
-                    data = data.encode(self.encoding)
+                    data = data.encode(self.encoding)  # noqa: PLW2901
                 elif not isinstance(data, bytes):  # pragma: no cover
                     raise TypeError(f'Iterable contained non-bytes: {type(data).__name__!r}')
                 yield data

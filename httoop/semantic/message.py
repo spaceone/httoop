@@ -45,7 +45,7 @@ class ComposedMessage:
                 self.message.headers.pop('Transfer-Encoding')
 
     @contextmanager
-    def _composing(self) -> Iterator[None]:
+    def _composing(self) -> Iterator[None]:  # noqa: PLR6301
         yield
 
     def __iter__(self) -> Iterator[bytes]:

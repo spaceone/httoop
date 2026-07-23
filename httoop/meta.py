@@ -6,7 +6,7 @@ from __future__ import annotations
 __all__ = ['Semantic']
 
 
-class Semantic:
+class Semantic:  # noqa: PLW1641
     """Implements the HTTP Semantic interface."""
 
     __slots__ = ()

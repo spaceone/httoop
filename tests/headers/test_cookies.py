@@ -23,7 +23,7 @@ set_cookie = (
     (('PREF=ID=1111111111111111:FF=0:TM=1442750337:LM=1442750337:V=1:S=OzLcd0aN7JCguSAs; expires=Thu, 31-Dec-2015 16:02:17 GMT; path=/; domain=.google.de, NID=71=qx1aDrIv1ZCfe9nzprBX_6_GMe5jmnD2RniOFz5UINXwR_3TQU0Kon20XczY4aUNlt75z_2r1wHOJw4FKL9RMUCo5QIEbmKGw3W4U7nkpZZolbPBCGbw6RN2N0p7D3q6fhXQbg; expires=Mon, 21-Mar-2016 11:58:57 GMT; path=/; domain=.google.de; HttpOnly', {
         'PREF': {
             'cookie_value': 'ID=1111111111111111:FF=0:TM=1442750337:LM=1442750337:V=1:S=OzLcd0aN7JCguSAs',
-            'expires': datetime(2015, 12, 31, 16, 2, 17),
+            'expires': datetime(2015, 12, 31, 16, 2, 17),  # noqa: DTZ001
             'path': '/',
             'domain': '.google.de',
             'httponly': False,
@@ -33,7 +33,7 @@ set_cookie = (
         },
         'NID': {
             'cookie_value': '71=qx1aDrIv1ZCfe9nzprBX_6_GMe5jmnD2RniOFz5UINXwR_3TQU0Kon20XczY4aUNlt75z_2r1wHOJw4FKL9RMUCo5QIEbmKGw3W4U7nkpZZolbPBCGbw6RN2N0p7D3q6fhXQbg',
-            'expires': datetime(2016, 3, 21, 11, 58, 57),
+            'expires': datetime(2016, 3, 21, 11, 58, 57),  # noqa: DTZ001
             'path': '/',
             'domain': '.google.de',
             'httponly': True,

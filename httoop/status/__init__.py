@@ -17,5 +17,5 @@ from httoop.status.types import StatusException
 __all__ = ['REASONS', 'ClientErrorStatus', 'InformationalStatus', 'RedirectStatus', 'ServerErrorStatus', 'Status', 'StatusException', 'SuccessStatus']
 
 for member in STATUSES.values():
-    __all__.append(member.__name__)
+    __all__.append(member.__name__)  # noqa: PYI056
     globals()[member.__name__] = member

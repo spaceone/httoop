@@ -18,7 +18,7 @@ from httoop.util import _, integer
 STATUSES = {}
 
 
-class Status(Semantic):
+class Status(Semantic):  # noqa: PLW1641
     """
     A HTTP Status.
 
@@ -29,23 +29,23 @@ class Status(Semantic):
 
     @property
     def informational(self) -> bool:
-        return 99 < self.__code < 200
+        return 99 < self.__code < 200  # noqa: PLR2004
 
     @property
     def successful(self) -> bool:
-        return 199 < self.__code < 300
+        return 199 < self.__code < 300  # noqa: PLR2004
 
     @property
     def redirection(self) -> bool:
-        return 299 < self.__code < 400
+        return 299 < self.__code < 400  # noqa: PLR2004
 
     @property
     def client_error(self) -> bool:
-        return 399 < self.__code < 500
+        return 399 < self.__code < 500  # noqa: PLR2004
 
     @property
     def server_error(self) -> bool:
-        return 499 < self.__code < 600
+        return 499 < self.__code < 600  # noqa: PLR2004
 
     # aliases
     @property
@@ -96,16 +96,16 @@ class Status(Semantic):
         if code is None:
             return
 
-        if not (100 <= code <= 599):
+        if not (100 <= code <= 599):  # noqa: PLR2004
             raise RuntimeError('HTTP status code must be between 100 and 599', code, cls)
 
-        if code < 200:
+        if code < 200:  # noqa: PLR2004
             expected = 'InformationalStatus'
-        elif code < 300:
+        elif code < 300:  # noqa: PLR2004
             expected = 'SuccessStatus'
-        elif code < 400:
+        elif code < 400:  # noqa: PLR2004
             expected = 'RedirectStatus'
-        elif code < 500:
+        elif code < 500:  # noqa: PLR2004
             expected = 'ClientErrorStatus'
         else:
             expected = 'ServerErrorStatus'
@@ -183,7 +183,7 @@ class Status(Semantic):
             self.__code, self.__reason = status.code, status.reason
         else:
             raise TypeError('invalid status')
-        if not (99 < self.__code < 600):
+        if not (99 < self.__code < 600):  # noqa: PLR2004
             raise TypeError('invalid status')
 
     def __repr__(self) -> str:

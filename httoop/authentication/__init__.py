@@ -68,7 +68,7 @@ class AuthRequestElement(AuthElement):
 
     encoding = 'ASCII'
 
-    schemes = {
+    schemes = {  # noqa: RUF012
         'basic': BasicAuthRequestScheme,
         'digest': SecureDigestAuthRequestScheme,
     }
@@ -103,7 +103,7 @@ class AuthRequestElement(AuthElement):
 
 class AuthResponseElement(AuthElement):
 
-    schemes = {
+    schemes = {  # noqa: RUF012
         'basic': BasicAuthResponseScheme,
         'digest': DigestAuthResponseScheme,
     }

@@ -22,13 +22,13 @@ if TYPE_CHECKING:
     from httoop.uri.http import HTTP
 
 
-class URI(Semantic):
+class URI(Semantic):  # noqa: PLW1641
     """Uniform Resource Identifier."""
 
     __slots__ = ('scheme', 'username', 'password', 'host', '_port', 'path', 'query_string', 'fragment')  # noqa: RUF023
     slots = __slots__
 
-    SCHEMES = {}
+    SCHEMES = {}  # noqa: RUF012
     PORT = None
     encoding = 'UTF-8'
 
@@ -65,7 +65,7 @@ class URI(Semantic):
         if port:
             try:
                 port = integer(port)
-                if not 0 < port <= 65535:
+                if not 0 < port <= 65535:  # noqa: PLR2004
                     raise ValueError
             except ValueError:
                 raise InvalidURI(_('Invalid port: %r'), port) from None  # TODO: TypeError
@@ -176,17 +176,17 @@ class URI(Semantic):
         slots = (key.lstrip('_') for key in self.slots)
         return {key: getattr(self, key) for key in slots}
 
-    @dict.setter
+    @dict.setter  # noqa: A003
     def dict(self, uri) -> None:
         for key in self.slots:
-            key = key.lstrip('_')
+            key = key.lstrip('_')  # noqa: PLW2901
             setattr(self, key, uri.get(key, ''))
 
     @property
     def tuple(self):
         return tuple(getattr(self, key) for key in self.slots)
 
-    @tuple.setter
+    @tuple.setter  # noqa: A003
     def tuple(self, tuple_) -> None:
         (self.scheme, self.username, self.password, self.host,
          self.port, self.path, self.query_string, self.fragment) = tuple_

@@ -6,7 +6,7 @@ from httoop import URI
 @pytest.mark.parametrize('url,expected', [
     ('ftp://ftp.is.co.za/rfc/rfc1808.txt', ('ftp', '', '', 'ftp.is.co.za', 21, '/rfc/rfc1808.txt', '', '')),
     ('http://www.ietf.org/rfc/rfc2396.txt', ('http', '', '', 'www.ietf.org', 80, '/rfc/rfc2396.txt', '', '')),
-    pytest.param('ldap://[2001:db8::7]/c=GB?objectClass?one', ('ldap', '', '', '[2001:db8::7]', 389, '/c=GB', 'objectClass?one', ''), marks=pytest.mark.skipif(True, reason='Parse query in ldap URI?')),  # noqa: FBT003
+    pytest.param('ldap://[2001:db8::7]/c=GB?objectClass?one', ('ldap', '', '', '[2001:db8::7]', 389, '/c=GB', 'objectClass?one', ''), marks=pytest.mark.skip(reason='Parse query in ldap URI?')),
     ('mailto:John.Doe@example.com', ('mailto', '', '', '', None, 'John.Doe@example.com', '', '')),
     ('news:comp.infosystems.www.servers.unix', ('news', '', '', '', None, 'comp.infosystems.www.servers.unix', '', '')),
     ('tel:+1-816-555-1212', ('tel', '', '', '', None, '+1-816-555-1212', '', '')),

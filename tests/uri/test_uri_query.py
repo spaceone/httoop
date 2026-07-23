@@ -7,8 +7,8 @@ from httoop import URI, InvalidURI
     (b'', ()),
     (b'&', ()),
     (b'&&', ()),
-    pytest.param(b'=', (('', ''),), marks=pytest.mark.skipif(True, reason='Dunno')),  # noqa: FBT003
-    pytest.param(b'=a', (('', 'a'),), marks=pytest.mark.skipif(True, reason='Dunno')),  # noqa: FBT003
+    pytest.param(b'=', (('', ''),), marks=pytest.mark.skip(reason='Dunno')),
+    pytest.param(b'=a', (('', 'a'),), marks=pytest.mark.skip(reason='Dunno')),
     (b'a', (('a', ''),)),
     (b'a=', (('a', ''),)),
     (b'&a=b', (('a', 'b'),)),
@@ -26,10 +26,10 @@ def test_query_string_parse(query_string, query):
 
 @pytest.mark.parametrize('query_string,query', [
     (b'', ()),
-    pytest.param(b'=', (('', ''),), marks=pytest.mark.skipif(True, reason='Dunno')),  # noqa: FBT003
-    pytest.param(b'=a', (('', 'a'),), marks=pytest.mark.skipif(True, reason='Dunno')),  # noqa: FBT003
+    pytest.param(b'=', (('', ''),), marks=pytest.mark.skip(reason='Dunno')),
+    pytest.param(b'=a', (('', 'a'),), marks=pytest.mark.skip(reason='Dunno')),
     (b'a', (('a', ''),)),
-    pytest.param(b'a=', (('a', ''),), marks=pytest.mark.skipif(True, reason='Dunno')),  # noqa: FBT003
+    pytest.param(b'a=', (('a', ''),), marks=pytest.mark.skip(reason='Dunno')),
     (b'a=b', (('a', 'b'),)),
     (b'a=b&b=c&d=f', (('a', 'b'), ('b', 'c'), ('d', 'f'))),
     (b'a=a+b&b=b+c', (('a', 'a b'), ('b', 'b c'))),

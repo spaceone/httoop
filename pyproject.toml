@@ -97,6 +97,9 @@ preview = true
 select = ["E", "W", "F", "I", "D", "TD", "ALL"]
 ignore = [
 # Invalid / don't care:
+ "RUF105",  # noqa-comments
+ "RUF106",  # rule-codes-in-suppression-comments:
+ "RUF201",  # rule-codes-in-selectors
  "E501",  # line-too-long
  "E203",  # whitespace-before-punctuation
  "COM812",  # missing-trailing-comma

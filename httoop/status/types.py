@@ -9,7 +9,7 @@ from __future__ import annotations
 from httoop.status.status import Status
 
 
-class StatusException(Status, Exception):
+class StatusException(Status, Exception):  # noqa: N818
     """
     This class represents a small HTTP Response message
     for error handling purposes
@@ -23,7 +23,7 @@ class StatusException(Status, Exception):
     @property
     def body(self):
         if not hasattr(self, '_body'):
-            from httoop.messages.body import Body
+            from httoop.messages.body import Body  # noqa: PLC0415
 
             self._body = Body(mimetype='application/json')
             self._body.data = self.to_dict()

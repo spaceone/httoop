@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 from socket import AF_INET, AF_INET6, inet_ntop, inet_pton
-from typing import TYPE_CHECKING, Any, Iterator
+from typing import TYPE_CHECKING, Any, ClassVar, Iterator
 
 from httoop.exceptions import InvalidURI
 from httoop.meta import Semantic
@@ -21,14 +21,16 @@ from httoop.util import _, integer
 if TYPE_CHECKING:
     from httoop.uri.http import HTTP
 
+_MAX_PORT = 65535
 
-class URI(Semantic):
+
+class URI(Semantic):  # noqa: PLW1641
     """Uniform Resource Identifier."""
 
     __slots__ = ('scheme', 'username', 'password', 'host', '_port', 'path', 'query_string', 'fragment')  # noqa: RUF023
     slots = __slots__
 
-    SCHEMES = {}
+    SCHEMES: ClassVar = {}
     PORT = None
     encoding = 'UTF-8'
 
@@ -65,10 +67,10 @@ class URI(Semantic):
         if port:
             try:
                 port = integer(port)
-                if not 0 < port <= 65535:
+                if not 0 < port <= _MAX_PORT:
                     raise ValueError
             except ValueError:
-                raise InvalidURI(_('Invalid port: %r'), port)  # TODO: TypeError
+                raise InvalidURI(_('Invalid port: %r'), port) from None  # TODO: TypeError
         self._port = port
 
     def __init__(self, uri: Any | None = None, *args, **kwargs) -> None:
@@ -138,7 +140,7 @@ class URI(Semantic):
         >>> u = URI(b'/foo/../bar/.'); u.abspath(); u.path == u'/bar/'
         True
         """
-        path = re.sub('\\/{2,}', '/', self.path)  # remove //
+        path = re.sub(r'\/{2,}', '/', self.path)  # remove //
         if not path:
             return
         unsplit = []
@@ -176,17 +178,17 @@ class URI(Semantic):
         slots = (key.lstrip('_') for key in self.slots)
         return {key: getattr(self, key) for key in slots}
 
-    @dict.setter
+    @dict.setter  # noqa: A003
     def dict(self, uri) -> None:
-        for key in self.slots:
-            key = key.lstrip('_')
+        for name in self.slots:
+            key = name.lstrip('_')
             setattr(self, key, uri.get(key, ''))
 
     @property
     def tuple(self):
         return tuple(getattr(self, key) for key in self.slots)
 
-    @tuple.setter
+    @tuple.setter  # noqa: A003
     def tuple(self, tuple_) -> None:
         (self.scheme, self.username, self.password, self.host,
          self.port, self.path, self.query_string, self.fragment) = tuple_
@@ -240,10 +242,10 @@ class URI(Semantic):
         try:
             scheme = scheme.decode('ascii').lower()
         except UnicodeDecodeError:  # pragma: no cover
-            raise InvalidURI(_('Invalid scheme: must be ASCII.'))
+            raise InvalidURI(_('Invalid scheme: must be ASCII.')) from None
 
         if scheme and scheme.strip('abcdefghijklmnopqrstuvwxyz0123456789.-+'):
-            raise InvalidURI(_('Invalid scheme: must only contain alphanumeric letters or plus, dash, dot.'))
+            raise InvalidURI(_('Invalid scheme: must only contain alphanumeric letters or plus, dash, dot.')) from None
 
         if query_string:
             query_string = QueryString.encode(QueryString.decode(query_string, self.encoding), self.encoding)
@@ -273,14 +275,14 @@ class URI(Semantic):
                     try:
                         return '[%s]' % host.decode('ascii')
                     except UnicodeDecodeError:  # pragma: no cover
-                        raise InvalidURI(_('Invalid IPvFuture address: must be ASCII.'))
-                raise InvalidURI(_('Invalid IP address in URI.'))
+                        raise InvalidURI(_('Invalid IPvFuture address: must be ASCII.')) from None
+                raise InvalidURI(_('Invalid IP address in URI.')) from None
         # IPv4
         if all(x.isdigit() for x in host.split(b'.')):
             try:
                 return inet_ntop(AF_INET, inet_pton(AF_INET, host.decode('ascii')))
             except (OSError, UnicodeDecodeError):
-                raise InvalidURI(_('Invalid IPv4 address in URI.'))
+                raise InvalidURI(_('Invalid IPv4 address in URI.')) from None
 
         if host.strip(Percent.UNRESERVED + Percent.SUB_DELIMS + b'%'):
             raise InvalidURI(_('Invalid URI host.'))
@@ -290,7 +292,7 @@ class URI(Semantic):
         try:
             return host.encode('ascii').decode('idna').lower()
         except UnicodeError:  # pragma: no cover
-            raise InvalidURI(_('Invalid host.'))
+            raise InvalidURI(_('Invalid host.')) from None
 
     def compose(self) -> bytes:
         return b''.join(self._compose_absolute_iter())
@@ -324,10 +326,10 @@ class URI(Semantic):
     def _compose_relative_iter(self) -> Iterator[bytes]:
         """Composes the relative URI beginning with the path."""
         scheme, path, query_string, quote, fragment = self.scheme, self.path, self.query_string, self.quote, self.fragment
-        PATH = Percent.PATH
+        path_quote_chars = Percent.PATH
         if not scheme and not path.startswith('/'):
-            PATH = b''.join({bytes((c,)) for c in iter(PATH)} - {b':', b'@'})
-        yield b'/'.join(quote(x, PATH) for x in path.split('/'))
+            path_quote_chars = b''.join({bytes((c,)) for c in iter(path_quote_chars)} - {b':', b'@'})
+        yield b'/'.join(quote(x, path_quote_chars) for x in path.split('/'))
         if query_string:
             yield b'?'
             yield query_string.encode(self.encoding)

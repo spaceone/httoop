@@ -4,6 +4,7 @@ HTTP status codes.
 .. seealso:: :rfc:`2616#section-6.2`
 .. seealso:: :rfc:`2616#section-10`
 """
+# ruff: file-ignore[PLR2004]
 
 from __future__ import annotations
 
@@ -18,7 +19,7 @@ from httoop.util import _, integer
 STATUSES = {}
 
 
-class Status(Semantic):
+class Status(Semantic):  # noqa: PLW1641
     """
     A HTTP Status.
 

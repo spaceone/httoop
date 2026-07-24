@@ -1,12 +1,24 @@
+from __future__ import annotations
+
 import datetime
+from typing import TypedDict
 
 import pytest
 
 from httoop import Date, InvalidDate
 
 
-dates = [{
-    'datetime': datetime.datetime(1994, 11, 6, 8, 49, 37),
+class DateData(TypedDict):
+    datetime: datetime.datetime
+    timestamp: float
+    lt: Date
+    gt: Date
+    gmtime: tuple[int, int, int, int, int, int, int, int, int]
+    formats: set[str]
+
+
+dates: list[DateData] = [{
+    'datetime': datetime.datetime(1994, 11, 6, 8, 49, 37, tzinfo=datetime.timezone.utc),
     'timestamp': 784111777.0,
     'lt': Date(784111776.0),
     'gt': Date(784111778.0),
@@ -35,7 +47,7 @@ def test_date_datetime(date, expected, lt, gt):
 def test_date_timestamp(date, expected, lt, gt):
     for d in (Date.parse(date.encode('utf-8')), Date(date)):
         assert d is not None
-        assert float(d) == expected
+        assert float(d) == expected  # noqa: RUF069
         assert d == expected
         assert d == Date(date)
 
@@ -56,7 +68,7 @@ def test_date_gmtime(date, expected, lt, gt):
 
 
 def test_date_comparing_none():
-    d = Date(datetime.datetime(1994, 11, 6, 8, 49, 37))
+    d = Date(datetime.datetime(1994, 11, 6, 8, 49, 37, tzinfo=datetime.timezone.utc))
     assert d == Date(d)
     assert not d == None  # noqa: E711, SIM201
     assert d > None

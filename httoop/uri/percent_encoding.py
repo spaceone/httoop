@@ -1,4 +1,4 @@
-from typing import Iterator
+from typing import ClassVar, Iterator
 
 
 class Percent:
@@ -11,7 +11,7 @@ class Percent:
     b"!#$&'()*+,/:;=?@[]"
     """
 
-    HEX_MAP = {(a + b).encode('ASCII'): bytes((int(a + b, 16),)) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef'}
+    HEX_MAP: ClassVar = {(a + b).encode('ASCII'): bytes((int(a + b, 16),)) for a in '0123456789ABCDEFabcdef' for b in '0123456789ABCDEFabcdef'}
 
     # ABNF
     GEN_DELIMS = b':/?#[]@'
@@ -35,18 +35,19 @@ class Percent:
 
     @classmethod
     def _decode_iter(cls, data: bytes) -> Iterator[bytes]:
-        data = data.split(b'%')
-        yield data.pop(0)
-        for item in data:
-            try:
-                yield cls.HEX_MAP[item[:2]]
+        datas = data.split(b'%')
+        yield datas.pop(0)
+        for item in datas:
+            mapped = cls.HEX_MAP.get(item[:2])
+            if mapped is not None:
+                yield mapped
                 yield item[2:]
-            except KeyError:
+            else:
                 yield b'%'
                 yield item
 
     @classmethod
     def quote(cls, data: bytes, charset: bytes = UNRESERVED) -> bytes:
-        charset = {bytes((c,)) for c in iter(charset)} - {b'%'}
-        data = (bytes((d,)) for d in iter(data))
-        return b''.join(b'%%%X' % (ord(d),) if d not in charset else d for d in data)
+        charset_s = {bytes((c,)) for c in iter(charset)} - {b'%'}
+        datas = (bytes((d,)) for d in iter(data))
+        return b''.join(b'%%%X' % (ord(d),) if d not in charset_s else d for d in datas)

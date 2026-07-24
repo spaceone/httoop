@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import gzip
 import io
 import zlib
@@ -20,30 +22,30 @@ class GZip(Codec):
                 fd.write(Codec.encode(data, charset))
             return out.getvalue()
         except zlib.error:  # pragma: no cover
-            raise EncodeError(_('Invalid gzip data.'))
+            raise EncodeError(_('Invalid gzip data.')) from None
 
     @classmethod
-    def decode(cls, data: bytes, charset: None = None, mimetype: None = None) -> str:
+    def decode(cls, data: bytes, charset: str | None = None, mimetype: None = None) -> str:
         try:
             with gzip.GzipFile(fileobj=io.BytesIO(data)) as fd:
                 data = fd.read()
         except (zlib.error, OSError, EOFError):
-            raise DecodeError(_('Invalid gzip data.'))
+            raise DecodeError(_('Invalid gzip data.')) from None
         return Codec.decode(data, charset)
 
     @classmethod
     def iterencode(cls, data, charset=None, mimetype=None):
+        out = io.BytesIO()
         try:
-            out = io.BytesIO()
             with gzip.GzipFile(fileobj=out, mode='w', compresslevel=cls.compression_level) as fd:
                 for part in data:
                     fd.write(Codec.encode(part, charset))
                     yield out.getvalue()
                     out.seek(0)
                     out.truncate()
-            yield out.getvalue()
         except zlib.error:  # pragma: no cover
-            raise EncodeError(_('Invalid gzip data.'))
+            raise EncodeError(_('Invalid gzip data.')) from None
+        yield out.getvalue()
 
     @classmethod
     def iterdecode(cls, data, charset=None, mimetype=None):
@@ -62,4 +64,4 @@ class GZip(Codec):
                 fd.seek(0)
                 yield Codec.decode(gzfd.read(), charset)
         except (zlib.error, OSError, EOFError):
-            raise DecodeError(_('Invalid gzip data.'))
+            raise DecodeError(_('Invalid gzip data.')) from None

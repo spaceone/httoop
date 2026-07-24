@@ -95,7 +95,7 @@ class Resource(dict):
         except StopIteration:
             pass
 
-    def expand(___self, ___href, **templates):
+    def expand(___self, ___href, **templates):  # noqa: N805
         return expand(___href, templates)
 
     def get_curie(self, relation: str) -> str:
@@ -125,10 +125,10 @@ class HAL(JSON):
 
     @classmethod
     def decode(cls, data: bytes, charset: str | None = None, mimetype: ContentType | None = None) -> Resource:
-        data = super().decode(data)
-        if not isinstance(data, dict):
+        doc = super().decode(data)
+        if not isinstance(doc, dict):
             raise DecodeError('HAL documents must be JSON objects.')
-        return Resource(data)
+        return Resource(doc)
 
     @classmethod
     def encode(cls, data: dict[str, None] | Resource, charset: str | None = None, mimetype: ContentType | None = None) -> bytes:
@@ -138,6 +138,6 @@ class HAL(JSON):
         try:
             Resource(data.copy())
         except DecodeError as exc:
-            raise EncodeError(str(exc))
+            raise EncodeError(str(exc)) from exc
 
         return super().encode(data)

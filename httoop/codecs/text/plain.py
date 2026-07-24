@@ -17,15 +17,15 @@ class PlainText(Codec):
     @classmethod
     def decode(cls, data: bytes, charset: str | None = None, mimetype: ContentType | None = None) -> str:
         try:
-            assert isinstance(data, bytes)
+            assert isinstance(data, bytes)  # noqa: S101
             return data.decode(charset or 'UTF-8')
         except UnicodeDecodeError:
-            raise DecodeError('Wrong encoding.')
+            raise DecodeError('Wrong encoding.') from None
 
     @classmethod
     def encode(cls, data: str, charset: str | None = None, mimetype: ContentType | None = None) -> bytes:
         try:
-            assert not isinstance(data, bytes)
+            assert not isinstance(data, bytes)  # noqa: S101
             return data.encode(charset or 'UTF-8')
         except UnicodeEncodeError:
-            raise EncodeError('Wrong encoding.')
+            raise EncodeError('Wrong encoding.') from None

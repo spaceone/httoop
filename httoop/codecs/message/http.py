@@ -21,7 +21,7 @@ class HTTP(Codec):
 
     @classmethod
     def decode(cls, data: bytes, charset: str | None = None, mimetype: ContentType | None = None) -> Request | Response:
-        from httoop.messages import Request, Response
+        from httoop.messages import Request, Response  # noqa: PLC0415
 
         line, data = data.split(b'\r\n', 1)
         message = Request()

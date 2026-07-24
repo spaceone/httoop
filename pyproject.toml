@@ -24,7 +24,6 @@ classifiers = [
   "Operating System :: POSIX :: Linux",
   "Operating System :: MacOS :: MacOS X",
   "Operating System :: Microsoft :: Windows",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -39,11 +38,17 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
-requires-python = ">=3.8"
+requires-python = ">=3.9"
+
+dependencies = [
+    "typing_extensions>=4.4",
+]
 
 [project.optional-dependencies]
 xml = ["defusedxml"]
 hal = ["uritemplate"]
+
+[dependency-groups]
 test = [
   "pytest",
   "pytest-cov",
@@ -70,6 +75,21 @@ exclude_lines = [
   "pragma: no cover",
 ]
 
+[tool.ty.terminal]
+output-format = "concise"
+
+[tool.ty.environment]
+python-version = "3.8"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+show_error_codes = true
+explicit_package_bases = true
+namespace_packages = true
+mypy_path = ["httoop"]
+files = ["httoop/"]
+
 [tool.ruff]
 line-length = 180
 target-version = "py37"
@@ -81,6 +101,9 @@ preview = true
 select = ["E", "W", "F", "I", "D", "TD", "ALL"]
 ignore = [
 # Invalid / don't care:
+ "RUF105",  # noqa-comments
+ "RUF106",  # rule-codes-in-suppression-comments:
+ "RUF201",  # rule-codes-in-selectors
  "E501",  # line-too-long
  "E203",  # whitespace-before-punctuation
  "COM812",  # missing-trailing-comma
@@ -119,6 +142,7 @@ ignore = [
  # "I", "S101", "Q000", "ANN", "ERA", "UP004", "ARG001", "ARG002",
  "FURB189",  # subclass-builtin
  "TRY301",  # raise-within-try
+ "RUF067",  # non-empty-init-module
 
 # too much effort:
  "ANN001",  # missing-type-function-argument
@@ -142,52 +166,6 @@ ignore = [
  "PLC2801",  # unnecessary-dunder-call
  "TRY003",  # raise-vanilla-args
  "TRY300",  # try-consider-else
-
-# should be fixed!
- "A001",  # builtin-variable-shadowing
- "A003",  # builtin-attribute-shadowing
- "B015",  # useless-comparison
- "B018",  # useless-expression
- "B904",  # raise-without-from-inside-except
- "D301",  # escape-sequence-in-docstring
- "DTZ001",  # call-datetime-without-tzinfo
- "DTZ004",  # call-datetime-utcfromtimestamp
- "FBT001",  # boolean-type-hint-positional-argument
- "FBT002",  # boolean-default-value-positional-argument
- "FBT003",  # boolean-positional-value-in-call
- "FURB113",  # repeated-append
- "N802",  # invalid-function-name
- "N803",  # invalid-argument-name
- "N805",  # invalid-first-argument-name-for-method
- "N806",  # non-lowercase-variable-in-function
- "N818",  # error-suffix-on-exception-name
- "PERF203",  # try-except-in-loop
- "PLC0206",  # dict-index-missing-items
- "PLC0415",  # import-outside-top-level
- "PLC1901",  # compare-to-empty-string
- "PLR1704",  # redefined-argument-from-local
- "PLR2004",  # magic-value-comparison
- "PLR6201",  # literal-membership
- "PLR6301",  # no-self-use
- "PLW0108",  # unnecessary-lambda
- "PLW0717",  # too-many-statements-in-try-clause
- "PLW1641",  # eq-without-hash
- "PLW2901",  # redefined-loop-name
- "PT011",  # pytest-raises-too-broad
- "PT012",  # pytest-raises-with-multiple-statements
- "PYI041",  # redundant-numeric-union
- "PYI056",  # unsupported-method-call-on-all
- "RUF005",  # collection-literal-concatenation
- "RUF012",  # mutable-class-default
- "RUF022",  # unsorted-dunder-all
- "RUF039",  # unraw-re-pattern
- "RUF067",  # non-empty-init-module
- "RUF069",  # float-equality-comparison
- "SIM102",  # collapsible-if
- "SIM108",  # if-else-block-instead-of-if-exp
- "SIM115",  # open-file-with-context-handler
- "RUF100",  # unused-noqa
- "S101",  # assert
 ]
 
 
@@ -228,6 +206,7 @@ task-tags = ["TODO", "FIXME"]
  "S404",  # suspicious-subprocess-import
  "S405",  # suspicious-xml-etree-import
  "S603",  # subprocess-without-shell-equals-true
+ "PLR2004",  # magic-value-comparison
 ]
 "httoop/status/*.py" = [
  "N801",

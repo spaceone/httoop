@@ -25,7 +25,7 @@ repos:
       - id: rst-directive-colons
       - id: rst-inline-touching-normal
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.21
+    rev: v0.16.0
     hooks:
       - id: ruff-check
         alias: "ruff"
@@ -54,8 +54,13 @@ repos:
       - id: conventional-pre-commit
         stages: [commit-msg]
         args: ["--strict"]
+  - repo: https://github.com/astral-sh/ty-pre-commit
+    rev: v0.0.63
+    hooks:
+      - id: ty
+        stages: [manual]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v2.2.0
+    rev: v2.3.0
     hooks:
       - id: mypy
         stages: [manual]

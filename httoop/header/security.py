@@ -25,7 +25,7 @@ class ContentSecurityPolicy(HeaderElement, name='Content-Security-Policy'):
     is_response_header = True
 
     RE_SPLIT = re.compile(rb';')
-    RE_PARAMS = re.compile(b'\\s+')
+    RE_PARAMS = re.compile(rb'\s+')
 
     def compose(self) -> bytes:
         return b'%s %s; ' % (self.value.encode('ISO8859-1'), b' '.join(self.params.keys()))
@@ -82,7 +82,7 @@ class FrameOptions(HeaderElement, name='X-Frame-Options'):
 
     is_response_header = True
 
-    RE_PARAMS = re.compile(b'\\s+')
+    RE_PARAMS = re.compile(rb'\s+')
 
     @property
     def deny(self) -> bool:
@@ -93,9 +93,9 @@ class FrameOptions(HeaderElement, name='X-Frame-Options'):
         return self.value.upper() == 'SAMEORIGIN'
 
     @property
-    def allow_from(self) -> list[HTTPS]:
+    def allow_from(self) -> list[HTTPS] | None:
         if self.value.upper() == 'ALLOW-FROM':
-            from httoop.uri import URI
+            from httoop.uri import URI  # noqa: PLC0415
 
             return [URI(uri) for uri in self.params]
         return None

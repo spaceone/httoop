@@ -8,8 +8,10 @@ def test_quality_parameter_in_accept_header(headers):
 
 def test_comparing_accept(headers):
     headers.parse(b'Accept: application/json; q=0.2, text/plain, text/html; q=0.5, *; q=0')
-    headers.elements('Accept')[0] < 'text/html'
-    headers.elements('Accept')[0] < '*'
+    assert headers.elements('Accept')[2] < 'text/html'
+    assert headers.elements('Accept')[2] < '*'
+    # FIXME: assert headers.elements('Accept')[1] <= 'text/html'
+    assert headers.elements('Accept')[1] < 'text/html'
 
 
 @pytest.mark.parametrize('header_name', ['Accept', 'Content-Type'])

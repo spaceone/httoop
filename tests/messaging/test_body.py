@@ -2,13 +2,13 @@ import sys
 
 import pytest
 
-from httoop import BAD_REQUEST
+from httoop import BAD_REQUEST, Request
 from httoop.codecs import lookup
 from httoop.semantic.request import ComposedRequest
 from httoop.semantic.response import ComposedResponse
 
 
-def test_chunked_body_without_trailer(request_):
+def test_chunked_body_without_trailer(request_: Request):
     def content():
         yield 'Let us test this chunked'
         yield '\n'
@@ -32,7 +32,7 @@ def test_parse_chunked_body_without_trailer(statemachine):
     assert bytes(request_.body) == request_body
 
 
-def test_parse_chunked_body_without_trailer_2(request_):
+def test_parse_chunked_body_without_trailer_2(request_: Request):
     request_.body = [
         'This is a chunked body with some lines',
         'foo', 'bar', 'Baz', '\n', '', 'blah!', 'blub'
@@ -54,7 +54,7 @@ def test_parse_transfer_encoding_deflate(statemachine):
     assert request.body == 'this is a test'
 
 
-def test_body_parse_transfer_encoding_deflate(request_):
+def test_body_parse_transfer_encoding_deflate(request_: Request):
     request_.body.transfer_encoding = 'deflate'
     request_.body.parse(b'x\x9c+\xc9\xc8,V\x00\xa2D\x85\x92\xd4\xe2\x12\x00&3\x05\x16')
     assert request_.body == 'this is a test'
@@ -79,7 +79,7 @@ def test_parse_chunked_body_with_untold_trailer(statemachine):
     assert 'untold trailers: "Bar"' in str(exc.value)
 
 
-def test_chunked_body_with_trailer(request_):
+def test_chunked_body_with_trailer(request_: Request):
     def content():
         yield 'Let us test this chunked'
         yield '\n'
@@ -155,13 +155,13 @@ def test_parse_chunked_body_with_invalid_terminator(statemachine):
     assert 'Invalid chunk terminator' in str(exc.value.description)
 
 
-def test_body_compress(request_):
+def test_body_compress(request_: Request):
     request_.body = 'this is a test'
     request_.body.content_encoding = 'deflate'
     request_.body.compress()
     assert lookup('application/zlib').decode(bytes(request_.body)) == 'this is a test'
 
 
-def test_body_encode_none(request_):
+def test_body_encode_none(request_: Request):
     request_.body.mimetype = 'application/json'
     request_.body.encode()

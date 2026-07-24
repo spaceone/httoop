@@ -5,7 +5,7 @@ from __future__ import annotations
 import codecs
 import string
 from binascii import Error as Base64Error, a2b_base64, b2a_base64
-from typing import Any, Callable
+from typing import IO, Any, Callable
 
 
 try:
@@ -18,7 +18,7 @@ def _(x: str) -> str:
     return x
 
 
-__all__ = ['CaseInsensitiveDict', 'IFile', '_', 'integer', 'sanitize_encoding', 'to_unicode', 'base64', 'base64_decode', 'Base64Error']
+__all__ = ['Base64Error', 'CaseInsensitiveDict', 'IFile', '_', 'base64', 'base64_decode', 'integer', 'sanitize_encoding', 'to_unicode']
 
 KNOWN_ENCODINGS = {
     'cp1254', 'cp949', 'cp865', 'cp1257', 'euc_jp', 'cp1250', 'mac-cyrillic', 'mac-latin2', 'cp866', 'cp857',
@@ -39,9 +39,9 @@ def base64(data: bytes):
 
 def base64_decode(data: bytes):
     try:
-        return a2b_base64(data, strict_mode=True)
+        return a2b_base64(data, strict_mode=True)  # type: ignore[unknown-argument]
     except TypeError:  # Py < 3.11
-        import base64
+        import base64  # noqa: PLC0415
         return base64.b64decode(data, validate=True)
 
 
@@ -68,7 +68,7 @@ def to_unicode(string: bytes | str | None) -> str:
 
 def if_has(func: Callable) -> Callable:
     def _decorated(self, *args, **kwargs):
-        if hasattr(self.fd, func.__name__):
+        if hasattr(self.fd, getattr(func, '__name__', '')):
             return func(self, *args, **kwargs)
         return False
 
@@ -76,7 +76,7 @@ def if_has(func: Callable) -> Callable:
 
 
 def integer(number: str | bytes, base=10) -> int:
-    """
+    r"""
     The native Python integer parsing from string allows to many forms which are not allowed by the protocol.
 
     >>> integer(bytearray(b'10'))
@@ -124,9 +124,8 @@ def integer(number: str | bytes, base=10) -> int:
     """
     if isinstance(number, int):
         return int(number)
-    if not number.isdigit():
-        if base != 16 or number.strip(string.hexdigits if isinstance(number, str) else string.hexdigits.encode('ASCII')):
-            raise ValueError()
+    if not number.isdigit() and (base != 16 or number.strip(string.hexdigits if isinstance(number, str) else string.hexdigits.encode('ASCII'))):  # noqa: PLR2004
+        raise ValueError()
     zero = '0' if isinstance(number, str) else b'0'
     if number != zero and len(number.lstrip(zero)) != len(number):
         raise ValueError()
@@ -137,6 +136,7 @@ class IFile:
     """The file interface."""
 
     __slots__ = ('fd',)
+    fd: IO
 
     @property
     def name(self) -> None:
@@ -222,8 +222,8 @@ class CaseInsensitiveDict(dict):
     def get(self, key: bytes | str, default: Any | None = None) -> Any:
         return dict.get(self, self.formatkey(key), default)
 
-    def update(self, E: dict[str, str]) -> None:
-        for key in E:
+    def update(self, E: dict[str, str]) -> None:  # noqa: N803
+        for key in E:  # noqa: PLC0206
             self[self.formatkey(key)] = self.formatvalue(E[key])
 
     # def setdefault(self, key: str, x: Optional[Union[UserAgent, Server, str, bytes]]=None) -> bytes:

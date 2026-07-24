@@ -80,7 +80,7 @@ class CLI:
 
     def parse_request(self) -> None:
         server = ServerStateMachine(self.arguments.scheme, self.arguments.host, self.arguments.port)
-        for _request, response in server.parse(self.get_file(self.arguments.file)):
+        for _request, response in server.parse(self.get_file(self.arguments.file).read()):
             print(repr(response))
             print(repr(response.headers))
             print(repr(response.body))
@@ -88,7 +88,7 @@ class CLI:
     def parse_response(self) -> None:
         client = ClientStateMachine()
         client.request = Request()
-        for response in client.parse(self.arguments.file.read()):
+        for response in client.parse(self.get_file(self.arguments.file).read()):
             print(repr(response))
             print(repr(response.headers))
             print(repr(response.body))

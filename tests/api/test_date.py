@@ -1,11 +1,23 @@
+from __future__ import annotations
+
 import datetime
+from typing import TypedDict
 
 import pytest
 
 from httoop import Date, InvalidDate
 
 
-dates = [{
+class DateData(TypedDict):
+    datetime: datetime.datetime
+    timestamp: float
+    lt: Date
+    gt: Date
+    gmtime: tuple[int, int, int, int, int, int, int, int, int]
+    formats: set[str]
+
+
+dates: list[DateData] = [{
     'datetime': datetime.datetime(1994, 11, 6, 8, 49, 37, tzinfo=datetime.timezone.utc),
     'timestamp': 784111777.0,
     'lt': Date(784111776.0),

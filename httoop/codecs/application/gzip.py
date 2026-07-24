@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import gzip
 import io
 import zlib
@@ -23,7 +25,7 @@ class GZip(Codec):
             raise EncodeError(_('Invalid gzip data.')) from None
 
     @classmethod
-    def decode(cls, data: bytes, charset: None = None, mimetype: None = None) -> str:
+    def decode(cls, data: bytes, charset: str | None = None, mimetype: None = None) -> str:
         try:
             with gzip.GzipFile(fileobj=io.BytesIO(data)) as fd:
                 data = fd.read()

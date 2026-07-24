@@ -62,7 +62,7 @@ def test_parse_encodings(query_string, encoding, query):
 def test_urlencode_sequences():
     u = URI()
     u.query = {'a': [1, 2], 'b': (3, 4, 5)}
-    assert set(u.query_string.split(b'&')) == {b'a=1', b'a=2', b'b=3', b'b=4', b'b=5'}
+    assert set(u.query_string.split('&')) == {b'a=1', b'a=2', b'b=3', b'b=4', b'b=5'}
 
 
 @pytest.mark.xfail(reason='API not yet implemented.')

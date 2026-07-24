@@ -9,7 +9,7 @@ from __future__ import annotations
 import time
 
 # import calendar
-from datetime import datetime, timezone
+from datetime import datetime as datetime_type, timezone
 from email.utils import parsedate_tz
 from typing import Any
 
@@ -17,11 +17,6 @@ from httoop.exceptions import InvalidDate
 from httoop.meta import Semantic
 from httoop.util import _
 
-
-try:
-    from typing import Self
-except ImportError:  # < Py 3.11
-    from typing_extensions import Self
 
 __all__ = ['Date']
 
@@ -66,7 +61,7 @@ class Date(Semantic):  # noqa: PLW1641
         elif isinstance(timeval, (tuple, time.struct_time)):
             # self.__timestamp = calendar.timegm(timeval)
             self.__timestamp = time.mktime(timeval) - time.timezone
-        elif isinstance(timeval, datetime):
+        elif isinstance(timeval, datetime_type):
             self.__datetime = timeval
             # self.__timestamp = calendar.timegm(self.datetime.utctimetuple())
             self.__timestamp = time.mktime(self.datetime.utctimetuple()) - time.timezone
@@ -80,9 +75,9 @@ class Date(Semantic):  # noqa: PLW1641
             raise TypeError('Date(): got invalid argument')
 
     @property
-    def datetime(self) -> datetime:
+    def datetime(self) -> datetime_type:
         if self.__datetime is None:
-            self.__datetime = datetime.fromtimestamp(int(self), tz=timezone.utc)
+            self.__datetime = datetime_type.fromtimestamp(int(self), tz=timezone.utc)
         return self.__datetime
 
     @property
@@ -154,7 +149,7 @@ class Date(Semantic):  # noqa: PLW1641
             return NotImplemented
 
     @staticmethod
-    def __other(other) -> Self:
+    def __other(other) -> Date:
         if other is None:
             return Date(0)
             # raise NotImplementedError()

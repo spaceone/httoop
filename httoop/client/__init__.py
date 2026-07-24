@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 from httoop.exceptions import InvalidLine
-from httoop.messages import Response
+from httoop.messages import Request, Response
 from httoop.parser import NOT_RECEIVED_YET, StateMachine
 
 
 class ClientStateMachine(StateMachine):
 
     Message = Response
+    request: Request
+    message: Response
 
     def __init__(self, *, strict: bool = True, max_status_line_length: float = 256) -> None:
         super().__init__(strict=strict)

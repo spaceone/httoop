@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 class ServerStateMachine(StateMachine):
 
     Message = Request
+    message: Request
     HTTP2 = None
 
     def __init__(self, scheme: str, host: str, port: int, *, strict: bool = True, max_uri_length: float = 8192) -> None:
@@ -41,6 +42,8 @@ class ServerStateMachine(StateMachine):
     def on_message_complete(self) -> tuple[httoop.messages.request.Request, httoop.messages.response.Response]:
         request = super().on_message_complete()
         response = self.response
+        assert request is not None  # noqa: S101
+        assert response is not None  # noqa: S101
         self.request = None
         self.response = None
         return (request, response)
@@ -62,6 +65,7 @@ class ServerStateMachine(StateMachine):
 
     def on_uri_complete(self) -> None:
         super().on_uri_complete()
+        assert self.request  # noqa: S101
         self._check_uri_max_length(bytes(self.request.uri))
         self.sanitize_request_uri_path()
         self.validate_request_uri_scheme()
@@ -91,6 +95,8 @@ class ServerStateMachine(StateMachine):
 
     def set_response_protocol(self) -> None:
         # set appropriate response protocol version
+        assert self.message  # noqa: S101
+        assert self.response  # noqa: S101
         self.response.protocol = min(self.message.protocol, ServerProtocol)
 
     def _check_uri_max_length(self, uri: bytearray | bytes) -> None:
@@ -114,6 +120,7 @@ class ServerStateMachine(StateMachine):
             self.message.uri.port = self._default_port
 
     def set_server_response_header(self) -> None:
+        assert self.response  # noqa: S101
         self.response.headers.setdefault('Server', ServerHeader)
 
     def check_host_header_exists(self) -> None:
@@ -150,6 +157,7 @@ class ServerStateMachine(StateMachine):
         if all(is_http2_upgrade()):
             if self.HTTP2 is None:
                 return
+            assert self.response  # noqa: S101
             self.response.headers['Upgrade'] = 'h2c'
             self.response.headers['Connection'] = 'Upgrade'
             self.__class__ = self.HTTP2

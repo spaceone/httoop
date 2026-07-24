@@ -125,10 +125,10 @@ class HAL(JSON):
 
     @classmethod
     def decode(cls, data: bytes, charset: str | None = None, mimetype: ContentType | None = None) -> Resource:
-        data = super().decode(data)
-        if not isinstance(data, dict):
+        doc = super().decode(data)
+        if not isinstance(doc, dict):
             raise DecodeError('HAL documents must be JSON objects.')
-        return Resource(data)
+        return Resource(doc)
 
     @classmethod
     def encode(cls, data: dict[str, None] | Resource, charset: str | None = None, mimetype: ContentType | None = None) -> bytes:

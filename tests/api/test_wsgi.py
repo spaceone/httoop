@@ -165,6 +165,7 @@ def application15(environ, start_response):
 def test_essential_parameters():
     client = WSGIClient({'CONTENT_TYPE': 'text/html', 'CONTENT_LENGTH': '0', 'HTTP_HOST': 'foobar'})
     client(application15)
+    assert client.exc_info is not None
     assert client.exc_info[1].args[0] is True
 
 

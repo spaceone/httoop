@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import Any, Callable, Iterator
 
 import httoop.header
-from httoop.messages import Body
+from httoop.messages import Body, Request, Response
 
 
 __all__ = ('WSGI',)
@@ -31,6 +31,9 @@ class WSGIBody(Body):
 
 class WSGI:
     """A mixin class which implements the WSGI interface."""
+
+    request: Request
+    response: Response
 
     def __init__(self, environ: dict[str, str] | None = None, *args, use_path_info: bool = False, **kwargs) -> None:
         self.use_path_info = use_path_info
@@ -64,7 +67,7 @@ class WSGI:
     def start_response(self) -> None:
         pass
 
-    def __call__(self, application: Callable) -> Iterator[Any]:
+    def __call__(self, application: Callable) -> Iterator[Any] | None:
         def write(data):
             if not self.headers_set:
                 raise RuntimeError('write() before start_response()')
@@ -116,8 +119,9 @@ class WSGI:
                     if data:
                         yield data
             finally:
-                if hasattr(result, 'close'):
-                    result.close()
+                close = getattr(result, 'close', None)
+                if callable(close):
+                    close()
 
         self.response.body = buffered(data)
         return raw_result

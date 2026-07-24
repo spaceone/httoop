@@ -1,6 +1,7 @@
 import pytest
 
 from httoop import Status
+from httoop.messages import Response
 from httoop.status import (
     CREATED,
     INTERNAL_SERVER_ERROR,
@@ -66,7 +67,7 @@ def test_stats_int(response):
     assert int(response.status) == 100
 
 
-def test_status_tuple(response):
+def test_status_tuple(response: Response):
     response.status = 200
     assert response.status.code == 200
     assert response.status.reason == 'OK'
@@ -122,7 +123,7 @@ def test_status_parse(response):
     assert not response.status.reason
 
 
-def test_status_type(response):
+def test_status_type(response: Response):
     response.status = 100
     assert response.status.informational
     assert not response.status.successful

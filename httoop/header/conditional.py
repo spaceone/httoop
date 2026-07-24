@@ -6,6 +6,7 @@ from httoop.header.element import HeaderElement
 class _DateComparable:  # noqa: PLW1641
 
     Date = Date
+    value: str
 
     def sanitize(self) -> None:
         super().sanitize()
@@ -26,6 +27,7 @@ class _DateComparable:  # noqa: PLW1641
 
 
 class _MatchElement:  # noqa: PLW1641
+    value: str
 
     def __eq__(self, other: object) -> bool:
         return self.value in {other, '*'}

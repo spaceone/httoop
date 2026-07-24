@@ -42,9 +42,9 @@ class BasicAuthRequestScheme:
 class BasicAuthResponseScheme:
 
     @staticmethod
-    def parse(authinfo: bytes) -> dict[bytes, str | bytes]:
+    def parse(authinfo: bytes) -> dict[bytes, str]:
         params = HeaderElement.parseparams(b'X;%s' % authinfo)[1]
-        params.setdefault(b'realm', b'')
+        params.setdefault(b'realm', '')
         return params
 
     @staticmethod

@@ -4,37 +4,37 @@ from httoop import URI, Body, ClientStateMachine, Headers, Request, Response, Se
 
 
 @pytest.fixture
-def request_():
+def request_() -> Request:
     return Request()
 
 
 @pytest.fixture
-def response():
+def response() -> Response:
     return Response()
 
 
 @pytest.fixture
-def headers():
+def headers() -> Headers:
     return Headers()
 
 
 @pytest.fixture
-def body():
+def body() -> Body:
     return Body()
 
 
 @pytest.fixture
-def statemachine():
+def statemachine() -> ServerStateMachine:
     return ServerStateMachine('http', 'localhost', 8090)
 
 
 @pytest.fixture
-def clientstatemachine():
+def clientstatemachine() -> ClientStateMachine:
     c = ClientStateMachine()
     c.request = Request()
     return c
 
 
 @pytest.fixture
-def uri():
+def uri() -> URI:
     return URI()

@@ -172,9 +172,9 @@ class HeaderElement:  # noqa: PLW1641
                 yield b'%s*%d' % (key, k), v
 
     @classmethod
-    def parse(cls, elementstr: bytes) -> HeaderElement:
+    def parse(cls, element: bytes) -> HeaderElement:
         """Construct an instance from a string of the form 'token;key=val'."""
-        elementstr, encoding = cls.decode_rfc2047_charset(elementstr)
+        elementstr, encoding = cls.decode_rfc2047_charset(element)
         ival, params = cls.parseparams(elementstr.encode(encoding))
         return cls(ival.decode(encoding), params)
 
@@ -202,18 +202,20 @@ class HeaderElement:  # noqa: PLW1641
         This will quote the value if needed or if quote is true.
         """
         if value:
-            if not isinstance(value, bytes):
+            if isinstance(value, bytes):
+                val = value
+            else:
                 try:
-                    value = value.encode('ASCII')
+                    val = value.encode('ASCII')
                 except UnicodeEncodeError:
                     param += b'*'
-                    value = b"utf-8''%s" % (Percent.quote(value.encode('UTF-8')),)
+                    val = b"utf-8''%s" % (Percent.quote(value.encode('UTF-8')),)
                     quote = False
 
-            if quote or cls.RE_TSPECIALS.search(value):
-                value = value.replace(b'\\', b'\\\\').replace(b'"', rb'\"')
-                return b'%s="%s"' % (param, value)
-            return b'%s=%s' % (param, value)
+            if quote or cls.RE_TSPECIALS.search(val):
+                val = val.replace(b'\\', b'\\\\').replace(b'"', rb'\"')
+                return b'%s="%s"' % (param, val)
+            return b'%s=%s' % (param, val)
         return param
 
     @classmethod
@@ -256,6 +258,9 @@ class MimeType:
 
     .. seealso:: rfc:`3023`
     """
+
+    value: str
+    params: dict
 
     @property
     def mimetype(self) -> str:
@@ -317,14 +322,14 @@ class _AcceptElement(HeaderElement):  # noqa: PLW1641
     RE_Q_SEPARATOR = re.compile(rb';\s*q\s*=\s*')
 
     @property
-    def quality(self) -> float | None:
+    def quality(self) -> float:
         """The quality of this value."""
         val = self.params.get('q', '1')
         if isinstance(val, HeaderElement):  # pragma: no cover
             val = val.value
         if val:
             return float(val)
-        return None
+        return 0.0
 
     def sanitize(self) -> None:
         super().sanitize()
@@ -334,8 +339,8 @@ class _AcceptElement(HeaderElement):  # noqa: PLW1641
             raise InvalidHeader(_('Quality value must be float.')) from None
 
     @classmethod
-    def parse(cls, elementstr: bytes) -> HeaderElement:
-        elementstr, encoding = cls.decode_rfc2047_charset(elementstr)
+    def parse(cls, element: bytes) -> HeaderElement:
+        elementstr, encoding = cls.decode_rfc2047_charset(element)
         qvalue = None
         # The first "q" parameter (if any) separates the initial
         # media-range parameter(s) (if any) from the accept-params.
@@ -348,7 +353,7 @@ class _AcceptElement(HeaderElement):  # noqa: PLW1641
 
         media_type, params = cls.parseparams(media_range)
         if qvalue is not None:
-            params['q'] = bytes(qvalue)
+            params[b'q'] = str(qvalue)
 
         return cls(media_type.decode(encoding), params)
 
@@ -356,12 +361,12 @@ class _AcceptElement(HeaderElement):  # noqa: PLW1641
     def sorted(cls, elements: list) -> list:
         return sorted(elements, reverse=True)
 
-    def __eq__(self, other: str) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, _AcceptElement):
             other = _AcceptElement(other)
         return other.value == self.value and other.quality == self.quality
 
-    def __lt__(self, other: str) -> bool:
+    def __lt__(self, other: object) -> bool:
         if not isinstance(other, _AcceptElement):
             other = _AcceptElement(other)
         if self.quality == other.quality:
@@ -380,8 +385,8 @@ class _CookieElement(HeaderElement):
         super().__init__(self.value, params)
 
     @classmethod
-    def parse(cls, elementstr: bytes) -> HeaderElement:
-        elementstr, encoding = cls.decode_rfc2047_charset(elementstr)
+    def parse(cls, element: bytes) -> HeaderElement:
+        elementstr, encoding = cls.decode_rfc2047_charset(element)
         value, params = cls.parseparams(elementstr.encode(encoding))
         cookie_name, cookie_value, __ = cls.parseparam(value)
         return cls(cookie_name.decode(encoding), cookie_value.decode(encoding), params)

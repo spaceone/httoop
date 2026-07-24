@@ -25,7 +25,7 @@ class ContentSecurityPolicy(HeaderElement, name='Content-Security-Policy'):
     is_response_header = True
 
     RE_SPLIT = re.compile(rb';')
-    RE_PARAMS = re.compile(rb'\\s+')
+    RE_PARAMS = re.compile(rb'\s+')
 
     def compose(self) -> bytes:
         return b'%s %s; ' % (self.value.encode('ISO8859-1'), b' '.join(self.params.keys()))
@@ -82,7 +82,7 @@ class FrameOptions(HeaderElement, name='X-Frame-Options'):
 
     is_response_header = True
 
-    RE_PARAMS = re.compile(rb'\\s+')
+    RE_PARAMS = re.compile(rb'\s+')
 
     @property
     def deny(self) -> bool:

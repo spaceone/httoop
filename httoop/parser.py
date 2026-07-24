@@ -179,7 +179,7 @@ class StateMachine:
             rest += self.buffer[-len(self.line_end):]
         else:
             headers, _, rest = self.buffer.rpartition(self.line_end)
-        if headers and _ and rest[:1] not in {b'', b'\t', b' '}:
+        if headers and _ and bytes(rest[:1]) not in {b'', b'\t', b' '}:
             self.buffer = rest
             self._parse_header(headers)
 

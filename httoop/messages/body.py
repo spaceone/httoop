@@ -156,11 +156,11 @@ class Body(IFile, Semantic):
             self.set(codec.encode(self.__content_bytes()))
             self.content_encoding = None
 
-    def decompress(self) -> None:
+    def decompress(self, *, max_size: int = -1) -> None:
         """Applies the Content-Encoding codec to the content."""
         codec = self.content_codec
         if codec:
-            self.set(codec.decode(self.__content_bytes()))
+            self.set(codec.decode(self.__content_bytes(), max_size=max_size))
             self.content_encoding = None
 
     def set(self, content: Any) -> None:

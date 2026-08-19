@@ -1,5 +1,4 @@
 """Implements a state machine for the parsing process."""
-# TODO: translation API
 
 from __future__ import annotations
 
@@ -22,6 +21,7 @@ CR = b'\r'
 LF = b'\n'
 CRLF = CR + LF
 NOT_RECEIVED_YET = True
+DEFAULT_MAX_BODY_SIZE = 104857600  # 100 MB
 
 
 class StateMachine:
@@ -32,14 +32,16 @@ class StateMachine:
 
     Message = Message  # subclass provides the type
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         *,
         strict: bool = True,
         max_header_count: int = 1024,
         max_header_line_length: int = 8192,
         max_header_section_size: int = 65536,
-        max_body_size: float = float('inf'),
+        max_body_size: float = DEFAULT_MAX_BODY_SIZE,
+        decompress_body: bool = False,
+        max_decompressed_body_size: float | None = None,
     ) -> None:
         self.buffer = bytearray()
         self.message = None
@@ -48,6 +50,10 @@ class StateMachine:
         self.max_header_line_length = max_header_line_length
         self.max_header_section_size = max_header_section_size
         self.max_body_size = max_body_size
+        self.decompress_body = decompress_body
+        if max_decompressed_body_size is None:
+            max_decompressed_body_size = max_body_size
+        self.max_decompressed_body_size = max_decompressed_body_size
 
     def _reset_state(self) -> None:
         self.message = self.Message()
@@ -90,8 +96,12 @@ class StateMachine:
 
     def on_body_complete(self) -> None:
         self.message.body.seek(0)
-        self.message.body.decompress()
-        self.message.body.seek(0)
+        if self.decompress_body:
+            try:
+                self.message.body.decompress(max_size=-1 if self.max_decompressed_body_size == float('inf') else self.max_decompressed_body_size)
+            except InvalidBodySize as exc:
+                raise PAYLOAD_TOO_LARGE(str(exc)) from exc
+            self.message.body.seek(0)
         self.set_content_length()
 
     def on_message_complete(self) -> Response | Request:

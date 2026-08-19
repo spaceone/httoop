@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import gzip
 import io
 import zlib
 
 from httoop.codecs.codec import Codec
-from httoop.exceptions import DecodeError, EncodeError
+from httoop.exceptions import DecodeError, EncodeError, InvalidBodySize
 from httoop.util import _
 
 
@@ -20,46 +22,48 @@ class GZip(Codec):
                 fd.write(Codec.encode(data, charset))
             return out.getvalue()
         except zlib.error:  # pragma: no cover
-            raise EncodeError(_('Invalid gzip data.'))
+            raise EncodeError(_('Invalid gzip data.')) from None
 
     @classmethod
-    def decode(cls, data: bytes, charset: None = None, mimetype: None = None) -> str:
-        try:
-            with gzip.GzipFile(fileobj=io.BytesIO(data)) as fd:
-                data = fd.read()
-        except (zlib.error, OSError, EOFError):
-            raise DecodeError(_('Invalid gzip data.'))
-        return Codec.decode(data, charset)
+    def decode(cls, data: bytes, charset: str | None = None, mimetype: None = None, max_size: int = -1) -> str:
+        with gzip.GzipFile(fileobj=io.BytesIO(data)) as fd:
+            try:
+                result = fd.read(max_size + 1 if max_size > 0 else -1)
+                if max_size > 0 and len(result) > max_size:
+                    raise InvalidBodySize(_('Maximum content size (%d) reached'), max_size)
+            except (zlib.error, OSError, EOFError):
+                raise DecodeError(_('Invalid gzip data.')) from None
+        return Codec.decode(result, charset)
 
     @classmethod
     def iterencode(cls, data, charset=None, mimetype=None):
+        out = io.BytesIO()
         try:
-            out = io.BytesIO()
             with gzip.GzipFile(fileobj=out, mode='w', compresslevel=cls.compression_level) as fd:
                 for part in data:
                     fd.write(Codec.encode(part, charset))
                     yield out.getvalue()
                     out.seek(0)
                     out.truncate()
-            yield out.getvalue()
         except zlib.error:  # pragma: no cover
-            raise EncodeError(_('Invalid gzip data.'))
+            raise EncodeError(_('Invalid gzip data.')) from None
+        yield out.getvalue()
 
-    @classmethod
-    def iterdecode(cls, data, charset=None, mimetype=None):
-        try:
-            fd = io.BytesIO()
-            with gzip.GzipFile(fileobj=fd) as gzfd:
-                # FIXME: the gzip module cannot handle partial data
-                # for part in data:
-                #    fd.write(part)
-                #    fd.seek(fd.tell() - length)
-                #    fd.seek(fd.tell() - length)
-                #    yield Codec.decode(gzfd.read(), charset)
-                # yield Codec.decode(gzfd.read(), charset)
-                for part in data:
-                    fd.write(part)
-                fd.seek(0)
-                yield Codec.decode(gzfd.read(), charset)
-        except (zlib.error, OSError, EOFError):
-            raise DecodeError(_('Invalid gzip data.'))
+    # @classmethod
+    # def iterdecode(cls, data, charset=None, mimetype=None):
+    #     try:
+    #         fd = io.BytesIO()
+    #         with gzip.GzipFile(fileobj=fd) as gzfd:
+    #             # FIXME: the gzip module cannot handle partial data
+    #             # for part in data:
+    #             #    fd.write(part)
+    #             #    fd.seek(fd.tell() - length)
+    #             #    fd.seek(fd.tell() - length)
+    #             #    yield Codec.decode(gzfd.read(), charset)
+    #             # yield Codec.decode(gzfd.read(), charset)
+    #             for part in data:
+    #                 fd.write(part)
+    #             fd.seek(0)
+    #             yield Codec.decode(gzfd.read(), charset)
+    #     except (zlib.error, OSError, EOFError):
+    #         raise DecodeError(_('Invalid gzip data.')) from None

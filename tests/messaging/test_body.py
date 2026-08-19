@@ -1,14 +1,15 @@
+import gzip
 import sys
 
 import pytest
 
-from httoop import BAD_REQUEST
+from httoop import BAD_REQUEST, PAYLOAD_TOO_LARGE, Request
 from httoop.codecs import lookup
 from httoop.semantic.request import ComposedRequest
 from httoop.semantic.response import ComposedResponse
 
 
-def test_chunked_body_without_trailer(request_):
+def test_chunked_body_without_trailer(request_: Request):
     def content():
         yield 'Let us test this chunked'
         yield '\n'
@@ -32,7 +33,7 @@ def test_parse_chunked_body_without_trailer(statemachine):
     assert bytes(request_.body) == request_body
 
 
-def test_parse_chunked_body_without_trailer_2(request_):
+def test_parse_chunked_body_without_trailer_2(request_: Request):
     request_.body = [
         'This is a chunked body with some lines',
         'foo', 'bar', 'Baz', '\n', '', 'blah!', 'blub'
@@ -46,7 +47,7 @@ def test_parse_chunked_body_without_trailer_2(request_):
     b''.join(c)
 
 
-@pytest.mark.skipif(sys.version_info[:2] == (3, 5), reason='exception handling broken in py3.[4,5}')
+@pytest.mark.skipif(sys.version_info[:2] == (3, 5), reason='exception handling broken in py3.{4,5}')
 @pytest.mark.xfail(reason='501 not implemented. why?!')
 def test_parse_transfer_encoding_deflate(statemachine):
     statemachine.parse(b'POST / HTTP/1.1\r\nTransfer-Encoding: deflate\r\nAccept: */*\r\nUser-Agent: httoop/0.0\r\nHost: localhost\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n')
@@ -54,7 +55,7 @@ def test_parse_transfer_encoding_deflate(statemachine):
     assert request.body == 'this is a test'
 
 
-def test_body_parse_transfer_encoding_deflate(request_):
+def test_body_parse_transfer_encoding_deflate(request_: Request):
     request_.body.transfer_encoding = 'deflate'
     request_.body.parse(b'x\x9c+\xc9\xc8,V\x00\xa2D\x85\x92\xd4\xe2\x12\x00&3\x05\x16')
     assert request_.body == 'this is a test'
@@ -79,7 +80,7 @@ def test_parse_chunked_body_with_untold_trailer(statemachine):
     assert 'untold trailers: "Bar"' in str(exc.value)
 
 
-def test_chunked_body_with_trailer(request_):
+def test_chunked_body_with_trailer(request_: Request):
     def content():
         yield 'Let us test this chunked'
         yield '\n'
@@ -118,6 +119,7 @@ def test_body_gzip_compressed(request_, response, clientstatemachine):
     assert b'Content-Encoding: gzip\r\n' in bytes(c.response.headers)
     assert b'Transfer-Encoding: chunked\r\n' in bytes(c.response.headers)  # automatically added
     # assert bytes(c.response.body) == b'20\r\n\x1f\x8b\x00N\xed\xdb^\x02\xff+\xc9\xc8,V\x00\xa2D\x85\x92\xd4\xe2\x12\x00\xea\xe7\x1e\r\x0e\x00\x00\x00\r\n0\r\n\r\n'
+    clientstatemachine.decompress_body = True
     clientstatemachine.request = request_
     clientstatemachine.parse(bytes(c.response))
     clientstatemachine.parse(bytes(c.response.headers))
@@ -133,11 +135,52 @@ def test_body_deflate_compressed(request_, response, clientstatemachine):
     assert b'Content-Encoding: deflate\r\n' in bytes(c.response.headers)
     assert b'Transfer-Encoding: chunked\r\n' in bytes(c.response.headers)  # automatically added
     print(repr(bytes(c.response.body)))
+    clientstatemachine.decompress_body = True
     clientstatemachine.request = request_
     clientstatemachine.parse(bytes(c.response))
     clientstatemachine.parse(bytes(c.response.headers))
     res = clientstatemachine.parse(bytes(c.response.body))[0]
     assert str(res.body) == 'this is a test'
+
+
+def test_body_max_content_size(request_, response, statemachine):
+    statemachine.max_body_size = 5
+    with pytest.raises(PAYLOAD_TOO_LARGE):
+        statemachine.parse(b'POST / HTTP/1.1\r\nContent-Length: 6\r\nAccept: */*\r\nUser-Agent: httoop/0.0\r\nHost: localhost\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n')
+        # statemachine.parse(b'12345')
+        # statemachine.parse(b'6')
+
+
+def test_body_max_size_chunked(request_, response, statemachine):
+    statemachine.max_body_size = 10
+    statemachine.parse(b'POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nAccept: */*\r\nUser-Agent: httoop/0.0\r\nHost: localhost\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n')
+    with pytest.raises(PAYLOAD_TOO_LARGE):
+        statemachine.parse(b'11\r\nand seems to work\r\n0\r\n\r\n')
+
+
+def test_body_max_size_chunked_valid(request_, response, statemachine):
+    statemachine.max_body_size = 20
+    statemachine.parse(b'POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nAccept: */*\r\nUser-Agent: httoop/0.0\r\nHost: localhost\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n')
+    statemachine.parse(b'11\r\nand seems to work\r\n0\r\n\r\n')
+
+
+def test_body_max_compression_size_deflated(request_, response, statemachine):
+    statemachine.max_decompressed_body_size = 5
+    statemachine.decompress_body = True
+    statemachine.parse(b'POST / HTTP/1.1\r\nContent-Length: 20\r\nContent-Encoding: deflate\r\nAccept: */*\r\nUser-Agent: httoop/0.0\r\nHost: localhost\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n')
+    with pytest.raises(PAYLOAD_TOO_LARGE):
+        statemachine.parse(b'x\x9c+\xc9\xc8,V\x00\xa2D\x85\x92\xd4\xe2\x12\x00&3\x05\x16')
+
+
+def test_body_max_compression_size_gzip(request_, response, statemachine):
+    raw = b'A' * 1_000_000
+    compressed = gzip.compress(raw)
+    assert len(compressed) == 1004
+    statemachine.max_decompressed_body_size = len(compressed) * 2
+    statemachine.decompress_body = True
+    statemachine.parse(b'POST / HTTP/1.1\r\nContent-Length: %d\r\nContent-Encoding: gzip\r\nAccept: */*\r\nUser-Agent: httoop/0.0\r\nHost: localhost\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n' % len(compressed))
+    with pytest.raises(PAYLOAD_TOO_LARGE):
+        statemachine.parse(compressed)
 
 
 @pytest.mark.parametrize('chunk_size', [b'-18', b'fg', b'1_8', b'00'])
@@ -155,13 +198,13 @@ def test_parse_chunked_body_with_invalid_terminator(statemachine):
     assert 'Invalid chunk terminator' in str(exc.value.description)
 
 
-def test_body_compress(request_):
+def test_body_compress(request_: Request):
     request_.body = 'this is a test'
     request_.body.content_encoding = 'deflate'
     request_.body.compress()
     assert lookup('application/zlib').decode(bytes(request_.body)) == 'this is a test'
 
 
-def test_body_encode_none(request_):
+def test_body_encode_none(request_: Request):
     request_.body.mimetype = 'application/json'
     request_.body.encode()

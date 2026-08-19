@@ -9,14 +9,16 @@ if TYPE_CHECKING:
 
 class Codec:
 
+    mimetype: str
+
     @classmethod
-    def decode(cls, data: bytes, charset: str | None = None, mimetype: None = None) -> str:  # pragma: no cover
+    def decode(cls, data: bytes, charset: str | None = None, mimetype: ContentType | None = None, **kwargs) -> str:  # pragma: no cover
         if isinstance(data, bytes):
             data = data.decode(charset or 'ascii')
         return data
 
     @classmethod
-    def encode(cls, data: bytes, charset: None = None, mimetype: None = None) -> bytes:  # pragma: no cover
+    def encode(cls, data: bytes, charset: None = None, mimetype: ContentType | None = None) -> bytes:  # pragma: no cover
         if isinstance(data, str):
             data = data.encode(charset or 'ascii')
         return data
@@ -26,5 +28,5 @@ class Codec:
         yield cls.encode(data, charset, mimetype)
 
     @classmethod
-    def iterdecode(cls, data: Any, charset=None, mimetype=None):  # pragma: no cover
+    def iterdecode(cls, data: Any, charset=None, mimetype: ContentType | None = None):  # pragma: no cover
         yield cls.decode(data, charset, mimetype)

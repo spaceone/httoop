@@ -20,8 +20,8 @@ class ServerStateMachine(StateMachine):
     Message = Request
     HTTP2 = None
 
-    def __init__(self, scheme: str, host: str, port: int, *, strict: bool = True, max_uri_length: float = 8192) -> None:
-        super().__init__(strict=strict)
+    def __init__(self, scheme: str, host: str, port: int, *, strict: bool = True, max_uri_length: float = 8192, **kwargs) -> None:
+        super().__init__(strict=strict, **kwargs)
         self.MAX_URI_LENGTH = max_uri_length  # float('inf')
         self._default_scheme = scheme
         self._default_host = host
@@ -87,7 +87,7 @@ class ServerStateMachine(StateMachine):
         # check if we speak the same major HTTP version
         if self.message.protocol > ServerProtocol:
             # the major HTTP version differs
-            raise HTTP_VERSION_NOT_SUPPORTED('The server only supports HTTP/1.0 and HTTP/1.1.')
+            raise HTTP_VERSION_NOT_SUPPORTED(_('The server only supports HTTP/1.0 and HTTP/1.1.'))
 
     def set_response_protocol(self) -> None:
         # set appropriate response protocol version
@@ -95,7 +95,7 @@ class ServerStateMachine(StateMachine):
 
     def _check_uri_max_length(self, uri: bytearray | bytes) -> None:
         if len(uri) > self.MAX_URI_LENGTH:
-            raise URI_TOO_LONG('The maximum length of the request is %d' % self.MAX_URI_LENGTH)
+            raise URI_TOO_LONG(_('The maximum length of the request is %d') % self.MAX_URI_LENGTH)
 
     def sanitize_request_uri_path(self) -> None:
         path = self.message.uri.path
@@ -118,7 +118,7 @@ class ServerStateMachine(StateMachine):
 
     def check_host_header_exists(self) -> None:
         if self.message.protocol >= (1, 1) and 'Host' not in self.message.headers:
-            raise BAD_REQUEST('Missing Host header')
+            raise BAD_REQUEST(_('Missing Host header'))
 
     def set_request_uri_host(self) -> None:
         if 'Host' not in self.message.headers:
@@ -130,11 +130,11 @@ class ServerStateMachine(StateMachine):
     def check_message_without_body_containing_data(self) -> None:
         if self.buffer and 'Content-Length' not in self.message.headers and not self.chunked:
             # request without Content-Length header but body
-            raise LENGTH_REQUIRED('Missing Content-Length header.')
+            raise LENGTH_REQUIRED(_('Missing Content-Length header.'))
 
     def check_methods_without_body(self) -> None:
         if self.message.method in {'HEAD', 'GET', 'TRACE'} and self.message.body:
-            raise BAD_REQUEST(f'A {self.message.method} request is considered as safe and MUST NOT contain a request body.')
+            raise BAD_REQUEST(_('A %s request is considered as safe and MUST NOT contain a request body.') % self.message.method)
 
     def check_http2_upgrade(self) -> None:
 

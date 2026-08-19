@@ -8,7 +8,7 @@ from httoop.exceptions import Invalid, InvalidBody, InvalidBodySize, InvalidHead
 from httoop.header import Headers
 from httoop.header.messaging import Trailer
 from httoop.messages import Message
-from httoop.status import BAD_REQUEST, NOT_IMPLEMENTED, PAYLOAD_TOO_LARGE, REQUEST_HEADER_FIELDS_TOO_LARGE
+from httoop.status import BAD_REQUEST, CONTENT_TOO_LARGE, NOT_IMPLEMENTED, REQUEST_HEADER_FIELDS_TOO_LARGE
 from httoop.util import _, integer
 
 
@@ -100,7 +100,7 @@ class StateMachine:
             try:
                 self.message.body.decompress(max_size=-1 if self.max_decompressed_body_size == float('inf') else self.max_decompressed_body_size)
             except InvalidBodySize as exc:
-                raise PAYLOAD_TOO_LARGE(str(exc)) from exc
+                raise CONTENT_TOO_LARGE(str(exc)) from exc
             self.message.body.seek(0)
         self.set_content_length()
 
@@ -235,14 +235,14 @@ class StateMachine:
             except ValueError:
                 raise BAD_REQUEST(_('Invalid Content-Length header.'))
             if self.message_length > self.max_body_size:
-                raise PAYLOAD_TOO_LARGE(_('Maximum content size (%d) reached') % (self.max_body_size,))
+                raise CONTENT_TOO_LARGE(_('Maximum content size (%d) reached') % (self.max_body_size,))
 
     def parse_body_with_message_length(self) -> bool | None:
         body, self.buffer = self.buffer[:self.message_length], self.buffer[self.message_length:]
         try:
             self.message.body.parse(bytes(body))
         except InvalidBodySize as exc:
-            raise PAYLOAD_TOO_LARGE(str(exc))
+            raise CONTENT_TOO_LARGE(str(exc))
 
         blen = len(body)
         unfinished = blen < self.message_length
@@ -270,7 +270,7 @@ class StateMachine:
         try:
             self.message.body.parse(bytes(body_part))
         except InvalidBodySize as exc:
-            raise PAYLOAD_TOO_LARGE(str(exc))
+            raise CONTENT_TOO_LARGE(str(exc))
         self.buffer = rest_chunk
 
         if chunk_size == 0:

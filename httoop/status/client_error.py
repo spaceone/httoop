@@ -134,7 +134,7 @@ class PRECONDITION_FAILED(ClientErrorStatus, code=412):
     """
 
 
-class PAYLOAD_TOO_LARGE(ClientErrorStatus, code=413):
+class CONTENT_TOO_LARGE(ClientErrorStatus, code=413):
     """
     The HTTP server can deny too large representations.
     A LBYL request can be useful.

@@ -22,19 +22,9 @@ On top of the object oriented abstraction of HTTP httoop provides an easy way to
 
 HTTP and extensions are defined in the following RFC's:
 
-* HTTP/1.1 RFC 7230 [Message Syntax and Routing](https://datatracker.ietf.org/doc/html/rfc7230)
-
-* HTTP/1.1 RFC 7231 [Semantics and Content](https://datatracker.ietf.org/doc/html/rfc7231)
-
-* HTTP/1.1 RFC 7232 [Conditional Requests](https://datatracker.ietf.org/doc/html/rfc7232)
-
-* HTTP/1.1 RFC 7233 [Range Requests](https://datatracker.ietf.org/doc/html/rfc7233)
+* [RFC 9110 HTTP Semantics](https://datatracker.ietf.org/doc/html/rfc9110)
 
 * HTTP/1.1 RFC 7234 [Caching](https://datatracker.ietf.org/doc/html/rfc7234)
-
-* HTTP/1.1 RFC 7235 [Authentication](https://datatracker.ietf.org/doc/html/rfc7235)
-
-* <s>Hypertext Transfer Protocol -- HTTP/1.1 ([RFC 2616](https://datatracker.ietf.org/doc/html/rfc2616)) </s>
 
 * HTTP/2 RFC 7540 [Hypertext Transfer Protocol Version 2](https://datatracker.ietf.org/doc/html/rfc7540)
 
@@ -57,10 +47,6 @@ HTTP and extensions are defined in the following RFC's:
 * Uniform Resource Identifier (URI) ([RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986))
 
 * Internet Message Format ([RFC 822](https://datatracker.ietf.org/doc/html/rfc822), [2822](https://datatracker.ietf.org/doc/html/rfc2822), [5322](https://datatracker.ietf.org/doc/html/rfc5322))
-
-* <s>HTTP Authentication: Basic and Digest Access Authentication ([RFC 2617](https://datatracker.ietf.org/doc/html/rfc2617))</s>
-
-* HTTP Authentication-Info and Proxy-Authentication-Info Response Header Fields ([RFC 7615](https://datatracker.ietf.org/doc/html/rfc7615))
 
 * HTTP Digest Access Authentication ([RFC 7616](https://datatracker.ietf.org/doc/html/rfc7616))
 
@@ -159,3 +145,14 @@ OAuth 2.0:
 * [JSON Web Token (JWT)](https://datatracker.ietf.org/doc/html/rfc7519)
 * [JSON Web Token (JWT) Profile for OAuth 2.0 Access Tokens](https://datatracker.ietf.org/doc/html/rfc9068)
 * [Resource Indicators for OAuth 2.0](https://datatracker.ietf.org/doc/html/rfc8707)
+
+Obsolete:
+
+* <s>HTTP/1.1 RFC 7230 [Message Syntax and Routing](https://datatracker.ietf.org/doc/html/rfc7230)</s>
+* <s>HTTP/1.1 RFC 7231 [Semantics and Content](https://datatracker.ietf.org/doc/html/rfc7231)</s>
+* <s>HTTP/1.1 RFC 7232 [Conditional Requests](https://datatracker.ietf.org/doc/html/rfc7232)</s>
+* <s>HTTP/1.1 RFC 7233 [Range Requests](https://datatracker.ietf.org/doc/html/rfc7233)</s>
+* <s>HTTP/1.1 RFC 7235 [Authentication](https://datatracker.ietf.org/doc/html/rfc7235)</s>
+* <s>Hypertext Transfer Protocol -- HTTP/1.1 ([RFC 2616](https://datatracker.ietf.org/doc/html/rfc2616)) </s>
+* <s>HTTP Authentication: Basic and Digest Access Authentication ([RFC 2617](https://datatracker.ietf.org/doc/html/rfc2617))</s>
+* <s>HTTP Authentication-Info and Proxy-Authentication-Info Response Header Fields ([RFC 7615](https://datatracker.ietf.org/doc/html/rfc7615))</s>

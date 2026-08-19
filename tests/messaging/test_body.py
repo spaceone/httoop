@@ -3,7 +3,7 @@ import sys
 
 import pytest
 
-from httoop import BAD_REQUEST, PAYLOAD_TOO_LARGE, Request
+from httoop import BAD_REQUEST, CONTENT_TOO_LARGE, Request
 from httoop.codecs import lookup
 from httoop.semantic.request import ComposedRequest
 from httoop.semantic.response import ComposedResponse
@@ -145,7 +145,7 @@ def test_body_deflate_compressed(request_, response, clientstatemachine):
 
 def test_body_max_content_size(request_, response, statemachine):
     statemachine.max_body_size = 5
-    with pytest.raises(PAYLOAD_TOO_LARGE):
+    with pytest.raises(CONTENT_TOO_LARGE):
         statemachine.parse(b'POST / HTTP/1.1\r\nContent-Length: 6\r\nAccept: */*\r\nUser-Agent: httoop/0.0\r\nHost: localhost\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n')
         # statemachine.parse(b'12345')
         # statemachine.parse(b'6')
@@ -154,7 +154,7 @@ def test_body_max_content_size(request_, response, statemachine):
 def test_body_max_size_chunked(request_, response, statemachine):
     statemachine.max_body_size = 10
     statemachine.parse(b'POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nAccept: */*\r\nUser-Agent: httoop/0.0\r\nHost: localhost\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n')
-    with pytest.raises(PAYLOAD_TOO_LARGE):
+    with pytest.raises(CONTENT_TOO_LARGE):
         statemachine.parse(b'11\r\nand seems to work\r\n0\r\n\r\n')
 
 
@@ -168,7 +168,7 @@ def test_body_max_compression_size_deflated(request_, response, statemachine):
     statemachine.max_decompressed_body_size = 5
     statemachine.decompress_body = True
     statemachine.parse(b'POST / HTTP/1.1\r\nContent-Length: 20\r\nContent-Encoding: deflate\r\nAccept: */*\r\nUser-Agent: httoop/0.0\r\nHost: localhost\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n')
-    with pytest.raises(PAYLOAD_TOO_LARGE):
+    with pytest.raises(CONTENT_TOO_LARGE):
         statemachine.parse(b'x\x9c+\xc9\xc8,V\x00\xa2D\x85\x92\xd4\xe2\x12\x00&3\x05\x16')
 
 
@@ -179,7 +179,7 @@ def test_body_max_compression_size_gzip(request_, response, statemachine):
     statemachine.max_decompressed_body_size = len(compressed) * 2
     statemachine.decompress_body = True
     statemachine.parse(b'POST / HTTP/1.1\r\nContent-Length: %d\r\nContent-Encoding: gzip\r\nAccept: */*\r\nUser-Agent: httoop/0.0\r\nHost: localhost\r\nContent-Type: text/plain; charset="UTF-8"\r\n\r\n' % len(compressed))
-    with pytest.raises(PAYLOAD_TOO_LARGE):
+    with pytest.raises(CONTENT_TOO_LARGE):
         statemachine.parse(compressed)
 
 

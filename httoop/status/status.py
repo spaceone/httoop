@@ -221,7 +221,7 @@ REASONS = {
     410: ('Gone', 'URI no longer exists and has been permanently removed.'),
     411: ('Length Required', 'Client must specify Content-Length.'),
     412: ('Precondition Failed', 'Precondition in headers is false.'),
-    413: ('Payload Too Large', 'Payload is too large.'),
+    413: ('Content Too Large', 'Content is too large.'),
     414: ('URI Too Long', 'URI is too long.'),
     415: ('Unsupported Media Type', 'Entity body in unsupported format.'),
     416: ('Requested Range Not Satisfiable', 'Cannot satisfy request range.'),

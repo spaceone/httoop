@@ -6,19 +6,39 @@
 httoop
 ======
 
-An object oriented HTTP/1.1 library. (HTTP/2 will probably follow in the future).
+An object-oriented HTTP/1.x protocol library for Python.
 
-Httoop can be used to parse, compose and work with HTTP-Request- and Response-Messages.
+Httoop is for applications that need to understand HTTP, not merely send a request.
+It parses and composes requests and responses, and gives every important part of a message a useful object: methods, URIs, protocols, headers, statuses, and bodies.
+The same model can be used to build protocol-aware clients, servers, gateways, middleware, caches, and proxies.
 
-It is an generic library for implementing HTTP servers, clients, caches and proxies.
+## Why httoop?
 
-Httoop provides an powerful interface using the vocabularity used in RFC 7230 - 7235 and focuses on implementing HTTP "compliant" as defined in [RFC 7230 Section 2.5](https://datatracker.ietf.org/doc/html/rfc7230#section-2.5).
+Most HTTP libraries make the network convenient by hiding the protocol.
+Httoop takes a different approach: it makes the protocol convenient to work with.
+You can inspect, validate, transform, and re-compose a message without dropping down to ad-hoc string manipulation or abandoning the HTTP wire format.
 
-"An implementation is not compliant if it fails to satisfy one or more of the MUST or REQUIRED level requirements for the protocols it implements."
-[RFC 2616 Section 1.2](https://datatracker.ietf.org/doc/html/rfc2616#section-1.2)
+* **One coherent object model.** HTTP values share a small semantic interface: they can be parsed, composed, converted to bytes, compared, and represented consistently.
+* **Incremental by design.** The state-machine parser accepts fragmented input, supports pipelined messages, handles fixed-length and chunked bodies, and preserves trailers.
+* **Structured instead of stringly typed.** Headers and URIs expose parsed components, parameters, normalization, joining, and validation. Cookies, ranges, content types, dates, authentication fields, and security headers do not need to be hand-parsed.
+* **Streaming without special cases.** A body can be bytes, text, a file, a file-like object, or an iterable. The same body abstraction handles content encoding, transfer encoding, chunking, and limits.
+* **Protocol-aware composition.** Request and response preparation takes care of HTTP details such as `Host`, `Content-Length`, `Date`, connection semantics, bodyless statuses, `HEAD`, and byte ranges.
+* **Safe boundaries for untrusted input.** Header counts and sizes, URI lengths, body sizes, and decompressed body sizes can be bounded explicitly, while malformed framing and invalid fields are rejected.
+* **Designed to be extended.** New header elements, URI schemes, statuses, and media codecs can be registered and used through the same interfaces as the built-ins.
+* **Integration where it matters.** WSGI support provides a bridge to existing Python web applications without requiring a second message representation.
 
-On top of the object oriented abstraction of HTTP httoop provides an easy way to support WSGI.
+## The Zen of httoop
 
+Httoop follows a few simple principles:
+
+1. **Model HTTP as meaning, not as text.** Wire bytes are an input and output format; inside the application, HTTP should be represented by objects with explicit semantics.
+2. **Separate syntax, semantics, and transport.** Parsing answers "is this a valid message?", composition answers "what should this message mean on the wire?", and adapters answer "where does it run?". Each layer can evolve independently.
+3. **Make the wire visible when it matters.** Httoop does not hide framing, headers, status codes, encodings, or protocol versions. This makes unusual HTTP behavior possible to inspect and reason about.
+4. **Treat partial input and large bodies as normal.** Streaming, buffering, pipelining, and resource limits are part of the model rather than afterthoughts.
+5. **Prefer composition over special-purpose APIs.** The same `Request`, `Response`, `Headers`, `URI`, and `Body` objects work across clients, servers, gateways, and middleware.
+6. **Extend by adding knowledge, not by rewriting the core.** Protocol extensions plug into registries and semantic types instead of requiring changes throughout the parser.
+
+## HTTP standards
 
 HTTP and extensions are defined in the following RFC's:
 

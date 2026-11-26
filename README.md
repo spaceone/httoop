@@ -120,7 +120,7 @@ Extended information about hypermedia, WWW and how HTTP is meant to be used:
 
   * [Economies of scale](https://roy.gbiv.com/untangled/2008/economies-of-scale)
 
-* Clarifications of misconceptions people have about REST:
+Clarifications of misconceptions people have about REST:
 
  * [Do You Really Understand the REST?](https://t-code.pl/blog/2016/02/rest-misconceptions-0/)
 

@@ -123,7 +123,6 @@ def test_attwithfilenameandextparam(content_disposition):
     assert h.filename == 'foo.html'
 
 
-@pytest.mark.xfail(raises=InvalidHeader, reason='HeaderElement.RE_PARAMS.split')
 def test_attwithfilenameandextparamescaped(content_disposition):
     h = content_disposition(b'Content-Disposition: attachment; foo="\\"\\\\";filename="foo.html"')
     assert h.attachment

@@ -39,8 +39,8 @@ class HeaderElement:  # noqa: PLW1641
     # Regular expression that matches `special' characters in parameters, the
     # existence of which force quoting of the parameter value.
     RE_TSPECIALS = re.compile(rb'[ \(\)<>@,;:\\"/\[\]\?=]')
-    RE_SPLIT = re.compile(rb',(?=(?:[^"]*"[^"]*")*[^"]*$)')
-    RE_PARAMS = re.compile(rb';(?=(?:[^"]*"[^"]*")*[^"]*$)')
+    RE_SPLIT = None
+    RE_PARAMS = None
 
     def __init__(self, value: str, params: Any | None = None) -> None:
         self.value = value
@@ -85,7 +85,8 @@ class HeaderElement:  # noqa: PLW1641
         """Transform 'token;key=val' to ('token', {'key': 'val'})."""
         # Split the element into a value and parameters. The 'value' may
         # be of the form, "token=token", but we don't split that here.
-        atoms = [x.strip() for x in cls.RE_PARAMS.split(elementstr) if x.strip()] or [b'']
+        atoms = cls._split_quoted(elementstr, ord(';')) if cls.RE_PARAMS is None else cls.RE_PARAMS.split(elementstr)
+        atoms = [x.strip() for x in atoms if x.strip()] or [b'']
 
         value = atoms.pop(0)
         params = (cls.parseparam(atom) for atom in atoms)
@@ -180,7 +181,30 @@ class HeaderElement:  # noqa: PLW1641
 
     @classmethod
     def split(cls, fieldvalue: bytes) -> list[bytes]:
-        return [x.strip() for x in cls.RE_SPLIT.split(fieldvalue)]
+        parts = cls._split_quoted(fieldvalue, ord(',')) if cls.RE_SPLIT is None else cls.RE_SPLIT.split(fieldvalue)
+        return [x.strip() for x in parts]
+
+    @staticmethod
+    def _split_quoted(value: bytes, separator: int) -> list[bytes]:
+        """Split a byte string at separators outside quoted strings."""
+        parts = []
+        start = 0
+        quoted = False
+        escaped = False
+
+        for index, character in enumerate(value):
+            if escaped:
+                escaped = False
+            elif quoted and character == ord('\\'):
+                escaped = True
+            elif character == ord('"'):
+                quoted = not quoted
+            elif character == separator and not quoted:
+                parts.append(value[start:index])
+                start = index + 1
+
+        parts.append(value[start:])
+        return parts
 
     @classmethod
     def join(cls, values: list[bytes]) -> bytes:

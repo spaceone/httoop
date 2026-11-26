@@ -3,6 +3,9 @@ import io
 import pytest
 
 from httoop.exceptions import InvalidHeader
+from httoop.header.element import HeaderElement
+from httoop.header.messaging import Cookie
+from httoop.header.security import ContentSecurityPolicy
 
 
 def test_connection_close(headers):
@@ -48,6 +51,31 @@ def test_xss_protection(headers):
     headers['X-XSS-Protection'] = '0; mode=block'
     assert not headers.get_element('X-XSS-Protection').enabled
     assert headers.get_element('X-XSS-Protection').block
+
+
+@pytest.mark.parametrize('value, expected', [
+    (b'a,b,c', [b'a', b'b', b'c']),
+    (b'a,"b,c",d', [b'a', b'"b,c"', b'd']),
+    (b'a,"b' + b'\\' + b'",c",d', [b'a', b'"b' + b'\\' + b'",c"', b'd']),
+    (b',,', [b'', b'', b'']),
+])
+def test_split_header_elements(value, expected):
+    assert HeaderElement.split(value) == expected
+
+
+def test_split_header_elements_large_separator_only_value():
+    assert len(HeaderElement.split(b',' * 32000)) == 32001
+
+
+def test_parseparams_large_separator_only_value():
+    value, params = HeaderElement.parseparams(b'X' + b';' * 32000)
+    assert value == b'X'
+    assert params == {}
+
+
+def test_subclass_split_regexes_remain_supported():
+    assert Cookie.split(b'a=1; b=2') == [b'a=1', b'b=2']
+    assert ContentSecurityPolicy.split(b'default-src; script-src') == [b'default-src', b'script-src']
 
 
 def test_strict_transport_security(headers):
